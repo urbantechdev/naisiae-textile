@@ -1,0 +1,6 @@
+{
+  "name": "Naisiae Textile Admin & Shop",
+  "description": "A comprehensive management and sales platform for Naisiae Textile, featuring real-time product synchronization, user management, and detailed analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["Firebase Integration", "Admin Dashboard", "Analytics", "E-commerce"]
+}
