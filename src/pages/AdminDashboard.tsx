@@ -29,7 +29,10 @@ import {
   GripVertical,
   Megaphone,
   PlusCircle,
-  Calendar
+  Calendar,
+  Star,
+  Check,
+  Ban
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -90,11 +93,12 @@ import {
 } from 'recharts';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { suggestCompetitivePrice, PriceSuggestion } from '../services/pricingService';
-import { Sparkles, Zap, ShieldCheck, Palette } from 'lucide-react';
+import { Sparkles, Zap, ShieldCheck, Palette, Percent } from 'lucide-react';
 
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
   const [activeView, setActiveView] = useState('overview');
+  const [activeTab, setActiveTab] = useState('all');
   const [products, setProducts] = useState<any[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
@@ -119,7 +123,15 @@ export default function AdminDashboard() {
   const [editingDiscountRule, setEditingDiscountRule] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
   const [chartData, setChartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
   const [analyticsDocs, setAnalyticsDocs] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalViews: 0,
@@ -400,7 +412,7 @@ export default function AdminDashboard() {
                 sortOrder: products.length + 1
               });
             }
-            alert('Products imported successfully!');
+            setToast({ message: 'Products imported successfully!', type: 'success' });
           } catch (error) {
             handleFirestoreError(error, OperationType.CREATE, 'products');
           } finally {
@@ -456,6 +468,12 @@ export default function AdminDashboard() {
             onClick={() => setActiveView('promotions')} 
             icon={<Megaphone size={20} />} 
             label="Marketing & Promos" 
+          />
+          <SidebarItem 
+            active={activeView === 'reviews'} 
+            onClick={() => setActiveView('reviews')} 
+            icon={<Star size={20} />} 
+            label="Public Reviews" 
           />
           <SidebarItem 
             active={activeView === 'users'} 
@@ -1259,6 +1277,7 @@ export default function AdminDashboard() {
                   </div>
                   <SettingsForm 
                     initialData={siteSettings} 
+                    setToast={setToast}
                     onSave={async (data: any) => {
                       try {
                         const settingsRef = doc(db, 'settings', 'site');
@@ -1358,6 +1377,124 @@ export default function AdminDashboard() {
                 </div>
               </motion.div>
             )}
+
+            {activeView === 'reviews' && (
+              <motion.div 
+                key="reviews"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+              >
+                <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
+                  <div className="p-6 border-b border-[#E2E8F0] flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-[#1E293B]">Public Customer Reviews</h3>
+                      <p className="text-xs text-[#64748B]">Moderate and manage product reviews submitted by customers</p>
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                        <tr>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Product</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Customer</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Rating</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Comment</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Status</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B] text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {reviews.map((review) => (
+                          <tr key={review.id} className="hover:bg-slate-50 transition-colors">
+                            <td className="px-6 py-4">
+                              <p className="text-xs font-bold text-[#1E293B]">{review.productName}</p>
+                              <p className="text-[10px] text-slate-400">ID: {review.productId}</p>
+                            </td>
+                            <td className="px-6 py-4 text-xs font-medium text-slate-600">{review.userName || 'Verified Buyer'}</td>
+                            <td className="px-6 py-4">
+                              <div className="flex text-amber-400">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star key={i} size={12} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <p className="text-xs text-slate-500 max-w-xs line-clamp-2">{review.comment}</p>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+                                review.status === 'approved' ? 'bg-green-50 text-green-600' : 
+                                review.status === 'rejected' ? 'bg-red-50 text-red-600' : 
+                                'bg-blue-50 text-blue-600'
+                              }`}>
+                                {review.status || 'Pending'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                {review.status !== 'approved' && (
+                                  <button 
+                                    onClick={async () => {
+                                      try {
+                                        await updateDoc(doc(db, 'reviews', review.id), { status: 'approved' });
+                                      } catch (err) {
+                                        handleFirestoreError(err, OperationType.UPDATE, `reviews/${review.id}`);
+                                      }
+                                    }}
+                                    className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                                    title="Approve"
+                                  >
+                                    <Check size={16} />
+                                  </button>
+                                )}
+                                {review.status !== 'rejected' && (
+                                  <button 
+                                    onClick={async () => {
+                                      try {
+                                        await updateDoc(doc(db, 'reviews', review.id), { status: 'rejected' });
+                                      } catch (err) {
+                                        handleFirestoreError(err, OperationType.UPDATE, `reviews/${review.id}`);
+                                      }
+                                    }}
+                                    className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                    title="Reject"
+                                  >
+                                    <Ban size={16} />
+                                  </button>
+                                )}
+                                <button 
+                                  onClick={async () => {
+                                    if (confirm('Delete this review?')) {
+                                      try {
+                                        await deleteDoc(doc(db, 'reviews', review.id));
+                                      } catch (err) {
+                                        handleFirestoreError(err, OperationType.DELETE, `reviews/${review.id}`);
+                                      }
+                                    }
+                                  }}
+                                  className="p-1.5 text-slate-400 hover:text-red-600 transition-all"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {reviews.length === 0 && (
+                      <div className="py-20 text-center border-t border-slate-50">
+                        <div className="opacity-20 flex flex-col items-center">
+                          <Star size={40} className="mb-4" />
+                          <p className="font-bold text-sm">No pending or approved reviews</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
@@ -1388,7 +1525,7 @@ export default function AdminDashboard() {
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            ></motion.div>
+            />
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1403,6 +1540,7 @@ export default function AdminDashboard() {
               </div>
               <ProductForm 
                 initialData={editingItem} 
+                setToast={setToast}
                 onSubmit={async (data) => {
                   try {
                     if (editingItem) {
@@ -1415,7 +1553,7 @@ export default function AdminDashboard() {
                         sortOrder: products.length + 1
                       });
                     }
-                    alert(editingItem ? 'Product updated successfully!' : 'Product added successfully!');
+                    setToast({ message: editingItem ? 'Product updated successfully!' : 'Product added successfully!', type: 'success' });
                     setIsModalOpen(false);
                     setEditingItem(null);
                   } catch (error) {
@@ -1438,7 +1576,7 @@ export default function AdminDashboard() {
               exit={{ opacity: 0 }}
               onClick={() => setActivePromoModal(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            ></motion.div>
+            />
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1453,6 +1591,7 @@ export default function AdminDashboard() {
               </div>
               <PromotionForm 
                 initialData={editingItem} 
+                setToast={setToast}
                 onSubmit={async (data) => {
                   try {
                     if (editingItem) {
@@ -1485,7 +1624,7 @@ export default function AdminDashboard() {
               exit={{ opacity: 0 }}
               onClick={() => setSelectedQuote(null)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            ></motion.div>
+            />
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1497,7 +1636,9 @@ export default function AdminDashboard() {
                   <h3 className="font-['Bebas_Neue'] text-2xl tracking-wide text-[#0A1628]">Request Details</h3>
                   <p className="text-[10px] font-black text-[#64748B] uppercase tracking-widest">{selectedQuote.id}</p>
                 </div>
-                <button onClick={() => setSelectedQuote(null)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
+                <button onClick={() => setSelectedQuote(null)} className="text-gray-400 hover:text-black transition-colors">
+                  <X size={20} />
+                </button>
               </div>
               
               <div className="flex-1 overflow-y-auto p-8 space-y-8">
@@ -1521,7 +1662,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {selectedQuote.items && (
+                {selectedQuote.items && selectedQuote.items.length > 0 && (
                   <div>
                     <h4 className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-3">Items Requested</h4>
                     <div className="border border-gray-100 rounded-xl overflow-hidden">
@@ -1550,8 +1691,6 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 )}
-              </div>
-              </div>
 
                 {selectedQuote.details && (
                   <div>
@@ -1581,6 +1720,79 @@ export default function AdminDashboard() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Bulk Discount Rule Modal */}
+      <AnimatePresence>
+        {isDiscountModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDiscountModalOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
+                <h3 className="font-['Bebas_Neue'] text-2xl tracking-wide text-[#0A1628]">
+                  {editingDiscountRule ? 'Edit Discount Rule' : 'New Bulk Discount Rule'}
+                </h3>
+                <button onClick={() => setIsDiscountModalOpen(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
+              </div>
+              <DiscountRuleForm 
+                initialData={editingDiscountRule} 
+                setToast={setToast}
+                onSubmit={async (data: any) => {
+                  try {
+                    if (editingDiscountRule) {
+                      await updateDoc(doc(db, 'discountRules', editingDiscountRule.id), { ...data, updatedAt: serverTimestamp() });
+                    } else {
+                      await addDoc(collection(db, 'discountRules'), { 
+                        ...data, 
+                        createdAt: serverTimestamp(), 
+                        updatedAt: serverTimestamp()
+                      });
+                    }
+                    setIsDiscountModalOpen(false);
+                    setEditingDiscountRule(null);
+                  } catch (error) {
+                    handleFirestoreError(error, editingDiscountRule ? OperationType.UPDATE : OperationType.CREATE, 'discountRules');
+                  }
+                }} 
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 border border-white/20 min-w-[300px]"
+            style={{ 
+              backgroundColor: toast.type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 
+                               toast.type === 'error' ? 'rgba(239, 68, 68, 0.9)' : 
+                               toast.type === 'warning' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(30, 41, 59, 0.9)',
+              color: 'white'
+            }}
+          >
+            {toast.type === 'success' && <CheckCircle2 size={18} />}
+            {toast.type === 'error' && <X size={18} />}
+            {toast.type === 'warning' && <Plus size={18} className="rotate-45" />}
+            {toast.type === 'info' && <MessageSquare size={18} />}
+            <span className="text-sm font-bold tracking-tight">{toast.message}</span>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
@@ -1697,7 +1909,7 @@ function SortableImage({ url, index, onRemove }: any) {
   );
 }
 
-function ProductForm({ initialData, onSubmit }: any) {
+function ProductForm({ initialData, onSubmit, setToast }: any) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isSuggestingPrice, setIsSuggestingPrice] = useState(false);
@@ -1790,7 +2002,7 @@ function ProductForm({ initialData, onSubmit }: any) {
       });
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload image(s). Please check your internet and Firebase Storage rules.");
+      setToast({ message: "Failed to upload image(s). Please check your internet and Firebase Storage rules.", type: 'error' });
     } finally {
       setUploading(false);
     }
@@ -1879,7 +2091,7 @@ function ProductForm({ initialData, onSubmit }: any) {
 
   const handleSuggestPrice = async () => {
     if (!formData.name) {
-      alert("Please enter a product name first so AI can research the market.");
+      setToast({ message: "Please enter a product name first so AI can research the market.", type: 'warning' });
       return;
     }
     
@@ -1896,7 +2108,7 @@ function ProductForm({ initialData, onSubmit }: any) {
       setPricingReasoning(suggestion.reasoning);
     } catch (error) {
       console.error(error);
-      alert("Could not get a pricing suggestion. Please try again.");
+      setToast({ message: "Could not get a pricing suggestion. Please try again.", type: 'error' });
     } finally {
       setIsSuggestingPrice(false);
     }
@@ -1940,8 +2152,7 @@ function ProductForm({ initialData, onSubmit }: any) {
     try {
       await onSubmit(formData);
     } catch (error) {
-      console.error("Submission error:", error);
-      alert("Failed to save product. Please check your connection.");
+      setToast({ message: "Failed to save product. Please check your connection.", type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -2416,7 +2627,7 @@ function ProductForm({ initialData, onSubmit }: any) {
 
 const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop';
 
-function SettingsForm({ initialData, onSave }: any) {
+function SettingsForm({ initialData, onSave, setToast }: any) {
   const [uploading, setUploading] = useState<string | null>(null);
   const [resolving, setResolving] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
@@ -2529,7 +2740,7 @@ function SettingsForm({ initialData, onSave }: any) {
       updateHeroSlide(index, 'url', url);
     } catch (error) {
       console.error("Hero upload error:", error);
-      alert("Failed to upload hero image.");
+      setToast({ message: "Failed to upload hero image.", type: 'error' });
     } finally {
       setUploading(null);
     }
@@ -2547,7 +2758,7 @@ function SettingsForm({ initialData, onSave }: any) {
       handleUpdate(field, url);
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload image.");
+      setToast({ message: "Failed to upload image.", type: 'error' });
     } finally {
       setUploading(null);
     }
@@ -2702,6 +2913,43 @@ function SettingsForm({ initialData, onSave }: any) {
             <p className="text-[10px] text-slate-400 leading-relaxed italic">
               * The tagline appears in the browser tab and search engine results. Branding assets are used across the header, footer, and checkout pages.
             </p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px] border-b border-slate-100 pb-2">Contact & Social</h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Contact Phone</label>
+              <input 
+                value={formData.contactPhone}
+                onChange={e => setFormData({ ...formData, contactPhone: e.target.value })}
+                onBlur={e => onSave(formData)}
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                placeholder="+254 ..." 
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Contact Email</label>
+              <input 
+                value={formData.contactEmail}
+                onChange={e => setFormData({ ...formData, contactEmail: e.target.value })}
+                onBlur={e => onSave(formData)}
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                placeholder="info@..." 
+              />
+            </div>
+            <div className="md:col-span-2 space-y-1.5">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Physical Address</label>
+              <input 
+                value={formData.contactAddress}
+                onChange={e => setFormData({ ...formData, contactAddress: e.target.value })}
+                onBlur={e => onSave(formData)}
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                placeholder="Shop location ..." 
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -2880,7 +3128,7 @@ function SettingsForm({ initialData, onSave }: any) {
                 setTimeout(() => notification.remove(), 300);
               }, 3000);
             } catch (err) {
-              alert('Failed to save settings.');
+              setToast({ message: 'Failed to save settings.', type: 'error' });
             }
           }}
           className="flex items-center gap-3 px-8 py-3.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[2px] rounded-2xl hover:bg-[#A67D15] transition-all shadow-xl shadow-[#C8961A]/20 active:scale-95 group"
@@ -2968,9 +3216,9 @@ function SettingsForm({ initialData, onSave }: any) {
           onClick={async () => {
             try {
               await onSave(formData);
-              alert('Site settings synchronized successfully!');
+              setToast({ message: 'Site settings synchronized successfully!', type: 'success' });
             } catch (err) {
-              alert('Failed to save settings.');
+              setToast({ message: 'Failed to save settings.', type: 'error' });
             }
           }}
           className="px-10 py-5 bg-gradient-to-r from-[#0A1628] to-[#1C3560] text-white rounded-3xl font-black text-xs uppercase tracking-[3px] transition-all hover:scale-[1.05] active:scale-[0.98] shadow-2xl shadow-[#1C3560]/30 flex items-center gap-4 group"
@@ -2983,7 +3231,111 @@ function SettingsForm({ initialData, onSave }: any) {
   );
 }
 
-function PromotionForm({ initialData, onSubmit }: any) {
+function DiscountRuleForm({ initialData, onSubmit, setToast }: any) {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    title: initialData?.title || '',
+    type: initialData?.type || 'quantity',
+    threshold: initialData?.threshold || 0,
+    discountPercentage: initialData?.discountPercentage || 0,
+    active: initialData?.active ?? true
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await onSubmit(formData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="p-6 space-y-5">
+      <div className="space-y-1.5">
+        <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Rule Title</label>
+        <input 
+          required 
+          value={formData.title}
+          onChange={e => setFormData({ ...formData, title: e.target.value })}
+          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+          placeholder="e.g. Bulk Order Savior" 
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Discount Type</label>
+          <select 
+            value={formData.type}
+            onChange={e => setFormData({ ...formData, type: e.target.value as 'quantity' | 'total' })}
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm outline-none font-bold"
+          >
+            <option value="quantity">Units Quantity</option>
+            <option value="total">Order Total Value (KES)</option>
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">
+            {formData.type === 'quantity' ? 'Min. Item Count' : 'Min. Order Value (KES)'}
+          </label>
+          <input 
+            type="number"
+            required
+            value={formData.threshold}
+            onChange={e => setFormData({ ...formData, threshold: parseFloat(e.target.value) || 0 })}
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm outline-none font-bold" 
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Discount Percentage (%)</label>
+          <div className="relative">
+            <input 
+              type="number"
+              min="0"
+              max="100"
+              required
+              value={formData.discountPercentage}
+              onChange={e => setFormData({ ...formData, discountPercentage: parseFloat(e.target.value) || 0 })}
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm outline-none font-bold pr-10" 
+            />
+            <Percent size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          </div>
+        </div>
+        <div className="space-y-1.5 flex items-end">
+          <label className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 cursor-pointer w-full hover:bg-slate-100 transition-all group">
+            <div className={`w-10 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-slate-300'}`}>
+              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.active ? 'left-5' : 'left-1'}`}></div>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Rule Active</span>
+            <input 
+              type="checkbox" 
+              className="hidden" 
+              checked={formData.active}
+              onChange={e => setFormData({ ...formData, active: e.target.checked })}
+            />
+          </label>
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        disabled={loading}
+        className="w-full bg-[#1C3560] text-white py-4 rounded-2xl font-black uppercase text-[12px] tracking-[2px] transition-all transform active:scale-95 shadow-xl shadow-[#1C3560]/20 mt-4 disabled:opacity-50"
+      >
+        {loading ? 'Processing...' : (initialData ? 'Update Rule' : 'Create Rule')}
+      </button>
+    </form>
+  );
+}
+
+function PromotionForm({ initialData, onSubmit, setToast }: any) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
@@ -3010,7 +3362,7 @@ function PromotionForm({ initialData, onSubmit }: any) {
       setFormData({ ...formData, imageUrl: url });
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload image.");
+      setToast({ message: "Failed to upload image.", type: 'error' });
     } finally {
       setUploading(false);
     }
@@ -3022,7 +3374,7 @@ function PromotionForm({ initialData, onSubmit }: any) {
     try {
       await onSubmit(formData);
     } catch (error) {
-      alert("Failed to save promotion.");
+      setToast({ message: "Failed to save promotion.", type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -3127,12 +3479,23 @@ function PromotionForm({ initialData, onSubmit }: any) {
           <div className="w-24 h-24 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
             {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={24} className="text-slate-300" />}
           </div>
-          <div className="flex-1 space-y-2">
-             <label className="inline-block px-4 py-2 bg-[#1C3560] text-white text-[10px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-[#0A1628] transition-all">
-               {uploading ? 'Uploading...' : 'Upload Image'}
-               <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={uploading} />
-             </label>
-             <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest leading-normal">Recommended: 1200x400px for banners. Max 2MB.</p>
+          <div className="flex-1 space-y-3">
+             <div className="space-y-1">
+               <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-0.5">Direct Image URL</p>
+               <input 
+                 value={formData.imageUrl}
+                 onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
+                 placeholder="https://images.unsplash.com/promo-image..."
+                 className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs focus:border-[#C8102E] outline-none transition-colors font-bold" 
+               />
+             </div>
+             <div>
+               <label className="inline-block px-4 py-2 bg-[#1C3560] text-white text-[10px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-[#0A1628] transition-all focus-within:ring-2 focus-within:ring-[#1C3560] focus-within:ring-offset-2">
+                 {uploading ? 'Uploading...' : 'Or Upload File Instead'}
+                 <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={uploading} />
+               </label>
+               <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest leading-normal mt-2">Recommended: 1200x400px for banners. Max 2MB.</p>
+             </div>
           </div>
         </div>
       </div>

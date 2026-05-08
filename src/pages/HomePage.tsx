@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
   ShoppingBag, 
@@ -19,7 +19,9 @@ import {
   Megaphone,
   Calendar,
   Share2,
-  ExternalLink
+  ExternalLink,
+  GitCompare,
+  Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -46,7 +48,18 @@ export default function HomePage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [compareList, setCompareList] = useState<any[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [discountRules, setDiscountRules] = useState<any[]>([]);
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
   const lastWishlistRef = useRef<string>('');
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   const handleShareProduct = async (product: any) => {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
@@ -61,14 +74,101 @@ export default function HomePage() {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert('Product link copied to clipboard!');
+        setToast({ message: 'Product link copied to clipboard!', type: 'success' });
       }
     } catch (err) {
       console.error('Error sharing:', err);
     }
   };
+
+  const toggleCompare = (product: any) => {
+    if (compareList.find(p => p.id === product.id)) {
+      setCompareList(prev => prev.filter(p => p.id !== product.id));
+    } else {
+      if (compareList.length >= 4) {
+        setToast({ message: "You can compare up to 4 products at a time.", type: 'warning' });
+        return;
+      }
+      setCompareList(prev => [...prev, product]);
+    }
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewForm.comment.trim()) return;
+    
+    setIsSubmittingReview(true);
+    try {
+      await addDoc(collection(db, 'reviews'), {
+        productId: selectedQuickViewProduct.id,
+        productName: selectedQuickViewProduct.name,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment,
+        userName: reviewForm.userName || 'Anonymous',
+        userId: auth.currentUser?.uid || null,
+        status: 'pending',
+        createdAt: serverTimestamp()
+      });
+      setReviewForm({ rating: 5, comment: '', userName: '' });
+      setReviewSubmitted(true);
+      setTimeout(() => setReviewSubmitted(false), 5000);
+    } catch (err) {
+      handleFirestoreError(err, OperationType.CREATE, 'reviews');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
   const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState<any>(null);
+  const [productReviews, setProductReviews] = useState<any[]>([]);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '', userName: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [quoteForm, setQuoteForm] = useState({ name: '', email: '', phone: '', service: 'General Enquiry', details: '' });
+
+  useEffect(() => {
+    if (selectedQuickViewProduct) {
+      // Track product view analytic
+      const trackProductView = async () => {
+        try {
+          const today = new Date().toISOString().split('T')[0];
+          await addDoc(collection(db, 'analytics'), {
+            type: 'view',
+            productId: selectedQuickViewProduct.id,
+            productName: selectedQuickViewProduct.name,
+            category: selectedQuickViewProduct.category,
+            userId: auth.currentUser?.uid || null,
+            date: today,
+            createdAt: serverTimestamp()
+          });
+        } catch (e) {
+          console.error("Product analytic tracking failed:", e);
+        }
+      };
+      trackProductView();
+    }
+  }, [selectedQuickViewProduct]);
+
+  useEffect(() => {
+    if (!selectedQuickViewProduct) {
+      setProductReviews([]);
+      return;
+    }
+
+    const q = query(
+      collection(db, 'reviews'), 
+      where('productId', '==', selectedQuickViewProduct.id),
+      where('status', '==', 'approved')
+    );
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const sortedReviews = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      setProductReviews(sortedReviews);
+    });
+
+    return () => unsubscribe();
+  }, [selectedQuickViewProduct]);
 
   useEffect(() => {
     const q = query(collection(db, 'products'), where('active', '==', true), orderBy('sortOrder', 'asc'), limit(50));
@@ -89,6 +189,11 @@ export default function HomePage() {
       if (snapshot.exists()) {
         setSiteSettings(snapshot.data());
       }
+    });
+
+    // Fetch Discount Rules
+    const unsubscribeDiscountRules = onSnapshot(collection(db, 'discountRules'), (snapshot) => {
+      setDiscountRules(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
 
     // Local storage persistence
@@ -135,6 +240,7 @@ export default function HomePage() {
       unsubscribe();
       unsubscribePromos();
       unsubscribeSettings();
+      unsubscribeDiscountRules();
       if (unsubscribeWishlist) unsubscribeWishlist();
     };
   }, []);
@@ -248,7 +354,17 @@ export default function HomePage() {
     });
   };
 
-  const cartTotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  const totalItems = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+  const activeDiscount = discountRules
+    .filter(rule => rule.active)
+    .find(rule => {
+      if (rule.type === 'quantity') return totalItems >= rule.threshold;
+      if (rule.type === 'order_value') return subtotal >= rule.threshold;
+      return false;
+    });
+  const discountAmount = activeDiscount ? Math.round(subtotal * (activeDiscount.discountPercentage / 100)) : 0;
+  const cartTotal = subtotal - discountAmount;
 
   const handleCheckout = async () => {
     if (cart.length === 0) return;
@@ -295,9 +411,9 @@ export default function HomePage() {
       <div className="hidden lg:flex bg-[#0A1628] text-white/50 text-[11.5px] py-2 border-b border-white/5">
         <div className="max-w-[1440px] mx-auto w-full px-8 flex justify-between items-center">
           <div className="flex gap-4 items-center">
-            <span className="flex items-center gap-1.5"><Phone size={12} /> <a href="tel:+254792021795" className="hover:text-[#C8961A]">+254 792 021 795</a></span>
+            <span className="flex items-center gap-1.5"><Phone size={12} /> <a href={`tel:${siteSettings?.contactPhone || '+254792021795'}`} className="hover:text-[#C8961A]">{siteSettings?.contactPhone || '+254 792 021 795'}</a></span>
             <div className="w-px h-3.5 bg-white/20"></div>
-            <span className="flex items-center gap-1.5"><Mail size={12} /> <a href="mailto:info@naisiaetextile.com" className="hover:text-[#C8961A]">info@naisiaetextile.com</a></span>
+            <span className="flex items-center gap-1.5"><Mail size={12} /> <a href={`mailto:${siteSettings?.contactEmail || 'info@naisiaetextile.com'}`} className="hover:text-[#C8961A]">{siteSettings?.contactEmail || 'info@naisiaetextile.com'}</a></span>
           </div>
           <div className="flex gap-4 items-center">
             <span>Mon–Sat: 8am–6pm</span>
@@ -311,11 +427,11 @@ export default function HomePage() {
       <nav className="sticky top-0 z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center h-[68px] justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="bg-white p-0.5 rounded-full shadow-md overflow-hidden">
+            <div className="overflow-hidden">
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt="Logo" className="w-11 h-11 object-contain" />
+                <img src={siteSettings.siteLogo} alt="Logo" className="w-14 h-14 object-contain" />
               ) : (
-                <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center font-bold text-xl text-[#C8102E]">NT</div>
+                <div className="w-14 h-14 flex items-center justify-center font-bold text-xl text-[#C8102E]">NT</div>
               )}
             </div>
             <div className="leading-tight">
@@ -375,7 +491,7 @@ export default function HomePage() {
                   ]
                 }
               },
-              { name: 'About Us', link: '#' },
+              { name: 'About Us', link: '/about' },
             ].map((item) => (
               <div key={item.name} className="group relative">
                 <Link 
@@ -727,6 +843,17 @@ export default function HomePage() {
                   >
                     <Search size={16} />
                   </button>
+                  <button 
+                    onClick={() => toggleCompare(product)}
+                    className={`w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-all ${
+                      compareList.find(i => i.id === product.id) 
+                        ? "bg-[#C8961A] text-white scale-110" 
+                        : "text-slate-400 hover:bg-[#C8961A] hover:text-white"
+                    }`}
+                    title="Compare Product"
+                  >
+                    <GitCompare size={16} />
+                  </button>
                 </div>
               </div>
               <div className="p-4 cursor-pointer" onClick={() => setSelectedQuickViewProduct(product)}>
@@ -757,9 +884,15 @@ export default function HomePage() {
       <footer className="bg-[#0A1628] pt-16 pb-8 text-gray-400 border-t border-white/5">
         <div className="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-3 mb-6">
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae'} className="h-10 w-auto" />
+                <>
+                  <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae'} className="w-14 h-14 object-contain" />
+                  <div className="leading-tight">
+                    <h3 className="text-white font-['Bebas_Neue'] text-2xl tracking-[2px]">{siteSettings?.siteName || 'Naisiae Textile'}</h3>
+                    <p className="text-[9px] text-[#C8961A] font-bold uppercase tracking-[1px]">{siteSettings?.siteTagline || 'Uhuru Market Uniforms'}</p>
+                  </div>
+                </>
               ) : (
                 <h3 className="font-['Bebas_Neue'] text-3xl tracking-[4px] text-white">NAISIAE TEXTILE</h3>
               )}
@@ -794,14 +927,14 @@ export default function HomePage() {
                 <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A]"><Phone size={18} /></div>
                 <div>
                   <div className="text-[10px] font-bold uppercase text-white/50">Phone</div>
-                  <div className="text-white font-bold">+254 792 021 795</div>
+                  <div className="text-white font-bold">{siteSettings?.contactPhone || '+254 792 021 795'}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A]"><Mail size={18} /></div>
                 <div>
                  <div className="text-[10px] font-bold uppercase text-white/50">Email</div>
-                 <div className="text-white font-bold">info@naisiaetextile.com</div>
+                 <div className="text-white font-bold">{siteSettings?.contactEmail || 'info@naisiaetextile.com'}</div>
                 </div>
               </div>
             </div>
@@ -820,6 +953,173 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Comparison Drawer */}
+      <AnimatePresence>
+        {compareList.length > 0 && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-24 lg:bottom-10 left-1/2 -translate-x-1/2 z-[60] w-full max-w-2xl px-4"
+          >
+            <div className="bg-[#0A1628] rounded-3xl p-4 shadow-2xl border border-white/10 flex items-center justify-between gap-6 backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[#C8961A] rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-[#C8961A]/20">
+                  <GitCompare size={24} />
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-sm leading-tight">Comparison Tray</h4>
+                  <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">{compareList.length} of 4 items selected</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                {compareList.map(item => (
+                  <div key={item.id} className="relative group/compare-item">
+                    <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-cover border-2 border-white/10" />
+                    <button 
+                      onClick={() => toggleCompare(item)}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center scale-0 group-hover/compare-item:scale-100 transition-transform"
+                    >
+                      <X size={10} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setIsCompareModalOpen(true)}
+                  className="bg-white text-[#0A1628] px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl active:scale-95"
+                >
+                  Compare Now
+                </button>
+                <button onClick={() => setCompareList([])} className="text-white/20 hover:text-red-500 transition-colors p-2">
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Comparison Modal */}
+      <AnimatePresence>
+        {isCompareModalOpen && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 lg:p-12 overflow-hidden">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCompareModalOpen(false)}
+              className="absolute inset-0 bg-[#0A1628]/95 backdrop-blur-md"
+            ></motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 30 }}
+              className="relative w-full max-w-7xl bg-white rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+            >
+              <div className="p-8 lg:p-12 border-b flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-2">
+                    <GitCompare size={16} /> Technical Analysis
+                  </div>
+                  <h2 className="font-['Bebas_Neue'] text-5xl text-[#0A1628] tracking-tight leading-none">Side-by-Side Comparison</h2>
+                </div>
+                <button 
+                  onClick={() => setIsCompareModalOpen(false)}
+                  className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-x-auto p-8 lg:p-12">
+                <div className="min-w-[1000px] grid grid-cols-[200px_repeat(4,1fr)] gap-8">
+                  {/* Row: Main Header */}
+                  <div className="flex flex-col justify-end pb-12">
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[3px]">Specifications</p>
+                  </div>
+                  {compareList.map(item => (
+                    <div key={item.id} className="text-center">
+                      <div className="aspect-square rounded-3xl bg-slate-50 border border-slate-100 p-6 mb-6 overflow-hidden flex items-center justify-center shadow-inner">
+                        <img src={item.imageUrl} className="w-full h-full object-contain" alt={item.name} />
+                      </div>
+                      <h4 className="font-bold text-lg text-[#0A1628] mb-2 leading-tight px-2">{item.name}</h4>
+                      <div className="text-[10px] font-black text-[#C8961A] uppercase tracking-widest mb-4">{item.category}</div>
+                    </div>
+                  ))}
+
+                  {/* Row: Price */}
+                  <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest">
+                    Unit Price
+                  </div>
+                  {compareList.map(item => (
+                    <div key={item.id} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#C8102E]">
+                      KES {item.price.toLocaleString()}
+                    </div>
+                  ))}
+
+                  {/* Row: Variants */}
+                  <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest">
+                    Available Sizes/Colors
+                  </div>
+                  {compareList.map(item => (
+                    <div key={item.id} className="py-8 border-t border-slate-100 text-center">
+                      <div className="flex flex-wrap justify-center gap-2 px-4">
+                        {item.variants?.length > 0 ? (
+                          item.variants.slice(0, 5).map((v: any) => (
+                            <span key={v.id} className="px-2 py-1 bg-slate-100 text-[9px] font-bold text-slate-500 rounded border border-slate-200">
+                              {v.value}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">One-size / Standard</span>
+                        )}
+                        {item.variants?.length > 5 && <span className="text-[9px] font-bold text-slate-300">+{item.variants.length - 5} more</span>}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Row: Description */}
+                  <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest leading-relaxed pr-8">
+                    Product Description
+                  </div>
+                  {compareList.map(item => (
+                    <div key={item.id} className="py-8 border-t border-slate-100 text-center">
+                      <p className="text-xs text-slate-500 leading-relaxed max-w-[200px] mx-auto px-2">
+                        {item.description || "Premium engineered textile with institutional-grade durability."}
+                      </p>
+                    </div>
+                  ))}
+
+                  {/* Row: Action */}
+                  <div className="pt-12"></div>
+                  {compareList.map(item => (
+                    <div key={item.id} className="pt-12 text-center">
+                      <button 
+                        onClick={() => { addToCart(item); setIsCompareModalOpen(false); }}
+                        className="w-full max-w-[180px] bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[2px] transition-all"
+                      >
+                        Add to Cart
+                      </button>
+                      <button 
+                        onClick={() => toggleCompare(item)}
+                        className="mt-4 text-[9px] font-bold text-red-500 hover:text-red-700 transition-colors uppercase tracking-widest"
+                      >
+                        Remove from tray
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Product Quick View Modal */}
       <AnimatePresence>
@@ -910,6 +1210,101 @@ export default function HomePage() {
                         <p className="text-[11px] font-bold text-slate-800">7-14 Work Days</p>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Reviews Section */}
+                  <div className="mt-8 pt-8 border-t border-slate-100">
+                    <div className="flex items-center justify-between mb-8">
+                      <h3 className="font-['Bebas_Neue'] text-3xl text-[#0A1628] tracking-tight">Customer Reviews</h3>
+                      <div className="flex items-center gap-2">
+                        <div className="flex text-amber-400">
+                          {[...Array(5)].map((_, i) => {
+                            const avgRating = productReviews.length > 0 ? (productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length) : 5;
+                            return <Star key={i} size={14} fill={i < Math.round(avgRating) ? 'currentColor' : 'none'} className={i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-200'} />;
+                          })}
+                        </div>
+                        <span className="text-sm font-bold text-[#0A1628]">({productReviews.length})</span>
+                      </div>
+                    </div>
+
+                    {/* Review List */}
+                    <div className="space-y-6 mb-10">
+                      {productReviews.length > 0 ? productReviews.map((review: any) => (
+                        <div key={review.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-xs font-bold text-[#0A1628] uppercase tracking-wider">{review.userName}</span>
+                            <div className="flex text-amber-400">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} size={10} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-500 italic leading-relaxed">"{review.comment}"</p>
+                        </div>
+                      )) : (
+                        <div className="text-center py-6 border-2 border-dashed border-slate-100 rounded-3xl">
+                          <p className="text-xs text-slate-400 font-medium">Be the first to review this product!</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Review Form */}
+                    {reviewSubmitted ? (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-8 bg-green-50 rounded-[2rem] border-2 border-green-100 text-center"
+                      >
+                        <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                          <CheckCircle2 size={24} />
+                        </div>
+                        <h4 className="font-bold text-[#0A1628] mb-2">Review Submitted!</h4>
+                        <p className="text-xs text-slate-500">Your feedback has been received and is currently being moderated. It will appear on the site once approved.</p>
+                      </motion.div>
+                    ) : (
+                      <form onSubmit={handleSubmitReview} className="p-6 bg-[#0A1628] rounded-[2rem] text-white">
+                        <h4 className="text-sm font-black uppercase tracking-[3px] mb-6 flex items-center gap-3">
+                          <MessageSquare size={16} className="text-[#C8961A]" /> 
+                          Share feedback
+                        </h4>
+                        <div className="space-y-4">
+                          <div className="flex gap-2 mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setReviewForm(prev => ({ ...prev, rating: star }))}
+                                className={`p-1 transition-all ${star <= reviewForm.rating ? 'text-amber-400 scale-110' : 'text-white/20'}`}
+                              >
+                                <Star size={20} fill={star <= reviewForm.rating ? 'currentColor' : 'none'} />
+                              </button>
+                            ))}
+                          </div>
+                          <input 
+                            type="text"
+                            placeholder="Your Name (Optional)"
+                            value={reviewForm.userName}
+                            onChange={(e) => setReviewForm(prev => ({ ...prev, userName: e.target.value }))}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C8961A] transition-all"
+                          />
+                          <textarea 
+                            required
+                            placeholder="What did you think of the quality?"
+                            value={reviewForm.comment}
+                            onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                            rows={3}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C8961A] transition-all resize-none"
+                          ></textarea>
+                          <button 
+                            type="submit"
+                            disabled={isSubmittingReview}
+                            className="w-full bg-[#C8961A] hover:bg-white hover:text-[#0A1628] text-[#0A1628] py-4 rounded-xl font-black text-[10px] uppercase tracking-[3px] transition-all disabled:opacity-50"
+                          >
+                            {isSubmittingReview ? 'Submitting...' : 'Post Review'}
+                          </button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 </div>
 
@@ -1145,7 +1540,19 @@ export default function HomePage() {
                   <div className="flex justify-between items-end mb-6">
                     <div>
                       <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-[2px]">Subtotal</div>
-                      <div className="text-2xl font-black text-[#0A1628]">KES {cartTotal.toLocaleString()}</div>
+                      {activeDiscount ? (
+                        <>
+                          <div className="text-sm font-bold text-slate-400 line-through">KES {subtotal.toLocaleString()}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-2xl font-black text-[#C8102E]">KES {cartTotal.toLocaleString()}</div>
+                            <span className="text-[9px] font-black bg-[#C8102E] text-white px-2 py-0.5 rounded uppercase tracking-widest leading-none">
+                              {activeDiscount.discountPercentage}% OFF
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-2xl font-black text-[#0A1628]">KES {cartTotal.toLocaleString()}</div>
+                      )}
                     </div>
                     <div className="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded">VAT Included</div>
                   </div>
@@ -1322,6 +1729,30 @@ export default function HomePage() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 border border-white/20 min-w-[300px]"
+            style={{ 
+              backgroundColor: toast.type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 
+                               toast.type === 'error' ? 'rgba(239, 68, 68, 0.9)' : 
+                               toast.type === 'warning' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(30, 41, 59, 0.9)',
+              color: 'white'
+            }}
+          >
+            {toast.type === 'success' && <CheckCircle2 size={18} />}
+            {toast.type === 'error' && <X size={18} />}
+            {toast.type === 'warning' && <Plus size={18} className="rotate-45" />}
+            {toast.type === 'info' && <MessageSquare size={18} />}
+            <span className="text-sm font-bold tracking-tight">{toast.message}</span>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

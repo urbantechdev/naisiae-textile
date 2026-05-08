@@ -1,6 +1,6 @@
 {
-  "name": "Naisiae Textile Admin & Shop",
-  "description": "A comprehensive management and sales platform for Naisiae Textile, featuring real-time product synchronization, user management, and detailed analytics.",
+  "name": "Naisiae Textile - Premium Uniforms & Branding",
+  "description": "Premium uniform manufacturing and textile branding solutions based in Nairobi. Real-time product catalog, bulk quote management, and custom order tracking.",
   "requestFramePermissions": [],
   "majorCapabilities": ["Firebase Integration", "Admin Dashboard", "Analytics", "E-commerce"]
 }
