@@ -93,7 +93,8 @@ import {
 } from 'recharts';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { suggestCompetitivePrice, PriceSuggestion } from '../services/pricingService';
-import { Sparkles, Zap, ShieldCheck, Palette, Percent } from 'lucide-react';
+import { generateProductDetails } from '../services/geminiService';
+import { Sparkles, Zap, ShieldCheck, Palette, Percent, BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
@@ -1912,6 +1913,7 @@ function SortableImage({ url, index, onRemove }: any) {
 function ProductForm({ initialData, onSubmit, setToast }: any) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSuggestingPrice, setIsSuggestingPrice] = useState(false);
   const [pricingReasoning, setPricingReasoning] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -2089,6 +2091,50 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
     });
   };
 
+  const handleAIAnalyze = async () => {
+    if (formData.imageUrls.length === 0) {
+      setToast({ message: "Please upload at least one image first.", type: 'warning' });
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      // Fetch the image and convert to base64
+      const imageUrl = formData.imageUrls[0];
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve) => {
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          resolve(base64String.split(',')[1]); // Remove data:image/xxx;base64,
+        };
+      });
+      reader.readAsDataURL(blob);
+      const base64Data = await base64Promise;
+
+      const aiData = await generateProductDetails(base64Data, blob.type);
+      
+      setFormData(prev => ({
+        ...prev,
+        name: aiData.name,
+        description: aiData.description,
+        category: aiData.category,
+        subCategory: aiData.subCategory || prev.subCategory,
+        price: aiData.priceSuggestion,
+        tags: [...new Set([...prev.tags, ...aiData.tags])]
+      }));
+
+      setToast({ message: "Product details generated successfully!", type: 'success' });
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "AI Analysis failed. Please try again or fill manually.", type: 'error' });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleSuggestPrice = async () => {
     if (!formData.name) {
       setToast({ message: "Please enter a product name first so AI can research the market.", type: 'warning' });
@@ -2176,7 +2222,32 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider mb-0.5 block">Product Gallery</label>
             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Drag images to reorder. First image is primary.</p>
           </div>
-          <label className="cursor-pointer group flex items-center gap-2 bg-[#1C3560] text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md active:scale-95">
+          <div className="flex gap-2">
+            {formData.imageUrls.length > 0 && (
+              <button
+                type="button"
+                onClick={handleAIAnalyze}
+                disabled={isAnalyzing || uploading}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ${
+                  isAnalyzing 
+                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                    : 'bg-[#C8961A] text-[#0A1628] hover:bg-[#B08416]'
+                }`}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-t-transparent border-[#0A1628] rounded-full animate-spin"></div>
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <BrainCircuit size={12} />
+                    Generate with AI
+                  </>
+                )}
+              </button>
+            )}
+            <label className="cursor-pointer group flex items-center gap-2 bg-[#1C3560] text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md active:scale-95">
             <Upload size={12} /> Add Images
             <input 
               type="file" 
@@ -2188,6 +2259,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             />
           </label>
         </div>
+      </div>
 
         {uploading && (
           <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 animate-pulse">
