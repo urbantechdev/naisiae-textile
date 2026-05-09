@@ -85,6 +85,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 import { 
   LineChart, 
   Line, 
@@ -411,48 +412,151 @@ export default function AdminDashboard() {
     document.body.removeChild(link);
   };
 
-  const importFromCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: async (results) => {
-        const importedData = results.data as any[];
-        if (importedData.length === 0) return;
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
-        if (confirm(`Are you sure you want to import ${importedData.length} products?`)) {
-          setIsImporting(true);
-          try {
-            for (const item of importedData) {
-              await addDoc(collection(db, 'products'), {
-                name: item.name || 'Unnamed Product',
-                category: item.category || 'School Uniforms',
-                price: parseFloat(item.price) || 0,
-                oldPrice: parseFloat(item.oldPrice) || 0,
-                description: item.description || '',
-                imageUrl: item.imageUrl || '',
-                imageUrls: item.imageUrl ? [item.imageUrl] : [],
-                active: item.active === 'true' || item.active === true,
-                badge: item.badge || '',
-                tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()) : (item.tag ? [item.tag] : []),
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-                sortOrder: products.length + 1
-              });
+    if (fileExtension === 'csv') {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          processImportedData(results.data as any[]);
+        },
+        error: (error: any) => {
+          setToast({ message: `Error parsing CSV: ${error.message}`, type: 'error' });
+        }
+      });
+    } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const bstr = evt.target?.result;
+          const wb = XLSX.read(bstr, { type: 'binary' });
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          
+          if (data.length < 2) {
+            setToast({ message: 'Excel file is empty or missing headers', type: 'error' });
+            return;
+          }
+
+          // Convert array of arrays to array of objects using the first row as headers
+          const headers = data[0] as string[];
+          const rows = data.slice(1) as any[][];
+          const formattedData = rows.map(row => {
+            const obj: any = {};
+            headers.forEach((h, i) => {
+              if (h) obj[h.toLowerCase().trim()] = row[i];
+            });
+            return obj;
+          });
+          
+          processImportedData(formattedData);
+        } catch (error) {
+          setToast({ message: `Error parsing Excel: ${error instanceof Error ? error.message : 'Unknown error'}`, type: 'error' });
+        }
+      };
+      reader.onerror = () => {
+        setToast({ message: 'Error reading file', type: 'error' });
+      };
+      reader.readAsBinaryString(file);
+    } else {
+      setToast({ message: 'Unsupported file format. Please use CSV or Excel.', type: 'error' });
+    }
+
+    // Reset input value so the same file can be selected again
+    e.target.value = '';
+  };
+
+  const processImportedData = async (importedData: any[]) => {
+    if (importedData.length === 0) {
+      setToast({ message: 'No data found in the file', type: 'error' });
+      return;
+    }
+
+    // Map headers to internal fields more robustly
+    const mappedData = importedData.map(item => {
+      // Find values regardless of case or slight name variations
+      const getVal = (fields: string[]) => {
+        for (const field of fields) {
+          const lowerField = field.toLowerCase();
+          for (const key of Object.keys(item)) {
+            const lowerKey = key.toLowerCase().trim();
+            if (lowerKey === lowerField || lowerKey.includes(lowerField)) {
+              return item[key];
             }
-            setToast({ message: 'Products imported successfully!', type: 'success' });
-          } catch (error) {
-            handleFirestoreError(error, OperationType.CREATE, 'products');
-          } finally {
-            setIsImporting(false);
           }
         }
-      }
+        return undefined;
+      };
+
+      const name = getVal(['name', 'title', 'product name']) || 'Unnamed Product';
+      const category = getVal(['category', 'type', 'group']) || 'School Uniforms';
+      const priceVal = getVal(['price', 'amount', 'cost']);
+      const oldPriceVal = getVal(['oldprice', 'discount price', 'original price']);
+      const desc = getVal(['description', 'details', 'summary', 'about']) || '';
+      const img = getVal(['imageurl', 'image', 'photo', 'url']) || '';
+      const statusVal = getVal(['active', 'status', 'published']);
+      const badge = getVal(['badge', 'label', 'tagline']) || '';
+      const tagsVal = getVal(['tags', 'keywords']);
+
+      return {
+        name,
+        category,
+        price: parseFloat(priceVal?.toString() || '0') || 0,
+        oldPrice: parseFloat(oldPriceVal?.toString() || '0') || 0,
+        description: desc,
+        imageUrl: img,
+        active: statusVal?.toString().toLowerCase() === 'true' || 
+                statusVal === true || 
+                statusVal === 1 ||
+                statusVal === undefined,
+        badge: badge,
+        tags: tagsVal ? 
+              (typeof tagsVal === 'string' ? 
+                tagsVal.split(',').map((t: string) => t.trim()) : 
+                [tagsVal.toString()]) : 
+              [],
+      };
     });
 
-    e.target.value = '';
+    if (confirm(`Are you sure you want to import ${mappedData.length} products?`)) {
+      setIsImporting(true);
+      let successCount = 0;
+      let failCount = 0;
+
+      try {
+        for (const productData of mappedData) {
+          try {
+            await addDoc(collection(db, 'products'), {
+              ...productData,
+              imageUrls: productData.imageUrl ? [productData.imageUrl] : [],
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              sortOrder: products.length + successCount + 1
+            });
+            successCount++;
+          } catch (err) {
+            console.error('Error importing row:', err);
+            failCount++;
+          }
+        }
+        
+        if (failCount === 0) {
+          setToast({ message: `Successfully imported ${successCount} products!`, type: 'success' });
+        } else {
+          setToast({ message: `Imported ${successCount} products. Failed ${failCount} rows.`, type: 'warning' });
+        }
+      } catch (error) {
+        handleFirestoreError(error, OperationType.CREATE, 'products');
+      } finally {
+        setIsImporting(false);
+      }
+    }
   };
 
   return (
@@ -775,13 +879,13 @@ export default function AdminDashboard() {
                         >
                           <Download size={14} /> Export
                         </button>
-                        <label className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-[#E2E8F0] hover:bg-slate-50 transition-all text-[#64748B]" title="Import from CSV">
+                        <label className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-[#E2E8F0] hover:bg-slate-50 transition-all text-[#64748B]" title="Import from CSV or Excel">
                           <Upload size={14} /> Import
                           <input 
                             type="file" 
-                            accept=".csv" 
+                            accept=".csv, .xlsx, .xls" 
                             className="hidden" 
-                            onChange={importFromCSV}
+                            onChange={handleImportFile}
                             disabled={isImporting}
                           />
                         </label>
