@@ -175,6 +175,17 @@
     "/reviews/{reviewId}": {
       "schema": "review",
       "description": "Product reviews moderated by admins."
+    },
+    "/system/{docId}": {
+      "schema": {
+        "title": "System Document",
+        "description": "Misc system documents for health checks.",
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" }
+        }
+      },
+      "description": "System health and configuration checks."
     }
   }
 }

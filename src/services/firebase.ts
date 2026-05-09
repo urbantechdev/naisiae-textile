@@ -1,12 +1,14 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import { initializeFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+}, firebaseConfig.firestoreDatabaseId);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
@@ -15,9 +17,11 @@ async function testConnection() {
   try {
     // Testing connection to a dummy path to verify Firestore is reachable
     await getDocFromServer(doc(db, 'system', 'connection-test'));
+    console.log("Firestore connection successful");
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error("Please check your Firebase configuration. The client appears to be offline.");
+    console.error("Firestore connection test failed:", error);
+    if (error instanceof Error && (error.message.includes('offline') || error.message.includes('reach'))) {
+      console.error("Please check your Firebase configuration. The client appears to be offline or firewall is blocking connectivity.");
     }
   }
 }

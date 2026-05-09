@@ -21,7 +21,8 @@ import {
   Share2,
   ExternalLink,
   GitCompare,
-  Star
+  Star,
+  Package
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -712,8 +713,154 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* Wholesale Excellence Block */}
+      <section className="py-12 bg-slate-50">
+        <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
+          <div className="bg-[#0A1628] rounded-[2rem] lg:rounded-[3.5rem] overflow-hidden relative group shadow-2xl">
+            {/* Background Decorative Elements */}
+            <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#C8961A] via-transparent to-transparent"></div>
+            </div>
+            
+            <div className="flex flex-col lg:flex-row items-center">
+              <div className="lg:w-1/2 p-8 lg:p-20 relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-4">
+                    <div className="w-8 h-[2px] bg-[#C8961A]"></div> Wholesale Excellence
+                  </div>
+                  <h2 className="font-['Bebas_Neue'] text-5xl lg:text-8xl text-white leading-[0.85] mb-8">
+                    Bulk Orders & <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
+                  </h2>
+                  <p className="text-white/60 text-sm lg:text-base leading-relaxed mb-12 max-w-lg font-medium">
+                    Naisiae Textile specializes in high-volume production for schools, distributors, and corporate institutions. Our wholesale program offers the most competitive rates in Kenya with guaranteed turnaround times.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-4">
+                    <button 
+                      onClick={() => setIsQuoteModalOpen(true)}
+                      className="px-8 lg:px-12 py-5 bg-[#C8102E] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#C8102E] transition-all shadow-xl shadow-black/40 active:scale-95"
+                    >
+                      Request Bulk Pricing
+                    </button>
+                    <button 
+                      onClick={() => {
+                          const el = document.getElementById('wholesale-deals');
+                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }}
+                      className="px-8 lg:px-12 py-5 bg-white/5 border border-white/10 text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white/10 transition-all active:scale-95"
+                    >
+                      Shop Wholesale
+                    </button>
+                  </div>
+
+                  <div className="mt-12 grid grid-cols-3 gap-6 lg:gap-10 border-t border-white/5 pt-10">
+                    <div>
+                      <div className="text-[#C8961A] font-['Bebas_Neue'] text-3xl leading-none mb-1">KES 500k+</div>
+                      <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Monthly Capacity</div>
+                    </div>
+                    <div>
+                      <div className="text-[#C8961A] font-['Bebas_Neue'] text-3xl leading-none mb-1">100+</div>
+                      <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Partner Schools</div>
+                    </div>
+                    <div>
+                      <div className="text-[#C8961A] font-['Bebas_Neue'] text-3xl leading-none mb-1">48HR</div>
+                      <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Quote Response</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+              
+              <div className="lg:w-1/2 w-full aspect-video lg:aspect-auto self-stretch relative overflow-hidden">
+                <motion.img 
+                  initial={{ scale: 1.2, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 1.5 }}
+                  viewport={{ once: true }}
+                  src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2574&auto=format&fit=crop" 
+                  className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+                  alt="Wholesale Textiles"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent lg:via-[#0A1628]/20"></div>
+                
+                {/* Floating Discount Badge */}
+                <motion.div 
+                  initial={{ y: 20, rotate: 0 }}
+                  whileInView={{ y: 0, rotate: 12 }}
+                  transition={{ type: 'spring', delay: 0.5 }}
+                  viewport={{ once: true }}
+                  className="absolute top-10 right-10 bg-[#C8961A] text-white p-6 lg:p-10 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center border-4 border-[#0A1628]"
+                >
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-none opacity-80 mb-1">Up To</span>
+                  <span className="font-['Bebas_Neue'] text-6xl lg:text-8xl leading-none">40%</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-none">Off Bulk Orders</span>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Wholesale Deals Products */}
+      <section id="wholesale-deals" className="py-20 bg-white border-b border-slate-100">
+        <div className="max-w-[1440px] mx-auto px-8">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
+                <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
+              </div>
+              <h2 className="font-['Bebas_Neue'] text-5xl tracking-tight leading-none text-[#0A1628]">Wholesale Deals</h2>
+            </div>
+            <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#1C3560] hover:text-[#C8102E] transition-colors border-b-2 border-transparent hover:border-[#C8102E] pb-1 flex items-center gap-2">
+              View All Wholesale Items <ChevronRight size={14} />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-8">
+            {products
+              .filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate'))
+              .slice(0, 5)
+              .map(product => (
+                <motion.div 
+                  key={product.id}
+                  whileHover={{ y: -6 }}
+                  className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer" onClick={() => setSelectedQuickViewProduct(product)}>
+                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <span className="absolute top-3 left-3 bg-[#C8961A] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">Wholesale</span>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-[14px] mb-1 leading-tight line-clamp-1">{product.name}</h3>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-[14px] font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedQuickViewProduct(product)}
+                      className="w-full py-2 bg-slate-50 hover:bg-[#1C3560] hover:text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </motion.div>
+              ))
+            }
+            {products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')).length === 0 && (
+              <div className="col-span-full py-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                <Package className="mx-auto text-slate-300 mb-4" size={40} />
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Wholesale Collection Launching Soon</p>
+                <p className="text-[11px] text-slate-400 mt-2 font-medium">Contact us directly for bulk pricing on any catalog item.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products */}
-      <section className="py-20 max-w-[1440px] mx-auto px-8">
+      <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8">
         <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-10 gap-6">
           <div>
             <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">

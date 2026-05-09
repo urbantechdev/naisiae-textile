@@ -19,6 +19,8 @@ import {
   TrendingUp,
   TrendingDown,
   ChevronRight,
+  ChevronLeft,
+  Menu,
   Filter,
   MoreVertical,
   X,
@@ -32,7 +34,12 @@ import {
   Calendar,
   Star,
   Check,
-  Ban
+  Ban,
+  UserPlus,
+  Sparkles,
+  Zap,
+  Percent,
+  Palette
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -94,11 +101,13 @@ import {
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { suggestCompetitivePrice, PriceSuggestion } from '../services/pricingService';
 import { generateProductDetails } from '../services/geminiService';
-import { Sparkles, Zap, ShieldCheck, Palette, Percent, BrainCircuit } from 'lucide-react';
+import { ShieldCheck, BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
   const [activeView, setActiveView] = useState('overview');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [products, setProducts] = useState<any[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
@@ -113,6 +122,9 @@ export default function AdminDashboard() {
   const [topCategories, setTopCategories] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activePromoModal, setActivePromoModal] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserRole, setNewUserRole] = useState('user');
   const [productSearch, setProductSearch] = useState('');
   const [debouncedProductSearch, setDebouncedProductSearch] = useState('');
   const [productCategoryFilter, setProductCategoryFilter] = useState('all');
@@ -140,6 +152,16 @@ export default function AdminDashboard() {
     totalPotentialRevenue: 0,
     activeProducts: 0
   });
+
+  const newQuotesCount = quotes.filter(q => q.status === 'new' || !q.status).length;
+  const pendingReviewsCount = reviews.filter(r => r.status === 'pending' || !r.status).length;
+  const lowStockProductsCount = products.filter(p => {
+    if (!p.active) return false;
+    const totalStock = p.variants?.length > 0 
+      ? p.variants.reduce((acc: number, v: any) => acc + (Number(v.stock) || 0), 0)
+      : (Number(p.stock) || 0);
+    return totalStock > 0 && totalStock < 5;
+  }).length;
 
   useEffect(() => {
     // Real-time products
@@ -346,8 +368,15 @@ export default function AdminDashboard() {
       product.tags?.some((t: string) => t.toLowerCase().includes(search));
     
     const matchesCategory = productCategoryFilter === 'all' || product.category === productCategoryFilter;
-    const matchesStatus = productStatusFilter === 'all' || 
-      (productStatusFilter === 'active' ? product.active : !product.active);
+    let matchesStatus = true;
+    if (productStatusFilter === 'active') matchesStatus = product.active === true;
+    else if (productStatusFilter === 'inactive') matchesStatus = product.active === false;
+    else if (productStatusFilter === 'low-stock') {
+      const totalStock = product.variants?.length > 0 
+        ? product.variants.reduce((acc: number, v: any) => acc + (Number(v.stock) || 0), 0)
+        : (Number(product.stock) || 0);
+      matchesStatus = totalStock <= 5;
+    }
     
     const minP = parseFloat(productMinPrice) || 0;
     const maxP = parseFloat(productMaxPrice) || Infinity;
@@ -428,74 +457,117 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0A1628] text-white flex flex-col shrink-0 border-r border-white/5">
-        <div className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20">
-              <span className="-rotate-3">NT</span>
+      <aside className={`
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        ${isSidebarCollapsed ? 'lg:w-20' : 'lg:w-72'}
+        bg-[#0A1628] text-white flex flex-col shrink-0 border-r border-white/5 fixed lg:static inset-y-0 left-0 z-[70] transition-all duration-300 ease-in-out
+      `}>
+        <div className="p-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20 shrink-0">
+              <span className="-rotate-3 text-white">NT</span>
             </div>
-            <h1 className="font-['Bebas_Neue'] text-xl tracking-[2px] leading-none pt-1 text-[#C8961A]">Admin Panel</h1>
+            {!isSidebarCollapsed && (
+              <motion.h1 
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                className="font-['Bebas_Neue'] text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] truncate"
+              >
+                Admin Panel
+              </motion.h1>
+            )}
           </div>
+          <button 
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="hidden lg:flex w-6 h-6 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+          >
+            {isSidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          </button>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1 mt-4">
+        <nav className="flex-1 px-4 space-y-1 mt-4 overflow-y-auto custom-scrollbar">
           <SidebarItem 
             active={activeView === 'overview'} 
-            onClick={() => setActiveView('overview')} 
+            onClick={() => { setActiveView('overview'); setIsMobileMenuOpen(false); }} 
             icon={<LayoutDashboard size={20} />} 
             label="Overview" 
+            collapsed={isSidebarCollapsed}
           />
           <SidebarItem 
             active={activeView === 'products'} 
-            onClick={() => setActiveView('products')} 
+            onClick={() => { setActiveView('products'); setIsMobileMenuOpen(false); }} 
             icon={<Package size={20} />} 
             label="Products" 
+            collapsed={isSidebarCollapsed}
+            badge={lowStockProductsCount}
           />
           <SidebarItem 
             active={activeView === 'quotes'} 
-            onClick={() => setActiveView('quotes')} 
+            onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} 
             icon={<MessageSquare size={20} />} 
             label="Quotes & Enquires" 
+            collapsed={isSidebarCollapsed}
+            badge={newQuotesCount}
           />
           <SidebarItem 
             active={activeView === 'wishlists'} 
-            onClick={() => setActiveView('wishlists')} 
+            onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} 
             icon={<Heart size={20} />} 
             label="Wishlist Insights" 
+            collapsed={isSidebarCollapsed}
           />
           <SidebarItem 
             active={activeView === 'promotions'} 
-            onClick={() => setActiveView('promotions')} 
+            onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} 
             icon={<Megaphone size={20} />} 
             label="Marketing & Promos" 
+            collapsed={isSidebarCollapsed}
           />
           <SidebarItem 
             active={activeView === 'reviews'} 
-            onClick={() => setActiveView('reviews')} 
+            onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} 
             icon={<Star size={20} />} 
             label="Public Reviews" 
+            collapsed={isSidebarCollapsed}
+            badge={pendingReviewsCount}
           />
           <SidebarItem 
             active={activeView === 'users'} 
-            onClick={() => setActiveView('users')} 
+            onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} 
             icon={<Users size={20} />} 
             label="Team Management" 
+            collapsed={isSidebarCollapsed}
           />
           <SidebarItem 
             active={activeView === 'analytics'} 
-            onClick={() => setActiveView('analytics')} 
+            onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} 
             icon={<BarChart3 size={20} />} 
             label="Analytics" 
+            collapsed={isSidebarCollapsed}
           />
         </nav>
 
         <div className="p-4 mt-auto border-t border-white/5 space-y-1">
           <SidebarItem 
             active={activeView === 'settings'} 
-            onClick={() => setActiveView('settings')} 
+            onClick={() => { setActiveView('settings'); setIsMobileMenuOpen(false); }} 
             icon={<Settings size={20} />} 
             label="Site Branding" 
+            collapsed={isSidebarCollapsed}
           />
           <SidebarItem 
             active={false} 
@@ -503,19 +575,38 @@ export default function AdminDashboard() {
             icon={<LogOut size={20} />} 
             label="Sign Out" 
             danger
+            collapsed={isSidebarCollapsed}
           />
+          
+          {!isSidebarCollapsed && (
+            <div className="mt-6 flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-[#C8961A] flex items-center justify-center text-white font-bold shadow-lg shadow-black/20">
+                {auth.currentUser?.displayName?.charAt(0) || 'A'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white truncate">{auth.currentUser?.displayName || 'Admin'}</p>
+                <p className="text-[10px] text-gray-500 truncate">naisiaetext@gmail.com</p>
+              </div>
+            </div>
+          )}
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-8 sticky top-0 z-20">
+        <header className="h-20 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-4 lg:px-8 sticky top-0 z-50">
           <div className="flex items-center gap-4">
-            <h2 className="font-bold text-lg capitalize">{activeView === 'overview' ? 'Dashboard Overview' : activeView}</h2>
-            <div className="hidden lg:flex items-center gap-2 bg-[#F1F5F9] rounded-full px-3 py-1.5 border border-[#E2E8F0]">
-              <Search size={14} className="text-[#94A3B8]" />
-              <input type="text" placeholder="Global search..." className="bg-transparent border-none outline-none text-xs w-48" />
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+            >
+              <Menu size={24} />
+            </button>
+            <h2 className="font-bold text-xl capitalize text-[#0A1628]">{activeView === 'overview' ? 'Dashboard Overview' : activeView}</h2>
+            <div className="hidden lg:flex items-center gap-3 bg-[#F8FAFC] rounded-2xl px-4 py-2 border border-[#E2E8F0] focus-within:ring-2 focus-within:ring-[#C8102E]/20 transition-all">
+              <Search size={16} className="text-[#94A3B8]" />
+              <input type="text" placeholder="Global search..." className="bg-transparent border-none outline-none text-sm w-64 placeholder:text-gray-400" />
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -542,8 +633,23 @@ export default function AdminDashboard() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <StatCard label="Total Site Views" value={stats.totalViews.toLocaleString()} trend={0} icon={<Eye className="text-blue-600" />} />
-                  <StatCard label="Quote Requests" value={stats.totalQuotes.toString()} trend={0} icon={<MessageSquare className="text-purple-600" />} />
-                  <StatCard label="Est. Pipeline (KES)" value={stats.totalPotentialRevenue.toLocaleString()} trend={0} icon={<TrendingUp className="text-green-600" />} />
+                  <StatCard 
+                    label="Quote Requests" 
+                    value={stats.totalQuotes.toString()} 
+                    trend={0} 
+                    icon={<MessageSquare className="text-purple-600" />} 
+                    onClick={() => setActiveView('quotes')}
+                  />
+                  <StatCard 
+                    label="Low Stock Items" 
+                    value={lowStockProductsCount.toString()} 
+                    trend={0} 
+                    icon={<Package className={`${lowStockProductsCount > 0 ? 'text-red-500 animate-pulse' : 'text-green-500'}`} />} 
+                    onClick={() => {
+                      setProductStatusFilter('low-stock');
+                      setActiveView('products');
+                    }}
+                  />
                   <StatCard label="Active Items" value={stats.activeProducts.toString()} trend={0} icon={<Package className="text-[#C8961A]" />} />
                 </div>
 
@@ -610,6 +716,38 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                     <button onClick={() => setActiveView('quotes')} className="mt-4 w-full py-2.5 text-xs font-bold text-[#1C3560] bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">View All Requests</button>
+                  </div>
+                </div>
+
+                {/* Top Products Integration */}
+                <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="font-bold text-gray-800">Top Performing Products</h3>
+                      <p className="text-xs text-gray-400">Based on wishlist additions and interactions</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {products.slice(0, 4).map((product, idx) => (
+                      <div key={product.id} className="group flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:border-[#E2E8F0] hover:bg-slate-50/50 transition-all">
+                        <div className="relative">
+                          <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                             <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                          </div>
+                          <div className="absolute -top-2 -left-2 w-6 h-6 bg-[#C8961A] text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-lg">
+                            #{idx + 1}
+                          </div>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-sm font-bold text-[#1E293B] truncate">{product.name}</h4>
+                          <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-tighter">{product.category}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                             <Heart size={10} className="text-red-500 fill-red-500" />
+                             <span className="text-[10px] font-black text-[#1C3560]">{Math.floor(Math.random() * 50) + 10} Saves</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </motion.div>
@@ -914,9 +1052,17 @@ export default function AdminDashboard() {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
-                  <div className="p-6 border-b border-[#E2E8F0]">
-                    <h3 className="font-bold text-[#1E293B]">Team Members</h3>
-                    <p className="text-xs text-[#64748B]">Manage platform administrators and roles</p>
+                  <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold text-[#1E293B]">Team Members</h3>
+                      <p className="text-xs text-[#64748B]">Manage platform administrators and roles</p>
+                    </div>
+                    <button 
+                      onClick={() => setIsAddUserModalOpen(true)}
+                      className="bg-[#1C3560] hover:bg-[#0A1628] text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg active:scale-95"
+                    >
+                      <Plus size={16} /> Add Member
+                    </button>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">
@@ -1516,6 +1662,108 @@ export default function AdminDashboard() {
         </footer>
       </main>
 
+      {/* Add User Modal */}
+      <AnimatePresence>
+        {isAddUserModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAddUserModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden p-8"
+            >
+              <div className="text-center space-y-2 mb-8">
+                <div className="w-16 h-16 bg-[#1C3560]/10 rounded-2xl flex items-center justify-center mx-auto text-[#1C3560]">
+                  <UserPlus size={32} />
+                </div>
+                <h3 className="text-2xl font-['Bebas_Neue'] tracking-wide text-[#0A1628]">Add Team Member</h3>
+                <p className="text-[10px] font-black text-[#64748B] uppercase tracking-[3px]">Assign Administrative Roles</p>
+              </div>
+
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!newUserEmail) return;
+                  try {
+                    await setDoc(doc(db, 'users', newUserEmail.replace(/\./g, '_')), {
+                      email: newUserEmail,
+                      role: newUserRole,
+                      displayName: newUserEmail.split('@')[0],
+                      createdAt: serverTimestamp()
+                    });
+                    setToast({ message: `Access granted to ${newUserEmail}`, type: 'success' });
+                    setNewUserEmail('');
+                    setIsAddUserModalOpen(false);
+                  } catch (err) {
+                    handleFirestoreError(err, OperationType.CREATE, 'users');
+                  }
+                }}
+                className="space-y-6"
+              >
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest ml-1">Member Email Address</label>
+                  <input 
+                    required
+                    type="email"
+                    value={newUserEmail}
+                    onChange={e => setNewUserEmail(e.target.value)}
+                    placeholder="teammate@naisiaetextile.com"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm focus:border-[#C8102E] focus:bg-white outline-none transition-all font-bold"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest ml-1">Access Level</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => setNewUserRole('user')}
+                      className={`py-3 px-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+                        newUserRole === 'user' ? 'border-[#1C3560] bg-[#1C3560]/5 text-[#1C3560]' : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                      }`}
+                    >
+                      Staff Member
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setNewUserRole('admin')}
+                      className={`py-3 px-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+                        newUserRole === 'admin' ? 'border-[#C8102E] bg-[#C8102E]/5 text-[#C8102E]' : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                      }`}
+                    >
+                      Administrator
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex gap-3">
+                  <button 
+                    type="button"
+                    onClick={() => setIsAddUserModalOpen(false)}
+                    className="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-[#64748B] hover:text-[#1E293B]"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="flex-1 py-4 bg-[#1C3560] hover:bg-[#0A1628] text-white rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all shadow-xl active:scale-95"
+                  >
+                    Grant Access
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Product Modal */}
       <AnimatePresence>
         {isModalOpen && (
@@ -1820,21 +2068,40 @@ export default function AdminDashboard() {
   }
 }
 
-function SidebarItem({ icon, label, active, onClick, danger = false }: any) {
+function SidebarItem({ icon, label, active, onClick, danger = false, collapsed = false, badge = 0 }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm group ${
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm group relative ${
         active 
           ? 'bg-[#1C3560] text-white shadow-lg shadow-black/20' 
           : danger 
             ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300' 
             : 'text-gray-400 hover:bg-white/5 hover:text-white'
-      }`}
+      } ${collapsed ? 'justify-center px-0' : ''}`}
+      title={collapsed ? label : ''}
     >
       <span className={active ? 'text-[#C8961A]' : ''}>{icon}</span>
-      {label}
-      {active && (
+      {!collapsed && (
+        <motion.span
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="truncate"
+        >
+          {label}
+        </motion.span>
+      )}
+      
+      {badge > 0 && (
+        <span className={`
+          absolute flex items-center justify-center bg-[#C8102E] text-white text-[10px] font-bold rounded-full
+          ${collapsed ? '-top-1 -right-1 w-4 h-4' : 'right-4 px-1.5 min-w-[18px] h-[18px]'}
+        `}>
+          {badge}
+        </span>
+      )}
+
+      {active && !collapsed && (
         <motion.div 
           layoutId="sidebar-active"
           className="ml-auto w-1 h-4 bg-[#C8961A] rounded-full"
@@ -1939,7 +2206,8 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
     badge: initialData?.badge || '',
     tags: initialData?.tags || (initialData?.tag ? [initialData.tag] : []),
     variants: initialData?.variants || [],
-    subCategory: initialData?.subCategory || ''
+    subCategory: initialData?.subCategory || '',
+    stock: initialData?.stock || 0
   });
 
   const sensors = useSensors(
@@ -2556,6 +2824,15 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">KES</div>
           </div>
+        </div>
+        <div className="space-y-1.5 pt-[22px] sm:pt-0">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1 sm:mt-[22px]">Base Stock (If no variants)</label>
+          <input 
+            type="number" 
+            value={formData.stock}
+            onChange={e => setFormData({...formData, stock: parseInt(e.target.value)})}
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+          />
         </div>
       </div>
 

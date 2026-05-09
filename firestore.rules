@@ -100,6 +100,10 @@ service cloud.firestore {
       allow write: if isAdmin() && isValidId(ruleId);
     }
 
+    match /system/connection-test {
+      allow read: if true;
+    }
+
     match /reviews/{reviewId} {
       allow read: if resource.data.status == 'approved' || isAdmin();
       
