@@ -22,14 +22,24 @@ import {
   ExternalLink,
   GitCompare,
   Star,
-  Package
+  Package,
+  Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { Navbar } from '../components/Navbar';
+import { Footer } from '../components/Footer';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
-import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
 
-export default function HomePage() {
+interface PageProps {
+  cart: any[];
+  setCart: React.Dispatch<React.SetStateAction<any[]>>;
+  wishlist: any[];
+  setWishlist: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageProps) {
   const [activeTab, setActiveTab] = useState('all');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
@@ -41,9 +51,8 @@ export default function HomePage() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [activeModalPromo, setActiveModalPromo] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
-  const [cart, setCart] = useState<any[]>([]);
-  const [wishlist, setWishlist] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
+  const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -65,7 +74,7 @@ export default function HomePage() {
   const handleShareProduct = async (product: any) => {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
     const shareData = {
-      title: `${product.name} | Naisiae Textile`,
+      title: `${product.name} | Uhuru Market Uniforms`,
       text: `Check out ${product.name} - ${product.description || 'Premium custom uniforms and branding.'}\nPrice: KES ${product.price?.toLocaleString()}`,
       url: shareUrl,
     };
@@ -120,6 +129,25 @@ export default function HomePage() {
     }
   };
   const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState<any>(null);
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (selectedQuickViewProduct) {
+      // Reset selected variants when product changes
+      const initialVariants: Record<string, string> = {};
+      const variantsByType = selectedQuickViewProduct.variants?.reduce((acc: any, v: any) => {
+        if (!acc[v.type]) acc[v.type] = [];
+        acc[v.type].push(v);
+        return acc;
+      }, {}) || {};
+      
+      Object.keys(variantsByType).forEach(type => {
+        initialVariants[type] = variantsByType[type][0].value;
+      });
+      setSelectedVariants(initialVariants);
+    }
+  }, [selectedQuickViewProduct]);
+
   const [productReviews, setProductReviews] = useState<any[]>([]);
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '', userName: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
@@ -166,6 +194,8 @@ export default function HomePage() {
         .map(doc => ({ id: doc.id, ...doc.data() }))
         .sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       setProductReviews(sortedReviews);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, `reviews_for_${selectedQuickViewProduct.id}`);
     });
 
     return () => unsubscribe();
@@ -183,6 +213,8 @@ export default function HomePage() {
     const qPromos = query(collection(db, 'promotions'), where('active', '==', true));
     const unsubscribePromos = onSnapshot(qPromos, (snapshot) => {
       setPromotions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'promotions');
     });
 
     // Fetch Site Settings
@@ -190,11 +222,22 @@ export default function HomePage() {
       if (snapshot.exists()) {
         setSiteSettings(snapshot.data());
       }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'settings/site');
     });
 
     // Fetch Discount Rules
     const unsubscribeDiscountRules = onSnapshot(collection(db, 'discountRules'), (snapshot) => {
       setDiscountRules(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'discountRules');
+    });
+
+    // Fetch Mega Menus
+    const unsubscribeMegaMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
+      setMegaMenus(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'mega_menus');
     });
 
     // Local storage persistence
@@ -209,10 +252,12 @@ export default function HomePage() {
       const wishlistRef = doc(db, 'wishlists', auth.currentUser.uid);
       unsubscribeWishlist = onSnapshot(wishlistRef, (doc) => {
         if (doc.exists()) {
-          const remoteItems = doc.data().items || [];
+          const remoteItems = (doc.data() as any).items || [];
           setWishlist(remoteItems);
           lastWishlistRef.current = JSON.stringify(remoteItems); // Update ref to avoid reflecting back
         }
+      }, (error) => {
+        handleFirestoreError(error, OperationType.GET, `wishlists/${auth.currentUser?.uid}`);
       });
     }
 
@@ -222,12 +267,12 @@ export default function HomePage() {
       const viewRef = doc(db, 'analytics', today);
       try {
         await setDoc(viewRef, { 
-          views: (await getDoc(viewRef)).data()?.views + 1 || 1,
+          views: increment(1),
           date: today,
           updatedAt: serverTimestamp() 
         }, { merge: true });
       } catch (e) {
-        console.error("Analytics error:", e);
+        handleFirestoreError(e, OperationType.WRITE, `analytics/${today}`);
       }
     };
     
@@ -242,6 +287,7 @@ export default function HomePage() {
       unsubscribePromos();
       unsubscribeSettings();
       unsubscribeDiscountRules();
+      unsubscribeMegaMenus();
       if (unsubscribeWishlist) unsubscribeWishlist();
     };
   }, []);
@@ -310,7 +356,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (siteSettings) {
-      document.title = siteSettings.siteName ? `${siteSettings.siteName} | ${siteSettings.siteTagline || 'Uhuru Market'}` : 'Naisiae Textile | Uhuru Market';
+      document.title = siteSettings.siteName ? `${siteSettings.siteName} | ${siteSettings.siteTagline || 'Uhuru Market'}` : 'Uhuru Market Uniforms | Uhuru Market';
       
       if (siteSettings.favicon) {
         let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
@@ -448,6 +494,7 @@ export default function HomePage() {
           <div className="hidden lg:flex items-center gap-10">
             {[
               { 
+                id: 'school_uniforms',
                 name: 'School Uniforms', 
                 mega: {
                   featured: {
@@ -463,7 +510,8 @@ export default function HomePage() {
                 }
               },
               { 
-                name: 'Knitting', 
+                id: 'corporate_wear',
+                name: 'Corporate Wear', 
                 mega: {
                   featured: {
                     title: 'Custom Patterns',
@@ -478,6 +526,7 @@ export default function HomePage() {
                 }
               },
               { 
+                id: 'branding',
                 name: 'Branding', 
                 mega: {
                   featured: {
@@ -492,52 +541,68 @@ export default function HomePage() {
                   ]
                 }
               },
-              { name: 'About Us', link: '/about' },
-            ].map((item) => (
-              <div key={item.name} className="group relative">
-                <Link 
-                  to={item.link || '#'} 
-                  className="text-white/90 hover:text-[#C8961A] font-['Bebas_Neue'] text-lg tracking-[2px] h-[68px] flex items-center transition-colors"
-                >
-                  {item.name}
-                </Link>
-                
-                {item.mega && (
-                  <div className="absolute top-[68px] left-1/2 -translate-x-1/2 w-[800px] bg-white shadow-2xl rounded-b-2xl p-8 opacity-0 invisible translate-y-4 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-[100] border border-slate-100 flex gap-10">
-                    <div className="flex-1 grid grid-cols-3 gap-8">
-                      {item.mega.categories.map((cat) => (
-                        <div key={cat.name}>
-                          <h4 className="font-['Bebas_Neue'] text-[#0A1628] text-xl tracking-[1px] mb-4 border-b border-slate-100 pb-2">{cat.name}</h4>
-                          <ul className="space-y-2">
-                            {cat.items.map((sub) => (
-                              <li key={sub}>
-                                <a href="#" className="text-[11px] text-[#64748B] hover:text-[#C8102E] font-bold flex items-center justify-between group transition-colors uppercase tracking-wider">
-                                  {sub}
-                                  <ChevronRight size={10} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="w-[280px] shrink-0 border-l border-slate-100 pl-10">
-                      <div className="relative h-full rounded-xl overflow-hidden group/feat">
-                        <img src={item.mega.featured.image} className="w-full h-full object-cover transition-transform duration-700 group-hover/feat:scale-110" alt={item.mega.featured.title} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-transparent"></div>
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[3px] mb-1">Featured</p>
-                          <h5 className="text-white font-['Bebas_Neue'] text-2xl leading-none">{item.mega.featured.title}</h5>
-                          <Link to={item.mega.featured.link} className="mt-3 text-[10px] text-white/70 hover:text-white flex items-center gap-1 transition-colors uppercase font-bold tracking-widest">
-                            Shop Collection <ChevronRight size={10} />
-                          </Link>
+              { name: 'About Us', id: 'about', link: '/about' },
+            ].map((defaultItem) => {
+              const dynamicMega = megaMenus.find(m => m.id === defaultItem.id);
+              const item = {
+                ...defaultItem,
+                mega: dynamicMega ? {
+                  ...defaultItem.mega,
+                  featured: dynamicMega.featured || defaultItem.mega?.featured,
+                  categories: dynamicMega.categories || defaultItem.mega?.categories
+                } : defaultItem.mega
+              };
+
+              return (
+                <div key={item.id} className="group relative">
+                  <Link 
+                    to={item.link || '#'} 
+                    className="text-white/90 hover:text-[#C8961A] font-['Bebas_Neue'] text-lg tracking-[2px] h-[68px] flex items-center transition-colors"
+                  >
+                    {item.name}
+                  </Link>
+                  
+                  {item.mega && (
+                    <div className="absolute top-[68px] left-1/2 -translate-x-1/2 w-[1100px] bg-white shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] rounded-b-[2rem] p-12 opacity-0 invisible translate-y-4 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-500 z-[100] border border-slate-100 flex gap-16">
+                      <div className="flex-1 grid grid-cols-3 gap-12">
+                        {item.mega.categories.map((cat: any) => (
+                          <div key={cat.name}>
+                            <h4 className="font-['Bebas_Neue'] text-[#0A1628] text-2xl tracking-[1px] mb-6 border-b-2 border-slate-100 pb-3">{cat.name}</h4>
+                            <ul className="space-y-3">
+                              {cat.items.map((sub: string) => (
+                                <li key={sub}>
+                                  <a href="#" className="text-[12px] text-[#64748B] hover:text-[#C8102E] font-black flex items-center justify-between group transition-all uppercase tracking-[2px]">
+                                    {sub}
+                                    <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-[#C8961A]" />
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="w-[320px] shrink-0 border-l border-slate-100 pl-16">
+                        <div className="relative h-full rounded-2xl overflow-hidden group/feat shadow-xl flex items-center justify-center bg-[#0A1628]">
+                          {item.mega.featured.image ? (
+                            <img src={item.mega.featured.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" alt={item.mega.featured.title} />
+                          ) : (
+                            <div className="text-white/20"><Package size={64} /></div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                          <div className="absolute bottom-6 left-6 right-6">
+                            <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[4px] mb-2">Editor's Pick</p>
+                            <h5 className="text-white font-['Bebas_Neue'] text-3xl leading-none mb-4">{item.mega.featured.title}</h5>
+                            <Link to={item.mega.featured.link} className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-[10px] text-white hover:bg-[#C8102E] hover:border-[#C8102E] transition-all uppercase font-black tracking-widest">
+                              Shop Collection <ChevronRight size={12} />
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">
@@ -549,6 +614,18 @@ export default function HomePage() {
               {wishlist.length > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-[#F0A500] text-[#0A1628] text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#15284A]">
                   {wishlist.length}
+                </span>
+              )}
+            </button>
+            <button 
+              onClick={() => setIsCompareModalOpen(true)}
+              className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
+              title="Compare Products"
+            >
+              <GitCompare size={20} className={compareList.length > 0 ? "text-[#C8961A]" : ""} />
+              {compareList.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-[#C8961A] text-[#0A1628] text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#15284A]">
+                  {compareList.length}
                 </span>
               )}
             </button>
@@ -634,70 +711,78 @@ export default function HomePage() {
                 )}
               </motion.div>
 
-              {/* Search Bar with Autofill Integrated into Hero */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
-                className="w-full max-w-3xl relative"
-              >
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                    <Search className="text-white/40 group-focus-within:text-[#C8961A] transition-colors" size={24} />
-                  </div>
-                  <input 
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                    onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-                    placeholder="Search uniforms, sports kits, or corporate branding..."
-                    className="w-full bg-white/10 backdrop-blur-3xl border-2 border-white/20 rounded-3xl pl-16 pr-8 py-6 text-white text-lg outline-none focus:bg-white focus:text-[#0A1628] focus:border-[#C8961A] focus:ring-8 focus:ring-[#C8961A]/10 transition-all shadow-2xl placeholder:text-white/30 font-medium"
-                  />
-                  <button className="absolute right-3 top-3 bottom-3 bg-[#C8102E] hover:bg-[#8B0000] text-white px-8 rounded-2xl font-black text-xs tracking-[2px] uppercase transition-all shadow-xl active:scale-95">
-                    Find Products
-                  </button>
-                </div>
-
-                {/* Autocomplete Suggestions */}
-                <AnimatePresence>
-                  {showSearchSuggestions && searchResults.length > 0 && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden divide-y divide-slate-50 overflow-y-auto max-h-[450px]"
-                    >
-                      {searchResults.map((product) => (
-                        <div 
-                          key={product.id}
-                          id={`search-item-${product.id}`}
-                          onClick={() => {
-                            const el = document.getElementById(`product-${product.id}`);
-                            if (el) el.scrollIntoView({ behavior: 'smooth' });
-                            setSearchQuery('');
-                          }}
-                          className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors group text-left"
-                        >
-                          <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0">
-                            <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-black text-[#1E293B] group-hover:text-[#C8102E] transition-colors uppercase tracking-wider truncate">{product.name}</p>
-                            <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">{product.category}</p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <p className="text-sm font-black text-[#C8102E]">KES {product.price.toLocaleString()}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+              {/* MOVED SEARCH BAR OUT TO BE STATIC */}
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Floating Search Bar (Static) */}
+        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center pt-80 lg:pt-96">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="w-full max-w-3xl px-8 pointer-events-auto"
+          >
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                <Search className="text-white/40 group-focus-within:text-[#C8961A] transition-colors" size={24} />
+              </div>
+              <input 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+                placeholder="Search uniforms, sports kits, or corporate branding..."
+                className="w-full bg-white/10 backdrop-blur-3xl border-2 border-white/20 rounded-3xl pl-16 pr-8 py-6 text-white text-lg lg:text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:border-[#C8961A] focus:ring-8 focus:ring-[#C8961A]/10 transition-all shadow-2xl placeholder:text-white/30 font-medium"
+              />
+              <button className="absolute right-3 top-3 bottom-3 bg-[#C8102E] hover:bg-[#8B0000] text-white px-8 rounded-2xl font-black text-xs tracking-[2px] uppercase transition-all shadow-xl active:scale-95">
+                Find Products
+              </button>
+            </div>
+
+            {/* Autocomplete Suggestions */}
+            <AnimatePresence>
+              {showSearchSuggestions && searchResults.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden divide-y divide-slate-50 overflow-y-auto max-h-[450px]"
+                >
+                  {searchResults.map((product) => (
+                    <div 
+                      key={product.id}
+                      id={`search-item-${product.id}`}
+                      onClick={() => {
+                        const el = document.getElementById(`product-${product.id}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        setSearchQuery('');
+                      }}
+                      className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors group text-left"
+                    >
+                      <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center">
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                        ) : (
+                          <Package size={20} className="text-slate-300" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-black text-[#1E293B] group-hover:text-[#C8102E] transition-colors uppercase tracking-wider truncate">{product.name}</p>
+                        <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">{product.category}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-black text-[#C8102E]">KES {product.price.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
 
         {/* Slide Indicators */}
         {siteSettings?.heroImages?.length > 1 && (
@@ -736,7 +821,7 @@ export default function HomePage() {
                     Bulk Orders & <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
                   </h2>
                   <p className="text-white/60 text-sm lg:text-base leading-relaxed mb-12 max-w-lg font-medium">
-                    Naisiae Textile specializes in high-volume production for schools, distributors, and corporate institutions. Our wholesale program offers the most competitive rates in Kenya with guaranteed turnaround times.
+                    Uhuru Market Uniforms specializes in high-volume production for schools, distributors, and corporate institutions. Our wholesale program offers the most competitive rates in Kenya with guaranteed turnaround times.
                   </p>
                   
                   <div className="flex flex-wrap gap-4">
@@ -829,8 +914,12 @@ export default function HomePage() {
                   whileHover={{ y: -6 }}
                   className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer" onClick={() => setSelectedQuickViewProduct(product)}>
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <Package size={40} className="text-[#C8961A]/20" />
+                    )}
                     <span className="absolute top-3 left-3 bg-[#C8961A] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">Wholesale</span>
                   </div>
                   <div className="p-4">
@@ -964,8 +1053,12 @@ export default function HomePage() {
               whileHover={{ y: -6 }}
               className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
             >
-              <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer" onClick={() => setSelectedQuickViewProduct(product)}>
-                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
+                {product.imageUrl ? (
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                  <Package size={40} className="text-[#C8961A]/20" />
+                )}
                 {product.badge && (
                   <span className="absolute top-3 left-3 bg-[#C8102E] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">{product.badge}</span>
                 )}
@@ -1027,79 +1120,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#0A1628] pt-16 pb-8 text-gray-400 border-t border-white/5">
-        <div className="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              {siteSettings?.siteLogo ? (
-                <>
-                  <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae'} className="w-14 h-14 object-contain" />
-                  <div className="leading-tight">
-                    <h3 className="text-white font-['Bebas_Neue'] text-2xl tracking-[2px]">{siteSettings?.siteName || 'Naisiae Textile'}</h3>
-                    <p className="text-[9px] text-[#C8961A] font-bold uppercase tracking-[1px]">{siteSettings?.siteTagline || 'Uhuru Market Uniforms'}</p>
-                  </div>
-                </>
-              ) : (
-                <h3 className="font-['Bebas_Neue'] text-3xl tracking-[4px] text-white">NAISIAE TEXTILE</h3>
-              )}
-            </div>
-            <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold mb-6">
-              {siteSettings?.siteTagline || 'Uhuru Market Uniforms'}
-            </div>
-            <p className="text-sm leading-relaxed mb-6">Your trusted partner for quality school uniforms, custom knitwear and professional branding services across Kenya.</p>
-          </div>
-          <div>
-            <h4 className="font-['Bebas_Neue'] text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Uniforms</h4>
-            <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Primary School Uniforms</a></li>
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Junior Secondary</a></li>
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Corporate Uniforms</a></li>
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Sports Kits</a></li>
-            </ul>
-          </div>
-          <div>
-             <h4 className="font-['Bebas_Neue'] text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Services</h4>
-             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Knitting Services</a></li>
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Embroidery</a></li>
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Screen Printing</a></li>
-              <li><a href="#" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Design & Mockup</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-['Bebas_Neue'] text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Contact</h4>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A]"><Phone size={18} /></div>
-                <div>
-                  <div className="text-[10px] font-bold uppercase text-white/50">Phone</div>
-                  <div className="text-white font-bold">{siteSettings?.contactPhone || '+254 792 021 795'}</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A]"><Mail size={18} /></div>
-                <div>
-                 <div className="text-[10px] font-bold uppercase text-white/50">Email</div>
-                 <div className="text-white font-bold">{siteSettings?.contactEmail || 'info@naisiaetextile.com'}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-[1440px] mx-auto px-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs">
-          <div className="flex items-center gap-3">
-            <span>© 2026 Naisiae Textile. All rights reserved.</span>
-            <Link to="/admin" className="text-white/5 hover:text-[#C8961A]/20 transition-colors" title="Management">
-              <ShieldCheck size={10} />
-            </Link>
-          </div>
-          <div className="mt-4 md:mt-0 flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-          </div>
-        </div>
-      </footer>
+      <Footer siteSettings={siteSettings} />
 
       {/* Comparison Drawer */}
       <AnimatePresence>
@@ -1123,8 +1144,14 @@ export default function HomePage() {
               
               <div className="flex gap-2">
                 {compareList.map(item => (
-                  <div key={item.id} className="relative group/compare-item">
-                    <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-cover border-2 border-white/10" />
+                  <div key={item.id} className="relative group/compare-item flex items-center justify-center">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-cover border-2 border-white/10" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-white/10 border-2 border-white/5 flex items-center justify-center">
+                        <Package size={16} className="text-white/20" />
+                      </div>
+                    )}
                     <button 
                       onClick={() => toggleCompare(item)}
                       className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center scale-0 group-hover/compare-item:scale-100 transition-transform"
@@ -1146,6 +1173,51 @@ export default function HomePage() {
                   <Trash2 size={18} />
                 </button>
               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Comparison Bar */}
+      <AnimatePresence>
+        {compareList.length > 0 && !isCompareModalOpen && (
+          <motion.div 
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            className="fixed bottom-24 lg:bottom-8 left-1/2 -translate-x-1/2 z-[110] bg-[#0A1628] text-white px-6 py-4 rounded-3xl shadow-2xl border border-white/10 flex items-center gap-8 backdrop-blur-xl w-[95%] sm:w-auto"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-4">
+                {compareList.map((item, idx) => (
+                  <div key={item.id} className="w-10 h-10 rounded-full border-2 border-[#0A1628] overflow-hidden bg-white shadow-lg flex items-center justify-center">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.name} />
+                    ) : (
+                      <Package size={14} className="text-[#0A1628]/20" />
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[2px] leading-tight text-[#C8961A]">{compareList.length} Products</p>
+                <p className="text-[11px] font-bold text-white/60">Selected for comparison</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setCompareList([])}
+                className="text-[10px] font-bold text-white/40 hover:text-red-400 p-2 uppercase tracking-widest transition-colors"
+              >
+                Clear
+              </button>
+              <button 
+                onClick={() => setIsCompareModalOpen(true)}
+                className="bg-[#C8961A] hover:bg-white hover:text-[#0A1628] text-[#0A1628] px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-xl shadow-[#C8961A]/20 active:scale-95"
+              >
+                Compare Now <GitCompare size={14} />
+              </button>
             </div>
           </motion.div>
         )}
@@ -1193,10 +1265,24 @@ export default function HomePage() {
                   {compareList.map(item => (
                     <div key={item.id} className="text-center">
                       <div className="aspect-square rounded-3xl bg-slate-50 border border-slate-100 p-6 mb-6 overflow-hidden flex items-center justify-center shadow-inner">
-                        <img src={item.imageUrl} className="w-full h-full object-contain" alt={item.name} />
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} className="w-full h-full object-contain" alt={item.name} />
+                        ) : (
+                          <Package size={48} className="text-slate-200" />
+                        )}
                       </div>
                       <h4 className="font-bold text-lg text-[#0A1628] mb-2 leading-tight px-2">{item.name}</h4>
                       <div className="text-[10px] font-black text-[#C8961A] uppercase tracking-widest mb-4">{item.category}</div>
+                    </div>
+                  ))}
+
+                  {/* Row: Sub-Category */}
+                  <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest">
+                    Sub-Category
+                  </div>
+                  {compareList.map(item => (
+                    <div key={item.id} className="py-8 border-t border-slate-100 text-center font-bold text-xs text-slate-600">
+                      {item.subCategory || "-"}
                     </div>
                   ))}
 
@@ -1295,13 +1381,29 @@ export default function HomePage() {
               </button>
 
               {/* Product Gallery Section */}
-              <div className="lg:w-1/2 bg-slate-50 relative overflow-hidden flex items-center justify-center p-8 lg:p-12">
-                <motion.img 
-                  layoutId={`product-img-${selectedQuickViewProduct.id}`}
-                  src={selectedQuickViewProduct.imageUrl} 
-                  className="w-full h-auto max-h-[60vh] object-contain rounded-2xl drop-shadow-2xl"
-                  alt={selectedQuickViewProduct.name}
-                />
+                  <div className="lg:w-1/2 bg-slate-50 relative overflow-hidden flex items-center justify-center p-8 lg:p-12">
+                <AnimatePresence mode="wait">
+                  {(() => {
+                    const activeImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url) || selectedQuickViewProduct.imageUrl;
+                    
+                    return activeImageUrl ? (
+                      <motion.img 
+                        key={activeImageUrl}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
+                        src={activeImageUrl} 
+                        className="w-full h-auto max-h-[60vh] object-contain rounded-2xl drop-shadow-2xl"
+                        alt={selectedQuickViewProduct.name}
+                      />
+                    ) : (
+                      <div className="w-full aspect-square flex items-center justify-center text-slate-200">
+                        <ImageIcon size={120} />
+                      </div>
+                    );
+                  })()}
+                </AnimatePresence>
                 
                 {selectedQuickViewProduct.badge && (
                   <span className="absolute top-8 left-8 bg-[#C8102E] text-white text-[12px] font-black px-4 py-1.5 rounded-full tracking-[2px] uppercase shadow-lg">
@@ -1337,6 +1439,61 @@ export default function HomePage() {
                         <span key={tag} className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
                           #{tag}
                         </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Variants Selection */}
+                  {selectedQuickViewProduct.variants && selectedQuickViewProduct.variants.length > 0 && (
+                    <div className="space-y-6 mb-8 pt-6 border-t border-slate-50">
+                      {Object.entries(
+                        selectedQuickViewProduct.variants.reduce((acc: any, v: any) => {
+                          if (!acc[v.type]) acc[v.type] = [];
+                          acc[v.type].push(v);
+                          return acc;
+                        }, {})
+                      ).map(([type, options]: [string, any]) => (
+                        <div key={type} className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[2px]">{type}</label>
+                            {selectedVariants[type] && (
+                              <span className="text-[10px] font-bold text-[#1C3560] bg-[#1C3560]/5 px-2 py-0.5 rounded-lg">{selectedVariants[type]}</span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {options.map((opt: any) => {
+                              const isColor = type.toLowerCase() === 'color';
+                              const isSelected = selectedVariants[type] === opt.value;
+                              
+                              return (
+                                <button
+                                  key={opt.id}
+                                  onClick={() => setSelectedVariants(prev => ({ ...prev, [type]: opt.value }))}
+                                  className={`relative flex items-center justify-center transition-all ${
+                                    isColor 
+                                      ? `w-10 h-10 rounded-full border-2 ${isSelected ? 'border-[#C8102E] scale-110 shadow-lg' : 'border-slate-100 hover:border-slate-300'}`
+                                      : `px-4 py-2 rounded-xl border-2 text-[10px] font-black uppercase tracking-wider ${isSelected ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-lg scale-105' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'}`
+                                  }`}
+                                >
+                                  {isColor ? (
+                                    <div 
+                                      className="w-full h-full rounded-full border-2 border-white shadow-inner" 
+                                      style={{ backgroundColor: opt.value.toLowerCase() }}
+                                      title={opt.value}
+                                    />
+                                  ) : (
+                                    opt.value
+                                  )}
+                                  {isSelected && isColor && (
+                                    <div className="absolute -top-1 -right-1 bg-[#C8102E] text-white rounded-full p-0.5 shadow-sm">
+                                      <CheckCircle2 size={10} />
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -1455,31 +1612,66 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="mt-auto pt-8 border-t border-slate-100 flex flex-col sm:flex-row gap-4">
-                  <button 
-                    onClick={() => { addToCart(selectedQuickViewProduct); setSelectedQuickViewProduct(null); }}
-                    className="flex-1 bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-2xl font-black text-[12px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
-                  >
-                    <ShoppingBag size={18} /> Add to Order
-                  </button>
-                  <div className="flex gap-4">
+                <div className="mt-auto pt-8 border-t border-slate-100 bg-white sticky bottom-0 z-20 space-y-4">
+                  <div className="flex flex-wrap gap-3">
                     <button 
-                      onClick={() => toggleWishlist(selectedQuickViewProduct)}
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all group ${
-                        wishlist.find(i => i.id === selectedQuickViewProduct.id) 
-                          ? "bg-red-50 border-red-100 text-red-500" 
-                          : "border-slate-100 text-slate-400 hover:border-red-200 hover:text-red-400"
+                      onClick={() => toggleCompare(selectedQuickViewProduct)}
+                      className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 border-2 transition-all group ${
+                        compareList.find(i => i.id === selectedQuickViewProduct.id) 
+                          ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
+                          : "border-slate-100 text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] bg-slate-50/50"
                       }`}
                     >
-                      <Heart size={24} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-110" : "group-hover:scale-110 transition-transform"} />
+                      <GitCompare size={20} className={compareList.find(i => i.id === selectedQuickViewProduct.id) ? "scale-110" : "group-hover:scale-110 transition-transform"} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Compare</span>
+                    </button>
+                    <button 
+                      onClick={() => toggleWishlist(selectedQuickViewProduct)}
+                      className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 border-2 transition-all group ${
+                        wishlist.find(i => i.id === selectedQuickViewProduct.id) 
+                          ? "bg-red-50 border-red-100 text-red-500" 
+                          : "border-slate-100 text-slate-400 hover:border-red-200 hover:text-red-400 bg-slate-50/50"
+                      }`}
+                    >
+                      <Heart size={20} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-110" : "group-hover:scale-110 transition-transform"} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Wishlist</span>
                     </button>
                     <button 
                       onClick={() => handleShareProduct(selectedQuickViewProduct)}
-                      className="w-14 h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] transition-all group"
+                      className="w-14 h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] transition-all bg-slate-50/50 group"
                     >
-                      <Share2 size={24} className="group-hover:scale-110 transition-transform" />
+                      <Share2 size={20} className="group-hover:scale-110 transition-transform" />
                     </button>
                   </div>
+
+                  <button 
+                    onClick={() => {
+                      const finalPrice = selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                        const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                        return sum + (variant?.price || 0);
+                      }, 0);
+
+                      const cartItem = {
+                        ...selectedQuickViewProduct,
+                        price: finalPrice,
+                        selectedVariants: { ...selectedVariants }
+                      };
+                      
+                      addToCart(cartItem);
+                      setSelectedQuickViewProduct(null);
+                    }}
+                    className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-5 rounded-2xl font-black text-[14px] uppercase tracking-[4px] transition-all flex items-center justify-center gap-4 shadow-xl hover:shadow-[#C8102E]/20 active:scale-[0.98]"
+                  >
+                    <div className="flex flex-col items-start mr-auto pl-6 border-r border-white/10 pr-6">
+                      <span className="text-[8px] opacity-60">Final Price</span>
+                      <span className="text-sm">KES {(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                        const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                        return sum + (variant?.price || 0);
+                      }, 0)).toLocaleString()}</span>
+                    </div>
+                    <ShoppingBag size={22} className="shrink-0" />
+                    <span className="flex-1 text-center pr-6">Add to Cart</span>
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -1634,13 +1826,26 @@ export default function HomePage() {
                   </div>
                 ) : (
                   (isCartOpen ? cart : wishlist).map((item) => (
-                    <div key={item.id} className="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                      <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0">
-                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                    <div key={item.id} className="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100 items-center">
+                      <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Package size={24} className="text-slate-200" />
+                        )}
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-1">
-                          <h4 className="text-sm font-bold text-[#0A1628]">{item.name}</h4>
+                          <h4 className="text-sm font-bold text-[#0A1628] leading-tight">{item.name}</h4>
+                          {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-1">
+                              {Object.entries(item.selectedVariants).map(([type, val]) => (
+                                <span key={type} className="text-[8px] font-black uppercase text-[#C8961A] bg-[#C8961A]/10 px-1.5 py-0.5 rounded tracking-tighter">
+                                  {type}: {val as string}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           <button 
                             onClick={() => isCartOpen ? removeFromCart(item.id) : toggleWishlist(item)}
                             className="p-1 text-slate-300 hover:text-red-500 transition-colors"

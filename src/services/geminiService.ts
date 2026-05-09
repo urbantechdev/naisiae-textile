@@ -62,3 +62,23 @@ export async function generateProductDetails(base64Image: string, mimeType: stri
     throw new Error("Failed to generate product details with AI");
   }
 }
+
+export async function generateDescriptionOnly(name: string, category: string, tags: string[]): Promise<string> {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `Generate a professional, compelling marketing description for a product with the following details:
+      Name: ${name}
+      Category: ${category}
+      Tags: ${tags.join(', ')}
+      
+      The description should be concise (2-3 paragraphs), highlight quality, durability, and suitability for the Kenyan market. 
+      Use professional yet engaging language. Return ONLY the description text.`,
+    });
+
+    return response.text.trim();
+  } catch (error) {
+    console.error("Gemini AI description generation error:", error);
+    throw new Error("Failed to generate description with AI");
+  }
+}

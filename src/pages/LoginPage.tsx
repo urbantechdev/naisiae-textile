@@ -126,7 +126,7 @@ export default function LoginPage() {
             <ShieldCheck size={32} className="text-white -rotate-3" />
           </div>
           <h1 className="font-['Bebas_Neue'] text-3xl tracking-[3px] text-[#C8961A] mb-2 uppercase">Platform Secure Login</h1>
-          <p className="text-gray-400 text-sm">Protected administrator management portal for Naisiae Textile</p>
+          <p className="text-gray-400 text-sm">Protected administrator management portal for Uhuru Market Uniforms</p>
         </div>
 
         {/* Method Switcher */}
@@ -236,7 +236,7 @@ export default function LoginPage() {
 
         <div className="mt-8 pt-8 border-t border-white/5">
           <p className="text-[10px] text-center text-gray-500 uppercase tracking-widest leading-relaxed">
-            By continuing, you agree to the Naisiae Textile <br /> data processing and security terms.
+            By continuing, you agree to the Uhuru Market Uniforms <br /> data processing and security terms.
           </p>
         </div>
       </motion.div>

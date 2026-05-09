@@ -87,7 +87,9 @@ export function Navbar({
               { name: 'School Uniforms', link: '/#shop' },
               { name: 'Knitting', link: '/#shop' },
               { name: 'Branding', link: '/#shop' },
+              { name: 'Wholesale', link: '/wholesale' },
               { name: 'About Us', link: '/about' },
+              { name: 'Contact', link: '/contact' },
             ].map((item) => (
               <div key={item.name} className="group relative">
                 <Link 

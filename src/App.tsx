@@ -14,6 +14,12 @@ import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import LoginPage from './pages/LoginPage';
 import AboutPage from './pages/AboutPage';
+import WholesalePage from './pages/WholesalePage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import ShippingPage from './pages/ShippingPage';
+import ReturnsPage from './pages/ReturnsPage';
 import { InactivityHandler } from './components/InactivityHandler';
 
 export default function App() {
@@ -79,6 +85,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
           <Route path="/about" element={<AboutPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/wholesale" element={<WholesalePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/contact" element={<ContactPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/privacy" element={<PrivacyPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/terms" element={<TermsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/shipping" element={<ShippingPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/returns" element={<ReturnsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route 
             path="/admin/*" 

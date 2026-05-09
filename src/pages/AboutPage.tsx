@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Target, Compass, Users, Award, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+import { Footer } from '../components/Footer';
 import { doc, onSnapshot, query, collection, where } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
@@ -54,11 +55,11 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
           >
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C8102E] mb-4 block">Our Story</span>
             <h1 className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-8 uppercase">
-              Crafting <br /> Modern Living.
+              Excellence <br /> In Textiles.
             </h1>
             <p className="text-xl text-slate-500 leading-relaxed font-medium max-w-2xl">
-              We believe that great design should be accessible, functional, and deeply personal. 
-              Since our inception, we've been transforming spaces into stories.
+              We provide premium, institution-grade textiles specifically engineered for the Kenyan climate. 
+              Since our inception, we've been outfitting the future leaders of our nation.
             </p>
           </motion.div>
         </div>
@@ -80,9 +81,9 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
             <div className="relative z-10">
               <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-6">Our Mission</h2>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
-                To revolutionize interior spaces by combining artisanal craftsmanship with modern 
-                technology, delivering unmatched aesthetic value and functionality to every home 
-                and office in Kenya.
+                To revolutionize the institutional apparel industry in Kenya by combining superior 
+                fabric engineering with distinctive branding, delivering matched value 
+                in comfort, durability, and identity to every student and professional.
               </p>
             </div>
             <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[#C8102E]/20 rounded-full blur-[100px] pointer-events-none" />
@@ -101,9 +102,9 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
             <div className="relative z-10">
               <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-6">Our Vision</h2>
               <p className="text-lg text-white/90 leading-relaxed font-medium">
-                To be the leading voice in modern interior design across East Africa, 
-                inspiring a movement where environment-conscious architecture meets 
-                limitless creative expression.
+                To be the undisputed leader in quality school and corporate wear across East Africa, 
+                defining high standards for textile manufacturing and professional 
+                institutional identity.
               </p>
             </div>
             <div className="absolute -right-20 -top-20 w-80 h-80 bg-white/10 rounded-full blur-[80px] pointer-events-none" />
@@ -159,6 +160,7 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
           <div className="absolute inset-0 bg-gradient-to-br from-[#C8102E]/20 to-transparent opacity-50" />
         </div>
       </section>
+      <Footer siteSettings={siteSettings} />
       </div>
     </div>
   );

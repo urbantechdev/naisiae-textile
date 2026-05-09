@@ -1,6 +1,6 @@
 {
-  "name": "Naisiae Textile - Premium Uniforms & Branding",
-  "description": "Premium uniform manufacturing and textile branding solutions based in Nairobi. Real-time product catalog, bulk quote management, and custom order tracking.",
+  "name": "Uhuru Market Uniforms",
+  "description": "Premium uniform manufacturing and textile solutions in Nairobi. Custom branding, bulk orders, and quality fabrics.",
   "requestFramePermissions": [],
   "majorCapabilities": ["Firebase Integration", "Admin Dashboard", "Analytics", "E-commerce"]
 }

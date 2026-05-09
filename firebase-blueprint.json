@@ -141,6 +141,37 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["productId", "rating", "comment", "status"]
+    },
+    "mega_menu": {
+      "title": "Mega Menu",
+      "description": "Advanced navigation menu structure with featured content and nested categories.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "featured": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "image": { "type": "string" },
+            "link": { "type": "string" }
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "items": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "featured", "categories"]
     }
   },
   "firestore": {
@@ -151,6 +182,10 @@
     "/products/{productId}": {
       "schema": "product",
       "description": "Collection of all items for sale."
+    },
+    "/mega_menus/{menuId}": {
+      "schema": "mega_menu",
+      "description": "Advanced navigation menu structures."
     },
     "/users/{userId}": {
       "schema": "user",

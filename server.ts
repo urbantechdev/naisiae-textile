@@ -91,15 +91,15 @@ async function startServer() {
           const price = productData.fields.price?.doubleValue || productData.fields.price?.integerValue || 0;
 
           const metaTags = `
-            <title>${name} | Naisiae Textile</title>
-            <meta property="og:title" content="${name} - KES ${price.toLocaleString()} | Naisiae Textile" />
+            <title>${name} | Uhuru Market Uniforms</title>
+            <meta property="og:title" content="${name} - KES ${price.toLocaleString()} | Uhuru Market Uniforms" />
             <meta property="og:description" content="${description}" />
             <meta property="og:image" content="${imageUrl}" />
             <meta property="og:type" content="product" />
             <meta name="twitter:card" content="summary_large_image" />
           `;
           
-          res.send(indexHtml.replace('<title>Naisiae Textile</title>', metaTags));
+          res.send(indexHtml.replace('<title>Uhuru Market Uniforms - Premium Uniforms & Branding</title>', metaTags));
           return;
         }
       } catch (e) {
@@ -126,7 +126,7 @@ async function startServer() {
         const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
         
         if (settingsData.fields) {
-          const title = settingsData.fields.sharingTitle?.stringValue || settingsData.fields.siteName?.stringValue || "Naisiae Textile";
+          const title = settingsData.fields.sharingTitle?.stringValue || settingsData.fields.siteName?.stringValue || "Uhuru Market Uniforms";
           const tagline = settingsData.fields.siteTagline?.stringValue || "Uniforms & Branding";
           const description = settingsData.fields.sharingDescription?.stringValue || "Quality school uniforms and corporate wear.";
           const imageUrl = settingsData.fields.sharingImage?.stringValue || settingsData.fields.siteLogo?.stringValue || "";
@@ -140,7 +140,7 @@ async function startServer() {
             <meta name="twitter:card" content="summary_large_image" />
           `;
           
-          res.send(indexHtml.replace('<title>Naisiae Textile</title>', metaTags));
+          res.send(indexHtml.replace('<title>Uhuru Market Uniforms - Premium Uniforms & Branding</title>', metaTags));
           return;
         }
       } catch (e) {

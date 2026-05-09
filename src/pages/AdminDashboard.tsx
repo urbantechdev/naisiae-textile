@@ -39,7 +39,8 @@ import {
   Sparkles,
   Zap,
   Percent,
-  Palette
+  Palette,
+  Maximize2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -84,6 +85,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { List as VirtualList } from 'react-window';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { 
@@ -100,8 +102,9 @@ import {
   Bar
 } from 'recharts';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import { SEED_URLS } from '../constants/seedData';
 import { suggestCompetitivePrice, PriceSuggestion } from '../services/pricingService';
-import { generateProductDetails } from '../services/geminiService';
+import { generateProductDetails, generateDescriptionOnly } from '../services/geminiService';
 import { ShieldCheck, BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
@@ -115,6 +118,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [wishlists, setWishlists] = useState<any[]>([]);
   const [discountRules, setDiscountRules] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -137,6 +141,7 @@ export default function AdminDashboard() {
   const [editingDiscountRule, setEditingDiscountRule] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [stagedProducts, setStagedProducts] = useState<any[] | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
   const [chartData, setChartData] = useState<any[]>([]);
 
@@ -196,6 +201,8 @@ export default function AdminDashboard() {
       setAnalyticsDocs(docs);
       const totalViews = docs.reduce((acc, doc) => acc + (doc.views || 0), 0);
       setStats(prev => ({ ...prev, totalViews }));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'analytics_summary');
     });
 
     // Real-time users
@@ -229,12 +236,12 @@ export default function AdminDashboard() {
       } else {
         // Initialize default settings if doesn't exist
         setSiteSettings({
-          siteName: 'Naisiae Textile',
+          siteName: 'Uhuru Market Uniforms',
           siteLogo: '',
           footerLogo: '',
           favicon: '',
-          siteTagline: 'Quality Textiles & Custom Uniforms',
-          sharingTitle: 'Naisiae Textile',
+          siteTagline: 'Uhuru Market Uniforms',
+          sharingTitle: 'Uhuru Market Uniforms',
           sharingDescription: 'Modern, High-Quality Uniforms & Apparel for Kenya\'s Leading Institutions.',
           sharingImage: '',
           enableComparison: true,
@@ -242,7 +249,7 @@ export default function AdminDashboard() {
         });
       }
     }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'settings');
+      handleFirestoreError(error, OperationType.GET, 'settings/site');
     });
 
     // Real-time discount rules
@@ -257,6 +264,14 @@ export default function AdminDashboard() {
       setReviews(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'reviews');
+    });
+
+    // Real-time Mega Menus
+    const unsubscribeMegaMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
+      const menus = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMegaMenus(menus);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'mega_menus');
     });
 
     // Fetch Analytics for Top Products (Last 30 Days)
@@ -378,6 +393,9 @@ export default function AdminDashboard() {
         : (Number(product.stock) || 0);
       matchesStatus = totalStock <= 5;
     }
+    else if (productStatusFilter === 'wholesale') {
+      matchesStatus = product.tags?.some((t: string) => t.toLowerCase() === 'wholesale');
+    }
     
     const minP = parseFloat(productMinPrice) || 0;
     const maxP = parseFloat(productMaxPrice) || Infinity;
@@ -417,71 +435,152 @@ export default function AdminDashboard() {
     if (!file) return;
 
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    
+    setToast({ message: `Analyzing ${file.name}...`, type: 'info' });
 
-    if (fileExtension === 'csv') {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          processImportedData(results.data as any[]);
-        },
-        error: (error: any) => {
-          setToast({ message: `Error parsing CSV: ${error.message}`, type: 'error' });
+    // Reset input value so the same file can be selected again
+    const resetInput = () => { if (e.target) e.target.value = ''; };
+
+    if (fileExtension === 'csv' || fileExtension === 'svg' || fileExtension === 'txt') {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const content = evt.target?.result as string;
+          
+          if (content.trim().startsWith('<svg') || content.trim().startsWith('<?xml')) {
+            setToast({ message: 'Use "Add Product" for SVG images.', type: 'warning' });
+            resetInput();
+            return;
+          }
+
+          Papa.parse(content, {
+            header: false, // Standard arrays first to find the real header row
+            skipEmptyLines: true,
+            complete: (results) => {
+              const rows = results.data as string[][];
+              if (rows.length === 0) {
+                setToast({ message: 'File is empty', type: 'error' });
+                resetInput();
+                return;
+              }
+
+              // Find the header row (one that contains "name" or "product")
+              let headerIndex = -1;
+              for (let i = 0; i < Math.min(rows.length, 10); i++) {
+                const row = rows[i].map(c => String(c).toLowerCase());
+                if (row.some(c => c.includes('product') || c.includes('name') || c.includes('category'))) {
+                  headerIndex = i;
+                  break;
+                }
+              }
+
+              if (headerIndex === -1) {
+                setToast({ message: 'Could not find product data headers', type: 'error' });
+                resetInput();
+                return;
+              }
+
+              const headers = rows[headerIndex].map(h => h.trim().toLowerCase());
+              const dataRows = rows.slice(headerIndex + 1);
+              const formattedData = dataRows.map(row => {
+                const obj: any = {};
+                headers.forEach((h, i) => {
+                  if (h) obj[h] = row[i];
+                });
+                return obj;
+              });
+
+              resetInput();
+              processImportedData(formattedData);
+            },
+            error: (error: any) => {
+              resetInput();
+              setToast({ message: `Error: ${error.message}`, type: 'error' });
+            }
+          });
+        } catch (err) {
+          resetInput();
+          setToast({ message: 'Error processing file', type: 'error' });
         }
-      });
+      };
+      reader.readAsText(file);
     } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
       const reader = new FileReader();
       reader.onload = (evt) => {
         try {
-          const bstr = evt.target?.result;
-          const wb = XLSX.read(bstr, { type: 'binary' });
+          const data = evt.target?.result;
+          const wb = XLSX.read(data, { type: 'array' });
           const wsname = wb.SheetNames[0];
           const ws = wb.Sheets[wsname];
-          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1 });
           
-          if (data.length < 2) {
-            setToast({ message: 'Excel file is empty or missing headers', type: 'error' });
+          if (jsonData.length === 0) {
+            setToast({ message: 'File is empty', type: 'error' });
+            resetInput();
             return;
           }
 
-          // Convert array of arrays to array of objects using the first row as headers
-          const headers = data[0] as string[];
-          const rows = data.slice(1) as any[][];
-          const formattedData = rows.map(row => {
+          const rows = jsonData as any[][];
+          let headerIndex = -1;
+          for (let i = 0; i < Math.min(rows.length, 10); i++) {
+            const row = rows[i].map(c => String(c).toLowerCase());
+            if (row.some(c => c.includes('product') || c.includes('name') || c.includes('category'))) {
+              headerIndex = i;
+              break;
+            }
+          }
+
+          if (headerIndex === -1) {
+            setToast({ message: 'Could not find product data headers', type: 'error' });
+            resetInput();
+            return;
+          }
+
+          const headers = rows[headerIndex].map(h => String(h).trim().toLowerCase());
+          const dataRows = rows.slice(headerIndex + 1);
+          const formattedData = dataRows.map(row => {
             const obj: any = {};
             headers.forEach((h, i) => {
-              if (h) obj[h.toLowerCase().trim()] = row[i];
+              if (h) obj[h] = row[i];
             });
             return obj;
           });
-          
+
+          resetInput();
           processImportedData(formattedData);
         } catch (error) {
-          setToast({ message: `Error parsing Excel: ${error instanceof Error ? error.message : 'Unknown error'}`, type: 'error' });
+          resetInput();
+          setToast({ message: `Error: ${error instanceof Error ? error.message : 'Unknown'}`, type: 'error' });
         }
       };
-      reader.onerror = () => {
-        setToast({ message: 'Error reading file', type: 'error' });
-      };
-      reader.readAsBinaryString(file);
+      reader.readAsArrayBuffer(file);
     } else {
+      resetInput();
       setToast({ message: 'Unsupported file format. Please use CSV or Excel.', type: 'error' });
     }
-
-    // Reset input value so the same file can be selected again
-    e.target.value = '';
   };
 
   const processImportedData = async (importedData: any[]) => {
-    if (importedData.length === 0) {
+    if (!importedData || importedData.length === 0) {
       setToast({ message: 'No data found in the file', type: 'error' });
       return;
     }
 
+    // Helper for safe strings
+    const s = (v: any) => v === null || v === undefined ? '' : String(v).trim();
+    const n = (v: any) => parseFloat(v?.toString() || '0') || 0;
+
     // Map headers to internal fields more robustly
-    const mappedData = importedData.map(item => {
+    const mappedData = importedData
+      .filter(item => {
+        const nameKey = Object.keys(item).find(k => k.toLowerCase().includes('name') || k.toLowerCase().includes('title'));
+        const name = nameKey ? s(item[nameKey]) : '';
+        // Skip empty rows or rows starting with separator symbols like ▶
+        return name && !name.startsWith('▶') && !name.startsWith('---');
+      })
+      .map(item => {
       // Find values regardless of case or slight name variations
-      const getVal = (fields: string[]) => {
+      const getRaw = (fields: string[]) => {
         for (const field of fields) {
           const lowerField = field.toLowerCase();
           for (const key of Object.keys(item)) {
@@ -494,44 +593,68 @@ export default function AdminDashboard() {
         return undefined;
       };
 
-      const name = getVal(['name', 'title', 'product name']) || 'Unnamed Product';
-      const category = getVal(['category', 'type', 'group']) || 'School Uniforms';
-      const priceVal = getVal(['price', 'amount', 'cost']);
-      const oldPriceVal = getVal(['oldprice', 'discount price', 'original price']);
-      const desc = getVal(['description', 'details', 'summary', 'about']) || '';
-      const img = getVal(['imageurl', 'image', 'photo', 'url']) || '';
-      const statusVal = getVal(['active', 'status', 'published']);
-      const badge = getVal(['badge', 'label', 'tagline']) || '';
-      const tagsVal = getVal(['tags', 'keywords']);
+      const name = s(getRaw(['name', 'title', 'product name'])) || 'Unnamed Product';
+      const category = s(getRaw(['category', 'type', 'group'])) || 'School Uniforms';
+      const price = n(getRaw(['price', 'amount', 'cost', 'unit price', 'current price']));
+      const wholesalePrice = n(getRaw(['wholesale', 'bulk price', 'wholesale price']));
+      const oldPrice = n(getRaw(['oldprice', 'discount price', 'original price', 'old price']));
+      const desc = s(getRaw(['description', 'details', 'summary', 'about']));
+      const img = s(getRaw(['imageurl', 'image', 'photo', 'url']));
+      const badge = s(getRaw(['badge', 'label', 'tagline']));
+      const statusVal = getRaw(['active', 'status', 'published']);
+      const tagsVal = getRaw(['tags', 'keywords']);
+
+      const tags = tagsVal ? 
+        (typeof tagsVal === 'string' ? tagsVal.split(',').map((t: string) => t.trim()) : [s(tagsVal)]) : 
+        [];
+      
+      // Auto-tag wholesale if wholesale price detected or tag exists
+      if (wholesalePrice > 0 && !tags.some(t => t.toLowerCase() === 'wholesale')) {
+        tags.push('Wholesale');
+      }
 
       return {
         name,
         category,
-        price: parseFloat(priceVal?.toString() || '0') || 0,
-        oldPrice: parseFloat(oldPriceVal?.toString() || '0') || 0,
+        price,
+        wholesalePrice: wholesalePrice || price, // Fallback to price if not set
+        oldPrice,
         description: desc,
         imageUrl: img,
         active: statusVal?.toString().toLowerCase() === 'true' || 
                 statusVal === true || 
                 statusVal === 1 ||
                 statusVal === undefined,
-        badge: badge,
-        tags: tagsVal ? 
-              (typeof tagsVal === 'string' ? 
-                tagsVal.split(',').map((t: string) => t.trim()) : 
-                [tagsVal.toString()]) : 
-              [],
+        badge,
+        tags: [...new Set(tags)],
       };
     });
 
-    if (confirm(`Are you sure you want to import ${mappedData.length} products?`)) {
-      setIsImporting(true);
-      let successCount = 0;
-      let failCount = 0;
+    setStagedProducts(mappedData);
+    setToast({ message: `Imported ${mappedData.length} products to staging. Please review and sync.`, type: 'info' });
+  };
 
-      try {
-        for (const productData of mappedData) {
-          try {
+  const handleSyncStagedProducts = async () => {
+    if (!stagedProducts || stagedProducts.length === 0) return;
+
+    setIsImporting(true);
+    let successCount = 0;
+    let updatedCount = 0;
+    let failCount = 0;
+
+    try {
+      for (const productData of stagedProducts) {
+        try {
+          // Synchronization: Check if product with same name exists
+          const existingProduct = products.find(p => p.name.toLowerCase().trim() === productData.name.toLowerCase().trim());
+          
+          if (existingProduct) {
+            await updateDoc(doc(db, 'products', existingProduct.id), {
+              ...productData,
+              updatedAt: serverTimestamp()
+            });
+            updatedCount++;
+          } else {
             await addDoc(collection(db, 'products'), {
               ...productData,
               imageUrls: productData.imageUrl ? [productData.imageUrl] : [],
@@ -540,22 +663,74 @@ export default function AdminDashboard() {
               sortOrder: products.length + successCount + 1
             });
             successCount++;
-          } catch (err) {
-            console.error('Error importing row:', err);
-            failCount++;
           }
+        } catch (err) {
+          console.error('Error importing row:', err);
+          failCount++;
         }
-        
-        if (failCount === 0) {
-          setToast({ message: `Successfully imported ${successCount} products!`, type: 'success' });
-        } else {
-          setToast({ message: `Imported ${successCount} products. Failed ${failCount} rows.`, type: 'warning' });
-        }
-      } catch (error) {
-        handleFirestoreError(error, OperationType.CREATE, 'products');
-      } finally {
-        setIsImporting(false);
       }
+      
+      setToast({ 
+        message: `Sync complete! ${updatedCount} updated, ${successCount} created.${failCount > 0 ? ` Errors: ${failCount}` : ''}`, 
+        type: failCount === 0 ? 'success' : 'warning' 
+      });
+      setStagedProducts(null); // Clear staging after success
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'products');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleSaveMegaMenu = async (menuData: any) => {
+    try {
+      await setDoc(doc(db, 'mega_menus', menuData.id), {
+        ...menuData,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      setToast({ message: 'Mega menu updated successfully!', type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'mega_menus');
+    }
+  };
+
+  const handleSeedPhotos = async () => {
+    if (!confirm(`This will add ${SEED_URLS.length} product placeholders with the requested images. Continue?`)) return;
+    
+    setIsImporting(true);
+    let successCount = 0;
+    
+    try {
+      for (let i = 0; i < SEED_URLS.length; i++) {
+        const url = SEED_URLS[i];
+        await addDoc(collection(db, 'products'), {
+          name: `Premium Textile Sample ${i + 1}`,
+          category: 'New Arrivals',
+          price: 0,
+          oldPrice: 0,
+          description: 'Waiting for product description and finalized specifications...',
+          imageUrl: url,
+          imageUrls: [url],
+          active: true,
+          tags: ['Incoming', 'New'],
+          badge: 'New',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          stock: 100,
+          featured: false,
+          sku: `TX-${Date.now()}-${i}`
+        });
+        successCount++;
+        if (i % 5 === 0) {
+          setToast({ message: `Progress: ${successCount}/${SEED_URLS.length} images added...`, type: 'info' });
+        }
+      }
+      setToast({ message: `Successfully added ${successCount} product images!`, type: 'success' });
+    } catch (error) {
+      console.error(error);
+      setToast({ message: 'Error adding some images. Check console for details.', type: 'error' });
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -639,6 +814,13 @@ export default function AdminDashboard() {
             onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} 
             icon={<Megaphone size={20} />} 
             label="Marketing & Promos" 
+            collapsed={isSidebarCollapsed}
+          />
+          <SidebarItem 
+            active={activeView === 'appearance'} 
+            onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} 
+            icon={<Palette size={20} />} 
+            label="Mega Menu & Layout" 
             collapsed={isSidebarCollapsed}
           />
           <SidebarItem 
@@ -755,6 +937,16 @@ export default function AdminDashboard() {
                     }}
                   />
                   <StatCard label="Active Items" value={stats.activeProducts.toString()} trend={0} icon={<Package className="text-[#C8961A]" />} />
+                  <StatCard 
+                    label="Wholesale Deals" 
+                    value={products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale')).length.toString()} 
+                    trend={0} 
+                    icon={<Zap className="text-orange-500" />} 
+                    onClick={() => {
+                      setProductStatusFilter('wholesale');
+                      setActiveView('products');
+                    }}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -835,8 +1027,12 @@ export default function AdminDashboard() {
                     {products.slice(0, 4).map((product, idx) => (
                       <div key={product.id} className="group flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:border-[#E2E8F0] hover:bg-slate-50/50 transition-all">
                         <div className="relative">
-                          <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                             <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                          <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+                             {product.imageUrl ? (
+                               <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                             ) : (
+                               <ImageIcon size={24} className="text-slate-300" />
+                             )}
                           </div>
                           <div className="absolute -top-2 -left-2 w-6 h-6 bg-[#C8961A] text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-lg">
                             #{idx + 1}
@@ -879,16 +1075,24 @@ export default function AdminDashboard() {
                         >
                           <Download size={14} /> Export
                         </button>
-                        <label className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-[#E2E8F0] hover:bg-slate-50 transition-all text-[#64748B]" title="Import from CSV or Excel">
+                        <label className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-[#E2E8F0] hover:bg-slate-50 transition-all text-[#64748B]" title="Import from CSV, Excel or SVG">
                           <Upload size={14} /> Import
                           <input 
                             type="file" 
-                            accept=".csv, .xlsx, .xls" 
+                            accept=".csv, .xlsx, .xls, .svg" 
                             className="hidden" 
                             onChange={handleImportFile}
                             disabled={isImporting}
                           />
                         </label>
+                        <button 
+                          onClick={handleSeedPhotos}
+                          disabled={isImporting}
+                          className="px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 transition-all text-indigo-600 disabled:opacity-50"
+                          title="Import requested product images"
+                        >
+                          <ImageIcon size={14} /> Seed Photos
+                        </button>
                         <button 
                           onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
                           className="bg-[#C8102E] hover:bg-[#8B0000] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-[#B91C1C]/20 shrink-0"
@@ -911,27 +1115,28 @@ export default function AdminDashboard() {
                             className="w-full pl-10 pr-4 py-2 bg-white border border-[#E2E8F0] rounded-lg text-sm focus:ring-2 focus:ring-[#C8102E]/20 focus:border-[#C8102E] outline-none transition-all placeholder:text-[#94A3B8]"
                           />
                         </div>
-                        <div className="flex flex-wrap gap-3">
-                          <select 
-                            value={productCategoryFilter}
-                            onChange={(e) => setProductCategoryFilter(e.target.value)}
-                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
-                          >
-                            <option value="all">All Categories</option>
-                            {categories.map(cat => (
-                              <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                          </select>
-                          <select 
-                            value={productStatusFilter}
-                            onChange={(e) => setProductStatusFilter(e.target.value)}
-                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
-                          >
-                            <option value="all">All Status</option>
-                            <option value="active">Active Only</option>
-                            <option value="inactive">Drafts Only</option>
-                          </select>
-                        </div>
+      <div className="flex flex-wrap gap-3">
+        <select 
+          value={productCategoryFilter}
+          onChange={(e) => setProductCategoryFilter(e.target.value)}
+          className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
+        >
+          <option value="all">All Categories</option>
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+        <select 
+          value={productStatusFilter}
+          onChange={(e) => setProductStatusFilter(e.target.value)}
+          className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Drafts Only</option>
+          <option value="wholesale">Wholesale Only</option>
+        </select>
+      </div>
                       </div>
                       
                       <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 border-t border-[#E2E8F0]/50">
@@ -969,30 +1174,39 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                        <tr>
-                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Product</th>
-                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Category</th>
-                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Base Price</th>
-                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Status</th>
-                          <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B] text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[#F1F5F9]">
-                        {filteredProducts.map((item) => (
-                          <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3">
+                  <div className="bg-white rounded-2xl border border-[#E2E8F0] overflow-hidden shadow-sm min-w-[800px]">
+                    <div className="flex bg-[#F8FAFC] border-b border-[#E2E8F0] font-black text-[10px] uppercase tracking-wider text-[#64748B]">
+                      <div className="flex-1 px-6 py-4">Product</div>
+                      <div className="w-[180px] px-6 py-4">Category</div>
+                      <div className="w-[150px] px-6 py-4">Base Price</div>
+                      <div className="w-[120px] px-6 py-4">Status</div>
+                      <div className="w-[100px] px-6 py-4 text-right">Actions</div>
+                    </div>
+                    
+                    <div className="h-[600px]">
+                      <VirtualList
+                        style={{ height: 600, width: '100%' }}
+                        rowCount={filteredProducts.length}
+                        rowHeight={80}
+                        rowProps={{}}
+                        rowComponent={({ index, style }) => {
+                          const item = filteredProducts[index];
+                          if (!item) return null;
+                          return (
+                            <div style={style} className="flex border-b border-[#F1F5F9] hover:bg-slate-50/50 transition-colors group items-center">
+                              <div className="flex-1 px-6 py-4 flex items-center gap-3 overflow-hidden">
                                 <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-xl overflow-hidden shrink-0 border border-slate-200">
-                                  {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-cover" /> : '🧥'}
+                                  {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.name} /> : '🧥'}
                                 </div>
-                                <div className="min-w-0 max-w-[200px]">
+                                <div className="min-w-0 flex-1">
                                   <p className="text-sm font-bold text-[#1E293B] truncate">{item.name}</p>
                                   <div className="flex flex-wrap gap-1 mt-1">
                                     {(item.tags || []).slice(0, 3).map((tag: string) => (
-                                      <span key={tag} className="text-[8px] font-black uppercase px-1 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200">
+                                      <span key={tag} className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border transition-colors ${
+                                        tag.toLowerCase() === 'wholesale' 
+                                        ? 'bg-[#0A1628] text-[#C8961A] border-[#C8961A]/30' 
+                                        : 'bg-slate-100 text-slate-500 border-slate-200'
+                                      }`}>
                                         {tag}
                                       </span>
                                     ))}
@@ -1004,44 +1218,48 @@ export default function AdminDashboard() {
                                   </div>
                                 </div>
                               </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <span className="bg-[#F1F5F9] text-[#1E293B] px-2.5 py-1 rounded-full text-[10px] font-bold border border-[#E2E8F0] shadow-sm">
-                                {item.category}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="font-extrabold text-sm text-[#0A1628]">
-                                KES {item.price.toLocaleString()}
-                                {item.oldPrice && <span className="block text-[10px] text-gray-400 line-through font-normal">KES {item.oldPrice.toLocaleString()}</span>}
+                              
+                              <div className="w-[180px] px-6 py-4 shrink-0">
+                                <span className="bg-[#F1F5F9] text-[#1E293B] px-2.5 py-1 rounded-full text-[10px] font-bold border border-[#E2E8F0] shadow-sm truncate block text-center">
+                                  {item.category}
+                                </span>
                               </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className={`flex items-center gap-1.5 text-[10px] font-bold ${item.active ? 'text-green-600' : 'text-gray-400'}`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${item.active ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-300'}`}></div>
-                                {item.active ? 'Active' : 'Draft'}
+                              
+                              <div className="w-[150px] px-6 py-4 shrink-0">
+                                <div className="font-extrabold text-sm text-[#0A1628]">
+                                  KES {item.price.toLocaleString()}
+                                  {item.oldPrice > 0 && <span className="block text-[10px] text-gray-400 line-through font-normal">KES {item.oldPrice.toLocaleString()}</span>}
+                                </div>
                               </div>
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <div className="flex items-center justify-end gap-2">
-                                <button 
-                                  onClick={() => { setEditingItem(item); setIsModalOpen(true); }}
-                                  className="p-1.5 text-[#64748B] hover:text-[#1E293B] hover:bg-white rounded-lg border border-transparent hover:border-[#E2E8F0] transition-all"
-                                >
-                                  <Edit2 size={16} />
-                                </button>
-                                <button 
-                                  onClick={() => handleDeleteProduct(item.id)}
-                                  className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
+                              
+                              <div className="w-[120px] px-6 py-4 shrink-0">
+                                <div className={`flex items-center gap-1.5 text-[10px] font-bold ${item.active ? 'text-green-600' : 'text-gray-400'}`}>
+                                  <div className={`w-1.5 h-1.5 rounded-full ${item.active ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-300'}`}></div>
+                                  {item.active ? 'Active' : 'Draft'}
+                                </div>
                               </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                              
+                              <div className="w-[100px] px-6 py-4 text-right shrink-0">
+                                <div className="flex items-center justify-end gap-2">
+                                  <button 
+                                    onClick={() => { setEditingItem(item); setIsModalOpen(true); }}
+                                    className="p-1.5 text-[#64748B] hover:text-[#1E293B] hover:bg-white rounded-lg border border-transparent hover:border-[#E2E8F0] transition-all"
+                                  >
+                                    <Edit2 size={16} />
+                                  </button>
+                                  <button 
+                                    onClick={() => handleDeleteProduct(item.id)}
+                                    className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -1489,8 +1707,12 @@ export default function AdminDashboard() {
                         </div>
                         <div className="space-y-3">
                           {list.items?.map((item: any) => (
-                            <div key={item.id} className="flex gap-3 items-center bg-white p-2 rounded-lg border border-gray-50">
-                              <img src={item.imageUrl} className="w-8 h-8 rounded object-cover" />
+                            <div key={item.id} className="flex gap-3 items-center bg-white p-2 rounded-lg border border-gray-50 flex items-center justify-center min-w-[32px] min-h-[32px]">
+                              {item.imageUrl ? (
+                                <img src={item.imageUrl} className="w-8 h-8 rounded object-cover" />
+                              ) : (
+                                <Package size={16} className="text-slate-200" />
+                              )}
                               <p className="text-xs font-medium text-slate-700 truncate">{item.name}</p>
                             </div>
                           ))}
@@ -1629,6 +1851,160 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
+            {activeView === 'appearance' && (
+              <motion.div 
+                key="appearance"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-8"
+              >
+                <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
+                  <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between bg-gradient-to-r from-white to-[#F8FAFC]">
+                    <div>
+                      <h3 className="text-2xl font-['Bebas_Neue'] text-[#0A1628] tracking-wide">Mega Menu Architecture</h3>
+                      <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Configure Advanced Navigation Elements</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-8 space-y-12">
+                    {/* If no mega menus in firestore, show setup button or pre-fill defaults */}
+                    {megaMenus.length === 0 ? (
+                      <div className="py-12 text-center bg-slate-50 rounded-[32px] border-2 border-dashed border-slate-200">
+                        <div className="max-w-md mx-auto space-y-4">
+                          <Palette size={48} className="mx-auto text-slate-300" />
+                          <h4 className="text-lg font-bold">Initialize Navigation Settings</h4>
+                          <p className="text-sm text-slate-500">Would you like to load the default mega menu structure to begin customizing images?</p>
+                          <button 
+                            onClick={async () => {
+                              const defaults = [
+                                { 
+                                  id: 'school_uniforms',
+                                  name: 'School Uniforms', 
+                                  featured: { title: 'Premium Blazers', image: 'https://i.pinimg.com/1200x/90/64/8b/90648bb28cec9fb56d9f37ccce1ee27c.jpg', link: '#' },
+                                  categories: [
+                                    { name: 'Boys Uniform', items: ['Shirts', 'Trousers', 'Shorts', 'Blazers', 'Ties'] },
+                                    { name: 'Girls Uniform', items: ['Blouses', 'Skirts', 'Dresses', 'Pinafores', 'Jumpers'] },
+                                    { name: 'Accessories', items: ['Socks', 'Belts', 'Bags', 'Badges', 'Water Bottles'] }
+                                  ]
+                                },
+                                { 
+                                  id: 'corporate_wear',
+                                  name: 'Corporate Wear', 
+                                  featured: { title: 'Durable Overalls', image: 'https://i.pinimg.com/1200x/8c/8b/4a/8c8b4a92c90c677e483561a37c37494a.jpg', link: '#' },
+                                  categories: [
+                                    { name: 'Office Attire', items: ['Branded Shirts', 'Formal Suits', 'Polo Shirts', 'Ties', 'Scarves'] },
+                                    { name: 'Workwear', items: ['Overalls', 'Dust Coats', 'Safety Vests', 'Cargo Pants', 'Aprons'] },
+                                    { name: 'Accessories', items: ['ID Lanyards', 'Name Tags', 'Branded Caps', 'Corporate Bags', 'Belts'] }
+                                  ]
+                                },
+                                { 
+                                  id: 'service_sectors',
+                                  name: 'Service Sectors', 
+                                  featured: { title: 'Medical Scrubs', image: 'https://i.pinimg.com/1200x/4e/64/1d/4e641d8e641772635489ef08b1a43a0e.jpg', link: '#' },
+                                  categories: [
+                                    { name: 'Medical', items: ['Scrubs', 'Lab Coats', 'Nurse Uniforms', 'Theatre Caps', 'Aprons'] },
+                                    { name: 'Hospitality', items: ['Chef Coats', 'Waiter Shirts', 'Kitchen Aprons', 'Hostess Wear', 'Table Linens'] },
+                                    { name: 'Security', items: ['Security Shirts', 'Tactical Pants', 'Berets', 'Peak Caps', 'Whistles'] }
+                                  ]
+                                }
+                              ];
+                              for (const menu of defaults) {
+                                await handleSaveMegaMenu(menu);
+                              }
+                            }}
+                            className="bg-[#1C3560] text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-[#1C3560]/20 hover:scale-105 transition-all"
+                          >
+                            Load Template Architecture
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        {megaMenus.map((menu) => (
+                          <div key={menu.id} className="bg-[#FBFCFE] border border-slate-100 rounded-[32px] p-8 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/80">
+                              <h4 className="font-['Bebas_Neue'] text-2xl tracking-widest text-[#0A1628]">{menu.name}</h4>
+                            </div>
+
+                            <div className="space-y-8">
+                              {/* Featured Section */}
+                              <div className="space-y-4">
+                                <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 block ml-2">Featured Card Content</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-600">Featured Title</label>
+                                    <input 
+                                      type="text" 
+                                      value={menu.featured.title} 
+                                      onChange={(e) => {
+                                        const updated = { ...menu, featured: { ...menu.featured, title: e.target.value } };
+                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                      }}
+                                      className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                    />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-600">Action Link</label>
+                                    <input 
+                                      type="text" 
+                                      value={menu.featured.link} 
+                                      onChange={(e) => {
+                                        const updated = { ...menu, featured: { ...menu.featured, link: e.target.value } };
+                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                      }}
+                                      placeholder="#"
+                                      className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                    />
+                                  </div>
+                                </div>
+                                
+                                <div className="space-y-1.5">
+                                  <label className="text-xs font-bold text-slate-600">Featured Image URL</label>
+                                  <div className="flex gap-4">
+                                    <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-sm relative group flex items-center justify-center">
+                                      {menu.featured.image ? (
+                                        <img src={menu.featured.image} className="w-full h-full object-cover" alt="Featured" />
+                                      ) : (
+                                        <ImageIcon size={20} className="text-slate-300" />
+                                      )}
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                        <ImageIcon size={16} className="text-white" />
+                                      </div>
+                                    </div>
+                                    <input 
+                                      type="text" 
+                                      placeholder="https://..."
+                                      value={menu.featured.image} 
+                                      onChange={(e) => {
+                                        const updated = { ...menu, featured: { ...menu.featured, image: e.target.value } };
+                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                      }}
+                                      className="flex-1 bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="pt-4 flex justify-end">
+                                <button 
+                                  onClick={() => handleSaveMegaMenu(menu)}
+                                  className="flex items-center gap-2 px-6 py-3 bg-[#1C3560] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all"
+                                >
+                                  <Save size={16} />
+                                  Update Architecture
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {activeView === 'reviews' && (
               <motion.div 
                 key="reviews"
@@ -1753,7 +2129,7 @@ export default function AdminDashboard() {
         <footer className="px-8 py-6 border-t border-[#E2E8F0] mt-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-[#64748B]">
-              &copy; {new Date().getFullYear()} <span className="font-bold text-[#1E293B]">Naisiae Textile</span>. All rights reserved.
+              &copy; {new Date().getFullYear()} <span className="font-bold text-[#1E293B]">Uhuru Market Uniforms</span>. All rights reserved.
             </p>
             <Link 
               to="/" 
@@ -1863,6 +2239,121 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Product Staging Review Modal */}
+      <AnimatePresence>
+        {stagedProducts && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setStagedProducts(null)}
+              className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+            >
+              <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div>
+                  <h2 className="text-2xl font-black text-[#1E293B] tracking-tight">Review Imported Products</h2>
+                  <p className="text-sm text-slate-500 font-medium">{stagedProducts.length} items detected from your file</p>
+                </div>
+                <button 
+                  onClick={() => setStagedProducts(null)}
+                  className="p-2 hover:bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <div className="grid grid-cols-1 gap-3">
+                  {stagedProducts.map((p, idx) => {
+                    const isExisting = products.some(ep => ep.name.toLowerCase().trim() === p.name.toLowerCase().trim());
+                    return (
+                      <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors bg-slate-50/30">
+                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                          {p.imageUrl ? (
+                            <img src={p.imageUrl} className="w-full h-full object-cover" alt={p.name} />
+                          ) : (
+                            <span className="text-xl">🧥</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-[#1E293B] truncate">{p.name}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] font-black uppercase text-slate-400 bg-white px-1.5 py-0.5 border border-slate-100 rounded-md">
+                              {p.category}
+                            </span>
+                            <span className="text-[10px] font-black text-blue-600">
+                              KES {p.price.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {isExisting ? (
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-wider">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                              Update Existing
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-wider">
+                              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                              New Product
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="p-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4 text-sm font-medium text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    {stagedProducts.filter(p => products.some(ep => ep.name.toLowerCase().trim() === p.name.toLowerCase().trim())).length} to Update
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    {stagedProducts.filter(p => !products.some(ep => ep.name.toLowerCase().trim() === p.name.toLowerCase().trim())).length} New
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setStagedProducts(null)}
+                    className="px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest text-[#64748B] hover:text-[#1E293B] transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSyncStagedProducts}
+                    disabled={isImporting}
+                    className="bg-[#C8102E] hover:bg-[#A60D26] text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-lg shadow-[#C8102E]/20 transition-all disabled:opacity-50 disabled:grayscale"
+                  >
+                    {isImporting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Synchronizing...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 size={18} />
+                        Synchronize Products
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}
@@ -2257,9 +2748,13 @@ function SortableImage({ url, index, onRemove }: any) {
     <div 
       ref={setNodeRef} 
       style={style} 
-      className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group bg-white shadow-sm"
+      className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group bg-white shadow-sm flex items-center justify-center"
     >
-      <img src={url} className="w-full h-full object-cover" alt="product" />
+      {url ? (
+        <img src={url} className="w-full h-full object-cover" alt="product" />
+      ) : (
+        <ImageIcon size={24} className="text-slate-300" />
+      )}
       <div 
         {...attributes} 
         {...listeners}
@@ -2285,6 +2780,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const [isSuggestingPrice, setIsSuggestingPrice] = useState(false);
   const [pricingReasoning, setPricingReasoning] = useState<string | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -2302,6 +2798,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
     name: initialData?.name || '',
     category: initialData?.category || 'School Uniforms',
     price: initialData?.price || 0,
+    wholesalePrice: initialData?.wholesalePrice || initialData?.price || 0,
     oldPrice: initialData?.oldPrice || 0,
     description: initialData?.description || '',
     imageUrl: initialData?.imageUrl || '',
@@ -2507,6 +3004,29 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
     }
   };
 
+  const handleGenerateDescription = async () => {
+    if (!formData.name) {
+      setToast({ message: "Please enter a product name first.", type: 'warning' });
+      return;
+    }
+
+    setIsGeneratingDescription(true);
+    try {
+      const description = await generateDescriptionOnly(
+        formData.name,
+        formData.category,
+        formData.tags
+      );
+      setFormData({ ...formData, description });
+      setToast({ message: "Description generated successfully!", type: 'success' });
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "Failed to generate description. Please try again.", type: 'error' });
+    } finally {
+      setIsGeneratingDescription(false);
+    }
+  };
+
   const handleSuggestPrice = async () => {
     if (!formData.name) {
       setToast({ message: "Please enter a product name first so AI can research the market.", type: 'warning' });
@@ -2544,6 +3064,9 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
     { name: 'Gold', hex: '#FFD700' },
     { name: 'Red', hex: '#FF0000' }
   ];
+
+  const commonSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', 'Junior', 'Senior'];
+  const commonMaterials = ['Cotton', 'Polyester', 'Wool', 'Nylon', 'Silk', 'Canvas', 'Denim'];
 
   const quickAddColor = (colorName: string) => {
     if (formData.variants.some((v: any) => v.type === 'Color' && v.value === colorName)) {
@@ -2686,106 +3209,172 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
       </div>
 
       {/* Variants Section */}
-      <div className="space-y-4 pt-4 border-t border-slate-100">
+      <div className="space-y-6 pt-6 border-t border-slate-100 bg-slate-50/30 p-4 rounded-3xl">
         <div className="flex justify-between items-center px-1">
           <div>
-            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Product Variants</label>
-            <p className="text-[9px] text-[#94A3B8] font-bold uppercase">Size, Color, or custom options</p>
+            <label className="text-[11px] font-black uppercase text-[#1E293B] tracking-wider">Product Variants</label>
+            <p className="text-[9px] text-[#64748B] font-bold uppercase mt-0.5">Manage Size, Color, and Materials</p>
           </div>
           <button 
             type="button"
             onClick={() => setShowVariantForm(!showVariantForm)}
-            className="flex items-center gap-1.5 text-[10px] font-black text-[#1C3560] uppercase tracking-widest hover:text-[#C8102E] transition-colors"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
+              showVariantForm 
+                ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100' 
+                : 'bg-[#1C3560] text-white hover:bg-[#0A1628]'
+            }`}
           >
             {showVariantForm ? <X size={14} /> : <Plus size={14} />}
-            {showVariantForm ? 'Cancel' : 'Add Variant'}
+            {showVariantForm ? 'Cancel' : 'Add New Variant'}
           </button>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-[9px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
-            <Palette size={12} className="text-[#C8961A]" />
-            Quick Add Colors
-          </label>
-          <div className="flex flex-wrap gap-2 p-1">
-            {commonColors.map(color => (
-              <button
-                key={color.name}
-                type="button"
-                onClick={() => quickAddColor(color.name)}
-                className="group relative flex items-center gap-2 bg-white px-2 py-1.5 rounded-lg border border-slate-100 hover:border-[#C8102E] hover:shadow-sm transition-all"
-                title={`Add ${color.name}`}
-              >
-                <div 
-                  className="w-3 h-3 rounded-full border border-slate-200" 
-                  style={{ backgroundColor: color.hex }}
-                />
-                <span className="text-[9px] font-bold text-slate-600 uppercase">{color.name}</span>
-                <Plus size={8} className="text-slate-300 group-hover:text-[#C8102E]" />
-              </button>
-            ))}
+        {!showVariantForm && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
+                <Palette size={13} className="text-[#C8961A]" />
+                Quick Colors
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {commonColors.map(color => (
+                  <button
+                    key={color.name}
+                    type="button"
+                    onClick={() => quickAddColor(color.name)}
+                    className="group relative flex items-center gap-2 bg-white px-2.5 py-2 rounded-xl border border-slate-200 hover:border-[#F59E0B] hover:shadow-md transition-all active:scale-95"
+                    title={`Quick add ${color.name}`}
+                  >
+                    <div 
+                      className="w-3.5 h-3.5 rounded-full border border-slate-200 shadow-inner" 
+                      style={{ backgroundColor: color.hex }}
+                    />
+                    <span className="text-[9px] font-black text-slate-700 uppercase tracking-tight">{color.name}</span>
+                    <Plus size={8} className="text-slate-300 group-hover:text-[#F59E0B]" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
+                <Maximize2 size={13} className="text-[#C8961A]" />
+                Quick Sizes
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {commonSizes.map(size => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        variants: [...prev.variants, { id: Date.now().toString() + Math.random(), type: 'Size', value: size, price: 0, stock: 0, imageUrl: formData.imageUrl }]
+                      }));
+                    }}
+                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-[9px] font-black text-slate-700 uppercase hover:border-[#1C3560] hover:bg-[#1C3560]/5 transition-all active:scale-95 flex items-center gap-1.5"
+                  >
+                    {size} <Plus size={8} className="text-slate-300" />
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         {showVariantForm && (
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4 animate-in fade-in slide-in-from-top-2">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[9px] font-black uppercase text-[#64748B] tracking-widest">Type</label>
-                <select 
-                  value={newVariant.type}
-                  onChange={e => setNewVariant({...newVariant, type: e.target.value})}
-                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs outline-none focus:border-[#C8102E]"
-                >
-                  <option>Size</option>
-                  <option>Color</option>
-                  <option>Material</option>
-                </select>
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-[2rem] border-2 border-[#E2E8F0] shadow-xl space-y-6"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Variant Type</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['Size', 'Color', 'Material'].map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setNewVariant({...newVariant, type: t})}
+                      className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                        newVariant.type === t 
+                          ? 'bg-[#1C3560] text-white border-[#1C3560] shadow-lg' 
+                          : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100 hover:text-slate-600'
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-1">
-                <label className="text-[9px] font-black uppercase text-[#64748B] tracking-widest">Value (e.g. XL, Blue)</label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">
+                  Value <span className="text-slate-400 font-bold">(e.g. XL, Navy Blue)</span>
+                </label>
                 <input 
                   type="text"
-                  placeholder="Small, Navy Blue..."
+                  placeholder="Enter variant name..."
                   value={newVariant.value}
                   onChange={e => setNewVariant({...newVariant, value: e.target.value})}
-                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs outline-none focus:border-[#C8102E]"
+                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm font-bold placeholder:text-slate-300 outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
                 />
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[9px] font-black uppercase text-[#64748B] tracking-widest">Price Offset (Optional)</label>
-                <input 
-                  type="number"
-                  value={newVariant.price}
-                  onChange={e => setNewVariant({...newVariant, price: parseFloat(e.target.value)})}
-                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs outline-none focus:border-[#C8102E]"
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Price Offset (KES)</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">+</span>
+                  <input 
+                    type="number"
+                    value={newVariant.price}
+                    onChange={e => setNewVariant({...newVariant, price: parseFloat(e.target.value) || 0})}
+                    className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-8 pr-4 py-3 text-sm font-bold outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
+                    placeholder="0"
+                  />
+                </div>
+                <p className="text-[8px] text-slate-400 font-black uppercase tracking-widest ml-1">Added to base product price</p>
               </div>
-              <div className="space-y-1">
-                <label className="text-[9px] font-black uppercase text-[#64748B] tracking-widest">Stock</label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Stock Amount</label>
                 <input 
                   type="number"
                   value={newVariant.stock}
-                  onChange={e => setNewVariant({...newVariant, stock: parseInt(e.target.value)})}
-                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs outline-none focus:border-[#C8102E]"
+                  onChange={e => setNewVariant({...newVariant, stock: parseInt(e.target.value) || 0})}
+                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
+                  placeholder="0"
                 />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[9px] font-black uppercase text-[#64748B] tracking-widest">Variant Image (Optional)</label>
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1 flex items-center gap-2">
+                <ImageIcon size={12} className="text-[#C8961A]" />
+                Associate Image <span className="text-[8px] text-slate-400 normal-case tracking-normal">(Optional)</span>
+              </label>
+              <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide">
+                <button
+                  type="button"
+                  onClick={() => setNewVariant({...newVariant, imageUrl: ''})}
+                  className={`shrink-0 w-16 h-16 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${!newVariant.imageUrl ? 'border-[#C8102E] bg-red-50 text-[#C8102E]' : 'border-slate-100 text-slate-300 hover:border-slate-300'}`}
+                >
+                  <Ban size={16} />
+                  <span className="text-[8px] font-black uppercase">None</span>
+                </button>
                 {formData.imageUrls.map((url: string, i: number) => (
                   <button
                     key={i}
                     type="button"
                     onClick={() => setNewVariant({...newVariant, imageUrl: url})}
-                    className={`shrink-0 w-12 h-12 rounded-lg border-2 transition-all ${newVariant.imageUrl === url ? 'border-[#C8102E] scale-95' : 'border-transparent'}`}
+                    className={`shrink-0 w-16 h-16 rounded-2xl border-2 transition-all overflow-hidden p-0.5 ${newVariant.imageUrl === url ? 'border-[#C8102E] scale-95 shadow-lg ring-4 ring-red-500/10' : 'border-transparent opacity-60 hover:opacity-100 hover:border-slate-200'}`}
                   >
-                    <img src={url} className="w-full h-full object-cover rounded-md" />
+                  {url ? (
+                    <img src={url} className="w-full h-full object-cover rounded-[14px]" alt={`Gallery ${i}`} />
+                  ) : (
+                    <ImageIcon size={16} />
+                  )}
                   </button>
                 ))}
               </div>
@@ -2794,41 +3383,68 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             <button 
               type="button"
               onClick={addVariant}
-              className="w-full py-3 bg-[#1C3560] text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#0A1628]"
+              className="w-full py-4 bg-gradient-to-r from-[#1C3560] to-[#0A1628] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:scale-[0.99] transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-3"
             >
-              Confirm Variant
+              <CheckCircle2 size={16} /> Save This Variant
             </button>
-          </div>
+          </motion.div>
         )}
 
-        <div className="space-y-2">
-          {formData.variants.map((v: any) => (
-            <div key={v.id} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl group shadow-sm transition-all hover:border-slate-200">
-              <div className="flex items-center gap-3">
-                {v.imageUrl && <img src={v.imageUrl} className="w-8 h-8 rounded-md object-cover border border-slate-100" />}
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase text-[#64748B] bg-slate-100 px-1.5 py-0.5 rounded">{v.type}</span>
-                    <span className="text-xs font-bold text-[#1E293B]">{v.value}</span>
+        <div className="space-y-3">
+          {formData.variants.length > 0 && (
+            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 ml-1">Defined Variants ({formData.variants.length})</label>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {formData.variants.map((v: any) => (
+              <motion.div 
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                key={v.id} 
+                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl group shadow-sm hover:shadow-md hover:border-[#1C3560] transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    {v.imageUrl ? (
+                      <img src={v.imageUrl} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" alt={v.value} />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-300">
+                        <ImageIcon size={20} />
+                      </div>
+                    )}
+                    <span className="absolute -top-2 -right-2 bg-[#1C3560] text-white text-[7px] font-black px-1.5 py-0.5 rounded-lg border border-white">
+                      {v.type}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    <span className="text-[10px] text-[#C8102E] font-bold">KSh {v.price.toLocaleString()}</span>
-                    <span className="text-[10px] text-[#94A3B8]">Stock: {v.stock}</span>
+                  <div>
+                    <h5 className="text-xs font-black text-[#1E293B] uppercase tracking-wide">{v.value}</h5>
+                    <div className="flex items-center gap-4 mt-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Price +</span>
+                        <span className="text-[11px] text-[#C8102E] font-black">KES {v.price.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 border-l border-slate-100 pl-4">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Stock</span>
+                        <span className={`text-[11px] font-black ${v.stock > 10 ? 'text-green-600' : 'text-amber-500'}`}>{v.stock}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <button 
-                type="button"
-                onClick={() => removeVariant(v.id)}
-                className="text-slate-300 hover:text-red-500 transition-colors"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
+                <button 
+                  type="button"
+                  onClick={() => removeVariant(v.id)}
+                  className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </motion.div>
+            ))}
+          </div>
           {formData.variants.length === 0 && !showVariantForm && (
-            <div className="text-center py-6 bg-slate-50/50 border border-dashed border-slate-200 rounded-2xl">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No variants defined</p>
+            <div className="text-center py-12 bg-white/50 border-2 border-dashed border-slate-100 rounded-[2.5rem]">
+              <Package className="mx-auto text-slate-200 mb-3" size={32} />
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-[3px]">Stock Keeping Units (SKU)</p>
+              <p className="text-[9px] text-slate-300 font-bold uppercase mt-1">Define sizes or colors to track individual stock</p>
             </div>
           )}
         </div>
@@ -2879,8 +3495,8 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-1.5 flex flex-col justify-end">
           <div className="flex items-center justify-between px-1">
             <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (KES)</label>
             <button
@@ -2918,7 +3534,19 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
           )}
         </div>
         <div className="space-y-1.5 pt-[22px] sm:pt-0">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1 sm:mt-[22px]">Old Price (Optional)</label>
+          <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (KES)</label>
+          <div className="relative">
+            <input 
+              type="number" 
+              value={formData.wholesalePrice}
+              onChange={e => setFormData({...formData, wholesalePrice: Number(e.target.value)})}
+              className="w-full bg-orange-50 border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:border-orange-500 outline-none transition-colors text-orange-700 font-bold" 
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest pointer-events-none">BULK</div>
+          </div>
+        </div>
+        <div className="space-y-1.5 pt-[22px] sm:pt-0">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Old Price (Optional)</label>
           <div className="relative">
             <input 
               type="number" 
@@ -3034,7 +3662,18 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Short Description</label>
+        <div className="flex justify-between items-center px-1">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Short Description</label>
+          <button
+            type="button"
+            onClick={handleGenerateDescription}
+            disabled={isGeneratingDescription}
+            className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+          >
+            <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
+            {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
+          </button>
+        </div>
         <textarea 
           rows={3} 
           required
@@ -3055,15 +3694,35 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
           </select>
         </div>
-        <div className="flex items-center gap-4 mt-6">
-          <button 
-            type="button"
-            onClick={() => setFormData({...formData, active: !formData.active})}
-            className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'}`}
-          >
-            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
-          </button>
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">{formData.active ? 'Public' : 'Hidden'}</span>
+        <div className="flex items-center gap-6 mt-6">
+          <div className="flex items-center gap-3">
+            <button 
+              type="button"
+              onClick={() => setFormData({...formData, active: !formData.active})}
+              className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'}`}
+            >
+              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
+            </button>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{formData.active ? 'Public' : 'Hidden'}</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button 
+              type="button"
+              onClick={() => {
+                const isWholesale = formData.tags.includes('Wholesale');
+                if (isWholesale) {
+                  setFormData({ ...formData, tags: formData.tags.filter((t: string) => t !== 'Wholesale') });
+                } else {
+                  setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
+                }
+              }}
+              className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'}`}
+            >
+              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
+            </button>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Wholesale Deal</span>
+          </div>
         </div>
       </div>
 
@@ -3348,7 +4007,7 @@ function SettingsForm({ initialData, onSave, setToast }: any) {
                 onChange={e => setFormData({ ...formData, siteName: e.target.value })}
                 onBlur={e => onSave(formData)}
                 className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
-                placeholder="e.g. Naisiae Textile" 
+                placeholder="e.g. Uhuru Market Uniforms" 
               />
             </div>
 
@@ -3359,7 +4018,7 @@ function SettingsForm({ initialData, onSave, setToast }: any) {
                 onChange={e => setFormData({ ...formData, siteTagline: e.target.value })}
                 onBlur={e => onSave(formData)}
                 className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
-                placeholder="e.g. Quality Textiles & Custom Uniforms" 
+                placeholder="e.g. Uhuru Market Uniforms" 
               />
             </div>
             
