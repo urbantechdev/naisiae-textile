@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 export interface GeneratedProduct {
   name: string;
@@ -14,7 +14,7 @@ export interface GeneratedProduct {
 export async function generateProductDetails(base64Image: string, mimeType: string): Promise<GeneratedProduct> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.0-flash",
       contents: [
         {
           parts: [
@@ -66,7 +66,7 @@ export async function generateProductDetails(base64Image: string, mimeType: stri
 export async function generateDescriptionOnly(name: string, category: string, tags: string[]): Promise<string> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.0-flash",
       contents: `Generate a professional, compelling marketing description for a product with the following details:
       Name: ${name}
       Category: ${category}
@@ -86,7 +86,7 @@ export async function generateDescriptionOnly(name: string, category: string, ta
 export async function generateProductDataFromText(name: string, category: string): Promise<GeneratedProduct> {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.0-flash",
       contents: `Generate professional product details for a textile/apparel product based on:
       Name: ${name}
       Category: ${category}
