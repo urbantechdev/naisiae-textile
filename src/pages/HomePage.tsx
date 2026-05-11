@@ -26,7 +26,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
@@ -40,9 +40,42 @@ interface PageProps {
 }
 
 export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageProps) {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('all');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    const subParam = params.get('sub');
+    const actionParam = params.get('action');
+    
+    if (tabParam) {
+      setActiveTab(tabParam);
+      if (subParam) {
+        setActiveSubCategory(subParam);
+      } else {
+        setActiveSubCategory(null);
+      }
+      setTimeout(() => {
+        const shopEl = document.getElementById('shop');
+        if (shopEl) {
+          shopEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+
+    if (actionParam) {
+      if (actionParam === 'cart') setIsCartOpen(true);
+      if (actionParam === 'wishlist') setIsWishlistOpen(true);
+      if (actionParam === 'compare') setIsCompareModalOpen(true);
+      if (actionParam === 'menu') setIsMenuOpen(true);
+      
+      // Clean up the URL
+      window.history.replaceState({}, '', '/');
+    }
+  }, [location.search]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -443,215 +476,17 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
-      {/* Top Promotion Bar */}
-      {promotions.filter(p => p.type === 'top-bar').map(promo => (
-        <div key={promo.id} className="bg-[#1C3560] text-white py-2 px-4 text-center text-[11px] font-bold tracking-widest uppercase flex items-center justify-center gap-4 animate-in fade-in slide-in-from-top duration-500 z-[60] relative">
-          <Megaphone size={12} className="text-[#C8961A]" />
-          <span>{promo.title} — {promo.subtitle}</span>
-          {promo.buttonLink && (
-            <Link to={promo.buttonLink} className="underline hover:text-[#C8961A] transition-colors ml-2 font-black">{promo.buttonText}</Link>
-          )}
-        </div>
-      ))}
-
-      {/* Top Bar */}
-      <div className="hidden lg:flex bg-[#0A1628] text-white/50 text-[11.5px] py-2 border-b border-white/5">
-        <div className="max-w-[1440px] mx-auto w-full px-8 flex justify-between items-center">
-          <div className="flex gap-4 items-center">
-            <span className="flex items-center gap-1.5"><Phone size={12} /> <a href={`tel:${siteSettings?.contactPhone || '+254792021795'}`} className="hover:text-[#C8961A]">{siteSettings?.contactPhone || '+254 792 021 795'}</a></span>
-            <div className="w-px h-3.5 bg-white/20"></div>
-            <span className="flex items-center gap-1.5"><Mail size={12} /> <a href={`mailto:${siteSettings?.contactEmail || 'info@naisiaetextile.com'}`} className="hover:text-[#C8961A]">{siteSettings?.contactEmail || 'info@naisiaetextile.com'}</a></span>
-          </div>
-          <div className="flex gap-4 items-center">
-            <span>Mon–Sat: 8am–6pm</span>
-            <div className="w-px h-3.5 bg-white/20"></div>
-            <span>7–14 Day Turnaround</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
-        <div className="max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center h-[68px] justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="overflow-hidden">
-              {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt="Logo" className="w-14 h-14 object-contain" />
-              ) : (
-                <div className="w-14 h-14 flex items-center justify-center font-bold text-xl text-[#C8102E]">NT</div>
-              )}
-            </div>
-            <div className="leading-tight">
-              <div className="font-['Bebas_Neue'] text-2xl tracking-[4px] text-transparent bg-clip-text bg-gradient-to-r from-[#F59E0B] via-[#FCD34D] to-[#D97706]">
-                {siteSettings?.sharingTitle || 'NAISIAE TEXTILE'}
-              </div>
-              <div className="text-[8px] tracking-[3px] text-[#F59E0B]/70 uppercase font-bold">
-                {siteSettings?.siteTagline || 'Uhuru Market Uniforms'}
-              </div>
-            </div>
-          </Link>
-
-          <div className="hidden lg:flex items-center gap-10">
-            {[
-              { 
-                id: 'school_uniforms',
-                name: 'School Uniforms', 
-                mega: {
-                  featured: {
-                    title: 'New Term Collection',
-                    image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
-                    link: '#'
-                  },
-                  categories: [
-                    { name: 'Primary Schools', items: ['Sweaters', 'Shirts', 'Shorts', 'Dresses', 'Socks'] },
-                    { name: 'Secondary Schools', items: ['Blazers', 'Trousers', 'Skirts', 'Ties', 'Tracksuits'] },
-                    { name: 'Kindergarten', items: ['Pinafores', 'T-shirts', 'Tunics', 'Hats'] }
-                  ]
-                }
-              },
-              { 
-                id: 'corporate_wear',
-                name: 'Corporate Wear', 
-                mega: {
-                  featured: {
-                    title: 'Custom Patterns',
-                    image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80',
-                    link: '#'
-                  },
-                  categories: [
-                    { name: 'Pullovers', items: ['V-Neck', 'Round Neck', 'Sleeveless', 'Cardigans'] },
-                    { name: 'Accessories', items: ['Scarves', 'Beanies', 'Gloves', 'Leg Warmers'] },
-                    { name: 'Corporate', items: ['Branded Vests', 'Logo Embroidery', 'Bulk Orders'] }
-                  ]
-                }
-              },
-              { 
-                id: 'branding',
-                name: 'Branding', 
-                mega: {
-                  featured: {
-                    title: 'Corporate Identity',
-                    image: 'https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&q=80',
-                    link: '#'
-                  },
-                  categories: [
-                    { name: 'Screen Printing', items: ['T-Shirts', 'Hoodies', 'Caps', 'Tote Bags'] },
-                    { name: 'Signage', items: ['Roll-up Banners', 'Vinyl Stickers', 'Posters'] },
-                    { name: 'Events', items: ['Lanyards', 'Wristbands', 'ID Cards'] }
-                  ]
-                }
-              },
-              { name: 'About Us', id: 'about', link: '/about' },
-            ].map((defaultItem) => {
-              const dynamicMega = megaMenus.find(m => m.id === defaultItem.id);
-              const item = {
-                ...defaultItem,
-                mega: dynamicMega ? {
-                  ...defaultItem.mega,
-                  featured: dynamicMega.featured || defaultItem.mega?.featured,
-                  categories: dynamicMega.categories || defaultItem.mega?.categories
-                } : defaultItem.mega
-              };
-
-              return (
-                <div key={item.id} className="group relative">
-                  <Link 
-                    to={item.link || '#'} 
-                    className="text-white/90 hover:text-[#C8961A] font-['Bebas_Neue'] text-lg tracking-[2px] h-[68px] flex items-center transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                  
-                  {item.mega && (
-                    <div className="absolute top-[68px] left-1/2 -translate-x-1/2 w-[1100px] bg-white shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] rounded-b-[2rem] p-12 opacity-0 invisible translate-y-4 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-500 z-[100] border border-slate-100 flex gap-16">
-                      <div className="flex-1 grid grid-cols-3 gap-12">
-                        {item.mega.categories.map((cat: any) => (
-                          <div key={cat.name}>
-                            <h4 className="font-['Bebas_Neue'] text-[#0A1628] text-2xl tracking-[1px] mb-6 border-b-2 border-slate-100 pb-3">{cat.name}</h4>
-                            <ul className="space-y-3">
-                              {cat.items.map((sub: string) => (
-                                <li key={sub}>
-                                  <a href="#" className="text-[12px] text-[#64748B] hover:text-[#C8102E] font-black flex items-center justify-between group transition-all uppercase tracking-[2px]">
-                                    {sub}
-                                    <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-[#C8961A]" />
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="w-[320px] shrink-0 border-l border-slate-100 pl-16">
-                        <div className="relative h-full rounded-2xl overflow-hidden group/feat shadow-xl flex items-center justify-center bg-[#0A1628]">
-                          {item.mega.featured.image ? (
-                            <img src={item.mega.featured.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" alt={item.mega.featured.title} />
-                          ) : (
-                            <div className="text-white/20"><Package size={64} /></div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
-                          <div className="absolute bottom-6 left-6 right-6">
-                            <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[4px] mb-2">Editor's Pick</p>
-                            <h5 className="text-white font-['Bebas_Neue'] text-3xl leading-none mb-4">{item.mega.featured.title}</h5>
-                            <Link to={item.mega.featured.link} className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-[10px] text-white hover:bg-[#C8102E] hover:border-[#C8102E] transition-all uppercase font-black tracking-widest">
-                              Shop Collection <ChevronRight size={12} />
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setIsWishlistOpen(true)}
-              className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
-            >
-              <Heart size={20} className={wishlist.length > 0 ? "fill-[#F0A500] text-[#F0A500]" : ""} />
-              {wishlist.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-[#F0A500] text-[#0A1628] text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#15284A]">
-                  {wishlist.length}
-                </span>
-              )}
-            </button>
-            <button 
-              onClick={() => setIsCompareModalOpen(true)}
-              className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
-              title="Compare Products"
-            >
-              <GitCompare size={20} className={compareList.length > 0 ? "text-[#C8961A]" : ""} />
-              {compareList.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-[#C8961A] text-[#0A1628] text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#15284A]">
-                  {compareList.length}
-                </span>
-              )}
-            </button>
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
-            >
-              <ShoppingBag size={20} />
-              {cart.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-[#C8102E] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#15284A]">
-                  {cart.length}
-                </span>
-              )}
-            </button>
-            <button onClick={() => setIsMenuOpen(true)} className="lg:hidden p-2 text-white/80 hover:bg-white/10 rounded-lg">
-              <Menu size={24} />
-            </button>
-    <Link to="/contact" 
-      onClick={(e) => { e.preventDefault(); setIsQuoteModalOpen(true); }}
-      className="hidden lg:flex bg-[#C8102E] hover:bg-[#8B0000] text-white px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all shadow-lg shadow-[#B91C1C]/30"
-    >
-      Get Quote
-    </Link>
-          </div>
-        </div>
-      </nav>
+      {/* Top Promotion Bar & Navbar */}
+      <Navbar 
+        cartCount={cart.length}
+        wishlistCount={wishlist.length}
+        compareCount={compareList.length}
+        setIsCartOpen={setIsCartOpen}
+        setIsWishlistOpen={setIsWishlistOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        setIsQuoteModalOpen={setIsQuoteModalOpen}
+        setIsCompareModalOpen={setIsCompareModalOpen}
+      />
 
       {/* Dynamic Hero Slider Section */}
       <section className="relative h-[85vh] min-h-[700px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
@@ -681,20 +516,20 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             </div>
 
             {/* Content Container (Maintains center position) */}
-            <div className="relative z-20 h-full max-w-[1440px] mx-auto px-8 flex flex-col items-center justify-center text-center">
+            <div className="relative z-20 h-full max-w-[1440px] mx-auto px-8 lg:px-24 flex flex-col items-start justify-center text-left">
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="mb-12"
+                className="mb-12 max-w-4xl"
               >
                 <span className="inline-block px-4 py-1.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[4px] rounded-full mb-6">
-                  {siteSettings?.siteTagline || "Official Uhuru Market Supplier"}
+                  {siteSettings?.siteTagline || "Uhuru Market Uniforms"}
                 </span>
-                <h1 className="font-['Bebas_Neue'] text-7xl md:text-8xl lg:text-[10rem] text-white tracking-[2px] leading-none mb-6">
+                <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-white tracking-tight leading-tight md:leading-none mb-6">
                   {siteSettings?.heroImages?.[currentSlide]?.title || "WEAR THE FUTURE"}
                 </h1>
-                <p className="text-white/70 max-w-2xl mx-auto text-sm md:text-base leading-relaxed tracking-widest font-bold uppercase opacity-80 mb-10">
+                <p className="text-white/70 max-w-2xl text-sm md:text-base leading-relaxed tracking-widest font-bold uppercase opacity-80 mb-10">
                   {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Quality textiles, custom engineered for Kenya's leading institutions."}
                 </p>
 
@@ -717,12 +552,12 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         </AnimatePresence>
 
         {/* Floating Search Bar (Static) */}
-        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center pt-80 lg:pt-96">
+        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-start justify-center pt-[450px] lg:pt-[550px] max-w-[1440px] mx-auto px-8 lg:px-24">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="w-full max-w-3xl px-8 pointer-events-auto"
+            className="w-full max-w-2xl pointer-events-auto"
           >
             <div className="relative group">
               <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
@@ -735,10 +570,10 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
                 onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
                 placeholder="Search uniforms, sports kits, or corporate branding..."
-                className="w-full bg-white/10 backdrop-blur-3xl border-2 border-white/20 rounded-3xl pl-16 pr-8 py-6 text-white text-lg lg:text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:border-[#C8961A] focus:ring-8 focus:ring-[#C8961A]/10 transition-all shadow-2xl placeholder:text-white/30 font-medium"
+                className="peer w-full bg-white/10 backdrop-blur-3xl border-2 border-white/20 rounded-3xl pl-16 pr-16 py-6 text-white text-lg lg:text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:border-[#C8961A] focus:ring-8 focus:ring-[#C8961A]/10 transition-all shadow-2xl placeholder:text-white/30 font-medium"
               />
-              <button className="absolute right-3 top-3 bottom-3 bg-[#C8102E] hover:bg-[#8B0000] text-white px-8 rounded-2xl font-black text-xs tracking-[2px] uppercase transition-all shadow-xl active:scale-95">
-                Find Products
+              <button className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white peer-focus:text-slate-400 peer-focus:hover:text-[#C8961A] transition-colors active:scale-95 flex items-center justify-center">
+                <Search size={24} />
               </button>
             </div>
 
@@ -817,7 +652,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-4">
                     <div className="w-8 h-[2px] bg-[#C8961A]"></div> Wholesale Excellence
                   </div>
-                  <h2 className="font-['Bebas_Neue'] text-5xl lg:text-8xl text-white leading-[0.85] mb-8">
+                  <h2 className="font-display text-5xl lg:text-8xl text-white leading-[0.85] mb-8">
                     Bulk Orders & <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
                   </h2>
                   <p className="text-white/60 text-sm lg:text-base leading-relaxed mb-12 max-w-lg font-medium">
@@ -844,15 +679,15 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
                   <div className="mt-12 grid grid-cols-3 gap-6 lg:gap-10 border-t border-white/5 pt-10">
                     <div>
-                      <div className="text-[#C8961A] font-['Bebas_Neue'] text-3xl leading-none mb-1">KES 500k+</div>
+                      <div className="text-[#C8961A] font-display text-3xl leading-none mb-1">KES 500k+</div>
                       <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Monthly Capacity</div>
                     </div>
                     <div>
-                      <div className="text-[#C8961A] font-['Bebas_Neue'] text-3xl leading-none mb-1">100+</div>
+                      <div className="text-[#C8961A] font-display text-3xl leading-none mb-1">100+</div>
                       <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Partner Schools</div>
                     </div>
                     <div>
-                      <div className="text-[#C8961A] font-['Bebas_Neue'] text-3xl leading-none mb-1">48HR</div>
+                      <div className="text-[#C8961A] font-display text-3xl leading-none mb-1">48HR</div>
                       <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Quote Response</div>
                     </div>
                   </div>
@@ -880,7 +715,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   className="absolute top-10 right-10 bg-[#C8961A] text-white p-6 lg:p-10 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center border-4 border-[#0A1628]"
                 >
                   <span className="text-[10px] font-black uppercase tracking-widest leading-none opacity-80 mb-1">Up To</span>
-                  <span className="font-['Bebas_Neue'] text-6xl lg:text-8xl leading-none">40%</span>
+                  <span className="font-display text-6xl lg:text-8xl leading-none">40%</span>
                   <span className="text-[10px] font-black uppercase tracking-widest leading-none">Off Bulk Orders</span>
                 </motion.div>
               </div>
@@ -897,7 +732,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
                 <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
               </div>
-              <h2 className="font-['Bebas_Neue'] text-5xl tracking-tight leading-none text-[#0A1628]">Wholesale Deals</h2>
+              <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">Wholesale Deals</h2>
             </div>
             <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#1C3560] hover:text-[#C8102E] transition-colors border-b-2 border-transparent hover:border-[#C8102E] pb-1 flex items-center gap-2">
               View All Wholesale Items <ChevronRight size={14} />
@@ -955,7 +790,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
               <div className="w-7 h-0.5 bg-[#C8961A]"></div> Featured Products
             </div>
-            <h2 className="font-['Bebas_Neue'] text-5xl tracking-tight leading-none text-[#0A1628]">Top Flash Deals</h2>
+            <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">Top Flash Deals</h2>
             
             {/* Category Tabs */}
             <div className="flex flex-wrap gap-4 mt-8">
@@ -1120,7 +955,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         </div>
       </section>
 
-      <Footer siteSettings={siteSettings} />
+      <Footer />
 
       {/* Comparison Drawer */}
       <AnimatePresence>
@@ -1246,7 +1081,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-2">
                     <GitCompare size={16} /> Technical Analysis
                   </div>
-                  <h2 className="font-['Bebas_Neue'] text-5xl text-[#0A1628] tracking-tight leading-none">Side-by-Side Comparison</h2>
+                  <h2 className="font-display text-5xl text-[#0A1628] tracking-tight leading-none">Side-by-Side Comparison</h2>
                 </div>
                 <button 
                   onClick={() => setIsCompareModalOpen(false)}
@@ -1357,7 +1192,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       {/* Product Quick View Modal */}
       <AnimatePresence>
         {selectedQuickViewProduct && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8">
+          <div className="fixed inset-0 z-[100] flex items-end lg:items-center justify-center p-0 lg:p-8 pt-16 lg:pt-8">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1367,21 +1202,21 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             ></motion.div>
             
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-5xl bg-white rounded-[2rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row h-auto max-h-[90vh] overflow-y-auto"
+              exit={{ opacity: 0, scale: 0.95, y: 40 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+              className="relative w-full max-w-5xl bg-white lg:rounded-[2rem] rounded-t-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row h-[90vh] lg:h-auto lg:max-h-[85vh] mt-auto lg:mt-0"
             >
               <button 
                 onClick={() => setSelectedQuickViewProduct(null)}
-                className="absolute top-6 right-6 z-10 w-10 h-10 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors shadow-lg"
+                className="absolute top-4 right-4 lg:top-6 lg:right-6 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors shadow-lg"
               >
                 <X size={24} />
               </button>
 
               {/* Product Gallery Section */}
-                  <div className="lg:w-1/2 bg-slate-50 relative overflow-hidden flex items-center justify-center p-8 lg:p-12">
+              <div className="w-full lg:w-1/2 bg-slate-50 relative flex items-center justify-center p-6 lg:p-12 shrink-0 h-[40vh] lg:h-auto">
                 <AnimatePresence mode="wait">
                   {(() => {
                     const activeImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url) || selectedQuickViewProduct.imageUrl;
@@ -1394,11 +1229,11 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         exit={{ opacity: 0, scale: 1.05 }}
                         transition={{ duration: 0.3 }}
                         src={activeImageUrl} 
-                        className="w-full h-auto max-h-[60vh] object-contain rounded-2xl drop-shadow-2xl"
+                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-contain rounded-2xl mix-blend-multiply"
                         alt={selectedQuickViewProduct.name}
                       />
                     ) : (
-                      <div className="w-full aspect-square flex items-center justify-center text-slate-200">
+                      <div className="w-full h-full flex items-center justify-center text-slate-200">
                         <ImageIcon size={120} />
                       </div>
                     );
@@ -1406,31 +1241,33 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 </AnimatePresence>
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-8 left-8 bg-[#C8102E] text-white text-[12px] font-black px-4 py-1.5 rounded-full tracking-[2px] uppercase shadow-lg">
+                  <span className="absolute top-4 lg:top-8 left-4 lg:left-8 bg-[#C8102E] text-white text-[10px] lg:text-[12px] font-black px-4 py-1.5 rounded-full tracking-[2px] uppercase shadow-lg z-10">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
               </div>
 
               {/* Product Info Section */}
-              <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col">
-                <div className="mb-8">
-                  <div className="text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
-                    <span className="w-8 h-[2px] bg-[#C8961A]"></span>
-                    {selectedQuickViewProduct.category}
+              <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full">
+                <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-10">
+                  <div className="mb-8">
+                    <div className="text-[10px] lg:text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
+                      <span className="w-6 lg:w-8 h-[2px] bg-[#C8961A]"></span>
+                      {selectedQuickViewProduct.category}
+                    </div>
+                    <h2 className="font-display text-3xl lg:text-5xl lg:leading-[1.1] text-[#0A1628] leading-[1] mb-3">
+                      {selectedQuickViewProduct.name}
+                    </h2>
+                    <div className="flex items-center gap-3 lg:gap-4 mb-6">
+                      <span className="text-2xl lg:text-3xl font-black text-[#C8102E]">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
+                      {selectedQuickViewProduct.oldPrice && (
+                        <span className="text-sm lg:text-lg text-slate-400 line-through">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
+                      )}
+                    </div>
+                    <p className="text-slate-500 text-sm leading-relaxed mb-6 lg:mb-8">
+                      {selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}
+                    </p>
                   </div>
-                  <h2 className="font-['Bebas_Neue'] text-5xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-4">
-                    {selectedQuickViewProduct.name}
-                  </h2>
-                  <div className="flex items-center gap-4 mb-6">
-                    <span className="text-3xl font-black text-[#C8102E]">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
-                    {selectedQuickViewProduct.oldPrice && (
-                      <span className="text-lg text-slate-300 line-through">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
-                    )}
-                  </div>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-8">
-                    {selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}
-                  </p>
                   
                   {/* Tags */}
                   {selectedQuickViewProduct.tags && selectedQuickViewProduct.tags.length > 0 && (
@@ -1499,7 +1336,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   )}
 
                   {/* Feature Highlights */}
-                  <div className="grid grid-cols-2 gap-4 mb-10">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
                       <div className="text-[#C8961A]"><ShieldCheck size={20} /></div>
                       <div>
@@ -1515,163 +1352,73 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       </div>
                     </div>
                   </div>
-
-                  {/* Reviews Section */}
-                  <div className="mt-8 pt-8 border-t border-slate-100">
-                    <div className="flex items-center justify-between mb-8">
-                      <h3 className="font-['Bebas_Neue'] text-3xl text-[#0A1628] tracking-tight">Customer Reviews</h3>
-                      <div className="flex items-center gap-2">
-                        <div className="flex text-amber-400">
-                          {[...Array(5)].map((_, i) => {
-                            const avgRating = productReviews.length > 0 ? (productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length) : 5;
-                            return <Star key={i} size={14} fill={i < Math.round(avgRating) ? 'currentColor' : 'none'} className={i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-200'} />;
-                          })}
-                        </div>
-                        <span className="text-sm font-bold text-[#0A1628]">({productReviews.length})</span>
-                      </div>
-                    </div>
-
-                    {/* Review List */}
-                    <div className="space-y-6 mb-10">
-                      {productReviews.length > 0 ? productReviews.map((review: any) => (
-                        <div key={review.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                          <div className="flex justify-between items-start mb-2">
-                            <span className="text-xs font-bold text-[#0A1628] uppercase tracking-wider">{review.userName}</span>
-                            <div className="flex text-amber-400">
-                              {[...Array(5)].map((_, i) => (
-                                <Star key={i} size={10} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
-                              ))}
-                            </div>
-                          </div>
-                          <p className="text-xs text-slate-500 italic leading-relaxed">"{review.comment}"</p>
-                        </div>
-                      )) : (
-                        <div className="text-center py-6 border-2 border-dashed border-slate-100 rounded-3xl">
-                          <p className="text-xs text-slate-400 font-medium">Be the first to review this product!</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Review Form */}
-                    {reviewSubmitted ? (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="p-8 bg-green-50 rounded-[2rem] border-2 border-green-100 text-center"
-                      >
-                        <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                          <CheckCircle2 size={24} />
-                        </div>
-                        <h4 className="font-bold text-[#0A1628] mb-2">Review Submitted!</h4>
-                        <p className="text-xs text-slate-500">Your feedback has been received and is currently being moderated. It will appear on the site once approved.</p>
-                      </motion.div>
-                    ) : (
-                      <form onSubmit={handleSubmitReview} className="p-6 bg-[#0A1628] rounded-[2rem] text-white">
-                        <h4 className="text-sm font-black uppercase tracking-[3px] mb-6 flex items-center gap-3">
-                          <MessageSquare size={16} className="text-[#C8961A]" /> 
-                          Share feedback
-                        </h4>
-                        <div className="space-y-4">
-                          <div className="flex gap-2 mb-2">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <button
-                                key={star}
-                                type="button"
-                                onClick={() => setReviewForm(prev => ({ ...prev, rating: star }))}
-                                className={`p-1 transition-all ${star <= reviewForm.rating ? 'text-amber-400 scale-110' : 'text-white/20'}`}
-                              >
-                                <Star size={20} fill={star <= reviewForm.rating ? 'currentColor' : 'none'} />
-                              </button>
-                            ))}
-                          </div>
-                          <input 
-                            type="text"
-                            placeholder="Your Name (Optional)"
-                            value={reviewForm.userName}
-                            onChange={(e) => setReviewForm(prev => ({ ...prev, userName: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C8961A] transition-all"
-                          />
-                          <textarea 
-                            required
-                            placeholder="What did you think of the quality?"
-                            value={reviewForm.comment}
-                            onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                            rows={3}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#C8961A] transition-all resize-none"
-                          ></textarea>
-                          <button 
-                            type="submit"
-                            disabled={isSubmittingReview}
-                            className="w-full bg-[#C8961A] hover:bg-white hover:text-[#0A1628] text-[#0A1628] py-4 rounded-xl font-black text-[10px] uppercase tracking-[3px] transition-all disabled:opacity-50"
-                          >
-                            {isSubmittingReview ? 'Submitting...' : 'Post Review'}
-                          </button>
-                        </div>
-                      </form>
-                    )}
-                  </div>
                 </div>
 
-                <div className="mt-auto pt-8 border-t border-slate-100 bg-white sticky bottom-0 z-20 space-y-4">
-                  <div className="flex flex-wrap gap-3">
+                <div className="shrink-0 bg-white/90 backdrop-blur-xl z-20 p-4 lg:p-8 border-t border-slate-100 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)]">
+                  <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 max-w-full">
+                    <div className="flex gap-2 lg:gap-3 w-full lg:w-auto">
+                      <button 
+                        onClick={() => toggleCompare(selectedQuickViewProduct)}
+                        className={`flex-1 lg:w-14 h-12 lg:h-14 rounded-2xl flex items-center justify-center gap-2 border-2 transition-all group ${
+                          compareList.find(i => i.id === selectedQuickViewProduct.id) 
+                            ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
+                            : "border-slate-100 text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] bg-slate-50/50"
+                        }`}
+                        title="Compare"
+                      >
+                        <GitCompare size={18} className={compareList.find(i => i.id === selectedQuickViewProduct.id) ? "scale-110" : "group-hover:scale-110 transition-transform"} />
+                        <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">Compare</span>
+                      </button>
+                      <button 
+                        onClick={() => toggleWishlist(selectedQuickViewProduct)}
+                        className={`flex-1 lg:w-14 h-12 lg:h-14 rounded-2xl flex items-center justify-center gap-2 border-2 transition-all group ${
+                          wishlist.find(i => i.id === selectedQuickViewProduct.id) 
+                            ? "bg-red-50 border-red-100 text-red-500" 
+                            : "border-slate-100 text-slate-400 hover:border-red-200 hover:text-red-400 bg-slate-50/50"
+                        }`}
+                        title="Wishlist"
+                      >
+                        <Heart size={18} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-110" : "group-hover:scale-110 transition-transform"} />
+                        <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">Wishlist</span>
+                      </button>
+                      <button 
+                        onClick={() => handleShareProduct(selectedQuickViewProduct)}
+                        className="w-12 lg:w-14 shrink-0 h-12 lg:h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] transition-all bg-slate-50/50 group"
+                        title="Share"
+                      >
+                        <Share2 size={18} className="group-hover:scale-110 transition-transform" />
+                      </button>
+                    </div>
+
                     <button 
-                      onClick={() => toggleCompare(selectedQuickViewProduct)}
-                      className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 border-2 transition-all group ${
-                        compareList.find(i => i.id === selectedQuickViewProduct.id) 
-                          ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
-                          : "border-slate-100 text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] bg-slate-50/50"
-                      }`}
+                      onClick={() => {
+                        const finalPrice = selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                          const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                          return sum + (variant?.price || 0);
+                        }, 0);
+
+                        const cartItem = {
+                          ...selectedQuickViewProduct,
+                          price: finalPrice,
+                          selectedVariants: { ...selectedVariants }
+                        };
+                        
+                        addToCart(cartItem);
+                        setSelectedQuickViewProduct(null);
+                      }}
+                      className="w-full flex-1 bg-[#0A1628] hover:bg-[#C8102E] text-white h-12 lg:h-14 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] lg:tracking-[4px] transition-all flex items-center justify-center gap-3 lg:gap-4 shadow-xl hover:shadow-[#C8102E]/20 active:scale-[0.98]"
                     >
-                      <GitCompare size={20} className={compareList.find(i => i.id === selectedQuickViewProduct.id) ? "scale-110" : "group-hover:scale-110 transition-transform"} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Compare</span>
-                    </button>
-                    <button 
-                      onClick={() => toggleWishlist(selectedQuickViewProduct)}
-                      className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-3 border-2 transition-all group ${
-                        wishlist.find(i => i.id === selectedQuickViewProduct.id) 
-                          ? "bg-red-50 border-red-100 text-red-500" 
-                          : "border-slate-100 text-slate-400 hover:border-red-200 hover:text-red-400 bg-slate-50/50"
-                      }`}
-                    >
-                      <Heart size={20} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-110" : "group-hover:scale-110 transition-transform"} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Wishlist</span>
-                    </button>
-                    <button 
-                      onClick={() => handleShareProduct(selectedQuickViewProduct)}
-                      className="w-14 h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] transition-all bg-slate-50/50 group"
-                    >
-                      <Share2 size={20} className="group-hover:scale-110 transition-transform" />
+                      <div className="flex flex-col items-start mr-auto pl-4 lg:pl-6 border-r border-white/10 pr-4 lg:pr-6">
+                        <span className="text-[7px] lg:text-[8px] opacity-60">Final Price</span>
+                        <span className="text-xs lg:text-sm">KES {(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                          const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                          return sum + (variant?.price || 0);
+                        }, 0)).toLocaleString()}</span>
+                      </div>
+                      <ShoppingBag size={18} className="shrink-0" />
+                      <span className="flex-1 text-center pr-4 lg:pr-6">Add to Cart</span>
                     </button>
                   </div>
-
-                  <button 
-                    onClick={() => {
-                      const finalPrice = selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                        const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                        return sum + (variant?.price || 0);
-                      }, 0);
-
-                      const cartItem = {
-                        ...selectedQuickViewProduct,
-                        price: finalPrice,
-                        selectedVariants: { ...selectedVariants }
-                      };
-                      
-                      addToCart(cartItem);
-                      setSelectedQuickViewProduct(null);
-                    }}
-                    className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-5 rounded-2xl font-black text-[14px] uppercase tracking-[4px] transition-all flex items-center justify-center gap-4 shadow-xl hover:shadow-[#C8102E]/20 active:scale-[0.98]"
-                  >
-                    <div className="flex flex-col items-start mr-auto pl-6 border-r border-white/10 pr-6">
-                      <span className="text-[8px] opacity-60">Final Price</span>
-                      <span className="text-sm">KES {(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                        const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                        return sum + (variant?.price || 0);
-                      }, 0)).toLocaleString()}</span>
-                    </div>
-                    <ShoppingBag size={22} className="shrink-0" />
-                    <span className="flex-1 text-center pr-6">Add to Cart</span>
-                  </button>
                 </div>
               </div>
             </motion.div>
@@ -1734,7 +1481,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-10">
-                <div className="font-['Bebas_Neue'] text-2xl tracking-[4px] text-transparent bg-clip-text bg-gradient-to-r from-[#F59E0B] via-[#FCD34D] to-[#D97706]">NAISIAE</div>
+                <div className="font-display text-2xl tracking-[4px] text-transparent bg-clip-text bg-gradient-to-r from-[#F59E0B] via-[#FCD34D] to-[#D97706]">NAISIAE</div>
                 <button onClick={() => setIsMenuOpen(false)} className="text-white/60 hover:text-white p-2 bg-white/5 rounded-lg">
                   <X size={20} />
                 </button>
@@ -1754,7 +1501,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       if (item.onClick) item.onClick();
                       else setIsMenuOpen(false);
                     }}
-                    className="py-4 px-2 border-b border-white/5 text-white/90 font-['Bebas_Neue'] text-xl tracking-[2px] hover:text-[#C8961A] transition-colors flex justify-between items-center group text-left"
+                    className="py-4 px-2 border-b border-white/5 text-white/90 font-sans text-base font-semibold tracking-wide uppercase hover:text-[#C8961A] transition-colors flex justify-between items-center group text-left"
                   >
                     <span className="flex items-center gap-4">
                       <span className="text-[#F59E0B]/50 group-hover:text-[#F59E0B] transition-colors">{item.icon}</span>
@@ -1797,7 +1544,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             >
               <div className="p-6 border-b flex items-center justify-between">
                 <div>
-                  <h2 className="font-['Bebas_Neue'] text-2xl text-[#0A1628] leading-none mb-1">
+                  <h2 className="font-display text-2xl text-[#0A1628] leading-none mb-1">
                     {isCartOpen ? 'Your Shopping Cart' : 'Your Wishlist'}
                   </h2>
                   <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">
@@ -1946,7 +1693,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             >
               <div className="p-6 border-b flex items-center justify-between bg-[#F8FAFC]">
                 <div>
-                  <h2 className="font-['Bebas_Neue'] text-3xl text-[#0A1628] leading-none mb-1">Get Custom Quote</h2>
+                  <h2 className="font-display text-3xl text-[#0A1628] leading-none mb-1">Get Custom Quote</h2>
                   <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">Expert branding & uniform consultations</p>
                 </div>
                 <button onClick={() => setIsQuoteModalOpen(false)} className="text-slate-400 p-2"><X size={20} /></button>
@@ -1956,7 +1703,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 onSubmit={async (e) => { 
                   e.preventDefault();
                   try {
-                    await addDoc(collection(db, 'quotes'), { ...quoteForm, status: 'new', createdAt: serverTimestamp(), uid: auth.currentUser?.uid || 'guest' });
+                    await addDoc(collection(db, 'quotes'), { ...quoteForm, status: 'pending', createdAt: serverTimestamp(), uid: auth.currentUser?.uid || 'guest' });
                     setOrderSuccess(true);
                     setTimeout(() => { setOrderSuccess(false); setIsQuoteModalOpen(false); }, 2000);
                   } catch (err) {
@@ -2051,7 +1798,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-6">
                   <Megaphone size={14} /> Seasonal Offer
                 </div>
-                <h3 className="font-['Bebas_Neue'] text-5xl lg:text-6xl text-[#0A1628] tracking-wider leading-none mb-6">
+                <h3 className="font-display text-5xl lg:text-6xl text-[#0A1628] tracking-wider leading-none mb-6">
                   {activeModalPromo.title}
                 </h3>
                 <p className="text-slate-500 text-lg mb-10 leading-relaxed font-medium">

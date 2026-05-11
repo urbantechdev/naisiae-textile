@@ -63,8 +63,6 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        siteSettings={siteSettings}
-        promotions={promotions}
         cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
@@ -82,7 +80,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
               className="max-w-3xl"
             >
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#C8961A] mb-6 block font-mono">Channel Connection</span>
-              <h1 className="text-6xl md:text-8xl font-['Bebas_Neue'] tracking-[2px] leading-[0.9] mb-8">
+              <h1 className="text-6xl md:text-8xl font-display tracking-[2px] leading-[0.9] mb-8">
                 Let's Start a <br /> <span className="text-[#C8102E]">Conversation.</span>
               </h1>
               <p className="text-lg text-white/60 leading-relaxed font-medium max-w-xl">
@@ -102,7 +100,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
               viewport={{ once: true }}
               className="bg-white p-10 lg:p-16 rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-50"
             >
-              <h2 className="font-['Bebas_Neue'] text-4xl text-[#0A1628] tracking-widest mb-10">Send a direct line</h2>
+              <h2 className="font-display text-4xl text-[#0A1628] tracking-widest mb-10">Send a direct line</h2>
               
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid md:grid-cols-2 gap-8">
@@ -177,7 +175,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <h3 className="font-['Bebas_Neue'] text-3xl text-[#0A1628] tracking-widest mb-8 border-b-4 border-[#C8102E] inline-block pb-2">HQ Details</h3>
+                <h3 className="font-display text-3xl text-[#0A1628] tracking-widest mb-8 border-b-4 border-[#C8102E] inline-block pb-2">HQ Details</h3>
                 <div className="space-y-10">
                   <div className="flex gap-6 items-start">
                     <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#C8102E] shrink-0 border border-slate-100">
@@ -219,7 +217,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
                 transition={{ delay: 0.2 }}
                 className="bg-[#F8FAFC] p-10 rounded-[40px] border border-slate-100"
               >
-                <h3 className="font-['Bebas_Neue'] text-2xl text-[#0A1628] tracking-widest mb-6 uppercase">Connect Sociales</h3>
+                <h3 className="font-display text-2xl text-[#0A1628] tracking-widest mb-6 uppercase">Connect Sociales</h3>
                 <div className="flex gap-4">
                   {[
                     { icon: <Instagram size={20} />, link: '#' },
@@ -245,12 +243,12 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
           <div className="absolute inset-0 flex items-center justify-center text-slate-300 pointer-events-none">
             <div className="text-center">
               <MapPin size={48} className="mx-auto mb-4 opacity-20" />
-              <p className="font-['Bebas_Neue'] text-4xl tracking-widest opacity-20">Interactive Map Interface</p>
+              <p className="font-display text-4xl tracking-widest opacity-20">Interactive Map Interface</p>
             </div>
           </div>
           {/* Real Google Map iframe would go here */}
         </section>
-        <Footer siteSettings={siteSettings} />
+        <Footer />
       </div>
     </div>
   );

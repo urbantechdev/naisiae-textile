@@ -125,7 +125,7 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-[#C8102E] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[#C8102E]/20 rotate-3">
             <ShieldCheck size={32} className="text-white -rotate-3" />
           </div>
-          <h1 className="font-['Bebas_Neue'] text-3xl tracking-[3px] text-[#C8961A] mb-2 uppercase">Platform Secure Login</h1>
+          <h1 className="font-display text-3xl tracking-[3px] text-[#C8961A] mb-2 uppercase">Platform Secure Login</h1>
           <p className="text-gray-400 text-sm">Protected administrator management portal for Uhuru Market Uniforms</p>
         </div>
 

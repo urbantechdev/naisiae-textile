@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShoppingBag, 
   Heart, 
@@ -7,31 +7,59 @@ import {
   Mail, 
   ChevronRight,
   Megaphone,
-  ShieldCheck
+  GitCompare,
+  Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
+import { db } from '../services/firebase';
 
 interface NavbarProps {
-  siteSettings: any;
-  promotions: any[];
   cartCount: number;
   wishlistCount: number;
+  compareCount?: number;
   setIsCartOpen: (open: boolean) => void;
   setIsWishlistOpen: (open: boolean) => void;
   setIsMenuOpen: (open: boolean) => void;
   setIsQuoteModalOpen: (open: boolean) => void;
+  setIsCompareModalOpen?: (open: boolean) => void;
 }
 
 export function Navbar({ 
-  siteSettings, 
-  promotions, 
   cartCount, 
   wishlistCount,
+  compareCount = 0,
   setIsCartOpen,
   setIsWishlistOpen,
   setIsMenuOpen,
-  setIsQuoteModalOpen
+  setIsQuoteModalOpen,
+  setIsCompareModalOpen
 }: NavbarProps) {
+  const [megaMenus, setMegaMenus] = useState<any[]>([]);
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [promotions, setPromotions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const unsubMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
+      setMegaMenus(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    
+    const unsubSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
+      if (snapshot.exists()) setSiteSettings(snapshot.data());
+    });
+
+    const qPromos = query(collection(db, 'promotions'), where('active', '==', true));
+    const unsubPromos = onSnapshot(qPromos, (snapshot) => {
+      setPromotions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    return () => {
+      unsubMenus();
+      unsubSettings();
+      unsubPromos();
+    };
+  }, []);
+
   return (
     <div className="font-sans text-[#0A1628]">
       {/* Top Promotion Bar */}
@@ -62,7 +90,7 @@ export function Navbar({
       </div>
 
       {/* Main Navbar */}
-      <nav className="sticky top-0 z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
+      <nav className="relative z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center h-[68px] justify-between">
           <Link to="/" className="flex items-center gap-3">
             <div className="overflow-hidden">
@@ -73,8 +101,9 @@ export function Navbar({
               )}
             </div>
             <div className="leading-tight">
-              <div className="font-['Bebas_Neue'] text-2xl tracking-[4px] text-transparent bg-clip-text bg-gradient-to-r from-[#F59E0B] via-[#FCD34D] to-[#D97706]">
-                {siteSettings?.sharingTitle || 'NAISIAE TEXTILE'}
+              <div className="font-display text-xl lg:text-2xl tracking-[4px] text-transparent bg-clip-text bg-gradient-to-r from-[#F59E0B] via-[#FCD34D] to-[#D97706]">
+                <span className="lg:hidden">NAISIAE</span>
+                <span className="hidden lg:inline">{siteSettings?.sharingTitle || 'NAISIAE TEXTILE'}</span>
               </div>
               <div className="text-[8px] tracking-[3px] text-[#F59E0B]/70 uppercase font-bold">
                 {siteSettings?.siteTagline || 'Uhuru Market Uniforms'}
@@ -84,27 +113,125 @@ export function Navbar({
 
           <div className="hidden lg:flex items-center gap-10">
             {[
-              { name: 'School Uniforms', link: '/#shop' },
-              { name: 'Knitting', link: '/#shop' },
-              { name: 'Branding', link: '/#shop' },
-              { name: 'Wholesale', link: '/wholesale' },
-              { name: 'About Us', link: '/about' },
-              { name: 'Contact', link: '/contact' },
-            ].map((item) => (
-              <div key={item.name} className="group relative">
-                <Link 
-                  to={item.link} 
-                  className="text-white/90 hover:text-[#C8961A] font-['Bebas_Neue'] text-lg tracking-[2px] h-[68px] flex items-center transition-colors"
-                >
-                  {item.name}
-                </Link>
-              </div>
-            ))}
+              { 
+                id: 'school_uniforms',
+                name: 'School Uniforms', 
+                mega: {
+                  featured: {
+                    title: 'New Term Collection',
+                    image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
+                    link: '/#shop'
+                  },
+                  categories: [
+                    { name: 'Primary Schools', items: ['Sweaters', 'Shirts', 'Shorts', 'Dresses', 'Socks'] },
+                    { name: 'Secondary Schools', items: ['Blazers', 'Trousers', 'Skirts', 'Ties', 'Tracksuits'] },
+                    { name: 'Kindergarten', items: ['Pinafores', 'T-shirts', 'Tunics', 'Hats'] }
+                  ]
+                }
+              },
+              { 
+                id: 'corporate_wear',
+                name: 'Corporate Wear', 
+                mega: {
+                  featured: {
+                    title: 'Custom Patterns',
+                    image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80',
+                    link: '/#shop'
+                  },
+                  categories: [
+                    { name: 'Pullovers', items: ['V-Neck', 'Round Neck', 'Sleeveless', 'Cardigans'] },
+                    { name: 'Accessories', items: ['Scarves', 'Beanies', 'Gloves', 'Leg Warmers'] },
+                    { name: 'Corporate', items: ['Branded Vests', 'Logo Embroidery', 'Bulk Orders'] }
+                  ]
+                }
+              },
+              { 
+                id: 'branding',
+                name: 'Branding', 
+                mega: {
+                  featured: {
+                    title: 'Corporate Identity',
+                    image: 'https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&q=80',
+                    link: '/#shop'
+                  },
+                  categories: [
+                    { name: 'Screen Printing', items: ['T-Shirts', 'Hoodies', 'Caps', 'Tote Bags'] },
+                    { name: 'Signage', items: ['Roll-up Banners', 'Vinyl Stickers', 'Posters'] },
+                    { name: 'Events', items: ['Lanyards', 'Wristbands', 'ID Cards'] }
+                  ]
+                }
+              },
+              { name: 'Wholesale', id: 'wholesale', link: '/wholesale' },
+              { name: 'About Us', id: 'about', link: '/about' },
+            ].map((defaultItem) => {
+              const dynamicMega = megaMenus.find(m => m.id === defaultItem.id);
+              const item = {
+                ...defaultItem,
+                mega: dynamicMega ? {
+                  ...defaultItem.mega,
+                  featured: dynamicMega.featured || defaultItem.mega?.featured,
+                  categories: dynamicMega.categories || defaultItem.mega?.categories
+                } : defaultItem.mega
+              };
+
+              return (
+                <div key={item.id} className="group relative">
+                  <Link 
+                    to={item.link || `/?tab=${item.name}#shop`} 
+                    className="text-white/90 hover:text-[#C8961A] font-sans text-sm font-semibold tracking-wider h-[68px] flex items-center transition-colors uppercase"
+                  >
+                    {item.name}
+                  </Link>
+                  
+                  {item.mega && (
+                    <div className="absolute top-[68px] left-1/2 -translate-x-1/2 w-[1100px] bg-white shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] rounded-b-[2rem] p-12 opacity-0 invisible translate-y-4 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-500 z-[100] border border-slate-100 flex gap-16">
+                      <div className="flex-1 grid grid-cols-3 gap-12">
+                        {item.mega.categories.map((cat: any) => (
+                          <div key={cat.name}>
+                            <h4 className="font-sans text-[#0A1628] text-base font-bold tracking-wider mb-6 border-b-2 border-slate-100 pb-3 uppercase">{cat.name}</h4>
+                            <ul className="space-y-3">
+                              {cat.items.map((sub: string) => (
+                                <li key={sub}>
+                                  <Link to={`/?tab=${item.name}&sub=${sub}#shop`} onClick={() => {}} className="text-[12px] text-[#64748B] hover:text-[#C8102E] font-black flex items-center justify-between group/link transition-all uppercase tracking-[2px]">
+                                    {sub}
+                                    <ChevronRight size={12} className="opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all text-[#C8961A]" />
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="w-[320px] shrink-0 border-l border-slate-100 pl-16">
+                        <div className="relative h-full rounded-2xl overflow-hidden group/feat shadow-xl flex items-center justify-center bg-[#0A1628]">
+                          {item.mega.featured.image ? (
+                            <img src={item.mega.featured.image} className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" alt={item.mega.featured.title} />
+                          ) : (
+                            <div className="text-white/20"><Package size={64} /></div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                          <div className="absolute bottom-6 left-6 right-6">
+                            <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[4px] mb-2">Editor's Pick</p>
+                            <h5 className="text-white font-display text-3xl leading-none mb-4">{item.mega.featured.title}</h5>
+                            <Link to={item.mega.featured.link || `/?tab=${item.name}#shop`} className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-[10px] text-white hover:bg-[#C8102E] hover:border-[#C8102E] transition-all uppercase font-black tracking-widest">
+                              Shop Collection <ChevronRight size={12} />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => setIsWishlistOpen(true)}
+              onClick={() => {
+                if (window.location.pathname === '/') setIsWishlistOpen(true);
+                else window.location.href = '/?action=wishlist';
+              }}
               className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
             >
               <Heart size={20} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : ""} />
@@ -114,8 +241,30 @@ export function Navbar({
                 </span>
               )}
             </button>
+            
+            {setIsCompareModalOpen && (
+              <button 
+                onClick={() => {
+                  if (window.location.pathname === '/') setIsCompareModalOpen(true);
+                  else window.location.href = '/?action=compare';
+                }}
+                className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
+                title="Compare Products"
+              >
+                <GitCompare size={20} className={compareCount > 0 ? "text-[#C8961A]" : ""} />
+                {compareCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-[#C8961A] text-[#0A1628] text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-[#15284A]">
+                    {compareCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             <button 
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => {
+                if (window.location.pathname === '/') setIsCartOpen(true);
+                else window.location.href = '/?action=cart';
+              }}
               className="p-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors relative"
             >
               <ShoppingBag size={20} />
@@ -125,15 +274,17 @@ export function Navbar({
                 </span>
               )}
             </button>
-            <button onClick={() => setIsMenuOpen(true)} className="lg:hidden p-2 text-white/80 hover:bg-white/10 rounded-lg">
+            <button onClick={() => {
+                if (window.location.pathname === '/') setIsMenuOpen(true);
+                else window.location.href = '/?action=menu';
+              }} className="lg:hidden p-2 text-white/80 hover:bg-white/10 rounded-lg">
               <Menu size={24} />
             </button>
-            <button 
-              onClick={() => setIsQuoteModalOpen(true)}
+            <Link to="/contact" 
               className="hidden lg:flex bg-[#C8102E] hover:bg-[#8B0000] text-white px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all shadow-lg shadow-[#B91C1C]/30"
             >
               Get Quote
-            </button>
+            </Link>
           </div>
         </div>
       </nav>

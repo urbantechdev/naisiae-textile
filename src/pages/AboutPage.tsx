@@ -34,8 +34,6 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        siteSettings={siteSettings}
-        promotions={promotions}
         cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
@@ -160,7 +158,7 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
           <div className="absolute inset-0 bg-gradient-to-br from-[#C8102E]/20 to-transparent opacity-50" />
         </div>
       </section>
-      <Footer siteSettings={siteSettings} />
+      <Footer />
       </div>
     </div>
   );

@@ -104,7 +104,7 @@ import {
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { SEED_URLS } from '../constants/seedData';
 import { suggestCompetitivePrice, PriceSuggestion } from '../services/pricingService';
-import { generateProductDetails, generateDescriptionOnly } from '../services/geminiService';
+import { generateProductDetails, generateDescriptionOnly, generateProductDataFromText } from '../services/geminiService';
 import { ShieldCheck, BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
@@ -764,7 +764,7 @@ export default function AdminDashboard() {
               <motion.h1 
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
-                className="font-['Bebas_Neue'] text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] truncate"
+                className="font-display text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] truncate"
               >
                 Admin Panel
               </motion.h1>
@@ -936,7 +936,16 @@ export default function AdminDashboard() {
                       setActiveView('products');
                     }}
                   />
-                  <StatCard label="Active Items" value={stats.activeProducts.toString()} trend={0} icon={<Package className="text-[#C8961A]" />} />
+                  <StatCard 
+                    label="Active Items" 
+                    value={stats.activeProducts.toString()} 
+                    trend={0} 
+                    icon={<Package className="text-[#C8961A]" />} 
+                    onClick={() => {
+                      setProductStatusFilter('active');
+                      setActiveView('products');
+                    }}
+                  />
                   <StatCard 
                     label="Wholesale Deals" 
                     value={products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale')).length.toString()} 
@@ -1025,7 +1034,15 @@ export default function AdminDashboard() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {products.slice(0, 4).map((product, idx) => (
-                      <div key={product.id} className="group flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:border-[#E2E8F0] hover:bg-slate-50/50 transition-all">
+                      <div 
+                        key={product.id} 
+                        onClick={() => {
+                          setEditingItem(product);
+                          setIsModalOpen(true);
+                          setActiveView('products');
+                        }}
+                        className="group flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:border-[#E2E8F0] hover:bg-slate-50/50 transition-all cursor-pointer"
+                      >
                         <div className="relative">
                           <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
                              {product.imageUrl ? (
@@ -1653,7 +1670,7 @@ export default function AdminDashboard() {
                                 <td colSpan={6} className="px-6 py-20 text-center">
                                   <div className="flex flex-col items-center justify-center opacity-30">
                                     <Percent size={48} className="mb-4" />
-                                    <p className="font-['Bebas_Neue'] text-2xl tracking-widest">No Active Rules</p>
+                                    <p className="font-display text-2xl tracking-widest">No Active Rules</p>
                                     <p className="text-[10px] font-bold uppercase tracking-wider max-w-[240px]">Create rules to automatically apply bulk discounts to customer orders.</p>
                                   </div>
                                 </td>
@@ -1862,7 +1879,7 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
                   <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between bg-gradient-to-r from-white to-[#F8FAFC]">
                     <div>
-                      <h3 className="text-2xl font-['Bebas_Neue'] text-[#0A1628] tracking-wide">Mega Menu Architecture</h3>
+                      <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Mega Menu Architecture</h3>
                       <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Configure Advanced Navigation Elements</p>
                     </div>
                   </div>
@@ -1924,7 +1941,7 @@ export default function AdminDashboard() {
                         {megaMenus.map((menu) => (
                           <div key={menu.id} className="bg-[#FBFCFE] border border-slate-100 rounded-[32px] p-8 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/80">
-                              <h4 className="font-['Bebas_Neue'] text-2xl tracking-widest text-[#0A1628]">{menu.name}</h4>
+                              <h4 className="font-display text-2xl tracking-widest text-[#0A1628]">{menu.name}</h4>
                             </div>
 
                             <div className="space-y-8">
@@ -2163,7 +2180,7 @@ export default function AdminDashboard() {
                 <div className="w-16 h-16 bg-[#1C3560]/10 rounded-2xl flex items-center justify-center mx-auto text-[#1C3560]">
                   <UserPlus size={32} />
                 </div>
-                <h3 className="text-2xl font-['Bebas_Neue'] tracking-wide text-[#0A1628]">Add Team Member</h3>
+                <h3 className="text-2xl font-display tracking-wide text-[#0A1628]">Add Team Member</h3>
                 <p className="text-[10px] font-black text-[#64748B] uppercase tracking-[3px]">Assign Administrative Roles</p>
               </div>
 
@@ -2362,7 +2379,7 @@ export default function AdminDashboard() {
       {/* Product Modal */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 pt-16 md:pt-4">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -2371,13 +2388,13 @@ export default function AdminDashboard() {
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
+              initial={{ scale: 0.95, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 40 }}
+              className="relative bg-white w-full max-w-xl rounded-t-3xl md:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] md:max-h-[85vh] flex flex-col mt-auto md:mt-0"
             >
               <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-['Bebas_Neue'] text-2xl tracking-wide text-[#0A1628]">
+                <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
                   {editingItem ? 'Edit Product' : 'Add New Product'}
                 </h3>
                 <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
@@ -2428,7 +2445,7 @@ export default function AdminDashboard() {
               className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-['Bebas_Neue'] text-2xl tracking-wide text-[#0A1628]">
+                <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
                   {editingItem ? 'Edit Campaign' : 'New Marketing Campaign'}
                 </h3>
                 <button onClick={() => setActivePromoModal(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
@@ -2477,7 +2494,7 @@ export default function AdminDashboard() {
             >
               <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-[#F8FAFC]">
                 <div>
-                  <h3 className="font-['Bebas_Neue'] text-2xl tracking-wide text-[#0A1628]">Request Details</h3>
+                  <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">Request Details</h3>
                   <p className="text-[10px] font-black text-[#64748B] uppercase tracking-widest">{selectedQuote.id}</p>
                 </div>
                 <button onClick={() => setSelectedQuote(null)} className="text-gray-400 hover:text-black transition-colors">
@@ -2585,7 +2602,7 @@ export default function AdminDashboard() {
               className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-['Bebas_Neue'] text-2xl tracking-wide text-[#0A1628]">
+                <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
                   {editingDiscountRule ? 'Edit Discount Rule' : 'New Bulk Discount Rule'}
                 </h3>
                 <button onClick={() => setIsDiscountModalOpen(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
@@ -2706,9 +2723,12 @@ function SidebarItem({ icon, label, active, onClick, danger = false, collapsed =
   );
 }
 
-function StatCard({ label, value, trend, icon }: any) {
+function StatCard({ label, value, trend, icon, onClick }: any) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#E2E8F0] relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+    <div 
+      onClick={onClick}
+      className={`bg-white p-6 rounded-2xl shadow-sm border border-[#E2E8F0] relative overflow-hidden group hover:shadow-xl transition-all duration-500 ${onClick ? 'cursor-pointer hover:-translate-y-1' : ''}`}
+    >
       <div className="flex justify-between items-start mb-4 relative z-10">
         <div className="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center shadow-inner border border-gray-50 group-hover:scale-110 transition-transform">
           {icon}
@@ -2780,6 +2800,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isGeneratingFull, setIsGeneratingFull] = useState(false);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const [isSuggestingPrice, setIsSuggestingPrice] = useState(false);
   const [pricingReasoning, setPricingReasoning] = useState<string | null>(null);
@@ -3027,6 +3048,34 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
     }
   };
 
+  const handleAIGenerateFull = async () => {
+    if (!formData.name || !formData.category) {
+      setToast({ message: "Please enter at least a name and select a category.", type: 'warning' });
+      return;
+    }
+
+    setIsGeneratingFull(true);
+    try {
+      const aiData = await generateProductDataFromText(formData.name, formData.category);
+      
+      setFormData(prev => ({
+        ...prev,
+        name: aiData.name || prev.name,
+        description: aiData.description || prev.description,
+        price: aiData.priceSuggestion || prev.price,
+        tags: [...new Set([...prev.tags, ...(aiData.tags || [])])],
+        subCategory: aiData.subCategory || prev.subCategory
+      }));
+
+      setToast({ message: "AI has successfully drafted the product content!", type: 'success' });
+    } catch (error) {
+      console.error(error);
+      setToast({ message: "AI generation failed. Please try again.", type: 'error' });
+    } finally {
+      setIsGeneratingFull(false);
+    }
+  };
+
   const handleSuggestPrice = async () => {
     if (!formData.name) {
       setToast({ message: "Please enter a product name first so AI can research the market.", type: 'warning' });
@@ -3100,10 +3149,11 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-      {/* Image Gallery Section */}
-      <div 
-        className={`space-y-4 p-5 rounded-3xl border-2 transition-all duration-300 relative group/dropzone ${
+    <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden flex-1">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar pb-10">
+        {/* Image Gallery Section */}
+        <div 
+          className={`space-y-4 p-5 rounded-3xl border-2 transition-all duration-300 relative group/dropzone ${
           isDraggingOver 
             ? 'border-[#C8102E] bg-[#C8102E]/5 scale-[0.99] border-dashed ring-4 ring-[#C8102E]/10' 
             : 'border-slate-100 bg-slate-50/30 border-dashed'
@@ -3450,6 +3500,50 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
         </div>
       </div>
 
+      {/* AI Content Generator Section */}
+      <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
+        </div>
+        <div className="flex items-start justify-between relative z-10">
+          <div>
+            <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+              <Sparkles size={16} className="text-indigo-500 animate-pulse" />
+              AI Product Drafter
+            </h4>
+            <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
+              Draft full details instantly based on name & category
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleAIGenerateFull}
+            disabled={isGeneratingFull || !formData.name}
+            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg active:scale-95 ${
+              isGeneratingFull || !formData.name
+                ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
+                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
+            }`}
+          >
+            {isGeneratingFull ? (
+              <>
+                <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                Drafting Content...
+              </>
+            ) : (
+              <>
+                <Zap size={14} />
+                Magic Draft
+              </>
+            )}
+          </button>
+        </div>
+        <p className="text-[10px] text-slate-500 italic relative z-10 leading-relaxed max-w-[80%]">
+          "Magic Draft" will automatically generate a professional name, market-ready description, 
+          competitive price suggestion, and relevant search tags for you.
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5 flex-1">
           <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Name</label>
@@ -3725,14 +3819,17 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
           </div>
         </div>
       </div>
+      </div>
 
-      <button 
-        disabled={loading || uploading}
-        type="submit" 
-        className="w-full h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.02] active:scale-[0.98] text-white rounded-2xl font-black text-xs uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
-      >
-        {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
-      </button>
+      <div className="shrink-0 p-6 bg-white border-t border-slate-100 z-20">
+        <button 
+          disabled={loading || uploading}
+          type="submit" 
+          className="w-full h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.02] active:scale-[0.98] text-white rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
+        >
+          {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
+        </button>
+      </div>
     </form>
   );
 }

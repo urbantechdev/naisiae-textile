@@ -20,6 +20,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { Footer } from '../components/Footer';
+import { Navbar } from '../components/Navbar';
 import { db, auth, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -36,6 +37,9 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' } | null>(null);
@@ -116,35 +120,14 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0A1628]">
-      {/* Navigation - Simplified for Wholesale */}
-      <nav className="sticky top-0 z-[60] bg-[#0A1628] text-white py-4 shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 shadow-lg shadow-[#C8102E]/20">
-              <span className="-rotate-3 text-white">NT</span>
-            </div>
-            <div>
-              <h1 className="font-['Bebas_Neue'] text-2xl tracking-[2px] leading-none mb-0.5">NAISIAE TEXTILE</h1>
-              <p className="text-[10px] font-black tracking-[3px] text-[#C8961A] uppercase">Wholesale Hub</p>
-            </div>
-          </Link>
-
-          <div className="hidden lg:flex items-center gap-8">
-            <Link to="/" className="text-xs font-black uppercase tracking-widest hover:text-[#C8961A] transition-all">Store</Link>
-            <Link to="/about" className="text-xs font-black uppercase tracking-widest hover:text-[#C8961A] transition-all">Quality</Link>
-            <div className="h-6 w-[1px] bg-white/10 mx-2"></div>
-            <div className="flex items-center gap-6">
-              <button className="text-white hover:text-[#C8961A] transition-all"><Search size={20} /></button>
-              <button className="text-white hover:text-[#C8961A] transition-all relative">
-                <ShoppingBag size={20} />
-                {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-[#C8102E] text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#0A1628] font-bold">{cart.length}</span>}
-              </button>
-            </div>
-          </div>
-
-          <button onClick={() => setIsMenuOpen(true)} className="lg:hidden p-2"><Menu size={24} /></button>
-        </div>
-      </nav>
+      <Navbar 
+        cartCount={cart.length}
+        wishlistCount={wishlist.length}
+        setIsCartOpen={setIsCartOpen}
+        setIsWishlistOpen={setIsWishlistOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        setIsQuoteModalOpen={setIsQuoteModalOpen}
+      />
 
       {/* Hero Section */}
       <section className="relative py-24 bg-[#0A1628] overflow-hidden">
@@ -164,7 +147,7 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-['Bebas_Neue'] text-6xl md:text-8xl text-white tracking-[2px] leading-[0.9] mb-6"
+              className="font-display text-6xl md:text-8xl text-white tracking-[2px] leading-[0.9] mb-6"
             >
               Wholesale <span className="text-[#C8961A]">Catalogue</span>
             </motion.h1>
@@ -250,21 +233,21 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
             <div className="w-16 h-16 bg-[#C8961A]/10 text-[#C8961A] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
               <Package size={32} />
             </div>
-            <h4 className="font-['Bebas_Neue'] text-3xl tracking-wide">Bulk Production</h4>
+            <h4 className="font-display text-3xl tracking-wide">Bulk Production</h4>
             <p className="text-slate-400 text-sm leading-relaxed">State-of-the-art facilities capable of delivering 10,000+ units per month with consistent quality.</p>
           </div>
           <div className="space-y-4">
             <div className="w-16 h-16 bg-[#1C3560]/10 text-[#1C3560] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle2 size={32} />
             </div>
-            <h4 className="font-['Bebas_Neue'] text-3xl tracking-wide">ISO Quality Control</h4>
+            <h4 className="font-display text-3xl tracking-wide">ISO Quality Control</h4>
             <p className="text-slate-400 text-sm leading-relaxed">Every garment undergoes a 5-step inspection process to ensure durable stitching and accurate branding.</p>
           </div>
           <div className="space-y-4">
             <div className="w-16 h-16 bg-[#C8102E]/10 text-[#C8102E] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
               <Zap size={32} />
             </div>
-            <h4 className="font-['Bebas_Neue'] text-3xl tracking-wide">Fast Turnaround</h4>
+            <h4 className="font-display text-3xl tracking-wide">Fast Turnaround</h4>
             <p className="text-slate-400 text-sm leading-relaxed">Swift production timelines with dedicated logistical support for institutions across East Africa.</p>
           </div>
         </div>
@@ -337,7 +320,7 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
                     <span className="w-8 h-[2px] bg-[#C8961A]"></span>
                     {selectedProduct.category}
                   </div>
-                  <h2 className="font-['Bebas_Neue'] text-5xl lg:text-7xl text-[#0A1628] leading-[0.9] mb-4">
+                  <h2 className="font-display text-5xl lg:text-7xl text-[#0A1628] leading-[0.9] mb-4">
                     {selectedProduct.name}
                   </h2>
                   <div className="flex items-center gap-6 mb-8">
@@ -384,7 +367,7 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
         )}
       </AnimatePresence>
       
-      <Footer siteSettings={siteSettings} />
+      <Footer />
     </div>
   );
 }
@@ -441,7 +424,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onCli
           <div className="h-[1px] flex-1 bg-slate-100"></div>
           <Package size={12} className="text-slate-300" />
         </div>
-        <h3 className="font-['Bebas_Neue'] text-3xl text-[#0A1628] leading-none mb-3 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
+        <h3 className="font-display text-3xl text-[#0A1628] leading-none mb-3 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
         <div className="flex items-center justify-between">
           <span className="text-xl font-black text-[#1C3560]">KES {product.price.toLocaleString()}</span>
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">Wholesale Unit</span>

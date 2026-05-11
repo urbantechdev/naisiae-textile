@@ -33,8 +33,6 @@ export default function ReturnsPage({ cart, setCart, wishlist, setWishlist }: an
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        siteSettings={siteSettings}
-        promotions={promotions}
         cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
@@ -53,7 +51,7 @@ export default function ReturnsPage({ cart, setCart, wishlist, setWishlist }: an
             >
               <RefreshCcw size={40} />
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-['Bebas_Neue'] tracking-tight leading-none mb-6">Returns & Exchanges</h1>
+            <h1 className="text-5xl md:text-7xl font-display tracking-tight leading-none mb-6">Returns & Exchanges</h1>
             <p className="text-white/40 font-bold text-[10px] uppercase tracking-[4px]">Our Commitment to Satisfaction</p>
           </div>
         </section>
@@ -122,7 +120,7 @@ export default function ReturnsPage({ cart, setCart, wishlist, setWishlist }: an
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-['Bebas_Neue'] text-3xl tracking-widest mb-4">Still have questions?</h3>
+                  <h3 className="font-display text-3xl tracking-widest mb-4">Still have questions?</h3>
                   <p className="text-white/60 text-sm leading-relaxed mb-6">Our dedicated institutional support team is here to help you resolve any textile quality issues immediately.</p>
                   <a href="/contact" className="text-[#C8961A] text-[10px] font-black uppercase tracking-[3px] border-b border-[#C8961A]/30 pb-1">Contact Support</a>
                 </div>
@@ -130,7 +128,7 @@ export default function ReturnsPage({ cart, setCart, wishlist, setWishlist }: an
             </div>
           </div>
         </section>
-        <Footer siteSettings={siteSettings} />
+        <Footer />
       </div>
     </div>
   );

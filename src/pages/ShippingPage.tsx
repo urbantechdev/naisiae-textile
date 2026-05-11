@@ -33,8 +33,6 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
   return (
     <div className="min-h-screen bg-white text-[#0A1628]">
       <Navbar 
-        siteSettings={siteSettings}
-        promotions={promotions}
         cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
@@ -60,7 +58,7 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-['Bebas_Neue'] text-7xl md:text-9xl text-white tracking-[2px] leading-none mb-6"
+              className="font-display text-7xl md:text-9xl text-white tracking-[2px] leading-none mb-6"
             >
               Swift <span className="text-[#C8102E]">Fulfillment.</span>
             </motion.h1>
@@ -117,7 +115,7 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
                 <div className="p-12 bg-[#0A1628] rounded-[40px] text-white overflow-hidden relative">
                   <div className="relative z-10 grid md:grid-cols-2 gap-12">
                     <div>
-                      <h3 className="font-['Bebas_Neue'] text-4xl tracking-widest mb-6">Global Wholesale</h3>
+                      <h3 className="font-display text-4xl tracking-widest mb-6">Global Wholesale</h3>
                       <p className="text-white/60 text-sm leading-relaxed mb-8">
                         We export high-quality Kenyan textiles worldwide. For international institutional orders, we coordinate via seafreight or airfreight with full customs documentation support.
                       </p>
@@ -136,7 +134,7 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
 
               <aside className="space-y-8">
                 <div className="p-10 bg-slate-900 rounded-[40px] text-white">
-                  <h3 className="font-['Bebas_Neue'] text-2xl tracking-[2px] mb-8 border-b border-white/10 pb-4">Order Tracking</h3>
+                  <h3 className="font-display text-2xl tracking-[2px] mb-8 border-b border-white/10 pb-4">Order Tracking</h3>
                   <div className="space-y-6">
                     <p className="text-xs text-white/40 leading-relaxed">Once your order is processed, you'll receive a tracking number via SMS/Email to monitor your textile journey in real-time.</p>
                     <div className="relative">
@@ -173,7 +171,7 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
             </div>
           </div>
         </section>
-        <Footer siteSettings={siteSettings} />
+        <Footer />
       </div>
     </div>
   );

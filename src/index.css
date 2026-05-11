@@ -1,9 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Bebas Neue", sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Comfortaa", sans-serif;
+  --font-barlow: "Barlow", sans-serif;
+}
+
+@layer base {
+  /* Designer asymmetrical curve with static yellow accent on the bottom right edge */
+  /* Applied selectively to products, modals, and primary buttons for professional appearance */
+  
+  /* Primary Buttons */
+  button.bg-\[\#C8102E\], 
+  a.bg-\[\#C8102E\],
+  button.bg-\[\#15284A\], 
+  a.bg-\[\#15284A\],
+  
+  /* Product / Feature Cards */
+  .group.bg-white.border.rounded-xl,
+  .group.bg-white.border.rounded-2xl,
+
+  /* Modals */
+  .fixed .bg-white.rounded-2xl,
+  .fixed .bg-white.rounded-3xl,
+  .fixed .bg-slate-50.rounded-2xl {
+    border-bottom-right-radius: 24px !important;
+    box-shadow: 4px 4px 0px 0px #F59E0B !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Hover states */
+  button.bg-\[\#C8102E\]:hover, 
+  a.bg-\[\#C8102E\]:hover,
+  button.bg-\[\#15284A\]:hover, 
+  a.bg-\[\#15284A\]:hover,
+  .group.bg-white.border.rounded-xl:hover,
+  .group.bg-white.border.rounded-2xl:hover,
+  .fixed .bg-white.rounded-2xl:hover,
+  .fixed .bg-white.rounded-3xl:hover,
+  .fixed .bg-slate-50.rounded-2xl:hover {
+    border-bottom-right-radius: 32px !important;
+    box-shadow: 6px 6px 0px 0px #F59E0B !important;
+  }
+
+  /* EXPLICIT EXCLUSION: Header and Navigation should remain professional and untouched */
+  nav button, 
+  nav a, 
+  header button, 
+  header a,
+  .bg-\[\#1C3560\] a /* top promotion bar */ {
+    border-bottom-right-radius: 0.5rem !important; /* Reset to rounded-lg */
+    box-shadow: none !important;
+  }
+  
+  nav a.font-\[\'Bebas_Neue\'\],
+  .bg-\[\#1C3560\] a {
+    border-bottom-right-radius: 0 !important; /* inline links */
+  }
 }
 
 body {
@@ -20,6 +74,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
+  @apply bg-[#F59E0B]/50 rounded-full hover:bg-[#F59E0B] transition-colors border border-[#F59E0B]/30;
 }
+
 

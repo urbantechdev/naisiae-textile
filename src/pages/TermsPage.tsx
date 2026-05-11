@@ -33,8 +33,6 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        siteSettings={siteSettings}
-        promotions={promotions}
         cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
@@ -53,7 +51,7 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
             >
               <Scale size={40} />
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-['Bebas_Neue'] tracking-tight leading-none mb-6 italic">Terms of Service</h1>
+            <h1 className="text-5xl md:text-7xl font-display tracking-tight leading-none mb-6 italic">Terms of Service</h1>
             <p className="text-white/60 font-bold text-[10px] uppercase tracking-[4px]">Agreement of Engagement</p>
           </div>
         </section>
@@ -86,7 +84,7 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
               </div>
 
               <div className="bg-slate-900 p-10 rounded-[32px] text-white">
-                <h2 className="text-2xl font-['Bebas_Neue'] tracking-[3px] mb-6 flex items-center gap-3">
+                <h2 className="text-2xl font-display tracking-[3px] mb-6 flex items-center gap-3">
                   <Gavel size={24} className="text-[#C8961A]" /> Order Cancellation
                 </h2>
                 <p className="text-white/70 leading-relaxed text-sm font-medium">
@@ -119,7 +117,7 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
             </div>
           </div>
         </section>
-        <Footer siteSettings={siteSettings} />
+        <Footer />
       </div>
     </div>
   );

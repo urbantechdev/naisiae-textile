@@ -33,8 +33,6 @@ export default function PrivacyPage({ cart, setCart, wishlist, setWishlist }: an
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        siteSettings={siteSettings}
-        promotions={promotions}
         cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
@@ -53,7 +51,7 @@ export default function PrivacyPage({ cart, setCart, wishlist, setWishlist }: an
             >
               <Shield size={40} />
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-['Bebas_Neue'] text-[#0A1628] tracking-tight leading-none mb-6 italic">Privacy Policy</h1>
+            <h1 className="text-5xl md:text-7xl font-display text-[#0A1628] tracking-tight leading-none mb-6 italic">Privacy Policy</h1>
             <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[4px]">Effective Date: January 1, 2026</p>
           </div>
         </section>
@@ -92,7 +90,7 @@ export default function PrivacyPage({ cart, setCart, wishlist, setWishlist }: an
               </div>
 
               <div className="bg-[#0A1628] p-10 rounded-[32px] text-white">
-                <h2 className="text-2xl font-['Bebas_Neue'] tracking-[3px] mb-6 flex items-center gap-3">
+                <h2 className="text-2xl font-display tracking-[3px] mb-6 flex items-center gap-3">
                   <Lock size={24} className="text-[#C8961A]" /> Security Protocol
                 </h2>
                 <p className="text-white/70 leading-relaxed text-sm font-medium">
@@ -125,7 +123,7 @@ export default function PrivacyPage({ cart, setCart, wishlist, setWishlist }: an
             </div>
           </div>
         </section>
-        <Footer siteSettings={siteSettings} />
+        <Footer />
       </div>
     </div>
   );
