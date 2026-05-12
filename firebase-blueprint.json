@@ -172,6 +172,41 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "featured", "categories"]
+    },
+    "category": {
+      "title": "Category",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "image": { "type": "string" },
+        "description": { "type": "string" },
+        "link": { "type": "string" },
+        "sortOrder": { "type": "number" }
+      }
+    },
+    "service": {
+      "title": "Service",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "iconType": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "sortOrder": { "type": "number" }
+      }
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "tag": { "type": "string" },
+        "image": { "type": "string" },
+        "description": { "type": "string" },
+        "sortOrder": { "type": "number" }
+      }
     }
   },
   "firestore": {
@@ -186,6 +221,18 @@
     "/mega_menus/{menuId}": {
       "schema": "mega_menu",
       "description": "Advanced navigation menu structures."
+    },
+    "/categories/{docId}": {
+      "schema": "category",
+      "description": "App categories."
+    },
+    "/services/{docId}": {
+      "schema": "service",
+      "description": "App services."
+    },
+    "/portfolio/{docId}": {
+      "schema": "portfolio",
+      "description": "App portfolio projects."
     },
     "/users/{userId}": {
       "schema": "user",

@@ -106,7 +106,7 @@ export function Navbar({
                 <span className="hidden lg:inline">{siteSettings?.sharingTitle || 'NAISIAE TEXTILE'}</span>
               </div>
               <div className="text-[8px] tracking-[3px] text-[#F59E0B]/70 uppercase font-bold">
-                {siteSettings?.siteTagline || 'Uhuru Market Uniforms'}
+                {siteSettings?.siteTagline || 'Naisiae Textiles Limited'}
               </div>
             </div>
           </Link>

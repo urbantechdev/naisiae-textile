@@ -44,6 +44,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { ContentManager } from '../components/admin/ContentManager';
 import { 
   collection, 
   addDoc, 
@@ -118,8 +119,13 @@ export default function AdminDashboard() {
   const [activeView, setActiveView] = useState('overview');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [portfolio, setPortfolio] = useState<any[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
@@ -188,6 +194,21 @@ export default function AdminDashboard() {
       handleFirestoreError(error, OperationType.GET, 'products');
     });
 
+    const qCategories = query(collection(db, 'categories'), orderBy('sortOrder', 'asc'));
+    const unsubscribeCategories = onSnapshot(qCategories, (snapshot) => {
+      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
+    }, error => handleFirestoreError(error, OperationType.GET, 'categories'));
+
+    const qServices = query(collection(db, 'services'), orderBy('sortOrder', 'asc'));
+    const unsubscribeServices = onSnapshot(qServices, (snapshot) => {
+      setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
+    }, error => handleFirestoreError(error, OperationType.GET, 'services'));
+
+    const qPortfolio = query(collection(db, 'portfolio'), orderBy('sortOrder', 'asc'));
+    const unsubscribePortfolio = onSnapshot(qPortfolio, (snapshot) => {
+      setPortfolio(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
+    }, error => handleFirestoreError(error, OperationType.GET, 'portfolio'));
+
     // Real-time quotes
     const qQuotes = query(collection(db, 'quotes'), orderBy('createdAt', 'desc'));
     const unsubscribeQuotes = onSnapshot(qQuotes, (snapshot) => {
@@ -244,12 +265,12 @@ export default function AdminDashboard() {
       } else {
         // Initialize default settings if doesn't exist
         setSiteSettings({
-          siteName: 'Uhuru Market Uniforms',
+          siteName: 'Naisiae Textiles Limited',
           siteLogo: '',
           footerLogo: '',
           favicon: '',
-          siteTagline: 'Uhuru Market Uniforms',
-          sharingTitle: 'Uhuru Market Uniforms',
+          siteTagline: 'Naisiae Textiles Limited',
+          sharingTitle: 'Naisiae Textiles Limited',
           sharingDescription: 'Modern, High-Quality Uniforms & Apparel for Kenya\'s Leading Institutions.',
           sharingImage: '',
           enableComparison: true,
@@ -342,6 +363,9 @@ export default function AdminDashboard() {
 
     return () => {
       unsubscribeProducts();
+      unsubscribeCategories();
+      unsubscribeServices();
+      unsubscribePortfolio();
       unsubscribeQuotes();
       unsubscribeUsers();
       unsubscribeWishlists();
@@ -412,7 +436,7 @@ export default function AdminDashboard() {
     return matchesSearch && matchesCategory && matchesStatus && matchesPrice;
   });
 
-  const categories = Array.from(new Set(products.map(p => p.category)));
+  const productCategories = Array.from(new Set(products.map(p => p.category)));
 
   const filteredWishlists = wishlists.filter(list => {
     const search = wishlistSearch.toLowerCase();
@@ -817,6 +841,7 @@ export default function AdminDashboard() {
           <MobileNavItem active={activeView === 'quotes'} onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} icon={<MessageSquare size={18} />} label="Quotes" badge={newQuotesCount} />
           <MobileNavItem active={activeView === 'wishlists'} onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} icon={<Heart size={18} />} label="Wishlists" />
           <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
+          <MobileNavItem active={activeView === 'content'} onClick={() => { setActiveView('content'); setIsMobileMenuOpen(false); }} icon={<Edit2 size={18} />} label="Pages Content" />
           <MobileNavItem active={activeView === 'appearance'} onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} icon={<Palette size={18} />} label="Layout" />
           <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
           <MobileNavItem active={activeView === 'users'} onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} icon={<Users size={18} />} label="Team" />
@@ -847,22 +872,101 @@ export default function AdminDashboard() {
           </h1>
         </div>
 
-        <div className="hidden md:flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-2 border border-white/5 focus-within:ring-2 focus-within:ring-[#C8961A]/50 transition-all flex-1 max-w-md mx-4">
+        <div className="hidden md:flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-2 border border-white/5 focus-within:ring-2 focus-within:ring-[#C8961A]/50 transition-all flex-1 max-w-md mx-4 relative">
           <Search size={16} className="text-white/50" />
-          <input type="text" placeholder="Global search..." className="bg-transparent border-none outline-none text-sm w-full placeholder:text-white/30 text-white" />
+          <input 
+            type="text" 
+            placeholder="Global search products..." 
+            value={globalSearchQuery}
+            onChange={(e) => setGlobalSearchQuery(e.target.value)}
+            className="bg-transparent border-none outline-none text-sm w-full placeholder:text-white/30 text-white" 
+          />
+          {globalSearchQuery && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-100 overflow-hidden z-50 max-h-80 overflow-y-auto">
+              {products.filter(p => p.name.toLowerCase().includes(globalSearchQuery.toLowerCase()) || p.category?.toLowerCase().includes(globalSearchQuery.toLowerCase())).slice(0, 5).map(product => (
+                <div 
+                  key={product.id} 
+                  className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0"
+                  onClick={() => {
+                    setActiveView('products');
+                    setGlobalSearchQuery('');
+                    // could select product here...
+                  }}
+                >
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
+                    {product.imageUrl ? <img src={product.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" /> : <Package size={14} className="text-slate-300" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-[#0A1628] truncate">{product.name}</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">{product.category}</p>
+                  </div>
+                </div>
+              ))}
+              {products.filter(p => p.name.toLowerCase().includes(globalSearchQuery.toLowerCase()) || p.category?.toLowerCase().includes(globalSearchQuery.toLowerCase())).length === 0 && (
+                <div className="p-4 text-center text-sm text-slate-500">No products found for "{globalSearchQuery}"</div>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 relative">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-white">{auth.currentUser?.displayName || 'Administrator'}</p>
             <p className="text-[10px] text-white/50">{auth.currentUser?.email || 'support@naisiaetextile.com'}</p>
           </div>
-          <div className="w-8 h-8 rounded-full bg-[#1C3560] flex items-center justify-center text-white border-2 border-white/20 shadow-md">
-            {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={14} />}
-          </div>
-          <button onClick={handleLogout} className="p-2 ml-1 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Sign Out">
-            <LogOut size={16} />
+          <button 
+            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            className="w-10 h-10 rounded-full bg-[#1C3560] flex items-center justify-center text-white border-2 border-white/20 shadow-md hover:border-[#C8961A] transition-colors focus:outline-none overflow-hidden"
+          >
+            {auth.currentUser?.photoURL ? (
+              <img src={auth.currentUser.photoURL} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              auth.currentUser?.displayName?.charAt(0) || <UserIcon size={14} />
+            )}
           </button>
+          
+          <AnimatePresence>
+            {isProfileMenuOpen && (
+              <>
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[50]" onClick={() => setIsProfileMenuOpen(false)}
+                />
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute top-12 right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-100 overflow-hidden z-[60]"
+                >
+                  <div className="p-4 border-b border-slate-50 bg-[#F8FAFC]">
+                    <div className="flex gap-3 items-center">
+                      <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-slate-200">
+                        {auth.currentUser?.photoURL ? (
+                          <img src={auth.currentUser.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-[#1C3560] flex items-center justify-center text-white font-bold text-lg">
+                            {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={20} />}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-[#0A1628] truncate">{auth.currentUser?.displayName || 'Administrator'}</p>
+                        <p className="text-[10px] text-slate-500 truncate">{auth.currentUser?.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-2">
+                    <button onClick={() => { setActiveView('settings'); setIsProfileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm font-bold text-slate-600 hover:text-[#0A1628] hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3">
+                      <Settings size={16} /> Platform Settings
+                    </button>
+                    <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-sm font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-3 mt-1">
+                      <LogOut size={16} /> Sign Out
+                    </button>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </header>
 
@@ -873,6 +977,7 @@ export default function AdminDashboard() {
         <TabItem active={activeView === 'quotes'} onClick={() => setActiveView('quotes')} icon={<MessageSquare size={14} />} label="Quotes" badge={newQuotesCount} />
         <TabItem active={activeView === 'wishlists'} onClick={() => setActiveView('wishlists')} icon={<Heart size={14} />} label="Wishlists" />
         <TabItem active={activeView === 'promotions'} onClick={() => setActiveView('promotions')} icon={<Megaphone size={14} />} label="Marketing" />
+        <TabItem active={activeView === 'content'} onClick={() => setActiveView('content')} icon={<Edit2 size={14} />} label="Pages Content" />
         <TabItem active={activeView === 'appearance'} onClick={() => setActiveView('appearance')} icon={<Palette size={14} />} label="Layout" />
         <TabItem active={activeView === 'reviews'} onClick={() => setActiveView('reviews')} icon={<Star size={14} />} label="Reviews" badge={pendingReviewsCount} />
         <TabItem active={activeView === 'users'} onClick={() => setActiveView('users')} icon={<Users size={14} />} label="Team" />
@@ -1116,7 +1221,7 @@ export default function AdminDashboard() {
           className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
         >
           <option value="all">All Categories</option>
-          {categories.map(cat => (
+          {productCategories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
@@ -1846,6 +1951,24 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
+            {activeView === 'content' && (
+              <motion.div 
+                key="content"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-8"
+              >
+                <ContentManager 
+                  categories={categories} 
+                  services={services} 
+                  portfolio={portfolio} 
+                  setToast={setToast} 
+                  handleFirestoreError={handleFirestoreError} 
+                />
+              </motion.div>
+            )}
+
             {activeView === 'appearance' && (
               <motion.div 
                 key="appearance"
@@ -2124,7 +2247,7 @@ export default function AdminDashboard() {
         <footer className="px-8 py-6 border-t border-[#E2E8F0] mt-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-[#64748B]">
-              &copy; {new Date().getFullYear()} <span className="font-bold text-[#1E293B]">Uhuru Market Uniforms</span>. All rights reserved.
+              &copy; {new Date().getFullYear()} <span className="font-bold text-[#1E293B]">Naisiae Textiles Limited</span>. All rights reserved.
             </p>
             <Link 
               to="/" 
@@ -3564,7 +3687,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
             className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors"
           >
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
       </div>
@@ -4107,7 +4230,7 @@ function SettingsForm({ initialData, onSave, setToast }: any) {
                 onChange={e => setFormData({ ...formData, siteName: e.target.value })}
                 onBlur={e => onSave(formData)}
                 className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
-                placeholder="e.g. Uhuru Market Uniforms" 
+                placeholder="e.g. Naisiae Textiles Limited" 
               />
             </div>
 
@@ -4118,7 +4241,7 @@ function SettingsForm({ initialData, onSave, setToast }: any) {
                 onChange={e => setFormData({ ...formData, siteTagline: e.target.value })}
                 onBlur={e => onSave(formData)}
                 className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
-                placeholder="e.g. Uhuru Market Uniforms" 
+                placeholder="e.g. Naisiae Textiles Limited" 
               />
             </div>
             

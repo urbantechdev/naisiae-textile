@@ -64,7 +64,7 @@ export default function PrivacyPage({ cart, setCart, wishlist, setWishlist }: an
                   <span className="w-10 h-[2px] bg-[#C8102E]"></span> 1. Data Collection
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
-                  At Uhuru Market Uniforms, we collect information that helps us provide a better experience for you. This includes:
+                  At Naisiae Textiles Limited, we collect information that helps us provide a better experience for you. This includes:
                 </p>
                 <ul className="list-disc pl-6 space-y-3 text-slate-600 mt-4 font-medium italic">
                   <li>Personal identifiers (Name, Email, Phone Number)</li>
@@ -112,7 +112,7 @@ export default function PrivacyPage({ cart, setCart, wishlist, setWishlist }: an
                   <span className="w-10 h-[2px] bg-[#C8102E]"></span> 4. Your Rights
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
-                  Under the Data Protection Act of Kenya, you have the right to access, rectify, or request the deletion of your personal data held by Uhuru Market Uniforms.
+                  Under the Data Protection Act of Kenya, you have the right to access, rectify, or request the deletion of your personal data held by Naisiae Textiles Limited.
                 </p>
               </div>
             </div>

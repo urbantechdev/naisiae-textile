@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { motion } from 'motion/react';
 import { ChevronRight, ShoppingBag, Heart, Menu } from 'lucide-react';
+import { db } from '../services/firebase';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 interface PageProps {
   cart: any[];
@@ -16,33 +18,51 @@ export default function CategoriesPage({ cart, setCart, wishlist, setWishlist }:
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [majorCategories, setMajorCategories] = useState<any[]>([]);
 
-  const majorCategories = [
-    {
-      id: 'school',
-      title: 'School Uniforms',
-      subtitle: 'Primary, Secondary & College',
-      image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
-      description: 'Comprehensive uniform kits engineered for daily school use.',
-      link: '/?tab=School Uniforms#shop'
-    },
-    {
-      id: 'casual',
-      title: 'Casual Wear',
-      subtitle: 'Premium Everyday Styles',
-      image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80',
-      description: 'Comfortable, durable t-shirts, hoodies, and leisure wear.',
-      link: '/?tab=Casual Wear#shop'
-    },
-    {
-      id: 'corporate',
-      title: 'Corporate Wear',
-      subtitle: 'Professional Branch Identity',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-      description: 'Polished apparel for office environments and corporate teams.',
-      link: '/?tab=Corporate Wear#shop'
-    }
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const q = query(collection(db, 'categories'), orderBy('sortOrder', 'asc'));
+        const querySnapshot = await getDocs(q);
+        const cats = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (cats.length > 0) {
+          setMajorCategories(cats);
+        } else {
+          // Default fallback
+          setMajorCategories([
+            {
+              id: 'school',
+              title: 'School Uniforms',
+              subtitle: 'Primary, Secondary & College',
+              image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
+              description: 'Comprehensive uniform kits engineered for daily school use.',
+              link: '/?tab=School Uniforms#shop'
+            },
+            {
+              id: 'casual',
+              title: 'Casual Wear',
+              subtitle: 'Premium Everyday Styles',
+              image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80',
+              description: 'Comfortable, durable t-shirts, hoodies, and leisure wear.',
+              link: '/?tab=Casual Wear#shop'
+            },
+            {
+              id: 'corporate',
+              title: 'Corporate Wear',
+              subtitle: 'Professional Branch Identity',
+              image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+              description: 'Polished apparel for office environments and corporate teams.',
+              link: '/?tab=Corporate Wear#shop'
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching categories: ", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { motion } from 'motion/react';
 import { ExternalLink, ShoppingBag, Heart, Menu, ChevronRight } from 'lucide-react';
+import { db } from '../services/firebase';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 interface PageProps {
   cart: any[];
@@ -16,45 +18,62 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [projects, setProjects] = useState<any[]>([]);
 
-  const projects = [
-    {
-      title: 'Loreto Schools Kenya',
-      tag: 'Education',
-      image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
-      description: 'Full custom uniform engineering including bespoke blazers, sweaters with school patterns, and performance sports kits.'
-    },
-    {
-      title: 'Safaricom Sports Day',
-      tag: 'Events',
-      image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80',
-      description: 'Bulk production of 5000+ branded moisture-wicking t-shirts and caps for corporate athletics event.'
-    },
-    {
-      title: 'Nairobi Hospital',
-      tag: 'Healthcare',
-      image: 'https://images.unsplash.com/photo-1576091160550-217359f42f8c?auto=format&fit=crop&q=80',
-      description: 'Durable, anti-microbial scrubs and lab coats designed for medical professionals in high-traffic environments.'
-    },
-    {
-      title: 'KCB Bank Corporate',
-      tag: 'Corporate',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-      description: 'Custom embroidered cardigans and v-neck sweaters for regional staff, maintaining strict brand identity.'
-    },
-    {
-      title: 'St. Mary\'s Academy',
-      tag: 'Wholesale',
-      image: 'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?auto=format&fit=crop&q=80',
-      description: 'End-to-end supply of primary and secondary uniforms with local Uhuru Market distribution points.'
-    },
-    {
-      title: 'Standard Chartered',
-      tag: 'Marketing',
-      image: 'https://images.unsplash.com/photo-1434626881859-194d67b2b86f?auto=format&fit=crop&q=80',
-      description: 'Branded promotional items and uniform caps for the Nairobi Marathon series.'
-    }
-  ];
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        const q = query(collection(db, 'portfolio'), orderBy('sortOrder', 'asc'));
+        const querySnapshot = await getDocs(q);
+        const ports = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (ports.length > 0) {
+          setProjects(ports);
+        } else {
+          setProjects([
+            {
+              title: 'Loreto Schools Kenya',
+              tag: 'Education',
+              image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
+              description: 'Full custom uniform engineering including bespoke blazers, sweaters with school patterns, and performance sports kits.'
+            },
+            {
+              title: 'Safaricom Sports Day',
+              tag: 'Events',
+              image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&q=80',
+              description: 'Bulk production of 5000+ branded moisture-wicking t-shirts and caps for corporate athletics event.'
+            },
+            {
+              title: 'Nairobi Hospital',
+              tag: 'Healthcare',
+              image: 'https://images.unsplash.com/photo-1576091160550-217359f42f8c?auto=format&fit=crop&q=80',
+              description: 'Durable, anti-microbial scrubs and lab coats designed for medical professionals in high-traffic environments.'
+            },
+            {
+              title: 'KCB Bank Corporate',
+              tag: 'Corporate',
+              image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+              description: 'Custom embroidered cardigans and v-neck sweaters for regional staff, maintaining strict brand identity.'
+            },
+            {
+              title: 'St. Mary\'s Academy',
+              tag: 'Wholesale',
+              image: 'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?auto=format&fit=crop&q=80',
+              description: 'End-to-end supply of primary and secondary uniforms with local Uhuru Market distribution points.'
+            },
+            {
+              title: 'Standard Chartered',
+              tag: 'Marketing',
+              image: 'https://images.unsplash.com/photo-1434626881859-194d67b2b86f?auto=format&fit=crop&q=80',
+              description: 'Branded promotional items and uniform caps for the Nairobi Marathon series.'
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching portfolio: ", error);
+      }
+    };
+    fetchPortfolio();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#0A1628]">

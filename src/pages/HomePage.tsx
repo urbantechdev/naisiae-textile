@@ -108,7 +108,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   const handleShareProduct = async (product: any) => {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
     const shareData = {
-      title: `${product.name} | Uhuru Market Uniforms`,
+      title: `${product.name} | Naisiae Textiles Limited`,
       text: `Check out ${product.name} - ${product.description || 'Premium custom uniforms and branding.'}\nPrice: KES ${product.price?.toLocaleString()}`,
       url: shareUrl,
     };
@@ -390,7 +390,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
   useEffect(() => {
     if (siteSettings) {
-      document.title = siteSettings.siteName ? `${siteSettings.siteName} | ${siteSettings.siteTagline || 'Uhuru Market'}` : 'Uhuru Market Uniforms | Uhuru Market';
+      document.title = siteSettings.siteName ? `${siteSettings.siteName} | ${siteSettings.siteTagline || 'Uhuru Market'}` : 'Naisiae Textiles Limited | Uhuru Market';
       
       if (siteSettings.favicon) {
         let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
@@ -525,7 +525,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 className="mb-12 max-w-4xl"
               >
                 <span className="inline-block px-4 py-1.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[4px] rounded-full mb-6">
-                  {siteSettings?.siteTagline || "Uhuru Market Uniforms"}
+                  {siteSettings?.siteTagline || "Naisiae Textiles Limited"}
                 </span>
                 <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-white tracking-tight leading-tight md:leading-none mb-6">
                   {siteSettings?.heroImages?.[currentSlide]?.title || "WEAR THE FUTURE"}
@@ -567,9 +567,17 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               <input 
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setTimeout(() => {
+                    const el = document.getElementById('catalog');
+                    if (el && e.target.value.length > 0) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }, 500);
+                }}
                 onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+                onFocus={() => searchQuery.length > 0 && setShowSearchSuggestions(true)}
                 placeholder="Search uniforms, sports kits, or corporate branding..."
                 className="peer w-full bg-white/10 backdrop-blur-3xl border-2 border-white/20 rounded-3xl pl-16 pr-16 py-6 text-white text-lg lg:text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:border-[#C8961A] focus:ring-8 focus:ring-[#C8961A]/10 transition-all shadow-2xl placeholder:text-white/30 font-medium"
               />
@@ -634,6 +642,76 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         )}
       </section>
 
+      {/* Featured Products */}
+      <section className="py-24 bg-white border-b border-slate-100">
+        <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-4">
+                <div className="w-8 h-[2px] bg-[#C8102E]"></div> Featured
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-display text-[#0A1628] leading-none mb-4">
+                Featured Categories
+              </h2>
+            </div>
+            <Link to="/products" className="hidden sm:flex text-sm font-bold text-[#0A1628] hover:text-[#C8102E] transition-colors items-center gap-2">
+              View All Products <ChevronRight size={14} />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
+            {products
+              .filter(p => p.featured || p.tags?.includes('featured'))
+              .slice(0, 4)
+              .map(product => (
+                <motion.div 
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -6 }}
+                  className="group bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
+                >
+                  <div className="relative aspect-[4/5] bg-white cursor-pointer overflow-hidden p-6 flex flex-col justify-between" onClick={() => setSelectedQuickViewProduct(product)}>
+                    <div>
+                      {product.badge && (
+                        <span className="inline-block bg-[#0A1628] text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-widest uppercase mb-4">{product.badge}</span>
+                      )}
+                      
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-contain p-4 transition-transform duration-500 group-hover:scale-105 my-4" />
+                      ) : (
+                        <div className="w-full h-48 flex items-center justify-center text-[#C8102E]/10 my-4 group-hover:scale-105 transition-transform">
+                          <Package size={60} />
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <p className="text-[10px] text-[#64748B] font-black tracking-[2px] uppercase mb-2">{product.category}</p>
+                      <h3 className="font-bold text-lg text-[#0A1628] truncate mb-2">{product.name}</h3>
+                      <div className="flex justify-between items-center mt-4">
+                        <p className="text-[#C8102E] font-black text-xl">KES {product.price.toLocaleString()}</p>
+                        <button className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#0A1628] group-hover:bg-[#C8102E] group-hover:text-white transition-colors">
+                          <ArrowRight size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            }
+            {products.filter(p => p.featured || p.tags?.includes('featured')).length === 0 && Array(4).fill(0).map((_, i) => (
+               <div key={i} className="aspect-[4/5] bg-slate-50 rounded-3xl border border-dashed border-slate-200 flex flex-col items-center justify-center animate-pulse">
+                 <Package className="text-slate-200 mb-4" size={40} />
+                 <div className="w-1/2 h-2 bg-slate-200 rounded mb-2"></div>
+                 <div className="w-1/3 h-2 bg-slate-200 rounded"></div>
+               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Wholesale Excellence Block */}
       <section className="py-12 bg-slate-50">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
@@ -657,7 +735,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     Bulk Orders & <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
                   </h2>
                   <p className="text-white/60 text-sm lg:text-base leading-relaxed mb-12 max-w-lg font-medium">
-                    Uhuru Market Uniforms specializes in high-volume production for schools, distributors, and corporate institutions. Our wholesale program offers the most competitive rates in Kenya with guaranteed turnaround times.
+                    Naisiae Textiles Limited specializes in high-volume production for schools, distributors, and corporate institutions. Our wholesale program offers the most competitive rates in Kenya with guaranteed turnaround times.
                   </p>
                   
                   <div className="flex flex-wrap gap-4">
@@ -752,7 +830,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" />
                     ) : (
                       <Package size={40} className="text-[#C8961A]/20" />
                     )}
@@ -891,7 +969,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                 {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <Package size={40} className="text-[#C8961A]/20" />
                 )}

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { motion } from 'motion/react';
 import { ChevronRight, Scissors, Ruler, Palette, ShoppingBag, Heart, Menu } from 'lucide-react';
+import { db } from '../services/firebase';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 interface PageProps {
   cart: any[];
@@ -16,33 +18,53 @@ export default function ServicesPage({ cart, setCart, wishlist, setWishlist }: P
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [services, setServices] = useState<any[]>([]);
 
-  const services = [
-    {
-      id: 'knitting',
-      title: 'Knitting Services',
-      description: 'Our state-of-the-art knitting facility produces high-quality sweaters, cardigans, and pullovers. We specialize in custom school patterns, corporate knitwear, and winter accessories with precision and durability.',
-      image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80',
-      icon: <Scissors size={32} className="text-[#C8961A]" />,
-      features: ['Custom School Patterns', 'High-Grade Wool & Acrylic', 'Precision Ribbing', 'Corporate Vests']
-    },
-    {
-      id: 'embroidery',
-      title: 'Professional Embroidery',
-      description: 'Bring your brand to life with high-density computer embroidery. From simple chest logos to complex back designs, we ensure every stitch represents your institution or business with prestige.',
-      image: 'https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&q=80',
-      icon: <Ruler size={32} className="text-[#C8961A]" />,
-      features: ['3D Puff Embroidery', 'Multi-Color Logos', 'Badge Production', 'Direct-to-Garment']
-    },
-    {
-      id: 'branding',
-      title: 'Branding & Screen Printing',
-      description: 'Comprehensive branding solutions for promotional wear and corporate identity. We use premium inks and modern printing techniques that withstand industrial washing and heavy use.',
-      image: 'https://images.unsplash.com/photo-1534452285072-c5cee3316af7?auto=format&fit=crop&q=80',
-      icon: <Palette size={32} className="text-[#C8961A]" />,
-      features: ['Plastisol Printing', 'Vinyl Heat Press', 'Sublimation', 'Corporate Gift Items']
-    }
-  ];
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const q = query(collection(db, 'services'), orderBy('sortOrder', 'asc'));
+        const querySnapshot = await getDocs(q);
+        const srvs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (srvs.length > 0) {
+          setServices(srvs);
+        } else {
+          setServices([
+            {
+              id: 'knitting',
+              title: 'Knitting Services',
+              description: 'Our state-of-the-art knitting facility produces high-quality sweaters, cardigans, and pullovers. We specialize in custom school patterns, corporate knitwear, and winter accessories with precision and durability.',
+              image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80',
+              features: ['Custom School Patterns', 'High-Grade Wool & Acrylic', 'Precision Ribbing', 'Corporate Vests']
+            },
+            {
+              id: 'embroidery',
+              title: 'Professional Embroidery',
+              description: 'Bring your brand to life with high-density computer embroidery. From simple chest logos to complex back designs, we ensure every stitch represents your institution or business with prestige.',
+              image: 'https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&q=80',
+              features: ['3D Puff Embroidery', 'Multi-Color Logos', 'Badge Production', 'Direct-to-Garment']
+            },
+            {
+              id: 'branding',
+              title: 'Branding & Screen Printing',
+              description: 'Comprehensive branding solutions for promotional wear and corporate identity. We use premium inks and modern printing techniques that withstand industrial washing and heavy use.',
+              image: 'https://images.unsplash.com/photo-1534452285072-c5cee3316af7?auto=format&fit=crop&q=80',
+              features: ['Plastisol Printing', 'Vinyl Heat Press', 'Sublimation', 'Corporate Gift Items']
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching services: ", error);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const getIcon = (idx: number) => {
+    if (idx % 3 === 0) return <Scissors size={32} className="text-[#C8961A]" />;
+    if (idx % 3 === 1) return <Ruler size={32} className="text-[#C8961A]" />;
+    return <Palette size={32} className="text-[#C8961A]" />;
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
@@ -92,7 +114,7 @@ export default function ServicesPage({ cart, setCart, wishlist, setWishlist }: P
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628]/60 to-transparent"></div>
                 </div>
                 <div className={`absolute -bottom-8 ${idx % 2 === 0 ? '-right-8' : '-left-8'} bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex items-center gap-4`}>
-                    <div className="p-4 bg-slate-50 rounded-2xl">{service.icon}</div>
+                    <div className="p-4 bg-slate-50 rounded-2xl">{getIcon(idx)}</div>
                     <div>
                         <div className="text-[10px] font-black text-[#C8961A] uppercase tracking-[3px]">Since 2018</div>
                         <div className="text-lg font-bold text-[#0A1628]">Expert Craft</div>
@@ -111,7 +133,7 @@ export default function ServicesPage({ cart, setCart, wishlist, setWishlist }: P
                   {service.description}
                 </p>
                 <div className="grid grid-cols-2 gap-y-4 gap-x-8 mb-12">
-                   {service.features.map(f => (
+                   {(service.features || []).map((f: string) => (
                      <div key={f} className="flex items-center gap-3 text-sm font-bold text-[#1E293B]">
                         <div className="w-2 h-2 rounded-full bg-[#C8102E]"></div> {f}
                      </div>

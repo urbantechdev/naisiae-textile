@@ -64,7 +64,7 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
                   <span className="w-10 h-[2px] bg-[#C8102E]"></span> 1. Acceptance of Terms
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
-                  By accessing the Uhuru Market Uniforms website and placing an order, you agree to comply with and be bound by these terms. These terms govern all institutional sales, wholesale contracts, and individual purchases.
+                  By accessing the Naisiae Textiles Limited website and placing an order, you agree to comply with and be bound by these terms. These terms govern all institutional sales, wholesale contracts, and individual purchases.
                 </p>
               </div>
 
@@ -106,7 +106,7 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
                   <span className="w-10 h-[2px] bg-[#C8102E]"></span> 4. Limitation of Liability
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
-                  Uhuru Market Uniforms shall not be liable for any indirect or consequential loss caused by delays in logistical transport partners. Our liability is limited to the value of the goods purchased.
+                  Naisiae Textiles Limited shall not be liable for any indirect or consequential loss caused by delays in logistical transport partners. Our liability is limited to the value of the goods purchased.
                 </p>
               </div>
             </div>

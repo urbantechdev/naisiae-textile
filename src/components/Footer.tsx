@@ -77,7 +77,7 @@ export function Footer() {
       </div>
       <div className="max-w-[1440px] mx-auto px-8 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs">
         <div className="flex items-center gap-3">
-          <span>© 2026 Uhuru Market Uniforms. All rights reserved.</span>
+          <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
           <Link to="/admin" className="text-white/5 hover:text-[#C8961A]/20 transition-colors" title="Management">
             <ShieldCheck size={10} />
           </Link>
