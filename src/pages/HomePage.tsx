@@ -23,6 +23,7 @@ import {
   GitCompare,
   Star,
   Package,
+  ChevronDown,
   Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -599,7 +600,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     >
                       <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center">
                         {product.imageUrl ? (
-                          <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                          <img src={product.imageUrl} className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform" />
                         ) : (
                           <Package size={20} className="text-slate-300" />
                         )}
@@ -751,7 +752,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
                     ) : (
                       <Package size={40} className="text-[#C8961A]/20" />
                     )}
@@ -890,7 +891,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                 {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <Package size={40} className="text-[#C8961A]/20" />
                 )}
@@ -981,7 +982,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 {compareList.map(item => (
                   <div key={item.id} className="relative group/compare-item flex items-center justify-center">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-cover border-2 border-white/10" />
+                      <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-contain bg-white border-2 border-white/10" />
                     ) : (
                       <div className="w-12 h-12 rounded-xl bg-white/10 border-2 border-white/5 flex items-center justify-center">
                         <Package size={16} className="text-white/20" />
@@ -1027,7 +1028,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 {compareList.map((item, idx) => (
                   <div key={item.id} className="w-10 h-10 rounded-full border-2 border-[#0A1628] overflow-hidden bg-white shadow-lg flex items-center justify-center">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.name} />
+                      <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" alt={item.name} />
                     ) : (
                       <Package size={14} className="text-[#0A1628]/20" />
                     )}
@@ -1264,25 +1265,11 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         <span className="text-sm lg:text-lg text-slate-400 line-through">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
                       )}
                     </div>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6 lg:mb-8">
-                      {selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}
-                    </p>
                   </div>
                   
-                  {/* Tags */}
-                  {selectedQuickViewProduct.tags && selectedQuickViewProduct.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-8">
-                      {selectedQuickViewProduct.tags.map((tag: string) => (
-                        <span key={tag} className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Variants Selection */}
                   {selectedQuickViewProduct.variants && selectedQuickViewProduct.variants.length > 0 && (
-                    <div className="space-y-6 mb-8 pt-6 border-t border-slate-50">
+                    <div className="space-y-6 mb-8 pt-2">
                       {Object.entries(
                         selectedQuickViewProduct.variants.reduce((acc: any, v: any) => {
                           if (!acc[v.type]) acc[v.type] = [];
@@ -1335,22 +1322,59 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     </div>
                   )}
 
-                  {/* Feature Highlights */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
-                      <div className="text-[#C8961A]"><ShieldCheck size={20} /></div>
-                      <div>
-                        <p className="text-[10px] font-black uppercase text-slate-400">Quality</p>
-                        <p className="text-[11px] font-bold text-slate-800">Double Stitched</p>
+                  {/* Accordion Group */}
+                  <div className="space-y-3 mb-4">
+                    {/* Description & Tags Accordion */}
+                    <details open className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
+                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0A1628] bg-slate-50 hover:bg-slate-100 transition-colors">
+                        Product Details
+                        <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
+                          <ChevronDown size={18} />
+                        </span>
+                      </summary>
+                      <div className="p-5 text-slate-500 text-sm leading-relaxed border-t border-slate-50 bg-white">
+                        <p className="mb-4">{selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</p>
+                        
+                        {/* Tags */}
+                        {selectedQuickViewProduct.tags && selectedQuickViewProduct.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-50">
+                            {selectedQuickViewProduct.tags.map((tag: string) => (
+                              <span key={tag} className="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
-                      <div className="text-[#C8961A]"><Calendar size={20} /></div>
-                      <div>
-                        <p className="text-[10px] font-black uppercase text-slate-400">Lead Time</p>
-                        <p className="text-[11px] font-bold text-slate-800">7-14 Work Days</p>
+                    </details>
+                    
+                    {/* Features & Lead Time Accordion */}
+                    <details className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
+                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0A1628] bg-slate-50 hover:bg-slate-100 transition-colors">
+                        Features & Lead Time
+                        <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
+                          <ChevronDown size={18} />
+                        </span>
+                      </summary>
+                      <div className="p-5 bg-white border-t border-slate-50">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
+                            <div className="text-[#C8961A] shrink-0"><ShieldCheck size={20} /></div>
+                            <div>
+                              <p className="text-[10px] font-black uppercase text-slate-400">Quality</p>
+                              <p className="text-[11px] font-bold text-slate-800">Double Stitched</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
+                            <div className="text-[#C8961A] shrink-0"><Calendar size={20} /></div>
+                            <div>
+                              <p className="text-[10px] font-black uppercase text-slate-400">Lead Time</p>
+                              <p className="text-[11px] font-bold text-slate-800">7-14 Work Days</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </details>
                   </div>
                 </div>
 
@@ -1576,7 +1600,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     <div key={item.id} className="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100 items-center">
                       <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
                         {item.imageUrl ? (
-                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-contain p-1" />
                         ) : (
                           <Package size={24} className="text-slate-200" />
                         )}

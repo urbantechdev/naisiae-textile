@@ -121,7 +121,7 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
                         transition={{ delay: idx * 0.1 }}
                         className={`rounded-3xl overflow-hidden border border-slate-100 shadow-xl ${idx % 2 !== 0 ? 'mt-12' : ''}`}
                     >
-                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-cover" />
+                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-contain" />
                         <div className="p-6 bg-white">
                             <h4 className="font-bold text-xs uppercase tracking-wider mb-2">{p.name}</h4>
                             <p className="text-[10px] font-black text-[#C8102E]">BULK PRICE ON REQUEST</p>
@@ -152,7 +152,7 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
                         className="group text-left"
                     >
                         <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 relative">
-                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4] p-4" />
                              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                         </div>
                         <h3 className="text-2xl font-display uppercase tracking-widest mb-2">{p.name}</h3>

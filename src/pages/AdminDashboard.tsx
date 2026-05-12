@@ -966,7 +966,7 @@ export default function AdminDashboard() {
                         <div className="relative">
                           <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
                              {product.imageUrl ? (
-                               <img src={product.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                               <img src={product.imageUrl} className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform" />
                              ) : (
                                <ImageIcon size={24} className="text-slate-300" />
                              )}
@@ -1134,7 +1134,7 @@ export default function AdminDashboard() {
                             <div style={style} className="flex border-b border-[#F1F5F9] hover:bg-slate-50/50 transition-colors group items-center">
                               <div className="flex-1 px-6 py-4 flex items-center gap-3 overflow-hidden">
                                 <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-xl overflow-hidden shrink-0 border border-slate-200">
-                                  {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.name} /> : '🧥'}
+                                  {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" alt={item.name} /> : '🧥'}
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <p className="text-sm font-bold text-[#1E293B] truncate">{item.name}</p>
@@ -1647,7 +1647,7 @@ export default function AdminDashboard() {
                           {list.items?.map((item: any) => (
                             <div key={item.id} className="flex gap-3 items-center bg-white p-2 rounded-lg border border-gray-50 flex items-center justify-center min-w-[32px] min-h-[32px]">
                               {item.imageUrl ? (
-                                <img src={item.imageUrl} className="w-8 h-8 rounded object-cover" />
+                                <img src={item.imageUrl} className="w-8 h-8 rounded object-contain bg-white" />
                               ) : (
                                 <Package size={16} className="text-slate-200" />
                               )}
@@ -2220,7 +2220,7 @@ export default function AdminDashboard() {
                       <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors bg-slate-50/30">
                         <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                           {p.imageUrl ? (
-                            <img src={p.imageUrl} className="w-full h-full object-cover" alt={p.name} />
+                            <img src={p.imageUrl} className="w-full h-full object-contain p-1 bg-white" alt={p.name} />
                           ) : (
                             <span className="text-xl">🧥</span>
                           )}
@@ -2692,7 +2692,7 @@ function SortableImage({ url, index, onRemove }: any) {
       className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group bg-white shadow-sm flex items-center justify-center"
     >
       {url ? (
-        <img src={url} className="w-full h-full object-cover" alt="product" />
+        <img src={url} className="w-full h-full object-contain bg-white" alt="product" />
       ) : (
         <ImageIcon size={24} className="text-slate-300" />
       )}
@@ -3342,7 +3342,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
                     className={`shrink-0 w-16 h-16 rounded-2xl border-2 transition-all overflow-hidden p-0.5 ${newVariant.imageUrl === url ? 'border-[#C8102E] scale-95 shadow-lg ring-4 ring-red-500/10' : 'border-transparent opacity-60 hover:opacity-100 hover:border-slate-200'}`}
                   >
                   {url ? (
-                    <img src={url} className="w-full h-full object-cover rounded-[14px]" alt={`Gallery ${i}`} />
+                    <img src={url} className="w-full h-full object-contain rounded-[14px] bg-white" alt={`Gallery ${i}`} />
                   ) : (
                     <ImageIcon size={16} />
                   )}
@@ -3377,7 +3377,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     {v.imageUrl ? (
-                      <img src={v.imageUrl} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" alt={v.value} />
+                      <img src={v.imageUrl} className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-100 shadow-sm" alt={v.value} />
                     ) : (
                       <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-300">
                         <ImageIcon size={20} />
@@ -3600,7 +3600,7 @@ function ProductForm({ initialData, onSubmit, setToast }: any) {
             className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
           />
           <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
-            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-slate-300" />}
+            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-contain bg-white p-1" /> : <ImageIcon size={20} className="text-slate-300" />}
           </div>
         </div>
       </div>
@@ -4607,7 +4607,7 @@ function PromotionForm({ initialData, onSubmit, setToast }: any) {
         <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Campaign Visual (Image)</label>
         <div className="flex gap-4 items-center">
           <div className="w-24 h-24 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
-            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={24} className="text-slate-300" />}
+            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-contain bg-white p-2" /> : <ImageIcon size={24} className="text-slate-300" />}
           </div>
           <div className="flex-1 space-y-3">
              <div className="space-y-1">
