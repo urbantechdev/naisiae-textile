@@ -779,12 +779,69 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex flex-col h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Sidebar */}
+      <div className={`fixed inset-y-0 left-0 bg-[#0A1628] w-[280px] z-[70] transform transition-transform duration-300 lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+           <div className="flex items-center gap-3">
+             {siteSettings?.siteLogo ? (
+               <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white">
+                 <img src={siteSettings.siteLogo} alt="Site Logo" className="w-full h-full object-contain p-1" />
+               </div>
+             ) : (
+               <div className="w-8 h-8 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-sm rotate-3 overflow-hidden shrink-0">
+                 <span className="-rotate-3 text-white">NT</span>
+               </div>
+             )}
+             <span className="font-display font-bold text-[#C8961A] tracking-wider uppercase text-sm">Admin Panel</span>
+           </div>
+           <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
+             <X size={20} />
+           </button>
+        </div>
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+          <MobileNavItem active={activeView === 'overview'} onClick={() => { setActiveView('overview'); setIsMobileMenuOpen(false); }} icon={<LayoutDashboard size={18} />} label="Overview" />
+          <MobileNavItem active={activeView === 'products'} onClick={() => { setActiveView('products'); setIsMobileMenuOpen(false); }} icon={<Package size={18} />} label="Products" badge={lowStockProductsCount} />
+          <MobileNavItem active={activeView === 'quotes'} onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} icon={<MessageSquare size={18} />} label="Quotes" badge={newQuotesCount} />
+          <MobileNavItem active={activeView === 'wishlists'} onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} icon={<Heart size={18} />} label="Wishlists" />
+          <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
+          <MobileNavItem active={activeView === 'appearance'} onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} icon={<Palette size={18} />} label="Layout" />
+          <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
+          <MobileNavItem active={activeView === 'users'} onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} icon={<Users size={18} />} label="Team" />
+          <MobileNavItem active={activeView === 'analytics'} onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} icon={<BarChart3 size={18} />} label="Analytics" />
+          <MobileNavItem active={activeView === 'settings'} onClick={() => { setActiveView('settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Settings" />
+        </nav>
+      </div>
+
       {/* Top Header */}
       <header className="h-16 bg-[#0A1628] text-white flex items-center justify-between px-4 lg:px-8 shrink-0 relative z-50">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20 shrink-0">
-            <span className="-rotate-3 text-white">NT</span>
-          </div>
+          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <Menu size={24} />
+          </button>
+          
+          {siteSettings?.siteLogo ? (
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white border border-white/10 hidden sm:flex">
+              <img src={siteSettings.siteLogo} alt="Site Logo" className="w-full h-full object-contain p-1" />
+            </div>
+          ) : (
+            <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20 shrink-0 hidden sm:flex">
+              <span className="-rotate-3 text-white">NT</span>
+            </div>
+          )}
+          
           <h1 className="font-display text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] hidden sm:block">
             Admin Panel
           </h1>
@@ -810,7 +867,7 @@ export default function AdminDashboard() {
       </header>
 
       {/* Main Tabs Navigation */}
-      <nav className="bg-white border-b border-[#E2E8F0] px-4 lg:px-8 overflow-x-auto scrollbar-hide flex gap-2 shrink-0 z-40 shadow-sm relative pt-3">
+      <nav className="bg-white border-b border-[#E2E8F0] px-4 lg:px-8 overflow-x-auto scrollbar-hide hidden lg:flex gap-2 shrink-0 z-40 shadow-sm relative pt-3">
         <TabItem active={activeView === 'overview'} onClick={() => setActiveView('overview')} icon={<LayoutDashboard size={14} />} label="Overview" />
         <TabItem active={activeView === 'products'} onClick={() => setActiveView('products')} icon={<Package size={14} />} label="Products" badge={lowStockProductsCount} />
         <TabItem active={activeView === 'quotes'} onClick={() => setActiveView('quotes')} icon={<MessageSquare size={14} />} label="Quotes" badge={newQuotesCount} />
@@ -2619,6 +2676,31 @@ export default function AdminDashboard() {
       }
     }
   }
+}
+
+function MobileNavItem({ icon, label, active, onClick, danger = false, badge = 0 }: any) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-bold text-xs uppercase tracking-widest ${
+        active 
+          ? 'bg-white/10 text-[#C8961A]' 
+          : danger 
+            ? 'text-red-400 hover:bg-red-900/20' 
+            : 'text-slate-400 hover:bg-white/5 hover:text-white'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <span className={active ? 'text-[#C8961A]' : ''}>{icon}</span>
+        <span>{label}</span>
+      </div>
+      {badge > 0 && (
+        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${active ? 'bg-[#C8102E] text-white' : 'bg-white/10 text-slate-300'}`}>
+          {badge}
+        </span>
+      )}
+    </button>
+  );
 }
 
 function TabItem({ icon, label, active, onClick, danger = false, badge = 0 }: any) {
