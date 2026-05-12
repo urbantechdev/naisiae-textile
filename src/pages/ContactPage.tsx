@@ -204,7 +204,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
                     </div>
                     <div>
                       <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Email support</h4>
-                      <p className="text-[#0A1628] font-bold">{siteSettings?.contactEmail || 'info@naisiaetextile.com'}</p>
+                      <p className="text-[#0A1628] font-bold">{siteSettings?.contactEmail || 'support@naisiaetextile.com'}</p>
                     </div>
                   </div>
                 </div>

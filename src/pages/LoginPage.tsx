@@ -31,11 +31,11 @@ export default function LoginPage() {
           email: user.email,
           displayName: user.displayName || user.email.split('@')[0],
           photoURL: user.photoURL || '',
-          role: user.email === 'naisiaetext@gmail.com' ? 'admin' : 'user',
+          role: (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') ? 'admin' : 'user',
           lastLogin: new Date().toISOString()
         });
         
-        if (user.email === 'naisiaetext@gmail.com') {
+        if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
           navigate('/admin');
         } else {
           setError('Access denied. You do not have administrator privileges.');
@@ -49,7 +49,7 @@ export default function LoginPage() {
       const userData = userDoc.data();
       
       // AUTO-UPGRADE logic for the primary admin email
-      if (user.email === 'naisiaetext@gmail.com' && userData.role !== 'admin') {
+      if ((user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') && userData.role !== 'admin') {
         try {
           await setDoc(doc(db, 'users', user.uid), { role: 'admin' }, { merge: true });
           navigate('/admin');
@@ -59,7 +59,7 @@ export default function LoginPage() {
         }
       }
 
-      if (userData.role === 'admin' || user.email === 'naisiaetext@gmail.com') {
+      if (userData.role === 'admin' || user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
         navigate('/admin');
       } else {
         setError('Access denied. You do not have administrator privileges.');

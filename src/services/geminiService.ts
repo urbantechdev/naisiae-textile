@@ -1,6 +1,3 @@
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 export interface GeneratedProduct {
   name: string;
@@ -13,70 +10,34 @@ export interface GeneratedProduct {
 
 export async function generateProductDetails(base64Image: string, mimeType: string): Promise<GeneratedProduct> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: [
-        {
-          parts: [
-            {
-              inlineData: {
-                data: base64Image,
-                mimeType: mimeType,
-              },
-            },
-            {
-              text: `Analyze this image of a textile/apparel product and generate professional product details. 
-              The response must be in JSON format matching the schema provided.
-              Categories available: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
-              Sub-categories for School Uniforms include: 'Sweater', 'Blazer', 'Shirt', 'Blouse', 'Trouser', 'Skirt', 'Shorts', 'Tie', 'Socks', 'Tracksuit', 'T-Shirt', 'P.E Kit', 'Lab Coat', 'Dust Coat'.
-              Provide a competitive price suggestion in Kenyan Shillings (KSH).`,
-            },
-          ],
-        },
-      ],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            name: { type: Type.STRING, description: "Professional product name" },
-            description: { type: Type.STRING, description: "Detailed marketing description" },
-            category: { type: Type.STRING, description: "Main category from the provided list" },
-            subCategory: { type: Type.STRING, description: "Sub-category if applicable" },
-            priceSuggestion: { type: Type.NUMBER, description: "Suggested price in KSH" },
-            tags: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING },
-              description: "Relevant keywords for search"
-            },
-          },
-          required: ["name", "description", "category", "priceSuggestion", "tags"],
-        },
-      },
+    const response = await fetch('/api/ai/generate-product', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base64Image, mimeType })
     });
-
-    const result = JSON.parse(response.text);
-    return result as GeneratedProduct;
+    
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || "AI Generation failed");
+    }
+    return await response.json();
   } catch (error) {
     console.error("Gemini AI generation error:", error);
-    throw new Error("Failed to generate product details with AI");
+    throw error;
   }
 }
 
 export async function generateDescriptionOnly(name: string, category: string, tags: string[]): Promise<string> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate a professional, compelling marketing description for a product with the following details:
-      Name: ${name}
-      Category: ${category}
-      Tags: ${tags.join(', ')}
-      
-      The description should be concise (2-3 paragraphs), highlight quality, durability, and suitability for the Kenyan market. 
-      Use professional yet engaging language. Return ONLY the description text.`,
+    const response = await fetch('/api/ai/generate-description', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category, tags })
     });
-
-    return response.text.trim();
+    
+    if (!response.ok) throw new Error("AI Description failed");
+    const data = await response.json();
+    return data.description.trim();
   } catch (error) {
     console.error("Gemini AI description generation error:", error);
     throw new Error("Failed to generate description with AI");
@@ -85,39 +46,50 @@ export async function generateDescriptionOnly(name: string, category: string, ta
 
 export async function generateProductDataFromText(name: string, category: string): Promise<GeneratedProduct> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Generate professional product details for a textile/apparel product based on:
-      Name: ${name}
-      Category: ${category}
-
-      The response must be in JSON format matching the schema provided.
-      Categories available: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
-      Provide a competitive price suggestion in Kenyan Shillings (KSH).`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            name: { type: Type.STRING, description: "Professional product name" },
-            description: { type: Type.STRING, description: "Detailed marketing description" },
-            category: { type: Type.STRING, description: "Main category from the provided list" },
-            subCategory: { type: Type.STRING, description: "Sub-category if applicable" },
-            priceSuggestion: { type: Type.NUMBER, description: "Suggested price in KSH" },
-            tags: { 
-              type: Type.ARRAY, 
-              items: { type: Type.STRING },
-              description: "Relevant keywords for search"
-            },
-          },
-          required: ["name", "description", "category", "priceSuggestion", "tags"],
-        },
-      },
+    const response = await fetch('/api/ai/generate-product', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category, isTextOnly: true })
     });
-
-    return JSON.parse(response.text) as GeneratedProduct;
+    
+    if (!response.ok) throw new Error("AI Generation failed");
+    return await response.json();
   } catch (error) {
-    console.error("Gemini AI text-based generation error:", error);
-    throw new Error("Failed to generate product details with AI");
+    return {
+      name,
+      description: `Premium ${category} solution: ${name}. Designed for durability and performance.`,
+      category,
+      subCategory: "",
+      priceSuggestion: 1200,
+      tags: [category.toLowerCase(), "custom", "premium"]
+    };
+  }
+}
+
+export interface BatchAnalysisResult {
+  analyzedProducts: {
+    originalName: string;
+    suggestedName?: string;
+    suggestedCategory: string;
+    suggestedSubCategory?: string;
+    suggestedTags?: string[];
+    isIssueFound: boolean;
+    issueDescription?: string;
+  }[];
+}
+
+export async function analyzeBatch(products: any[]): Promise<BatchAnalysisResult> {
+  try {
+    const response = await fetch('/api/ai/analyze-batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ products })
+    });
+    
+    if (!response.ok) throw new Error("Batch analysis failed");
+    return await response.json();
+  } catch (error) {
+    console.error("Gemini batch analysis error:", error);
+    throw new Error("AI analysis service unavailable");
   }
 }

@@ -79,7 +79,7 @@ export function Navbar({
           <div className="flex gap-4 items-center">
             <span className="flex items-center gap-1.5"><Phone size={12} /> <a href={`tel:${siteSettings?.contactPhone || '+254792021795'}`} className="hover:text-[#C8961A]">{siteSettings?.contactPhone || '+254 792 021 795'}</a></span>
             <div className="w-px h-3.5 bg-white/20"></div>
-            <span className="flex items-center gap-1.5"><Mail size={12} /> <a href={`mailto:${siteSettings?.contactEmail || 'info@naisiaetextile.com'}`} className="hover:text-[#C8961A]">{siteSettings?.contactEmail || 'info@naisiaetextile.com'}</a></span>
+            <span className="flex items-center gap-1.5"><Mail size={12} /> <a href={`mailto:${siteSettings?.contactEmail || 'support@naisiaetextile.com'}`} className="hover:text-[#C8961A]">{siteSettings?.contactEmail || 'support@naisiaetextile.com'}</a></span>
           </div>
           <div className="flex gap-4 items-center">
             <span>Mon–Sat: 8am–6pm</span>
@@ -90,7 +90,7 @@ export function Navbar({
       </div>
 
       {/* Main Navbar */}
-      <nav className="relative z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
+      <nav className="sticky top-0 z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center h-[68px] justify-between">
           <Link to="/" className="flex items-center gap-3">
             <div className="overflow-hidden">
@@ -113,56 +113,59 @@ export function Navbar({
 
           <div className="hidden lg:flex items-center gap-10">
             {[
+              { name: 'Home', id: 'home', link: '/' },
               { 
-                id: 'school_uniforms',
-                name: 'School Uniforms', 
+                name: 'Products', 
+                id: 'products', 
+                link: '/products',
                 mega: {
-                  featured: {
-                    title: 'New Term Collection',
-                    image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
-                    link: '/#shop'
-                  },
-                  categories: [
-                    { name: 'Primary Schools', items: ['Sweaters', 'Shirts', 'Shorts', 'Dresses', 'Socks'] },
-                    { name: 'Secondary Schools', items: ['Blazers', 'Trousers', 'Skirts', 'Ties', 'Tracksuits'] },
-                    { name: 'Kindergarten', items: ['Pinafores', 'T-shirts', 'Tunics', 'Hats'] }
-                  ]
+                   featured: {
+                     title: 'Wholesale Solutions',
+                     image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
+                     link: '/products#wholesale'
+                   },
+                   categories: [
+                     { name: 'Wholesale', items: ['Bulk Orders', 'School Supply', 'Corporate Deals'] },
+                     { name: 'Design', items: ['Template Designs', 'Color Options', 'Catalog'] },
+                     { name: 'Custom', items: ['Bespoke Weave', 'Performance Fabric', 'Unique Patterns'] }
+                   ]
                 }
               },
               { 
-                id: 'corporate_wear',
-                name: 'Corporate Wear', 
+                name: 'Services', 
+                id: 'services', 
+                link: '/services',
                 mega: {
                   featured: {
-                    title: 'Custom Patterns',
-                    image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80',
-                    link: '/#shop'
-                  },
-                  categories: [
-                    { name: 'Pullovers', items: ['V-Neck', 'Round Neck', 'Sleeveless', 'Cardigans'] },
-                    { name: 'Accessories', items: ['Scarves', 'Beanies', 'Gloves', 'Leg Warmers'] },
-                    { name: 'Corporate', items: ['Branded Vests', 'Logo Embroidery', 'Bulk Orders'] }
-                  ]
-                }
-              },
-              { 
-                id: 'branding',
-                name: 'Branding', 
-                mega: {
-                  featured: {
-                    title: 'Corporate Identity',
+                    title: 'Embroidery Excellence',
                     image: 'https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?auto=format&fit=crop&q=80',
-                    link: '/#shop'
+                    link: '/services#embroidery'
                   },
                   categories: [
-                    { name: 'Screen Printing', items: ['T-Shirts', 'Hoodies', 'Caps', 'Tote Bags'] },
-                    { name: 'Signage', items: ['Roll-up Banners', 'Vinyl Stickers', 'Posters'] },
-                    { name: 'Events', items: ['Lanyards', 'Wristbands', 'ID Cards'] }
+                    { name: 'Knitting', items: ['Sweaters', 'Cardigans', 'Pullovers', 'Vests'] },
+                    { name: 'Embroidery', items: ['Logos', 'Badges', '3D Puff', 'Monograms'] },
+                    { name: 'Branding', items: ['Screen Printing', 'Vinyl Press', 'Promotional Items'] }
                   ]
                 }
               },
-              { name: 'Wholesale', id: 'wholesale', link: '/wholesale' },
-              { name: 'About Us', id: 'about', link: '/about' },
+              { name: 'Portfolio', id: 'portfolio', link: '/portfolio' },
+              { 
+                name: 'Categories', 
+                id: 'categories', 
+                link: '/categories',
+                mega: {
+                  featured: {
+                    title: 'School Uniforms',
+                    image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
+                    link: '/categories#school'
+                  },
+                  categories: [
+                    { name: 'School Uniforms', items: ['Primary', 'Secondary', 'College'] },
+                    { name: 'Casual Wear', items: ['T-Shirts', 'Hoodies', 'Tracksuits'] },
+                    { name: 'Corporate Wear', items: ['Shirts', 'Suits', 'Workwear'] }
+                  ]
+                }
+              },
             ].map((defaultItem) => {
               const dynamicMega = megaMenus.find(m => m.id === defaultItem.id);
               const item = {
@@ -192,7 +195,16 @@ export function Navbar({
                             <ul className="space-y-3">
                               {cat.items.map((sub: string) => (
                                 <li key={sub}>
-                                  <Link to={`/?tab=${item.name}&sub=${sub}#shop`} onClick={() => {}} className="text-[12px] text-[#64748B] hover:text-[#C8102E] font-black flex items-center justify-between group/link transition-all uppercase tracking-[2px]">
+                                  <Link 
+                                    to={
+                                      item.id === 'products' ? `/products#${cat.name.toLowerCase()}` : 
+                                      item.id === 'services' ? `/services#${sub.toLowerCase()}` :
+                                      item.id === 'categories' ? `/categories#${cat.name.split(' ')[0].toLowerCase()}` :
+                                      `/?tab=${item.name}&sub=${sub}#shop`
+                                    } 
+                                    onClick={() => {}} 
+                                    className="text-[12px] text-[#64748B] hover:text-[#C8102E] font-black flex items-center justify-between group/link transition-all uppercase tracking-[2px]"
+                                  >
                                     {sub}
                                     <ChevronRight size={12} className="opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all text-[#C8961A]" />
                                   </Link>

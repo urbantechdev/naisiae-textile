@@ -3,25 +3,131 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { GoogleGenAI, SchemaType } from "@google/genai";
 
 // ESM __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Firebase Admin Setup (Lazy initialization can be used but we need it for OG tags)
-// In this environment, we usually don't have a service account key file easily accessible, 
-// so we might need to use the client config or just simulate if admin is not available.
-// However, the instructions say "Never simulate infrastructure". 
-// But Firebase Admin needs credentials.
-// For OG tags, I can also just use the client SDK if I run it in the server, 
-// but it's better to use Admin for server-side fetching.
-// If no service account is provided, we can't easily use Firebase Admin.
-// I'll skip Admin for now and use the REST API or just a simple fetch if possible.
-// Actually, I can use the same firebase-applet-config.json and the client SDK on the server if I transpile it.
+// Gemini AI Setup (Server-side)
+const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY || "");
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  app.use(express.json({ limit: '10mb' }));
+
+  // API route for Gemini AI Generation
+  app.post("/api/ai/generate-product", async (req, res) => {
+    try {
+      const { base64Image, mimeType } = req.body;
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "Gemini API key not configured on server" });
+      }
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const prompt = `Analyze this image of a textile/apparel product and generate professional product details. 
+      Categories: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
+      Provide a competitive price suggestion in Kenyan Shillings (KSH).`;
+
+      const result = await model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: base64Image,
+            mimeType: mimeType
+          }
+        }
+      ]);
+
+      const response = await result.response;
+      const text = response.text();
+      // Try to extract JSON if it's wrapped in triple backticks
+      const cleaned = text.replace(/```json|```/g, "").trim();
+      res.json(JSON.parse(cleaned));
+    } catch (error) {
+      console.error("Gemini Server Error:", error);
+      res.status(500).json({ error: "Failed to generate product via AI" });
+    }
+  });
+
+  app.post("/api/ai/analyze-batch", async (req, res) => {
+    try {
+      const { products } = req.body;
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "Gemini API key not configured on server" });
+      }
+
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: SchemaType.OBJECT,
+            properties: {
+              analyzedProducts: {
+                type: SchemaType.ARRAY,
+                items: {
+                  type: SchemaType.OBJECT,
+                  properties: {
+                    originalName: { type: SchemaType.STRING },
+                    suggestedName: { type: SchemaType.STRING },
+                    suggestedCategory: { type: SchemaType.STRING },
+                    suggestedSubCategory: { type: SchemaType.STRING },
+                    suggestedTags: { 
+                      type: SchemaType.ARRAY,
+                      items: { type: SchemaType.STRING }
+                    },
+                    isIssueFound: { type: SchemaType.BOOLEAN },
+                    issueDescription: { type: SchemaType.STRING }
+                  },
+                  required: ["originalName", "suggestedCategory", "isIssueFound"]
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      const prompt = `Analyze this batch of apparel products for a Kenyan textile company called Uhuru Market Uniforms.
+      Valid Categories: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
+      
+      For each product:
+      1. Verify if the category matches the name.
+      2. Suggest missing tags (e.g., 'Wholesale', 'Custom', 'Cotton').
+      3. Identify if the sub-category is appropriate.
+      
+      Products to analyze:
+      ${JSON.stringify(products.map((p: any) => ({ name: p.name, category: p.category, description: p.description })))}
+      `;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      res.json(JSON.parse(response.text()));
+    } catch (error) {
+      console.error("Gemini Batch Analysis Error:", error);
+      res.status(500).json({ error: "Failed to analyze batch via AI" });
+    }
+  });
+
+  app.post("/api/ai/generate-description", async (req, res) => {
+    try {
+      const { name, category, tags } = req.body;
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = `Generate a professional, compelling marketing description for a product:
+      Name: ${name}
+      Category: ${category}
+      Tags: ${tags.join(', ')}
+       Concise (2-3 paragraphs), high quality emphasis. Return ONLY text.`;
+
+      const result = await model.generateContent(prompt);
+      res.json({ description: result.response.text() });
+    } catch (error) {
+       res.status(500).json({ error: "Failed to generate description" });
+    }
+  });
 
   // API route to resolve social/short links (like Canva) to direct image URLs
   app.get("/api/resolve-image", async (req, res) => {

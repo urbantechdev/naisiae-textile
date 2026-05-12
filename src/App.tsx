@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { auth, db } from './services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-// Pages (to be created)
+// Pages
 import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import LoginPage from './pages/LoginPage';
@@ -20,6 +20,10 @@ import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import ShippingPage from './pages/ShippingPage';
 import ReturnsPage from './pages/ReturnsPage';
+import ServicesPage from './pages/ServicesPage';
+import ProductsPage from './pages/ProductsPage';
+import PortfolioPage from './pages/PortfolioPage';
+import CategoriesPage from './pages/CategoriesPage';
 import { InactivityHandler } from './components/InactivityHandler';
 
 export default function App() {
@@ -50,7 +54,7 @@ export default function App() {
       setUser(user);
       if (user && user.emailVerified) {
         // Super admin check by email
-        if (user.email === 'naisiaetext@gmail.com') {
+        if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
           setIsAdmin(true);
           setLoading(false);
           return;
@@ -91,6 +95,13 @@ export default function App() {
           <Route path="/terms" element={<TermsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
           <Route path="/shipping" element={<ShippingPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
           <Route path="/returns" element={<ReturnsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          
+          {/* New Routes */}
+          <Route path="/services" element={<ServicesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/products" element={<ProductsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/portfolio" element={<PortfolioPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          <Route path="/categories" element={<CategoriesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+          
           <Route path="/login" element={<LoginPage />} />
           <Route 
             path="/admin/*" 

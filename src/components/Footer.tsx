@@ -38,21 +38,21 @@ export function Footer() {
           <p className="text-sm leading-relaxed mb-6">Your trusted partner for quality school uniforms, custom knitwear and professional branding services across Kenya.</p>
         </div>
         <div>
-          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Uniforms</h4>
+          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Company</h4>
           <ul className="space-y-3 text-sm">
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Primary School Uniforms</Link></li>
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Junior Secondary</Link></li>
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Corporate Uniforms</Link></li>
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Sports Kits</Link></li>
+            <li><Link to="/about" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">About Us</Link></li>
+            <li><Link to="/contact" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Contact Us</Link></li>
+            <li><Link to="/portfolio" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Our Portfolio</Link></li>
+            <li><Link to="/services" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Services</Link></li>
           </ul>
         </div>
         <div>
-           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Services</h4>
+           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6">Support</h4>
            <ul className="space-y-3 text-sm">
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Knitting Services</Link></li>
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Embroidery</Link></li>
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Screen Printing</Link></li>
-            <li><Link to="/#shop" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Design & Mockup</Link></li>
+            <li><Link to="/terms" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Terms & Conditions</Link></li>
+            <li><Link to="/privacy" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Privacy Policy</Link></li>
+            <li><Link to="/shipping" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Shipping Policy</Link></li>
+            <li><Link to="/returns" className="hover:text-[#C8961A] transition-colors flex items-center gap-2">Returns & Refunds</Link></li>
           </ul>
         </div>
         <div>
@@ -69,7 +69,7 @@ export function Footer() {
               <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A]"><Mail size={18} /></div>
               <div>
                <div className="text-[10px] font-bold uppercase text-white/50">Email</div>
-               <div className="text-white font-bold">info@uhurumarketuniforms.com</div>
+               <div className="text-white font-bold">support@naisiaetextile.com</div>
               </div>
             </div>
           </div>

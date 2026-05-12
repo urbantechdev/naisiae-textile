@@ -33,6 +33,7 @@ service cloud.firestore {
     function isAdmin() {
       return isEmailVerified() && (
         request.auth.token.email == 'naisiaetext@gmail.com' ||
+        request.auth.token.email == 'support@naisiaetextile.com' ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
       );

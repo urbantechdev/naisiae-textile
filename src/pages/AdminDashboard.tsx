@@ -104,7 +104,13 @@ import {
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { SEED_URLS } from '../constants/seedData';
 import { suggestCompetitivePrice, PriceSuggestion } from '../services/pricingService';
-import { generateProductDetails, generateDescriptionOnly, generateProductDataFromText } from '../services/geminiService';
+import { 
+  analyzeBatch, 
+  BatchAnalysisResult,
+  generateProductDetails, 
+  generateDescriptionOnly, 
+  generateProductDataFromText
+} from '../services/geminiService';
 import { ShieldCheck, BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
@@ -141,6 +147,8 @@ export default function AdminDashboard() {
   const [editingDiscountRule, setEditingDiscountRule] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResults, setAnalysisResults] = useState<BatchAnalysisResult | null>(null);
   const [stagedProducts, setStagedProducts] = useState<any[] | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
   const [chartData, setChartData] = useState<any[]>([]);
@@ -166,7 +174,7 @@ export default function AdminDashboard() {
     const totalStock = p.variants?.length > 0 
       ? p.variants.reduce((acc: number, v: any) => acc + (Number(v.stock) || 0), 0)
       : (Number(p.stock) || 0);
-    return totalStock > 0 && totalStock < 5;
+    return totalStock <= 5;
   }).length;
 
   useEffect(() => {
@@ -634,6 +642,41 @@ export default function AdminDashboard() {
     setToast({ message: `Imported ${mappedData.length} products to staging. Please review and sync.`, type: 'info' });
   };
 
+  const handleAnalyzeStagedProducts = async () => {
+    if (!stagedProducts || stagedProducts.length === 0) return;
+    
+    setIsAnalyzing(true);
+    setToast({ message: 'AI is analyzing categorization and data quality...', type: 'info' });
+    
+    try {
+      const result = await analyzeBatch(stagedProducts);
+      setAnalysisResults(result);
+      
+      // Update staged products with AI suggestions
+      const updatedStaged = stagedProducts.map(p => {
+        const analysis = result.analyzedProducts.find(ap => ap.originalName === p.name);
+        if (analysis) {
+          return {
+            ...p,
+            name: analysis.suggestedName || p.name,
+            category: analysis.suggestedCategory || p.category,
+            tags: [...new Set([...(p.tags || []), ...(analysis.suggestedTags || [])])],
+            aiAnalysis: analysis
+          };
+        }
+        return p;
+      });
+      
+      setStagedProducts(updatedStaged);
+      setToast({ message: 'AI analysis complete! Review suggestions in the list.', type: 'success' });
+    } catch (error) {
+      console.error('Batch analysis error:', error);
+      setToast({ message: 'AI analysis failed. Service may be busy.', type: 'error' });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleSyncStagedProducts = async () => {
     if (!stagedProducts || stagedProducts.length === 0) return;
 
@@ -735,176 +778,53 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Sidebar */}
-      <aside className={`
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        ${isSidebarCollapsed ? 'lg:w-20' : 'lg:w-72'}
-        bg-[#0A1628] text-white flex flex-col shrink-0 border-r border-white/5 fixed lg:static inset-y-0 left-0 z-[70] transition-all duration-300 ease-in-out
-      `}>
-        <div className="p-6 flex items-center justify-between">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20 shrink-0">
-              <span className="-rotate-3 text-white">NT</span>
-            </div>
-            {!isSidebarCollapsed && (
-              <motion.h1 
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                className="font-display text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] truncate"
-              >
-                Admin Panel
-              </motion.h1>
-            )}
+    <div className="flex flex-col h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
+      {/* Top Header */}
+      <header className="h-16 bg-[#0A1628] text-white flex items-center justify-between px-4 lg:px-8 shrink-0 relative z-50">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20 shrink-0">
+            <span className="-rotate-3 text-white">NT</span>
           </div>
-          <button 
-            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="hidden lg:flex w-6 h-6 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
-          >
-            {isSidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          <h1 className="font-display text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] hidden sm:block">
+            Admin Panel
+          </h1>
+        </div>
+
+        <div className="hidden md:flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-2 border border-white/5 focus-within:ring-2 focus-within:ring-[#C8961A]/50 transition-all flex-1 max-w-md mx-4">
+          <Search size={16} className="text-white/50" />
+          <input type="text" placeholder="Global search..." className="bg-transparent border-none outline-none text-sm w-full placeholder:text-white/30 text-white" />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden sm:block">
+            <p className="text-xs font-bold text-white">{auth.currentUser?.displayName || 'Administrator'}</p>
+            <p className="text-[10px] text-white/50">{auth.currentUser?.email || 'support@naisiaetextile.com'}</p>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-[#1C3560] flex items-center justify-center text-white border-2 border-white/20 shadow-md">
+            {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={14} />}
+          </div>
+          <button onClick={handleLogout} className="p-2 ml-1 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors" title="Sign Out">
+            <LogOut size={16} />
           </button>
         </div>
+      </header>
 
-        <nav className="flex-1 px-4 space-y-1 mt-4 overflow-y-auto custom-scrollbar">
-          <SidebarItem 
-            active={activeView === 'overview'} 
-            onClick={() => { setActiveView('overview'); setIsMobileMenuOpen(false); }} 
-            icon={<LayoutDashboard size={20} />} 
-            label="Overview" 
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem 
-            active={activeView === 'products'} 
-            onClick={() => { setActiveView('products'); setIsMobileMenuOpen(false); }} 
-            icon={<Package size={20} />} 
-            label="Products" 
-            collapsed={isSidebarCollapsed}
-            badge={lowStockProductsCount}
-          />
-          <SidebarItem 
-            active={activeView === 'quotes'} 
-            onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} 
-            icon={<MessageSquare size={20} />} 
-            label="Quotes & Enquires" 
-            collapsed={isSidebarCollapsed}
-            badge={newQuotesCount}
-          />
-          <SidebarItem 
-            active={activeView === 'wishlists'} 
-            onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} 
-            icon={<Heart size={20} />} 
-            label="Wishlist Insights" 
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem 
-            active={activeView === 'promotions'} 
-            onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} 
-            icon={<Megaphone size={20} />} 
-            label="Marketing & Promos" 
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem 
-            active={activeView === 'appearance'} 
-            onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} 
-            icon={<Palette size={20} />} 
-            label="Mega Menu & Layout" 
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem 
-            active={activeView === 'reviews'} 
-            onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} 
-            icon={<Star size={20} />} 
-            label="Public Reviews" 
-            collapsed={isSidebarCollapsed}
-            badge={pendingReviewsCount}
-          />
-          <SidebarItem 
-            active={activeView === 'users'} 
-            onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} 
-            icon={<Users size={20} />} 
-            label="Team Management" 
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem 
-            active={activeView === 'analytics'} 
-            onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} 
-            icon={<BarChart3 size={20} />} 
-            label="Analytics" 
-            collapsed={isSidebarCollapsed}
-          />
-        </nav>
-
-        <div className="p-4 mt-auto border-t border-white/5 space-y-1">
-          <SidebarItem 
-            active={activeView === 'settings'} 
-            onClick={() => { setActiveView('settings'); setIsMobileMenuOpen(false); }} 
-            icon={<Settings size={20} />} 
-            label="Site Branding" 
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem 
-            active={false} 
-            onClick={handleLogout} 
-            icon={<LogOut size={20} />} 
-            label="Sign Out" 
-            danger
-            collapsed={isSidebarCollapsed}
-          />
-          
-          {!isSidebarCollapsed && (
-            <div className="mt-6 flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
-              <div className="w-10 h-10 rounded-xl bg-[#C8961A] flex items-center justify-center text-white font-bold shadow-lg shadow-black/20">
-                {auth.currentUser?.displayName?.charAt(0) || 'A'}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-white truncate">{auth.currentUser?.displayName || 'Admin'}</p>
-                <p className="text-[10px] text-gray-500 truncate">naisiaetext@gmail.com</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </aside>
+      {/* Main Tabs Navigation */}
+      <nav className="bg-white border-b border-[#E2E8F0] px-4 lg:px-8 overflow-x-auto scrollbar-hide flex gap-2 shrink-0 z-40 shadow-sm relative pt-3">
+        <TabItem active={activeView === 'overview'} onClick={() => setActiveView('overview')} icon={<LayoutDashboard size={14} />} label="Overview" />
+        <TabItem active={activeView === 'products'} onClick={() => setActiveView('products')} icon={<Package size={14} />} label="Products" badge={lowStockProductsCount} />
+        <TabItem active={activeView === 'quotes'} onClick={() => setActiveView('quotes')} icon={<MessageSquare size={14} />} label="Quotes" badge={newQuotesCount} />
+        <TabItem active={activeView === 'wishlists'} onClick={() => setActiveView('wishlists')} icon={<Heart size={14} />} label="Wishlists" />
+        <TabItem active={activeView === 'promotions'} onClick={() => setActiveView('promotions')} icon={<Megaphone size={14} />} label="Marketing" />
+        <TabItem active={activeView === 'appearance'} onClick={() => setActiveView('appearance')} icon={<Palette size={14} />} label="Layout" />
+        <TabItem active={activeView === 'reviews'} onClick={() => setActiveView('reviews')} icon={<Star size={14} />} label="Reviews" badge={pendingReviewsCount} />
+        <TabItem active={activeView === 'users'} onClick={() => setActiveView('users')} icon={<Users size={14} />} label="Team" />
+        <TabItem active={activeView === 'analytics'} onClick={() => setActiveView('analytics')} icon={<BarChart3 size={14} />} label="Analytics" />
+        <TabItem active={activeView === 'settings'} onClick={() => setActiveView('settings')} icon={<Settings size={14} />} label="Settings" />
+      </nav>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="h-20 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-4 lg:px-8 sticky top-0 z-50">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
-              <Menu size={24} />
-            </button>
-            <h2 className="font-bold text-xl capitalize text-[#0A1628]">{activeView === 'overview' ? 'Dashboard Overview' : activeView}</h2>
-            <div className="hidden lg:flex items-center gap-3 bg-[#F8FAFC] rounded-2xl px-4 py-2 border border-[#E2E8F0] focus-within:ring-2 focus-within:ring-[#C8102E]/20 transition-all">
-              <Search size={16} className="text-[#94A3B8]" />
-              <input type="text" placeholder="Global search..." className="bg-transparent border-none outline-none text-sm w-64 placeholder:text-gray-400" />
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-[#1E293B]">{auth.currentUser?.displayName || 'Administrator'}</p>
-              <p className="text-[10px] text-[#64748B]">naisiaetext@gmail.com</p>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1C3560] to-[#0A1628] flex items-center justify-center text-white border-2 border-white shadow-md">
-              {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={18} />}
-            </div>
-          </div>
-        </header>
+      <main className="flex-1 overflow-y-auto w-full relative bg-[#F1F5F9]">
 
         <div className="p-8">
           <AnimatePresence mode="wait">
@@ -1152,6 +1072,7 @@ export default function AdminDashboard() {
           <option value="active">Active Only</option>
           <option value="inactive">Drafts Only</option>
           <option value="wholesale">Wholesale Only</option>
+          <option value="low-stock">Low Stock (≤5)</option>
         </select>
       </div>
                       </div>
@@ -2305,15 +2226,23 @@ export default function AdminDashboard() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-bold text-[#1E293B] truncate">{p.name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-[#1E293B] truncate">{p.name}</p>
+                            {p.aiAnalysis?.isIssueFound && (
+                              <span title={p.aiAnalysis.issueDescription} className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                            )}
+                          </div>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[10px] font-black uppercase text-slate-400 bg-white px-1.5 py-0.5 border border-slate-100 rounded-md">
+                            <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 border rounded-md ${p.aiAnalysis ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-white text-slate-400 border-slate-100'}`}>
                               {p.category}
                             </span>
                             <span className="text-[10px] font-black text-blue-600">
                               KES {p.price.toLocaleString()}
                             </span>
                           </div>
+                          {p.aiAnalysis?.isIssueFound && (
+                            <p className="text-[9px] text-amber-600 font-medium mt-1">⚠️ {p.aiAnalysis.issueDescription}</p>
+                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           {isExisting ? (
@@ -2346,6 +2275,18 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="flex gap-3">
+                  <button
+                    onClick={handleAnalyzeStagedProducts}
+                    disabled={isAnalyzing || isImporting}
+                    className="px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isAnalyzing ? (
+                      <div className="w-4 h-4 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin" />
+                    ) : (
+                      <BrainCircuit size={16} />
+                    )}
+                    AI Analyzer
+                  </button>
                   <button
                     onClick={() => setStagedProducts(null)}
                     className="px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest text-[#64748B] hover:text-[#1E293B] transition-all"
@@ -2680,44 +2621,24 @@ export default function AdminDashboard() {
   }
 }
 
-function SidebarItem({ icon, label, active, onClick, danger = false, collapsed = false, badge = 0 }: any) {
+function TabItem({ icon, label, active, onClick, danger = false, badge = 0 }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm group relative ${
+      className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all font-bold text-xs uppercase tracking-widest relative whitespace-nowrap ${
         active 
-          ? 'bg-[#1C3560] text-white shadow-lg shadow-black/20' 
+          ? 'bg-white text-[#1C3560] shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.05)] border-t-[3px] border-[#C8102E]' 
           : danger 
-            ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300' 
-            : 'text-gray-400 hover:bg-white/5 hover:text-white'
-      } ${collapsed ? 'justify-center px-0' : ''}`}
-      title={collapsed ? label : ''}
+            ? 'text-red-500 hover:bg-red-50' 
+            : 'text-slate-500 hover:text-[#1E293B] hover:bg-slate-50 border-t-[3px] border-transparent'
+      }`}
     >
-      <span className={active ? 'text-[#C8961A]' : ''}>{icon}</span>
-      {!collapsed && (
-        <motion.span
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="truncate"
-        >
-          {label}
-        </motion.span>
-      )}
-      
+      <span className={active ? 'text-[#C8102E]' : ''}>{icon}</span>
+      <span>{label}</span>
       {badge > 0 && (
-        <span className={`
-          absolute flex items-center justify-center bg-[#C8102E] text-white text-[10px] font-bold rounded-full
-          ${collapsed ? '-top-1 -right-1 w-4 h-4' : 'right-4 px-1.5 min-w-[18px] h-[18px]'}
-        `}>
+        <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-black ${active ? 'bg-[#C8102E] text-white' : 'bg-slate-200 text-slate-500'}`}>
           {badge}
         </span>
-      )}
-
-      {active && !collapsed && (
-        <motion.div 
-          layoutId="sidebar-active"
-          className="ml-auto w-1 h-4 bg-[#C8961A] rounded-full"
-        />
       )}
     </button>
   );

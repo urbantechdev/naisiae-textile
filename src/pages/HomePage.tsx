@@ -235,7 +235,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   }, [selectedQuickViewProduct]);
 
   useEffect(() => {
-    const q = query(collection(db, 'products'), where('active', '==', true), orderBy('sortOrder', 'asc'), limit(50));
+    const q = query(collection(db, 'products'), where('active', '==', true), orderBy('sortOrder', 'asc'), limit(500));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProducts(items);
@@ -552,7 +552,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         </AnimatePresence>
 
         {/* Floating Search Bar (Static) */}
-        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-start justify-center pt-[450px] lg:pt-[550px] max-w-[1440px] mx-auto px-8 lg:px-24">
+        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center pt-[450px] lg:pt-[550px] max-w-[1440px] mx-auto px-8 lg:px-24 text-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
