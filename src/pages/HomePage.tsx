@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Search, 
   ShoppingBag, 
@@ -339,37 +339,33 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
     };
   }, []);
 
-  useEffect(() => {
-    const filtered = products.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-      
+  const displayProducts = useMemo(() => {
+    return products.filter(p => {
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = !searchQuery || 
+        p.name.toLowerCase().includes(searchLower) || 
+        p.category.toLowerCase().includes(searchLower) ||
+        p.tags?.some((t: string) => t.toLowerCase().includes(searchLower));
+        
       const matchesTag = !activeTag || p.tags?.includes(activeTag);
       const matchesTab = activeTab === 'all' || p.category.toLowerCase() === activeTab.toLowerCase();
       const matchesSubCategory = !activeSubCategory || p.subCategory === activeSubCategory;
       
       return matchesSearch && matchesTag && matchesTab && matchesSubCategory;
     });
-    setSearchResults(filtered);
+  }, [products, searchQuery, activeTag, activeTab, activeSubCategory]);
+
+  useEffect(() => {
     setShowSearchSuggestions(searchQuery.trim().length > 1);
-  }, [searchQuery, products, activeTag, activeTab, activeSubCategory]);
+  }, [searchQuery]);
 
-  const allTags = Array.from(new Set(products.flatMap(p => p.tags || []))).slice(0, 10);
-  const uniformSubCategories = Array.from(new Set(products.filter(p => p.category === 'School Uniforms' && p.subCategory).map(p => p.subCategory))).sort();
+  const allTags = useMemo(() => 
+    Array.from(new Set(products.flatMap(p => p.tags || []))).slice(0, 10)
+  , [products]);
 
-  const displayProducts = products.filter(p => {
-    const matchesSearch = !searchQuery || 
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.tags?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-    const matchesTag = !activeTag || p.tags?.includes(activeTag);
-    const matchesTab = activeTab === 'all' || p.category.toLowerCase() === activeTab.toLowerCase();
-    const matchesSubCategory = !activeSubCategory || p.subCategory === activeSubCategory;
-    
-    return matchesSearch && matchesTag && matchesTab && matchesSubCategory;
-  });
+  const uniformSubCategories = useMemo(() => 
+    Array.from(new Set(products.filter(p => p.category === 'School Uniforms' && p.subCategory).map(p => p.subCategory))).sort()
+  , [products]);
 
   useEffect(() => {
     const heroCount = siteSettings?.heroImages?.length || 1;
@@ -544,10 +540,12 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               className="absolute inset-0"
             >
               <img 
-                src={siteSettings?.heroImages?.[currentSlide]?.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop"} 
+                src={siteSettings?.heroImages?.[currentSlide]?.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=1920&auto=format&fit=crop"} 
                 className="w-full h-full object-cover object-center"
                 alt={siteSettings?.heroImages?.[currentSlide]?.title || 'Hero'}
                 loading="eager"
+                referrerPolicy="no-referrer"
+                fetchPriority="high"
               />
               {/* Complex Cinematic Lighting System */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
@@ -731,7 +729,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         className="p-6 hover:bg-[#C8961A]/5 cursor-pointer flex items-center gap-6 transition-colors group"
                       >
                         <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-slate-100 group-hover:border-[#C8961A]/30">
-                          <img src={product.imageUrl} className="w-full h-full object-contain p-2" alt="" />
+                          <img src={product.imageUrl} className="w-full h-full object-contain p-2" alt="" loading="lazy" referrerPolicy="no-referrer" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-black text-[#0A1628] uppercase tracking-wide truncate">{product.name}</p>
@@ -787,7 +785,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 >
                   <div className="absolute inset-0">
                     {cat.image ? (
-                      <img src={cat.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.title} />
+                      <img src={cat.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.title} loading="lazy" referrerPolicy="no-referrer" />
                     ) : (
                       <div className="w-full h-full bg-slate-100 flex items-center justify-center"><Package size={40} className="text-slate-200" /></div>
                     )}
@@ -882,9 +880,11 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   whileInView={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 1.5 }}
                   viewport={{ once: true }}
-                  src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2574&auto=format&fit=crop" 
+                  src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1600&auto=format&fit=crop" 
                   className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
                   alt="Wholesale Textiles"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent lg:via-[#0A1628]/20"></div>
                 
@@ -933,7 +933,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" loading="lazy" referrerPolicy="no-referrer" />
                     ) : (
                       <Package size={40} className="text-[#C8961A]/20" />
                     )}
@@ -1072,7 +1072,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                 {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" />
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" loading="lazy" referrerPolicy="no-referrer" />
                 ) : (
                   <Package size={40} className="text-[#C8961A]/20" />
                 )}

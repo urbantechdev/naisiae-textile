@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { LogIn, ShieldCheck, Mail, ArrowRight, Lock, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -99,10 +99,14 @@ export default function LoginPage() {
       await handlePostLogin(result.user);
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError('Invalid email or password');
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid credentials. If you haven\'t set a password yet, please use the Google login method above.');
+      } else if (err.code === 'auth/user-not-found') {
+        setError('No account found with this email. Please use Google Login to register automatically.');
+      } else if (err.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again or use Google Login.');
       } else {
-        setError('An error occurred during sign in. Please check your credentials.');
+        setError('An error occurred during sign in. We recommend using Google Login for faster access.');
       }
     } finally {
       setLoading(false);
@@ -238,6 +242,11 @@ export default function LoginPage() {
           <p className="text-[10px] text-center text-gray-500 uppercase tracking-widest leading-relaxed">
             By continuing, you agree to the Naisiae Textiles Limited <br /> data processing and security terms.
           </p>
+          <div className="mt-4 text-center">
+            <Link to="/" className="text-[10px] text-[#C8961A] font-bold uppercase tracking-widest hover:text-white transition-colors">
+              ← Back to Uhuru Market Home
+            </Link>
+          </div>
         </div>
       </motion.div>
     </div>

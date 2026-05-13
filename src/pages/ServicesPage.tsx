@@ -110,7 +110,7 @@ export default function ServicesPage({ cart, setCart, wishlist, setWishlist }: P
             >
               <div className="lg:w-1/2 relative">
                 <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                  <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                  <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy" referrerPolicy="no-referrer" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628]/60 to-transparent"></div>
                 </div>
                 <div className={`absolute -bottom-8 ${idx % 2 === 0 ? '-right-8' : '-left-8'} bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex items-center gap-4`}>

@@ -2,20 +2,15 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // -------------------------------------------------------------------------
-    // HELPER FUNCTIONS
-    // -------------------------------------------------------------------------
-    
+    // Helpers
     function isSignedIn() {
       return request.auth != null;
     }
-
+    
     function isAdmin() {
       return isSignedIn() && (
         request.auth.token.email == 'naisiaetext@gmail.com' ||
         request.auth.token.email == 'support@naisiaetextile.com'
-        // Temporarily disabled exists check to isolate permission issues
-        // || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       );
     }
 
@@ -23,37 +18,12 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    function incoming() {
-      return request.resource.data;
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
 
-    function existing() {
-      return resource.data;
-    }
-
-    function isValidProduct(data) {
-      return data.keys().hasAll(['name', 'category', 'price']) &&
-             data.name is string && data.name.size() <= 300 &&
-             data.category is string &&
-             data.price is number;
-    }
-
-    // -------------------------------------------------------------------------
-    // SYSTEM & TEST
-    // -------------------------------------------------------------------------
-
-    match /system/{docId} {
-      allow read: if true;
-    }
-
-    match /analytics/{dayId} {
-      allow read, write: if true;
-    }
-
-    // -------------------------------------------------------------------------
-    // PUBLIC ACCESS
-    // -------------------------------------------------------------------------
-
+    // Public collections
     match /settings/{id} {
       allow read: if true;
       allow write: if isAdmin();
@@ -68,56 +38,61 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+    
+    match /products/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
     match /promotions/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    match /discountRules/{id} {
+    match /services/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    match /products/{id} {
+    match /portfolio/{id} {
       allow read: if true;
-      allow create, update: if isAdmin() && isValidProduct(incoming());
-      allow delete: if isAdmin();
+      allow write: if isAdmin();
     }
 
     match /reviews/{id} {
       allow read: if true;
-      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      allow create: if isSignedIn();
       allow update, delete: if isAdmin();
     }
 
-    // -------------------------------------------------------------------------
-    // RESTRICTED ACCESS
-    // -------------------------------------------------------------------------
-
     match /quotes/{id} {
       allow create: if true;
-      allow read, update, delete: if isAdmin();
+      allow read, write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
     }
 
     match /wishlists/{userId} {
       allow read, write: if isOwner(userId) || isAdmin();
     }
 
-    match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId);
-      allow update: if (isOwner(userId) || isAdmin()) && 
-                    (!incoming().diff(existing()).affectedKeys().hasAny(['role']) || isAdmin());
+    match /system/{id} {
+      allow read: if true;
+    }
+
+    match /analytics/{id} {
+      allow read, write: if true;
     }
 
     match /admins/{userId} {
       allow read, write: if isAdmin();
     }
-
-    // Default Deny
-    match /{document=**} {
-      allow read, write: if false;
+    
+    match /discountRules/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

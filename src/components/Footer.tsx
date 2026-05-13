@@ -21,7 +21,7 @@ export function Footer() {
           <div className="flex items-center gap-3 mb-4">
             <div className="overflow-hidden shrink-0">
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae Textile'} className="w-14 h-14 object-contain" />
+                <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae Textile'} className="w-14 h-14 object-contain" loading="lazy" referrerPolicy="no-referrer" />
               ) : (
                 <div className="w-12 h-12 flex items-center justify-center font-black text-xl text-[#C8102E] bg-white rounded-xl border-4 border-[#C8102E]">NT</div>
               )}

@@ -45,11 +45,98 @@ export function Navbar({
     window.addEventListener('scroll', handleScroll);
     
     const unsubMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
-      setMegaMenus(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      let menus: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // If no data in DB, provide default fallbacks so the UI isn't broken
+      if (menus.length === 0) {
+        menus = [
+          {
+            id: 'products',
+            name: 'Products',
+            featured: { 
+              title: 'School Uniform Collection 2025',
+              image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
+              link: '/products'
+            },
+            categories: [
+              { name: 'Primary Schools', items: ['Sweaters', 'Shorts', 'Dresses', 'Blazers'] },
+              { name: 'Secondary Schools', items: ['Trousers', 'Skirts', 'Blouses', 'Ties'] },
+              { name: 'Branding', items: ['Embroidery', 'Screen Printing', 'Heat Press'] }
+            ]
+          },
+          {
+            id: 'services',
+            name: 'Services',
+            featured: {
+              title: 'Custom Textile Solutions',
+              image: 'https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80',
+              link: '/services'
+            },
+            categories: [
+              { name: 'Manufacturing', items: ['Wholesale Production', 'Custom Patterns', 'Bulk Orders'] },
+              { name: 'Corporate', items: ['Staff Uniforms', 'Promotional Wear', 'Identity Branding'] }
+            ]
+          },
+          {
+            id: 'categories',
+            name: 'Categories',
+            featured: {
+              title: 'Explore Our Catalog',
+              image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80',
+              link: '/categories'
+            },
+            categories: [
+              { name: 'Shop By Sector', items: ['Healthcare', 'Education', 'Hospitality', 'Security'] },
+              { name: 'Shop By Type', items: ['Woven Labels', 'Embossed Logos', 'Printed Fabrics'] }
+            ]
+          }
+        ];
+      }
+      setMegaMenus(menus);
+    }, (error) => {
+      console.error('Mega menus fetch error:', error);
+      // Fallback for demo/missing data
+      setMegaMenus([
+        {
+          id: 'products',
+          name: 'Products',
+          featured: { 
+            title: 'School Uniform Collection 2025',
+            image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
+            link: '/products'
+          },
+          categories: [
+            { name: 'Primary Schools', items: ['Sweaters', 'Shorts', 'Dresses', 'Blazers'] },
+            { name: 'Secondary Schools', items: ['Trousers', 'Skirts', 'Blouses', 'Ties'] },
+            { name: 'Branding', items: ['Embroidery', 'Screen Printing', 'Heat Press'] }
+          ]
+        },
+        {
+          id: 'services',
+          name: 'Services',
+          featured: {
+            title: 'Custom Textile Solutions',
+            image: 'https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80',
+            link: '/services'
+          },
+          categories: [
+            { name: 'Manufacturing', items: ['Wholesale Production', 'Custom Patterns', 'Bulk Orders'] },
+            { name: 'Corporate', items: ['Staff Uniforms', 'Promotional Wear', 'Identity Branding'] }
+          ]
+        }
+      ]);
     });
     
     const unsubSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
-      if (snapshot.exists()) setSiteSettings(snapshot.data());
+      if (snapshot.exists()) {
+        setSiteSettings(snapshot.data());
+      } else {
+        setSiteSettings({
+          siteName: 'NAISIAE TEXTILES',
+          siteTagline: 'Uhuru Market Uniforms',
+          siteLogo: null
+        });
+      }
     });
 
     const qPromos = query(collection(db, 'promotions'), where('active', '==', true));
@@ -103,10 +190,10 @@ export function Navbar({
       </AnimatePresence>
 
       <header 
-        className={`w-full transition-all duration-700 ${
+        className={`w-full transition-all duration-700 border-b border-white/5 ${
           isScrolled 
-            ? 'bg-[#0A1628]/95 backdrop-blur-2xl border-b border-white/5 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)]' 
-            : 'bg-transparent py-8'
+            ? 'bg-[#050B16]/95 backdrop-blur-2xl py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
+            : 'bg-[#050B16] py-8'
         }`}
         onMouseLeave={() => setActiveMegaMenu(null)}
       >
@@ -116,7 +203,7 @@ export function Navbar({
             <div className={`relative transition-all duration-700 ${isScrolled ? 'w-12 h-12' : 'w-16 h-16'}`}>
               <div className="absolute inset-0 bg-[#C8961A]/20 blur-[15px] group-hover:blur-[25px] transition-all rounded-full"></div>
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110" />
+                <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center font-display text-2xl text-[#C8961A] bg-[#0A1628] border border-[#C8961A]/30 rounded-2xl relative z-10 shadow-2xl overflow-hidden group-hover:border-[#C8961A] transition-all">
                   <span className="relative z-10">NT</span>
@@ -209,7 +296,7 @@ export function Navbar({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-full left-0 w-full bg-[#0A1628]/98 backdrop-blur-2xl border-t border-white/5 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] z-[90] pointer-events-auto"
+              className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] z-[90] pointer-events-auto"
             >
               <div className="max-w-[1440px] mx-auto grid grid-cols-12 gap-12 p-12 lg:px-12">
                 {(() => {
@@ -223,14 +310,14 @@ export function Navbar({
                           <div key={idx} className="space-y-6">
                             <div className="flex items-center gap-3">
                               <div className="w-6 h-0.5 bg-[#C8961A]"></div>
-                              <h4 className="text-white text-[11px] font-black tracking-[3px] uppercase">{cat.name}</h4>
+                              <h4 className="text-[#0A1628] text-[11px] font-black tracking-[3px] uppercase">{cat.name}</h4>
                             </div>
                             <ul className="space-y-3">
                               {cat.items?.map((sub: string, sIdx: number) => (
                                 <li key={sIdx}>
                                   <Link 
                                     to={activeMegaMenu === 'products' ? `/products#${cat.name.toLowerCase()}` : `/?tab=${activeMegaMenu}&sub=${sub}#shop`}
-                                    className="text-white/50 hover:text-white text-[12px] font-bold flex items-center justify-between group/link transition-all uppercase tracking-[1px] py-1 border-b border-transparent hover:border-white/10"
+                                    className="text-slate-500 hover:text-[#0A1628] text-[12px] font-bold flex items-center justify-between group/link transition-all uppercase tracking-[1px] py-1 border-b border-transparent hover:border-slate-100"
                                   >
                                     {sub}
                                     <ChevronRight size={12} className="opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all text-[#C8961A]" />
@@ -242,14 +329,16 @@ export function Navbar({
                         ))}
                       </div>
 
-                      <div className="col-span-4 border-l border-white/5 pl-12 flex flex-col justify-center">
+                      <div className="col-span-4 border-l border-slate-100 pl-12 flex flex-col justify-center">
                         <div className="relative aspect-[16/10] rounded-3xl overflow-hidden group/feat shadow-2xl">
                           <img 
                             src={dynamicMenu.featured?.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80"} 
                             className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" 
                             alt="Featured" 
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/20 to-transparent"></div>
                           <div className="absolute bottom-6 left-6 right-6">
                             <span className="text-[9px] text-[#C8961A] font-black uppercase tracking-[3px] mb-2 block font-sans">Special Edition</span>
                             <h5 className="text-white text-2xl font-bold mb-4 line-clamp-1">{dynamicMenu.featured?.title || 'Our Premium Selection'}</h5>

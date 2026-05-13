@@ -116,6 +116,7 @@ import { ShieldCheck, BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
+  const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState('overview');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -1885,6 +1886,8 @@ export default function AdminDashboard() {
                   <SettingsForm 
                     initialData={siteSettings} 
                     setToast={setToast}
+                    products={products}
+                    handleSeedSampleData={handleSeedSampleData}
                     onSave={async (data: any) => {
                       try {
                         const settingsRef = doc(db, 'settings', 'site');
@@ -3997,7 +4000,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
 
 const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop';
 
-function SettingsForm({ initialData, onSave, setToast }: any) {
+function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampleData }: any) {
   const [uploading, setUploading] = useState<string | null>(null);
   const [resolving, setResolving] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});

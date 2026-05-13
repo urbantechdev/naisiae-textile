@@ -94,7 +94,7 @@ export default function CategoriesPage({ cart, setCart, wishlist, setWishlist }:
                     viewport={{ once: true }}
                     className="relative group bg-[#0A1628] rounded-[3rem] overflow-hidden aspect-[3/4] shadow-2xl"
                 >
-                    <img src={cat.image} alt={cat.title} className="w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000" />
+                    <img src={cat.image} alt={cat.title} className="w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000" loading="lazy" referrerPolicy="no-referrer" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-transparent"></div>
                     
                     <div className="absolute bottom-12 left-12 right-12">

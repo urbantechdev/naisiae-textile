@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { motion } from 'motion/react';
@@ -30,7 +30,9 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
     return () => unsubscribe();
   }, []);
 
-  const wholesaleProducts = products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate'));
+  const wholesaleProducts = useMemo(() => 
+    products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate'))
+  , [products]);
 
   const sections = [
     {
@@ -122,7 +124,7 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
                         transition={{ delay: idx * 0.1 }}
                         className={`rounded-3xl overflow-hidden border border-slate-100 shadow-xl ${idx % 2 !== 0 ? 'mt-12' : ''}`}
                     >
-                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-contain" />
+                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-contain" loading="lazy" referrerPolicy="no-referrer" />
                         <div className="p-6 bg-white">
                             <h4 className="font-bold text-xs uppercase tracking-wider mb-2">{p.name}</h4>
                             <p className="text-[10px] font-black text-[#C8102E]">BULK PRICE ON REQUEST</p>
@@ -153,7 +155,7 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
                         className="group text-left"
                     >
                         <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 relative">
-                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4] p-4" />
+                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4] p-4" loading="lazy" referrerPolicy="no-referrer" />
                              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                         </div>
                         <h3 className="text-2xl font-display uppercase tracking-widest mb-2">{p.name}</h3>
@@ -181,6 +183,8 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
                         src="https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80" 
                         alt="Customization" 
                         className="rounded-[4rem] w-full aspect-[4/5] object-cover shadow-2xl" 
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
                     />
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#C8102E] rounded-full blur-[80px] opacity-20 -z-10"></div>
                 </div>

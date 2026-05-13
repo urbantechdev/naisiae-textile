@@ -5,25 +5,26 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { auth, db } from './services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-// Pages
-import HomePage from './pages/HomePage';
-import AdminDashboard from './pages/AdminDashboard';
-import LoginPage from './pages/LoginPage';
-import AboutPage from './pages/AboutPage';
-import WholesalePage from './pages/WholesalePage';
-import ContactPage from './pages/ContactPage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsPage from './pages/TermsPage';
-import ShippingPage from './pages/ShippingPage';
-import ReturnsPage from './pages/ReturnsPage';
-import ServicesPage from './pages/ServicesPage';
-import ProductsPage from './pages/ProductsPage';
-import PortfolioPage from './pages/PortfolioPage';
-import CategoriesPage from './pages/CategoriesPage';
+// Lazy loaded pages for better performance
+const HomePage = lazy(() => import('./pages/HomePage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const WholesalePage = lazy(() => import('./pages/WholesalePage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const ShippingPage = lazy(() => import('./pages/ShippingPage'));
+const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
+const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
+
 import { InactivityHandler } from './components/InactivityHandler';
 
 export default function App() {
@@ -92,29 +93,35 @@ export default function App() {
   return (
     <Router>
       <InactivityHandler>
-        <Routes>
-          <Route path="/" element={<HomePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/about" element={<AboutPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/wholesale" element={<WholesalePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/contact" element={<ContactPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/privacy" element={<PrivacyPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/terms" element={<TermsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/shipping" element={<ShippingPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/returns" element={<ReturnsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          
-          {/* New Routes */}
-          <Route path="/services" element={<ServicesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/products" element={<ProductsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/portfolio" element={<PortfolioPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          <Route path="/categories" element={<CategoriesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-          
-          <Route path="/login" element={<LoginPage />} />
-          <Route 
-            path="/admin/*" 
-            element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />} 
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C8961A]"></div>
+          </div>
+        }>
+          <Routes>
+            <Route path="/" element={<HomePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/about" element={<AboutPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/wholesale" element={<WholesalePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/contact" element={<ContactPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/privacy" element={<PrivacyPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/terms" element={<TermsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/shipping" element={<ShippingPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/returns" element={<ReturnsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            
+            {/* New Routes */}
+            <Route path="/services" element={<ServicesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/products" element={<ProductsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/portfolio" element={<PortfolioPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            <Route path="/categories" element={<CategoriesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
+            
+            <Route path="/login" element={<LoginPage />} />
+            <Route 
+              path="/admin/*" 
+              element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />} 
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </InactivityHandler>
     </Router>
   );
