@@ -24,6 +24,7 @@ import {
   Star,
   Package,
   ChevronDown,
+  ArrowRight,
   Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -85,6 +86,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [activeModalPromo, setActiveModalPromo] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
@@ -251,6 +253,14 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       handleFirestoreError(error, OperationType.GET, 'promotions');
     });
 
+    // Fetch Categories
+    const qCats = query(collection(db, 'categories'), orderBy('sortOrder', 'asc'));
+    const unsubscribeCats = onSnapshot(qCats, (snapshot) => {
+      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'categories');
+    });
+
     // Fetch Site Settings
     const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
       if (snapshot.exists()) {
@@ -390,8 +400,32 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
   useEffect(() => {
     if (siteSettings) {
-      document.title = siteSettings.siteName ? `${siteSettings.siteName} | ${siteSettings.siteTagline || 'Uhuru Market'}` : 'Naisiae Textiles Limited | Uhuru Market';
+      const siteName = siteSettings.siteName || 'Uhuru Market Uniforms';
+      const tagline = siteSettings.siteTagline || 'Premium Uniforms & Branding';
+      const description = siteSettings.sharingDescription || 'Premium uniform manufacturing and textile solutions in Nairobi. Custom branding, bulk orders, and quality fabrics.';
+      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://naisiaetextile.com/og-image.jpg';
+
+      document.title = `${siteName} | ${tagline}`;
       
+      // Update meta description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', description);
+      }
+
+      // Update OG tags
+      const updateMeta = (selector: string, attr: string, value: string) => {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute(attr, value);
+      };
+
+      updateMeta('meta[property="og:title"]', 'content', `${siteName} | ${tagline}`);
+      updateMeta('meta[property="og:description"]', 'content', description);
+      updateMeta('meta[property="og:image"]', 'content', sharingImage);
+      updateMeta('meta[property="twitter:title"]', 'content', `${siteName} | ${tagline}`);
+      updateMeta('meta[property="twitter:description"]', 'content', description);
+      updateMeta('meta[property="twitter:image"]', 'content', sharingImage);
+
       if (siteSettings.favicon) {
         let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
         if (!link) {
@@ -490,69 +524,86 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       />
 
       {/* Dynamic Hero Slider Section */}
-      <section className="relative h-[85vh] min-h-[700px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0"
-          >
-            {/* Background Split Layout */}
-            <div className="absolute inset-y-0 right-0 w-full lg:w-[60%] z-0">
+      <section className="relative h-[90vh] min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
+        {/* Background Layer with enhanced fitting */}
+        <div className="absolute inset-0 z-0">
+          {siteSettings?.heroImages?.map((slide: any, idx: number) => (
+            <motion.div
+              key={`bg-${idx}`}
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: currentSlide === idx ? 0.9 : 0,
+                scale: currentSlide === idx ? 1 : 1.1
+              }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="absolute inset-0"
+            >
+              <div className="absolute inset-0">
+                <img 
+                  src={slide.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop"} 
+                  className="w-full h-full object-cover"
+                  alt={`Hero ${idx}`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-black/20"></div>
+              </div>
+            </motion.div>
+          ))}
+          {/* Default fallback */}
+          {(!siteSettings?.heroImages || siteSettings.heroImages.length === 0) && (
+            <div className="absolute inset-0">
               <img 
-                src={siteSettings?.heroImages?.[currentSlide]?.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop"} 
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null; // Prevent infinite loops
-                  target.src = "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop";
-                }}
+                src="https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop" 
                 className="w-full h-full object-cover opacity-80"
-                alt="Hero Slide"
+                alt="Default Hero"
               />
-              {/* Sharp Gradient Separation */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
             </div>
+          )}
+        </div>
 
-            {/* Content Container (Maintains center position) */}
-            <div className="relative z-20 h-full max-w-[1440px] mx-auto px-8 lg:px-24 flex flex-col items-start justify-center text-left">
-              <motion.div 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="mb-12 max-w-4xl"
-              >
-                <span className="inline-block px-4 py-1.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[4px] rounded-full mb-6">
-                  {siteSettings?.siteTagline || "Naisiae Textiles Limited"}
-                </span>
-                <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-white tracking-tight leading-tight md:leading-none mb-6">
-                  {siteSettings?.heroImages?.[currentSlide]?.title || "WEAR THE FUTURE"}
-                </h1>
-                <p className="text-white/70 max-w-2xl text-sm md:text-base leading-relaxed tracking-widest font-bold uppercase opacity-80 mb-10">
-                  {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Quality textiles, custom engineered for Kenya's leading institutions."}
-                </p>
+        {/* Content Layer */}
+        <div className="relative z-20 w-full h-full max-w-[1440px] mx-auto px-8 lg:px-24 flex flex-col items-start justify-center text-left">
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={currentSlide}
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.8 }}
+              className="mb-12 max-w-4xl"
+            >
+              <span className="inline-block px-4 py-1.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[4px] rounded-full mb-6 shadow-lg shadow-[#C8961A]/10">
+                {siteSettings?.siteTagline || "Naisiae Textiles Limited"}
+              </span>
+              <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-white tracking-tight leading-[1.1] mb-6 drop-shadow-2xl">
+                {siteSettings?.heroImages?.[currentSlide]?.title || "WEAR THE FUTURE"}
+              </h1>
+              <p className="text-white/80 max-w-2xl text-sm md:text-base leading-relaxed tracking-widest font-bold uppercase mb-10 drop-shadow-md">
+                {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Quality textiles, custom engineered for Kenya's leading institutions."}
+              </p>
 
+              <div className="flex flex-wrap gap-4">
                 {siteSettings?.heroImages?.[currentSlide]?.link && (
-                  <motion.a
-                    href={siteSettings.heroImages[currentSlide].link}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="inline-flex items-center gap-3 px-10 py-4 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#C8102E] transition-all duration-300 shadow-2xl active:scale-95"
+                  <Link
+                    to={siteSettings.heroImages[currentSlide].link}
+                    className="inline-flex items-center gap-3 px-10 py-5 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#C8102E] transition-all duration-300 shadow-2xl active:scale-95"
                   >
                     Discover Collection <ChevronRight size={14} />
-                  </motion.a>
+                  </Link>
                 )}
-              </motion.div>
+                <button
+                  onClick={() => setIsQuoteModalOpen(true)}
+                  className="inline-flex items-center gap-3 px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#0A1628] transition-all duration-300 shadow-2xl active:scale-95"
+                >
+                  Request Quote <ArrowRight size={14} />
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-              {/* MOVED SEARCH BAR OUT TO BE STATIC */}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Floating Search Bar (Static) */}
+        {/* Floating Search Bar (Static/Overlay) */}
         <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center pt-[450px] lg:pt-[550px] max-w-[1440px] mx-auto px-8 lg:px-24 text-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -642,72 +693,66 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         )}
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Categories (Connected to Admin) */}
       <section className="py-24 bg-white border-b border-slate-100">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
               <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-4">
-                <div className="w-8 h-[2px] bg-[#C8102E]"></div> Featured
+                <div className="w-8 h-[2px] bg-[#C8102E]"></div> Our Specialties
               </div>
               <h2 className="text-4xl lg:text-5xl font-display text-[#0A1628] leading-none mb-4">
                 Featured Categories
               </h2>
             </div>
             <Link to="/products" className="hidden sm:flex text-sm font-bold text-[#0A1628] hover:text-[#C8102E] transition-colors items-center gap-2">
-              View All Products <ChevronRight size={14} />
+              Explore Catalog <ChevronRight size={14} />
             </Link>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
-            {products
-              .filter(p => p.featured || p.tags?.includes('featured'))
-              .slice(0, 4)
-              .map(product => (
+            {categories.length > 0 ? (
+              categories.slice(0, 4).map((cat, idx) => (
                 <motion.div 
-                  key={product.id}
+                  key={cat.id || idx}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
                   whileHover={{ y: -6 }}
-                  className="group bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
+                  className="group relative h-[350px] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
+                  onClick={() => {
+                    setActiveTab(cat.title);
+                    const shopEl = document.getElementById('shop');
+                    if (shopEl) shopEl.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
-                  <div className="relative aspect-[4/5] bg-white cursor-pointer overflow-hidden p-6 flex flex-col justify-between" onClick={() => setSelectedQuickViewProduct(product)}>
-                    <div>
-                      {product.badge && (
-                        <span className="inline-block bg-[#0A1628] text-white text-[10px] font-bold px-3 py-1.5 rounded-full tracking-widest uppercase mb-4">{product.badge}</span>
-                      )}
-                      
-                      {product.imageUrl ? (
-                        <img src={product.imageUrl} alt={product.name} className="w-full h-48 object-contain p-4 transition-transform duration-500 group-hover:scale-105 my-4" />
-                      ) : (
-                        <div className="w-full h-48 flex items-center justify-center text-[#C8102E]/10 my-4 group-hover:scale-105 transition-transform">
-                          <Package size={60} />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <p className="text-[10px] text-[#64748B] font-black tracking-[2px] uppercase mb-2">{product.category}</p>
-                      <h3 className="font-bold text-lg text-[#0A1628] truncate mb-2">{product.name}</h3>
-                      <div className="flex justify-between items-center mt-4">
-                        <p className="text-[#C8102E] font-black text-xl">KES {product.price.toLocaleString()}</p>
-                        <button className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#0A1628] group-hover:bg-[#C8102E] group-hover:text-white transition-colors">
-                          <ArrowRight size={18} />
-                        </button>
-                      </div>
+                  <div className="absolute inset-0">
+                    {cat.image ? (
+                      <img src={cat.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.title} />
+                    ) : (
+                      <div className="w-full h-full bg-slate-100 flex items-center justify-center"><Package size={40} className="text-slate-200" /></div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
+                  <div className="absolute bottom-8 left-8 right-8">
+                    {cat.subtitle && <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[2px] mb-2">{cat.subtitle}</p>}
+                    <h3 className="text-xl font-bold text-white mb-4 line-clamp-2">{cat.title}</h3>
+                    <div className="flex items-center gap-2 text-white/60 text-[10px] font-black uppercase tracking-widest group-hover:text-white transition-colors">
+                      Shop Now <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </motion.div>
               ))
-            }
-            {products.filter(p => p.featured || p.tags?.includes('featured')).length === 0 && Array(4).fill(0).map((_, i) => (
-               <div key={i} className="aspect-[4/5] bg-slate-50 rounded-3xl border border-dashed border-slate-200 flex flex-col items-center justify-center animate-pulse">
-                 <Package className="text-slate-200 mb-4" size={40} />
-                 <div className="w-1/2 h-2 bg-slate-200 rounded mb-2"></div>
-                 <div className="w-1/3 h-2 bg-slate-200 rounded"></div>
-               </div>
-            ))}
+            ) : (
+              Array(4).fill(0).map((_, i) => (
+                <div key={i} className="h-[350px] bg-slate-50 rounded-3xl border border-dashed border-slate-200 flex flex-col items-center justify-center animate-pulse">
+                  <Package className="text-slate-200 mb-4" size={40} />
+                  <div className="w-1/2 h-2 bg-slate-200 rounded mb-2"></div>
+                  <div className="w-1/3 h-2 bg-slate-200 rounded"></div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -1450,6 +1495,97 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                               <p className="text-[11px] font-bold text-slate-800">7-14 Work Days</p>
                             </div>
                           </div>
+                        </div>
+                      </div>
+                    </details>
+
+                    {/* Customer Reviews Accordion */}
+                    <details className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
+                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0A1628] bg-slate-50 hover:bg-slate-100 transition-colors">
+                        Customer Reviews ({productReviews.length})
+                        <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
+                          <ChevronDown size={18} />
+                        </span>
+                      </summary>
+                      <div className="p-5 bg-white border-t border-slate-50">
+                        {productReviews.length > 0 ? (
+                          <div className="space-y-6 mb-8">
+                            {productReviews.map((review) => (
+                              <div key={review.id} className="pb-6 border-b border-slate-50 last:border-0 last:pb-0">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[10px] font-black uppercase text-[#0A1628] tracking-wider">{review.userName}</span>
+                                  <div className="flex text-amber-400">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} size={10} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
+                                    ))}
+                                  </div>
+                                </div>
+                                <p className="text-xs text-slate-500 leading-relaxed italic">"{review.comment}"</p>
+                                <p className="text-[8px] text-slate-300 mt-2 uppercase font-bold">Verified Institution Purchaser</p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-6 border-b border-slate-50 mb-6">
+                            <p className="text-xs text-slate-400 font-medium">Be the first to review this product.</p>
+                          </div>
+                        )}
+
+                        {/* Review Form */}
+                        <div className="bg-slate-50 rounded-2xl p-4 lg:p-6">
+                          <h4 className="text-[10px] font-black uppercase tracking-[2px] text-[#0A1628] mb-4">Submit a Review</h4>
+                          {reviewSubmitted ? (
+                            <motion.div 
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="bg-green-50 text-green-700 p-4 rounded-xl border border-green-100 text-center"
+                            >
+                              <div className="flex justify-center mb-2"><CheckCircle2 size={24} /></div>
+                              <p className="text-xs font-bold uppercase tracking-wider">Thank you!</p>
+                              <p className="text-[10px]">Your review has been submitted and is pending moderation.</p>
+                            </motion.div>
+                          ) : (
+                            <form onSubmit={handleSubmitReview} className="space-y-4">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase">Rating:</span>
+                                <div className="flex gap-1">
+                                  {[1, 2, 3, 4, 5].map((num) => (
+                                    <button
+                                      key={num}
+                                      type="button"
+                                      onClick={() => setReviewForm(prev => ({ ...prev, rating: num }))}
+                                      className="text-amber-400 transition-transform hover:scale-110 active:scale-95"
+                                    >
+                                      <Star size={16} fill={num <= reviewForm.rating ? 'currentColor' : 'none'} className={num <= reviewForm.rating ? 'text-amber-400' : 'text-slate-200'} />
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="gap-4 grid grid-cols-1">
+                                <input 
+                                  type="text" 
+                                  placeholder="Your Name (Optional)" 
+                                  value={reviewForm.userName}
+                                  onChange={e => setReviewForm(prev => ({ ...prev, userName: e.target.value }))}
+                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#C8102E] transition-colors"
+                                />
+                                <textarea 
+                                  placeholder="Share your experience with this product..." 
+                                  required
+                                  value={reviewForm.comment}
+                                  onChange={e => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-[#C8102E] transition-colors h-24 resize-none"
+                                ></textarea>
+                              </div>
+                              <button 
+                                type="submit" 
+                                disabled={isSubmittingReview}
+                                className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C8102E]/20"
+                              >
+                                {isSubmittingReview ? 'Submitting...' : 'Post Review'}
+                              </button>
+                            </form>
+                          )}
                         </div>
                       </div>
                     </details>

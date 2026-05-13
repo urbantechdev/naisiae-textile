@@ -69,7 +69,7 @@ export function Footer() {
               <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A]"><Mail size={18} /></div>
               <div>
                <div className="text-[10px] font-bold uppercase text-white/50">Email</div>
-               <div className="text-white font-bold">support@naisiaetextile.com</div>
+               <div className="text-white font-bold">{siteSettings?.contactEmail || 'support@naisiaetextile.com'}</div>
               </div>
             </div>
           </div>

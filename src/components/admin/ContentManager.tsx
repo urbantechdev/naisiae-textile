@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, arrayMove } from 'motion/react';
+import { motion } from 'motion/react';
 import { db, auth } from '../../services/firebase';
 import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { Package, Plus, Trash2, Edit2, Link as LinkIcon, RotateCcw, ImageIcon, GripVertical } from 'lucide-react';

@@ -2,139 +2,58 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ---------------------------------------------------------
-    // 1. GLOBAL HELPERS & SAFETY
-    // ---------------------------------------------------------
-    
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isEmailVerified() {
-      return isSignedIn() && request.auth.token.email_verified == true;
-    }
-
-    function incoming() {
-      return request.resource.data;
-    }
-
-    function existing() {
-      return resource.data;
-    }
-
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
+    // 1. HELPERS
+    function isSignedIn() { return request.auth != null; }
+    function isEmailVerified() { return isSignedIn() && request.auth.token.email_verified == true; }
     function isAdmin() {
       return isEmailVerified() && (
         request.auth.token.email == 'naisiaetext@gmail.com' ||
-        request.auth.token.email == 'support@naisiaetextile.com' ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+        request.auth.token.email == 'support@naisiaetextile.com'
       );
     }
+    function isValidId(id) { return id is string && id.size() <= 128; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
 
-    // ---------------------------------------------------------
-    // 2. COLLECTION RULES
-    // ---------------------------------------------------------
+    // 2. PUBLIC READ ACCESS
+    match /settings/{id} { allow read: if true; }
+    match /products/{id} { allow read: if true; }
+    match /promotions/{id} { allow read: if true; }
+    match /discountRules/{id} { allow read: if true; }
+    match /mega_menus/{id} { allow read: if true; }
+    match /categories/{id} { allow read: if true; }
+    match /services/{id} { allow read: if true; }
+    match /portfolio/{id} { allow read: if true; }
+    match /reviews/{id} { allow read: if true; }
+    match /system/{id} { allow read: if true; }
+    match /test/connection { allow read: if true; }
 
-    match /products/{productId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(productId);
-      
-      // Validation for creation
-      function isValidProduct(data) {
-        return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
-               data.price is number && data.price >= 0;
-      }
-      
-      allow create: if isAdmin() && isValidProduct(incoming());
-      allow update: if isAdmin() && isValidProduct(incoming());
+    // 3. PUBLIC WRITE ACCESS (Gated by specific fields if needed)
+    match /analytics/{id} {
+      allow write: if true; // Public can record views
+      allow read: if isAdmin();
     }
-
-    match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      
-      // Users can only write their own profile, but can't self-elevate to admin
-      allow write: if isSignedIn() && request.auth.uid == userId && (
-        incoming().role == 'user' || (existing() != null && incoming().role == existing().role)
-      ) || isAdmin();
-    }
-
-    match /quotes/{quoteId} {
-      allow create: if isValidId(quoteId) && 
-                      incoming().name is string && incoming().name.size() <= 100 &&
-                      incoming().email is string && incoming().email.size() <= 100 &&
-                      incoming().phone is string && incoming().phone.size() <= 20 &&
-                      incoming().status == 'pending';
-      
+    match /quotes/{id} {
+      allow create: if isValidId(id);
       allow read, update, delete: if isAdmin();
     }
-
-    match /wishlists/{wishlistId} {
-      allow read, write: if isSignedIn() && request.auth.uid == wishlistId;
-      allow read: if isAdmin();
-    }
-
-    match /analytics/{dateId} {
-      allow write: if true;
-      allow read: if isAdmin();
-    }
-
-    match /promotions/{promoId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(promoId);
-    }
-
-    match /settings/{settingId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(settingId);
-    }
-
-    match /discountRules/{ruleId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(ruleId);
-    }
-
-    match /mega_menus/{menuId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(menuId);
-    }
-
-    match /categories/{docId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(docId);
-    }
-
-    match /services/{docId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(docId);
-    }
-
-    match /portfolio/{docId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(docId);
-    }
-
-    match /system/connection-test {
-      allow read: if true;
-    }
-
-    match /reviews/{reviewId} {
-      allow read: if resource.data.status == 'approved' || isAdmin();
-      
-      // Strict creation for reviews
-      allow create: if isValidId(reviewId) && 
-                      incoming().status == 'pending' &&
-                      incoming().rating is number && incoming().rating >= 1 && incoming().rating <= 5 &&
-                      incoming().text is string && incoming().text.size() <= 1000;
-                      
+    match /reviews/{id} {
+      allow create: if isValidId(id) && incoming().status == 'pending';
       allow update, delete: if isAdmin();
+    }
+
+    // 4. SECURE USER DATA
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+    match /wishlists/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // 5. GLOBAL DENY
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

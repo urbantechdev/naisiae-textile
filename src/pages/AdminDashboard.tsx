@@ -2523,6 +2523,7 @@ export default function AdminDashboard() {
               <ProductForm 
                 initialData={editingItem} 
                 setToast={setToast}
+                productCategories={productCategories}
                 onSubmit={async (data) => {
                   try {
                     if (editingItem) {
@@ -2922,7 +2923,7 @@ function SortableImage({ url, index, onRemove }: any) {
   );
 }
 
-function ProductForm({ initialData, onSubmit, setToast }: any) {
+function ProductForm({ initialData, onSubmit, setToast, productCategories }: any) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);

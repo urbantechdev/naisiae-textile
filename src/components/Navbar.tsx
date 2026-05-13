@@ -73,22 +73,6 @@ export function Navbar({
         </div>
       ))}
 
-      {/* Top Bar */}
-      <div className="hidden lg:flex bg-[#0A1628] text-white/50 text-[11.5px] py-2 border-b border-white/5">
-        <div className="max-w-[1440px] mx-auto w-full px-8 flex justify-between items-center">
-          <div className="flex gap-4 items-center">
-            <span className="flex items-center gap-1.5"><Phone size={12} /> <a href={`tel:${siteSettings?.contactPhone || '+254792021795'}`} className="hover:text-[#C8961A]">{siteSettings?.contactPhone || '+254 792 021 795'}</a></span>
-            <div className="w-px h-3.5 bg-white/20"></div>
-            <span className="flex items-center gap-1.5"><Mail size={12} /> <a href={`mailto:${siteSettings?.contactEmail || 'support@naisiaetextile.com'}`} className="hover:text-[#C8961A]">{siteSettings?.contactEmail || 'support@naisiaetextile.com'}</a></span>
-          </div>
-          <div className="flex gap-4 items-center">
-            <span>Mon–Sat: 8am–6pm</span>
-            <div className="w-px h-3.5 bg-white/20"></div>
-            <span>7–14 Day Turnaround</span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navbar */}
       <nav className="sticky top-0 z-50 bg-gradient-to-b from-[#0A1628] to-[#15284A] shadow-xl">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8 flex items-center h-[68px] justify-between">
