@@ -523,172 +523,161 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         setIsCompareModalOpen={setIsCompareModalOpen}
       />
 
-      {/* Dynamic Hero Slider Section */}
+      {/* Cinematic Hero Slider Section */}
       <section className="relative h-[90vh] min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
-        {/* Background Layer with enhanced fitting */}
+        {/* Cinematic Background Layer */}
         <div className="absolute inset-0 z-0">
-          {siteSettings?.heroImages?.map((slide: any, idx: number) => (
+          <AnimatePresence mode="popLayout">
             <motion.div
-              key={`bg-${idx}`}
-              initial={{ opacity: 0 }}
+              key={currentSlide}
+              initial={{ opacity: 0, scale: 1.1 }}
               animate={{ 
-                opacity: currentSlide === idx ? 0.9 : 0,
-                scale: currentSlide === idx ? 1 : 1.1
+                opacity: 1, 
+                scale: 1,
+                transition: { duration: 2, ease: "easeOut" }
               }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              exit={{ opacity: 0, scale: 0.95, transition: { duration: 1.5 } }}
               className="absolute inset-0"
             >
-              <div className="absolute inset-0">
-                <img 
-                  src={slide.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop"} 
-                  className="w-full h-full object-cover"
-                  alt={`Hero ${idx}`}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
-                <div className="absolute inset-0 bg-black/20"></div>
-              </div>
-            </motion.div>
-          ))}
-          {/* Default fallback */}
-          {(!siteSettings?.heroImages || siteSettings.heroImages.length === 0) && (
-            <div className="absolute inset-0">
               <img 
-                src="https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop" 
-                className="w-full h-full object-cover opacity-80"
-                alt="Default Hero"
+                src={siteSettings?.heroImages?.[currentSlide]?.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop"} 
+                className="w-full h-full object-cover object-center"
+                alt={`Hero slide ${currentSlide}`}
+                loading="eager"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
-            </div>
-          )}
-        </div>
-
-        {/* Content Layer */}
-        <div className="relative z-20 w-full h-full max-w-[1440px] mx-auto px-8 lg:px-24 flex flex-col items-start justify-center text-left">
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={currentSlide}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.8 }}
-              className="mb-12 max-w-4xl"
-            >
-              <span className="inline-block px-4 py-1.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[4px] rounded-full mb-6 shadow-lg shadow-[#C8961A]/10">
-                {siteSettings?.siteTagline || "Naisiae Textiles Limited"}
-              </span>
-              <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-white tracking-tight leading-[1.1] mb-6 drop-shadow-2xl">
-                {siteSettings?.heroImages?.[currentSlide]?.title || "WEAR THE FUTURE"}
-              </h1>
-              <p className="text-white/80 max-w-2xl text-sm md:text-base leading-relaxed tracking-widest font-bold uppercase mb-10 drop-shadow-md">
-                {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Quality textiles, custom engineered for Kenya's leading institutions."}
-              </p>
-
-              <div className="flex flex-wrap gap-4">
-                {siteSettings?.heroImages?.[currentSlide]?.link && (
-                  <Link
-                    to={siteSettings.heroImages[currentSlide].link}
-                    className="inline-flex items-center gap-3 px-10 py-5 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#C8102E] transition-all duration-300 shadow-2xl active:scale-95"
-                  >
-                    Discover Collection <ChevronRight size={14} />
-                  </Link>
-                )}
-                <button
-                  onClick={() => setIsQuoteModalOpen(true)}
-                  className="inline-flex items-center gap-3 px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#0A1628] transition-all duration-300 shadow-2xl active:scale-95"
-                >
-                  Request Quote <ArrowRight size={14} />
-                </button>
-              </div>
+              {/* Dynamic Overlay System */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/60 to-transparent"></div>
+              <div className="absolute inset-0 bg-black/20"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-transparent"></div>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Floating Search Bar (Static/Overlay) */}
-        <div className="absolute inset-0 z-30 pointer-events-none flex flex-col items-center justify-center pt-[450px] lg:pt-[550px] max-w-[1440px] mx-auto px-8 lg:px-24 text-center">
+        {/* Brand Content Layer */}
+        <div className="relative z-20 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex items-center">
+          <div className="max-w-4xl space-y-12">
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={currentSlide}
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 30 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="space-y-8"
+              >
+                <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-[#C8961A]/10 backdrop-blur-md border border-[#C8961A]/20 rounded-full">
+                  <div className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse"></div>
+                  <span className="text-[10px] font-black uppercase tracking-[4px] text-[#C8961A]">
+                    {siteSettings?.siteTagline || "Naisiae Textiles Limited"}
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  <h1 className="font-display font-medium text-5xl md:text-7xl lg:text-[100px] text-white leading-[0.95] tracking-tight text-shadow-xl">
+                    {siteSettings?.heroImages?.[currentSlide]?.title || "WEAR THE FUTURE"}
+                  </h1>
+                  <p className="text-white/70 max-w-2xl text-base md:text-xl leading-relaxed italic border-l-2 border-[#C8102E] pl-6">
+                    {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Quality textiles, custom engineered for Kenya's leading institutions."}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-5">
+                  {siteSettings?.heroImages?.[currentSlide]?.link && (
+                    <Link
+                      to={siteSettings.heroImages[currentSlide].link}
+                      className="group relative px-10 py-5 bg-[#C8102E] text-white rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl shadow-[#C8102E]/30"
+                    >
+                      <span className="relative z-10 text-[11px] font-black uppercase tracking-[3px] flex items-center gap-3">
+                        Shop Collection <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => setIsQuoteModalOpen(true)}
+                    className="px-10 py-5 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-2xl transition-all duration-300 hover:bg-white hover:text-[#0A1628] shadow-2xl"
+                  >
+                    <span className="text-[11px] font-black uppercase tracking-[3px] flex items-center gap-3">
+                      Request Catalog <Package size={16} />
+                    </span>
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Static Float Search Bar Overlay */}
+        <div className="absolute inset-x-0 bottom-[15%] z-30 pointer-events-none flex justify-center px-6 lg:px-0">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 1 }}
             className="w-full max-w-2xl pointer-events-auto"
           >
             <div className="relative group">
-              <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                <Search className="text-white/40 group-focus-within:text-[#C8961A] transition-colors" size={24} />
+              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                <Search className="text-white/30 group-focus-within:text-[#C8961A] transition-colors" size={20} />
               </div>
               <input 
                 type="text"
                 value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setTimeout(() => {
-                    const el = document.getElementById('catalog');
-                    if (el && e.target.value.length > 0) {
-                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }, 500);
-                }}
-                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.length > 0 && setShowSearchSuggestions(true)}
-                placeholder="Search uniforms, sports kits, or corporate branding..."
-                className="peer w-full bg-white/10 backdrop-blur-3xl border-2 border-white/20 rounded-3xl pl-16 pr-16 py-6 text-white text-lg lg:text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:border-[#C8961A] focus:ring-8 focus:ring-[#C8961A]/10 transition-all shadow-2xl placeholder:text-white/30 font-medium"
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                placeholder="Search uniforms, kits, or corporate branding..."
+                className="w-full bg-[#0A1628]/40 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] pl-16 pr-8 py-6 text-white text-lg outline-none focus:bg-white focus:text-[#0A1628] focus:ring-4 focus:ring-[#C8961A]/20 transition-all shadow-3xl placeholder:text-white/20"
               />
-              <button className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white peer-focus:text-slate-400 peer-focus:hover:text-[#C8961A] transition-colors active:scale-95 flex items-center justify-center">
-                <Search size={24} />
-              </button>
+              <AnimatePresence>
+                {showSearchSuggestions && searchResults.length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="absolute bottom-full left-0 right-0 mb-6 bg-white rounded-[2rem] shadow-3xl border border-slate-100 overflow-hidden max-h-[400px] overflow-y-auto"
+                  >
+                    {searchResults.map((product) => (
+                      <div 
+                        key={product.id}
+                        onClick={() => {
+                          const el = document.getElementById(`product-${product.id}`);
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          setSearchQuery('');
+                        }}
+                        className="p-4 hover:bg-slate-50 cursor-pointer flex items-center gap-4 transition-colors group"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                          <img src={product.imageUrl} className="w-full h-full object-contain p-1" alt="" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-black text-[#0A1628] uppercase tracking-wide truncate">{product.name}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase">{product.category}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-black text-[#C8102E]">KES {product.price.toLocaleString()}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-
-            {/* Autocomplete Suggestions */}
-            <AnimatePresence>
-              {showSearchSuggestions && searchResults.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 right-0 mt-4 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden divide-y divide-slate-50 overflow-y-auto max-h-[450px]"
-                >
-                  {searchResults.map((product) => (
-                    <div 
-                      key={product.id}
-                      id={`search-item-${product.id}`}
-                      onClick={() => {
-                        const el = document.getElementById(`product-${product.id}`);
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        setSearchQuery('');
-                      }}
-                      className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors group text-left"
-                    >
-                      <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center">
-                        {product.imageUrl ? (
-                          <img src={product.imageUrl} className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform" />
-                        ) : (
-                          <Package size={20} className="text-slate-300" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-black text-[#1E293B] group-hover:text-[#C8102E] transition-colors uppercase tracking-wider truncate">{product.name}</p>
-                        <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">{product.category}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-black text-[#C8102E]">KES {product.price.toLocaleString()}</p>
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
         </div>
 
-        {/* Slide Indicators */}
+        {/* Global Slide Indicators */}
         {siteSettings?.heroImages?.length > 1 && (
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
-            {siteSettings.heroImages.map((_: any, idx: number) => (
-              <button 
-                key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                className={`h-1.5 rounded-full transition-all duration-500 ${currentSlide === idx ? 'w-12 bg-[#C8961A]' : 'w-4 bg-white/20 hover:bg-white/40'}`}
-              />
-            ))}
+          <div className="absolute bottom-10 right-10 z-30 flex items-center gap-4 bg-white/5 backdrop-blur-md p-3 rounded-full border border-white/10">
+            <div className="flex gap-2">
+              {siteSettings.heroImages.map((_: any, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                    currentSlide === idx ? 'bg-[#C8961A] w-8' : 'bg-white/20 hover:bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         )}
       </section>
