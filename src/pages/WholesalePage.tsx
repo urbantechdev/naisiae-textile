@@ -51,15 +51,17 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
 
     const q = query(
       collection(db, 'products'), 
-      where('active', '==', true),
-      orderBy('sortOrder', 'asc')
+      where('active', '==', true)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const allItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-      // Filter for wholesale items (tagged 'Wholesale')
-      const wholesaleItems = allItems.filter(item => 
-        item.tags?.some((t: string) => t.toLowerCase() === 'wholesale')
+      // Sort in-memory to avoid index requirement for combined query
+      const sortedItems = allItems.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+      
+      // Filter for wholesale items (tagged 'Wholesale' or 'Bulk')
+      const wholesaleItems = sortedItems.filter(item => 
+        item.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')
       );
       setProducts(wholesaleItems);
       setLoading(false);

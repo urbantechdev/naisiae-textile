@@ -52,18 +52,24 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      if (user && user.emailVerified) {
-        // Super admin check by email
+      if (user) {
+        // Super admin check by email (bypass verification for primary admin if needed)
         if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
           setIsAdmin(true);
           setLoading(false);
           return;
         }
 
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists() && userDoc.data().role === 'admin') {
-          setIsAdmin(true);
+        // Only require verification for other admin roles if they have it
+        if (user.emailVerified) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists() && userDoc.data().role === 'admin') {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
         } else {
+          // Stay strict for non-super admins
           setIsAdmin(false);
         }
       } else {

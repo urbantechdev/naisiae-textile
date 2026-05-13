@@ -625,12 +625,12 @@ export default function AdminDashboard() {
         return undefined;
       };
 
-      const name = s(getRaw(['name', 'title', 'product name'])) || 'Unnamed Product';
-      const category = s(getRaw(['category', 'type', 'group'])) || 'School Uniforms';
-      const price = n(getRaw(['price', 'amount', 'cost', 'unit price', 'current price']));
-      const wholesalePrice = n(getRaw(['wholesale', 'bulk price', 'wholesale price']));
-      const oldPrice = n(getRaw(['oldprice', 'discount price', 'original price', 'old price']));
-      const desc = s(getRaw(['description', 'details', 'summary', 'about']));
+      const name = s(getRaw(['name', 'title', 'product name', 'item', 'label', 'description'])) || 'Unnamed Product';
+      const category = s(getRaw(['category', 'type', 'group', 'class', 'department'])) || 'School Uniforms';
+      const price = n(getRaw(['price', 'amount', 'cost', 'unit price', 'current price', 'selling price', 'retail'])) || 1200;
+      const wholesalePrice = n(getRaw(['wholesale', 'bulk price', 'wholesale price', 'trade price']));
+      const oldPrice = n(getRaw(['oldprice', 'discount price', 'original price', 'old price', 'was price']));
+      const desc = s(getRaw(['description', 'details', 'summary', 'about', 'long description', 'notes']));
       const img = s(getRaw(['imageurl', 'image', 'photo', 'url']));
       const badge = s(getRaw(['badge', 'label', 'tagline']));
       const statusVal = getRaw(['active', 'status', 'published']);
@@ -698,6 +698,40 @@ export default function AdminDashboard() {
       setToast({ message: 'AI analysis failed. Service may be busy.', type: 'error' });
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleSeedSampleData = async () => {
+    if (products.length > 0) {
+      setToast({ message: "Seed cancelled: Products already exist in database.", type: 'warning' });
+      return;
+    }
+    
+    setLoading(true);
+    setToast({ message: "Populating sample catalogue...", type: 'info' });
+    
+    const samples = [
+      { name: 'Boys Primary Sweater', category: 'School Uniforms', price: 1200, wholesalePrice: 850, active: true, tags: ['Wholesale', 'Boys', 'Wool'], description: 'High-quality wool blend sweater for primary schools.' },
+      { name: 'Girls Highschool Skirt', category: 'School Uniforms', price: 1500, wholesalePrice: 1100, active: true, tags: ['Wholesale', 'Girls', 'Pleated'], description: 'Classic pleated school skirt with durable fabric.' },
+      { name: 'Corporate Polo Shirt', category: 'Corporate Wear', price: 1800, wholesalePrice: 1350, active: true, tags: ['Wholesale', 'Corporate', 'Cotton'], description: 'Premium cotton polo shirt with reinforced collar.' },
+      { name: 'Sports Tracksuit Set', category: 'Sports Kits', price: 2500, wholesalePrice: 1900, active: true, tags: ['Wholesale', 'Sports', 'Nylon'], description: 'Full tracksuit set for school and college sports teams.' }
+    ];
+
+    try {
+      for (const [idx, item] of samples.entries()) {
+        await addDoc(collection(db, 'products'), {
+          ...item,
+          imageUrls: [],
+          sortOrder: idx + 1,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      setToast({ message: "Sample data seeded successfully!", type: 'success' });
+    } catch (err) {
+      handleFirestoreError(err, OperationType.WRITE, 'products');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -4448,30 +4482,44 @@ function SettingsForm({ initialData, onSave, setToast }: any) {
         </div>
       </div>
 
-      {/* Sync Hero Slider Specific Button */}
-      <div className="flex justify-start px-2">
-        <button 
-          type="button"
-          onClick={async () => {
-            try {
-              await onSave(formData);
-              const notification = document.createElement('div');
-              notification.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#0A1628] text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-xs uppercase tracking-widest animate-in fade-in slide-in-from-bottom-4 duration-300';
-              notification.innerText = '✨ Hero Slider Synchronized Successfully';
-              document.body.appendChild(notification);
-              setTimeout(() => {
-                notification.classList.add('fade-out', 'translate-y-4');
-                setTimeout(() => notification.remove(), 300);
-              }, 3000);
-            } catch (err) {
-              setToast({ message: 'Failed to save settings.', type: 'error' });
-            }
-          }}
-          className="flex items-center gap-3 px-8 py-3.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[2px] rounded-2xl hover:bg-[#A67D15] transition-all shadow-xl shadow-[#C8961A]/20 active:scale-95 group"
-        >
-          <Save size={16} className="group-hover:rotate-12 transition-transform" />
-          Synchronize Slider to Homepage
-        </button>
+      {/* Database Maintenance Utilities */}
+      <div className="space-y-6 pt-6 border-t border-slate-100">
+        <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px]">System Maintenance</h4>
+        <div className="flex flex-wrap gap-4">
+          <button 
+            type="button"
+            onClick={async () => {
+              try {
+                await onSave(formData);
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#0A1628] text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-xs uppercase tracking-widest animate-in fade-in slide-in-from-bottom-4 duration-300';
+                notification.innerText = '✨ Hero Slider Synchronized Successfully';
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                  notification.classList.add('fade-out', 'translate-y-4');
+                  setTimeout(() => notification.remove(), 300);
+                }, 3000);
+              } catch (err) {
+                setToast({ message: 'Failed to save settings.', type: 'error' });
+              }
+            }}
+            className="flex items-center gap-3 px-8 py-3.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[2px] rounded-2xl hover:bg-[#A67D15] transition-all shadow-xl shadow-[#C8961A]/20 active:scale-95 group"
+          >
+            <Save size={16} className="group-hover:rotate-12 transition-transform" />
+            Synchronize Slider to Homepage
+          </button>
+
+          {products.length === 0 && (
+            <button 
+              type="button"
+              onClick={handleSeedSampleData}
+              className="flex items-center gap-3 px-8 py-3.5 bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-[2px] rounded-2xl hover:bg-slate-200 transition-all active:scale-95 border border-slate-200"
+            >
+              <Sparkles size={16} />
+              Seed Sample Catalogue
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Social Sharing Section */}

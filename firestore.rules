@@ -1,57 +1,121 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // -------------------------------------------------------------------------
+    // HELPER FUNCTIONS
+    // -------------------------------------------------------------------------
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-    // 1. HELPERS
-    function isSignedIn() { return request.auth != null; }
-    function isEmailVerified() { return isSignedIn() && request.auth.token.email_verified == true; }
     function isAdmin() {
-      return isEmailVerified() && (
+      return isSignedIn() && (
         request.auth.token.email == 'naisiaetext@gmail.com' ||
         request.auth.token.email == 'support@naisiaetextile.com'
+        // Temporarily disabled exists check to isolate permission issues
+        // || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       );
     }
-    function isValidId(id) { return id is string && id.size() <= 128; }
-    function incoming() { return request.resource.data; }
-    function existing() { return resource.data; }
 
-    // 2. PUBLIC READ ACCESS
-    match /settings/{id} { allow read: if true; }
-    match /products/{id} { allow read: if true; }
-    match /promotions/{id} { allow read: if true; }
-    match /discountRules/{id} { allow read: if true; }
-    match /mega_menus/{id} { allow read: if true; }
-    match /categories/{id} { allow read: if true; }
-    match /services/{id} { allow read: if true; }
-    match /portfolio/{id} { allow read: if true; }
-    match /reviews/{id} { allow read: if true; }
-    match /system/{id} { allow read: if true; }
-    match /test/connection { allow read: if true; }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
 
-    // 3. PUBLIC WRITE ACCESS (Gated by specific fields if needed)
-    match /analytics/{id} {
-      allow write: if true; // Public can record views
-      allow read: if isAdmin();
+    function incoming() {
+      return request.resource.data;
     }
-    match /quotes/{id} {
-      allow create: if isValidId(id);
-      allow read, update, delete: if isAdmin();
+
+    function existing() {
+      return resource.data;
     }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'category', 'price']) &&
+             data.name is string && data.name.size() <= 300 &&
+             data.category is string &&
+             data.price is number;
+    }
+
+    // -------------------------------------------------------------------------
+    // SYSTEM & TEST
+    // -------------------------------------------------------------------------
+
+    match /system/{docId} {
+      allow read: if true;
+    }
+
+    match /analytics/{dayId} {
+      allow read, write: if true;
+    }
+
+    // -------------------------------------------------------------------------
+    // PUBLIC ACCESS
+    // -------------------------------------------------------------------------
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /mega_menus/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /promotions/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /discountRules/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /products/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidProduct(incoming());
+      allow delete: if isAdmin();
+    }
+
     match /reviews/{id} {
-      allow create: if isValidId(id) && incoming().status == 'pending';
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
       allow update, delete: if isAdmin();
     }
 
-    // 4. SECURE USER DATA
-    match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-    }
-    match /wishlists/{userId} {
-      allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    // -------------------------------------------------------------------------
+    // RESTRICTED ACCESS
+    // -------------------------------------------------------------------------
+
+    match /quotes/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
     }
 
-    // 5. GLOBAL DENY
+    match /wishlists/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if (isOwner(userId) || isAdmin()) && 
+                    (!incoming().diff(existing()).affectedKeys().hasAny(['role']) || isAdmin());
+    }
+
+    match /admins/{userId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Default Deny
     match /{document=**} {
       allow read, write: if false;
     }

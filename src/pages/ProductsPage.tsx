@@ -22,9 +22,10 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    const q = query(collection(db, 'products'), where('active', '==', true), orderBy('sortOrder', 'asc'), limit(500));
+    const q = query(collection(db, 'products'), where('active', '==', true), limit(500));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const unsorted = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProducts(unsorted.sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0)));
     });
     return () => unsubscribe();
   }, []);

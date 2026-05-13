@@ -74,7 +74,7 @@ export function Navbar({
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] transition-all duration-500">
+    <div className="fixed top-0 left-0 right-0 z-[100] transition-all duration-700">
       <AnimatePresence>
         {promotions.filter(p => p.type === 'top-bar').map(promo => (
           <motion.div 
@@ -82,56 +82,62 @@ export function Navbar({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-[#C8102E] text-white overflow-hidden relative z-[110]"
+            className="bg-[#0A1628] text-[#C8961A] overflow-hidden relative z-[110] border-b border-[#C8961A]/10"
           >
-            <div className="max-w-[1440px] mx-auto px-4 py-2 flex items-center justify-center gap-6 text-[10px] font-black tracking-[2px] uppercase text-center">
-              <Megaphone size={12} className="shrink-0" />
-              <div className="flex items-center gap-3">
-                <span className="hidden md:inline">{promo.title}</span>
-                <span className="hidden md:inline w-1 h-1 rounded-full bg-white/40"></span>
-                <span className="text-white/80">{promo.subtitle || promo.title}</span>
+            <div className="max-w-[1440px] mx-auto px-6 py-2.5 flex items-center justify-between gap-6 text-[9px] font-black tracking-[3px] uppercase">
+              <div className="flex items-center gap-4">
+                <Megaphone size={12} className="shrink-0 animate-bounce" />
+                <span className="hidden lg:inline">{promo.title}</span>
               </div>
-              {promo.buttonLink && (
-                <Link to={promo.buttonLink} className="underline hover:text-[#C8961A] transition-colors font-black">
-                  {promo.buttonText}
-                </Link>
-              )}
+              <div className="flex items-center gap-4">
+                <span className="text-white/60 lowercase tracking-widest italic">{promo.subtitle || 'Exclusive Offer'}</span>
+                {promo.buttonLink && (
+                  <Link to={promo.buttonLink} className="bg-[#C8961A] text-[#0A1628] px-4 py-1 rounded-full hover:bg-white transition-all font-black text-[8px]">
+                    {promo.buttonText || 'Discover'}
+                  </Link>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
       </AnimatePresence>
 
       <header 
-        className={`w-full transition-all duration-500 border-b ${
+        className={`w-full transition-all duration-700 ${
           isScrolled 
-            ? 'bg-[#0A1628]/95 backdrop-blur-xl border-white/5 py-4 shadow-2xl' 
-            : 'bg-transparent border-transparent py-6'
+            ? 'bg-[#0A1628]/95 backdrop-blur-2xl border-b border-white/5 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)]' 
+            : 'bg-transparent py-8'
         }`}
         onMouseLeave={() => setActiveMegaMenu(null)}
       >
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 flex items-center justify-between">
-          <Link to="/" className="group flex items-center gap-4">
-            <div className={`relative transition-all duration-500 ${isScrolled ? 'w-10 h-10' : 'w-14 h-14'}`}>
-              <div className="absolute inset-0 bg-[#C8961A] rounded-xl rotate-6 group-hover:rotate-12 transition-transform opacity-20"></div>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-20 flex items-center justify-between gap-12">
+          {/* Brand Identity */}
+          <Link to="/" className="group flex items-center gap-5 shrink-0">
+            <div className={`relative transition-all duration-700 ${isScrolled ? 'w-12 h-12' : 'w-16 h-16'}`}>
+              <div className="absolute inset-0 bg-[#C8961A]/20 blur-[15px] group-hover:blur-[25px] transition-all rounded-full"></div>
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10" />
+                <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center font-bold text-lg text-white bg-gradient-to-br from-[#C8102E] to-[#8B0000] rounded-xl relative z-10 shadow-lg">NT</div>
+                <div className="w-full h-full flex items-center justify-center font-display text-2xl text-[#C8961A] bg-[#0A1628] border border-[#C8961A]/30 rounded-2xl relative z-10 shadow-2xl overflow-hidden group-hover:border-[#C8961A] transition-all">
+                  <span className="relative z-10">NT</span>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[#C8961A]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
               )}
             </div>
             <div className="flex flex-col">
-              <span className={`font-display text-lg lg:text-2xl tracking-[5px] uppercase transition-colors duration-500 ${
+              <span className={`font-display text-xl lg:text-3xl tracking-[8px] uppercase transition-all duration-700 leading-none ${
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
-                {siteSettings?.sharingTitle?.split(' ')[0] || 'NAISIAE'}
+                {siteSettings?.siteName?.split(' ')[0] || 'NAISIAE'}
               </span>
-              <span className="text-[7px] lg:text-[8px] tracking-[4px] text-white/50 uppercase font-black -mt-1 group-hover:text-[#C8961A] transition-colors">
+              <span className="text-[8px] tracking-[5px] text-[#C8961A] uppercase font-black mt-1 group-hover:translate-x-1 transition-transform">
                 {siteSettings?.siteTagline || 'Textiles Limited'}
               </span>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-10">
+          {/* Centered Navigation */}
+          <nav className="hidden xl:flex items-center gap-12 flex-1 justify-center">
             {navItems.map((item) => (
               <div 
                 key={item.id} 
@@ -140,10 +146,12 @@ export function Navbar({
               >
                 <Link 
                   to={item.link} 
-                  className="text-[10px] font-black uppercase tracking-[3px] transition-all duration-300 relative group py-2 px-1 text-white hover:text-[#C8961A]"
+                  className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-500 relative group py-2 px-1 ${
+                    isScrolled ? 'text-white/70' : 'text-white'
+                  } hover:text-[#C8961A]`}
                 >
-                  {item.name}
-                  <span className={`absolute bottom-0 left-0 h-[2px] bg-[#C8961A] transition-all duration-500 ${
+                  <span className="relative z-10">{item.name}</span>
+                  <span className={`absolute -bottom-1 left-0 h-[1.5px] bg-[#C8961A] transition-all duration-700 ${
                     activeMegaMenu === item.id ? 'w-full' : 'w-0'
                   } group-hover:w-full`}></span>
                 </Link>
@@ -151,46 +159,45 @@ export function Navbar({
             ))}
           </nav>
 
-          <div className="flex items-center gap-1 lg:gap-3">
-            <div className="flex items-center gap-1 mr-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10 hidden sm:flex">
-               <button onClick={() => setIsWishlistOpen(true)} className="p-2 text-white/70 hover:text-[#F0A500] transition-colors relative group">
-                 <Heart size={18} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform"} />
+          {/* Action Hub */}
+          <div className="flex items-center gap-4 lg:gap-8">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hidden sm:flex">
+               <button onClick={() => setIsWishlistOpen(true)} title="Wishlist" className="p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
+                 <Heart size={20} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform"} />
                  {wishlistCount > 0 && (
-                   <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F0A500] text-[#0A1628] text-[8px] font-black flex items-center justify-center rounded-full">
-                     {wishlistCount}
-                   </span>
+                   <span className="absolute top-1 right-1 w-2 h-2 bg-[#F0A500] rounded-full animate-ping"></span>
                  )}
                </button>
-               <div className="w-[1px] h-4 bg-white/10"></div>
-               <button onClick={() => setIsCompareModalOpen?.(true)} className="p-2 text-white/70 hover:text-[#C8961A] transition-colors relative group">
-                 <GitCompare size={18} className={compareCount > 0 ? "text-[#C8961A]" : "group-hover:rotate-12 transition-transform"} />
+               <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
+               <button onClick={() => setIsCompareModalOpen?.(true)} title="Compare" className="p-2 text-white/50 hover:text-[#C8961A] transition-colors relative group">
+                 <GitCompare size={20} className="group-hover:rotate-45 transition-transform" />
                </button>
             </div>
 
             <button 
               onClick={() => setIsCartOpen(true)}
-              className="group relative p-3 bg-white hover:bg-[#C8961A] text-[#0A1628] hover:text-white rounded-xl transition-all duration-300 shadow-xl active:scale-95"
+              className="group relative p-4 bg-[#C8961A] text-[#0A1628] hover:bg-white transition-all duration-500 rounded-2xl shadow-2xl active:scale-90"
             >
-              <ShoppingBag size={20} />
+              <ShoppingBag size={22} className="relative z-10" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-5 h-5 bg-[#C8102E] text-white text-[9px] font-black flex items-center justify-center rounded-full border-2 border-[#0A1628]">
+                <span className="absolute -top-3 -right-3 w-6 h-6 bg-[#C8102E] text-white text-[10px] font-black flex items-center justify-center rounded-full border-[3px] border-[#0A1628] shadow-lg">
                   {cartCount}
                 </span>
               )}
             </button>
 
             <button 
-              onClick={() => setIsMenuOpen(true)} 
-              className="lg:hidden p-3 text-white hover:bg-white/10 rounded-xl transition-colors"
+              onClick={() => setIsQuoteModalOpen(true)}
+              className="hidden lg:flex items-center gap-3 bg-white text-[#0A1628] hover:bg-[#C8961A] hover:text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-500 active:scale-95 shadow-[0_15px_40px_-5px_rgba(200,150,26,0.3)]"
             >
-              <Menu size={24} />
+              <Package size={18} /> Catalog Quote
             </button>
 
             <button 
-              onClick={() => setIsQuoteModalOpen(true)}
-              className="hidden lg:flex items-center gap-2 bg-[#C8102E] hover:bg-white text-white hover:text-[#C8102E] border-2 border-[#C8102E] px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all duration-300 active:scale-95 ml-2 shadow-lg shadow-[#C8102E]/20"
+              onClick={() => setIsMenuOpen(true)} 
+              className="xl:hidden p-4 text-white hover:bg-white/10 rounded-2xl transition-colors"
             >
-              Get Quote
+              <Menu size={28} />
             </button>
           </div>
         </div>
