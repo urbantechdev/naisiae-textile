@@ -1274,18 +1274,19 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
               className="relative w-full max-w-7xl bg-white rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
             >
-              <div className="p-8 lg:p-12 border-b flex items-center justify-between">
+              <div className="p-6 lg:p-12 border-b flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-2">
-                    <GitCompare size={16} /> Technical Analysis
+                  <div className="flex items-center gap-3 text-[#C8961A] text-[9px] lg:text-[10px] font-black tracking-[4px] uppercase mb-2">
+                    <GitCompare size={14} className="lg:w-4 lg:h-4" /> Technical Analysis
                   </div>
-                  <h2 className="font-display text-5xl text-[#0A1628] tracking-tight leading-none">Side-by-Side Comparison</h2>
+                  <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl text-[#0A1628] tracking-tight leading-none">Side-by-Side Comparison</h2>
                 </div>
                 <button 
                   onClick={() => setIsCompareModalOpen(false)}
-                  className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors"
+                  className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors"
+                  aria-label="Close"
                 >
-                  <X size={24} />
+                  <X size={20} className="lg:w-6 lg:h-6" />
                 </button>
               </div>
 
@@ -1404,17 +1405,18 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 40 }}
               transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-              className="relative w-full max-w-5xl bg-white lg:rounded-[2rem] rounded-t-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row h-[90vh] lg:h-auto lg:max-h-[85vh] mt-auto lg:mt-0"
+              className="relative w-full max-w-5xl bg-white lg:rounded-[2rem] rounded-t-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row h-[92vh] lg:h-auto lg:max-h-[85vh] mt-auto lg:mt-0"
             >
               <button 
                 onClick={() => setSelectedQuickViewProduct(null)}
                 className="absolute top-4 right-4 lg:top-6 lg:right-6 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors shadow-lg"
+                aria-label="Close"
               >
                 <X size={24} />
               </button>
 
               {/* Product Gallery Section */}
-              <div className="w-full lg:w-1/2 bg-slate-50 relative flex items-center justify-center p-6 lg:p-12 shrink-0 h-[40vh] lg:h-auto">
+              <div className="w-full lg:w-1/2 bg-slate-50 relative flex items-center justify-center p-6 lg:p-12 shrink-0 h-[35vh] sm:h-[40vh] lg:h-auto">
                 <AnimatePresence mode="wait">
                   {(() => {
                     const activeImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url) || selectedQuickViewProduct.imageUrl;
@@ -1427,7 +1429,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         exit={{ opacity: 0, scale: 1.05 }}
                         transition={{ duration: 0.3 }}
                         src={activeImageUrl} 
-                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-contain rounded-2xl mix-blend-multiply"
+                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-contain rounded-xl mix-blend-multiply"
                         alt={selectedQuickViewProduct.name}
                       />
                     ) : (
@@ -1439,7 +1441,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 </AnimatePresence>
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-4 lg:top-8 left-4 lg:left-8 bg-[#C8102E] text-white text-[10px] lg:text-[12px] font-black px-4 py-1.5 rounded-full tracking-[2px] uppercase shadow-lg z-10">
+                  <span className="absolute top-4 lg:top-8 left-4 lg:left-8 bg-[#C8102E] text-white text-[9px] lg:text-[12px] font-black px-3 py-1 lg:px-4 lg:py-1.5 rounded-full tracking-[2px] uppercase shadow-lg z-10">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
@@ -1447,19 +1449,19 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
               {/* Product Info Section */}
               <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full">
-                <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-10">
-                  <div className="mb-8">
-                    <div className="text-[10px] lg:text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
+                <div className="flex-1 overflow-y-auto px-5 py-6 lg:p-10 scrollbar-hide">
+                  <div className="mb-6 lg:mb-8">
+                    <div className="text-[9px] lg:text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
                       <span className="w-6 lg:w-8 h-[2px] bg-[#C8961A]"></span>
                       {selectedQuickViewProduct.category}
                     </div>
-                    <h2 className="font-display text-3xl lg:text-5xl lg:leading-[1.1] text-[#0A1628] leading-[1] mb-3">
+                    <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl lg:leading-[1.1] text-[#0A1628] leading-[1.1] mb-2 lg:mb-3">
                       {selectedQuickViewProduct.name}
                     </h2>
-                    <div className="flex items-center gap-3 lg:gap-4 mb-6">
-                      <span className="text-2xl lg:text-3xl font-black text-[#C8102E]">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
+                    <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
+                      <span className="text-xl lg:text-3xl font-black text-[#C8102E]">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
                       {selectedQuickViewProduct.oldPrice && (
-                        <span className="text-sm lg:text-lg text-slate-400 line-through">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
+                        <span className="text-xs lg:text-lg text-slate-400 line-through">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
                       )}
                     </div>
                   </div>
@@ -2022,47 +2024,48 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[500px]"
+              className="relative bg-white w-full max-w-4xl rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[90vh] md:min-h-[500px]"
             >
               <button 
                 onClick={() => {
                   setShowPromoModal(false);
                   sessionStorage.setItem(`promo_${activeModalPromo.id}`, 'true');
                 }}
-                className="absolute top-6 right-6 z-30 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-[#0A1628] hover:bg-white/40 transition-all flex items-center justify-center"
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-30 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-[#0A1628] hover:bg-white/40 transition-all flex items-center justify-center shadow-lg md:shadow-none"
+                aria-label="Close"
               >
                 <X size={20} />
               </button>
 
-              <div className="w-full md:w-1/2 relative min-h-[300px]">
+              <div className="w-full md:w-1/2 relative h-[25vh] sm:h-[30vh] md:h-auto scroll-hide">
                 {activeModalPromo.imageUrl ? (
                   <img src={activeModalPromo.imageUrl} className="w-full h-full object-cover" alt={activeModalPromo.title} />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#0A1628] to-[#1C3560] flex items-center justify-center">
-                    <Megaphone size={80} className="text-[#C8961A]/20" />
+                    <Megaphone size={60} className="text-[#C8961A]/20 md:w-20 md:h-20" />
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden"></div>
               </div>
 
-              <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-center bg-white">
-                <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-6">
-                  <Megaphone size={14} /> Seasonal Offer
+              <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-14 flex flex-col justify-center bg-white overflow-y-auto scroll-hide">
+                <div className="flex items-center gap-3 text-[#C8961A] text-[9px] lg:text-[10px] font-black tracking-[4px] uppercase mb-4 md:mb-6">
+                  <Megaphone size={12} className="md:w-[14px]" /> Seasonal Offer
                 </div>
-                <h3 className="font-display text-5xl lg:text-6xl text-[#0A1628] tracking-wider leading-none mb-6">
+                <h3 className="font-display text-3xl sm:text-4xl lg:text-6xl text-[#0A1628] tracking-wider leading-none mb-4 md:mb-6">
                   {activeModalPromo.title}
                 </h3>
-                <p className="text-slate-500 text-lg mb-10 leading-relaxed font-medium">
+                <p className="text-slate-500 text-base lg:text-lg mb-6 md:mb-10 leading-relaxed font-medium">
                   {activeModalPromo.subtitle}
                 </p>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3 md:gap-4">
                   <Link 
                     to={activeModalPromo.buttonLink || '/shop'} 
                     onClick={() => {
                       setShowPromoModal(false);
                       sessionStorage.setItem(`promo_${activeModalPromo.id}`, 'true');
                     }}
-                    className="bg-[#C8102E] hover:bg-[#8B0000] text-white px-10 py-5 rounded-2xl font-black uppercase text-xs tracking-[3px] transition-all transform hover:scale-105 shadow-xl shadow-[#C8102E]/20 text-center"
+                    className="bg-[#C8102E] hover:bg-[#8B0000] text-white px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-[2px] md:tracking-[3px] transition-all transform hover:scale-105 shadow-xl shadow-[#C8102E]/20 text-center"
                   >
                     {activeModalPromo.buttonText}
                   </Link>
@@ -2071,7 +2074,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       setShowPromoModal(false);
                       sessionStorage.setItem(`promo_${activeModalPromo.id}`, 'true');
                     }}
-                    className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors py-2"
+                    className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors py-2"
                   >
                     Maybe Later
                   </button>

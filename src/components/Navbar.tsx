@@ -241,32 +241,30 @@ export function Navbar({
       <header 
         className={`w-full transition-all duration-700 border-b border-white/5 ${
           isScrolled 
-            ? 'bg-[#050B16]/95 backdrop-blur-2xl py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
-            : 'bg-[#050B16] py-8'
+            ? 'bg-[#050B16]/95 backdrop-blur-2xl py-3 md:py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
+            : 'bg-[#050B16] py-5 md:py-8'
         }`}
         onMouseLeave={() => setActiveMegaMenu(null)}
       >
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-20 flex items-center justify-between gap-12">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12">
           {/* Brand Identity */}
-          <Link to="/" className="group flex items-center gap-5 shrink-0">
-            <div className={`relative transition-all duration-700 ${isScrolled ? 'w-12 h-12' : 'w-16 h-16'}`}>
-              <div className="absolute inset-0 bg-[#C8961A]/20 blur-[15px] group-hover:blur-[25px] transition-all rounded-full"></div>
+          <Link to="/" className="group flex items-center gap-3 md:gap-5 shrink-0">
+            <div className={`relative transition-all duration-700 ${isScrolled ? 'w-10 h-10 md:w-12 md:h-12' : 'w-12 h-12 md:w-16 md:h-16'}`}>
+              <div className="absolute inset-0 bg-[#C8961A]/20 blur-[10px] md:blur-[15px] group-hover:blur-[25px] transition-all rounded-full"></div>
               {siteSettings?.siteLogo ? (
                 <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center font-display text-2xl text-[#C8961A] bg-[#0A1628] border border-[#C8961A]/30 rounded-2xl relative z-10 shadow-2xl overflow-hidden group-hover:border-[#C8961A] transition-all">
+                <div className="w-full h-full flex items-center justify-center font-display text-lg md:text-2xl text-[#C8961A] bg-[#0A1628] border border-[#C8961A]/30 rounded-xl md:rounded-2xl relative z-10 shadow-2xl overflow-hidden group-hover:border-[#C8961A] transition-all">
                   <span className="relative z-10">NT</span>
                   <div className="absolute inset-0 bg-gradient-to-tr from-[#C8961A]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
               )}
             </div>
             <div className="flex flex-col">
-              <span className={`font-display text-xl lg:text-3xl tracking-[8px] uppercase transition-all duration-700 leading-none ${
-                isScrolled ? 'text-white' : 'text-white'
-              }`}>
+              <span className={`font-display text-lg md:text-xl lg:text-3xl tracking-[4px] md:tracking-[8px] uppercase transition-all duration-700 leading-none text-white`}>
                 {siteSettings?.siteName?.split(' ')[0] || 'NAISIAE'}
               </span>
-              <span className="text-[8px] tracking-[5px] text-[#C8961A] uppercase font-black mt-1 group-hover:translate-x-1 transition-transform">
+              <span className="text-[7px] md:text-[8px] tracking-[3px] md:tracking-[5px] text-[#C8961A] uppercase font-black mt-1 group-hover:translate-x-1 transition-transform">
                 {siteSettings?.siteTagline || 'Textiles Limited'}
               </span>
             </div>
@@ -297,27 +295,27 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
-             <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hidden sm:flex">
-               <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
-                 <Heart size={20} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform"} />
+             <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
+               <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
+                 <Heart size={18} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform md:w-5 md:h-5"} />
                  {wishlistCount > 0 && (
                    <span className="absolute top-1 right-1 w-2 h-2 bg-[#F0A500] rounded-full animate-ping"></span>
                  )}
                </button>
                <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-               <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-2 text-white/50 hover:text-[#C8961A] transition-colors relative group">
-                 <GitCompare size={20} className="group-hover:rotate-45 transition-transform" />
+               <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-1.5 md:p-2 text-white/50 hover:text-[#C8961A] transition-colors relative group">
+                 <GitCompare size={18} className="group-hover:rotate-45 transition-transform md:w-5 md:h-5" />
                </button>
             </div>
 
             <button 
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Cart"
-              className="group relative p-4 bg-[#C8961A] text-[#0A1628] hover:bg-white transition-all duration-500 rounded-2xl shadow-2xl active:scale-90"
+              className="group relative p-3 md:p-4 bg-[#C8961A] text-[#0A1628] hover:bg-white transition-all duration-500 rounded-xl md:rounded-2xl shadow-2xl active:scale-90"
             >
-              <ShoppingBag size={22} className="relative z-10" />
+              <ShoppingBag size={20} className="relative z-10 md:w-5.5 md:h-5.5" />
               {cartCount > 0 && (
-                <span className="absolute -top-3 -right-3 w-6 h-6 bg-[#C8102E] text-white text-[10px] font-black flex items-center justify-center rounded-full border-[3px] border-[#0A1628] shadow-lg">
+                <span className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-5 h-5 md:w-6 md:h-6 bg-[#C8102E] text-white text-[9px] md:text-[10px] font-black flex items-center justify-center rounded-full border-[2px] md:border-[3px] border-[#0A1628] shadow-lg">
                   {cartCount}
                 </span>
               )}
@@ -332,9 +330,9 @@ export function Navbar({
 
             <button 
               onClick={() => setIsMenuOpen(true)} 
-              className="xl:hidden p-4 text-white hover:bg-white/10 rounded-2xl transition-colors"
+              className="xl:hidden p-3 md:p-4 text-white hover:bg-white/10 rounded-xl md:rounded-2xl transition-colors"
             >
-              <Menu size={28} />
+              <Menu size={24} className="md:w-7 md:h-7" />
             </button>
           </div>
         </div>
