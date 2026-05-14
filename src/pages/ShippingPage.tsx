@@ -37,6 +37,7 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />

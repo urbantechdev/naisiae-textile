@@ -6,7 +6,14 @@ import {
   ChevronRight,
   Megaphone,
   GitCompare,
-  Package
+  Package,
+  Search,
+  X,
+  Phone,
+  User as UserIcon,
+  Plus,
+  Zap,
+  Filter
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
@@ -17,6 +24,7 @@ interface NavbarProps {
   cartCount: number;
   wishlistCount: number;
   compareCount?: number;
+  isMenuOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   setIsWishlistOpen: (open: boolean) => void;
   setIsMenuOpen: (open: boolean) => void;
@@ -28,6 +36,7 @@ export function Navbar({
   cartCount, 
   wishlistCount,
   compareCount = 0,
+  isMenuOpen,
   setIsCartOpen,
   setIsWishlistOpen,
   setIsMenuOpen,
@@ -39,10 +48,25 @@ export function Navbar({
   const [promotions, setPromotions] = useState<any[]>([]);
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
+    
+    // Fetch products for global search
+    const qProducts = query(collection(db, 'products'), where('active', '==', true));
+    const unsubProducts = onSnapshot(qProducts, (snapshot) => {
+      setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    // Fetch services for global search
+    const unsubServices = onSnapshot(collection(db, 'services'), (snapshot) => {
+      setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
     
     const unsubMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
       let menus: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -149,8 +173,33 @@ export function Navbar({
       unsubMenus();
       unsubSettings();
       unsubPromos();
+      unsubProducts();
+      unsubServices();
     };
   }, []);
+
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    
+    const prodResults = products.filter(p => 
+      p.name?.toLowerCase().includes(q) || 
+      p.category?.toLowerCase().includes(q) ||
+      p.tags?.some((t: string) => t.toLowerCase().includes(q))
+    ).slice(0, 4).map(p => ({ ...p, type: 'product', icon: <Package size={14} className="text-[#C8961A]" /> }));
+
+    const serviceResults = services.filter(s => 
+      s.title?.toLowerCase().includes(q) || 
+      s.description?.toLowerCase().includes(q)
+    ).slice(0, 2).map(s => ({ ...s, name: s.title, type: 'service', icon: <Zap size={14} className="text-[#C8961A]" /> }));
+
+    const categories = Array.from(new Set(products.map(p => p.category))).filter((c): c is string => !!c);
+    const catResults = categories.filter(c => 
+      c.toLowerCase().includes(q)
+    ).slice(0, 2).map(c => ({ id: c, name: c, type: 'category', icon: <Filter size={14} className="text-[#C8961A]" /> }));
+
+    return [...prodResults, ...catResults, ...serviceResults];
+  }, [searchQuery, products, services]);
 
   const navItems = [
     { name: 'Home', id: 'home', link: '/' },
@@ -359,6 +408,155 @@ export function Navbar({
           )}
         </AnimatePresence>
       </header>
+
+      {/* Mobile Menu & Search Portal */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] bg-[#0A1628]/80 backdrop-blur-md lg:hidden"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <motion.div 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="absolute left-0 top-0 bottom-0 w-full max-w-[320px] bg-[#050B16] flex flex-col border-r border-[#C8961A]/10 shadow-[20px_0_100px_rgba(0,0,0,0.5)]"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                <div className="flex flex-col">
+                  <div className="font-display text-xl tracking-[4px] text-white">NAISIAE</div>
+                  <div className="text-[7px] tracking-[3px] text-[#C8961A] font-black uppercase">Textiles Limited</div>
+                </div>
+                <button 
+                  onClick={() => setIsMenuOpen(false)} 
+                  className="p-3 text-white/50 hover:text-[#C8961A] bg-white/5 rounded-2xl hover:bg-[#C8961A]/10 transition-all border border-white/5"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Enhanced Mobile Search */}
+              <div className="p-6 border-b border-white/5 bg-[#0A1628]/30">
+                <div className="relative group">
+                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#C8961A]' : 'text-white/30 group-focus-within:text-[#C8961A]'}`} size={16} />
+                  <input 
+                    type="text" 
+                    placeholder="Search catalog, styles..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsSearching(true)}
+                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/20 outline-none focus:ring-2 focus:ring-[#C8961A]/30 focus:border-[#C8961A]/50 transition-all font-medium"
+                  />
+                  {searchQuery && (
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Dropdown Results for Mobile Search */}
+                <AnimatePresence>
+                  {searchQuery && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      className="mt-4 bg-white/5 rounded-2xl border border-white/10 overflow-hidden"
+                    >
+                      {searchResults.length > 0 ? (
+                        <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                          {searchResults.map((item, idx) => (
+                            <Link 
+                              key={`${item.type}-${item.id || idx}`}
+                              to={item.type === 'product' ? '/products' : item.type === 'service' ? '/services' : '/categories'}
+                              onClick={() => {
+                                setIsMenuOpen(false);
+                                setSearchQuery('');
+                              }}
+                              className="flex items-center gap-3 p-4 hover:bg-white/5 border-b border-white/5 last:border-0 group transition-all"
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-[#C8961A]/30">
+                                {item.imageUrl ? (
+                                  <img src={item.imageUrl} className="w-full h-full object-cover rounded-lg" alt={item.name} />
+                                ) : item.icon}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-bold text-white group-hover:text-[#C8961A] transition-colors truncate">{item.name}</p>
+                                <span className="text-[8px] font-black uppercase text-[#C8961A]/50 tracking-[1px]">{item.type}</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-6 text-center text-[10px] text-white/30 uppercase tracking-[2px] font-bold">
+                          No matches found
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+                {[
+                  { name: 'Home', link: '/', icon: <ShoppingBag size={18} /> },
+                  { name: 'Products', link: '/products', icon: <Package size={18} /> },
+                  { name: 'Services', link: '/services', icon: <Zap size={18} /> },
+                  { name: 'Portfolio', link: '/portfolio', icon: <ChevronRight size={18} /> },
+                  { name: 'Catalog Quote', onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
+                ].map((item) => (
+                  <button 
+                    key={item.name}
+                    onClick={() => {
+                      if (item.onClick) item.onClick();
+                      else setIsMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
+                      item.highlight 
+                        ? 'bg-[#C8961A] text-[#0A1628] hover:bg-white' 
+                        : 'text-white/70 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {item.link ? (
+                      <Link to={item.link} className="flex items-center gap-4 w-full">
+                        <span className={`${item.highlight ? '' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
+                        <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
+                      </Link>
+                    ) : (
+                      <div className="flex items-center gap-4 w-full text-left">
+                        <span className={`${item.highlight ? '' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
+                        <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
+                      </div>
+                    )}
+                    <ChevronRight size={14} className={item.highlight ? 'opacity-50' : 'text-white/10 group-hover:text-[#C8961A]'} />
+                  </button>
+                ))}
+              </div>
+
+              {/* Footer Branding */}
+              <div className="p-6 mt-auto border-t border-white/5">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
+                  <div className="text-[8px] font-black text-[#C8961A] uppercase tracking-[3px] mb-2">Request Assistance</div>
+                  <div className="text-white font-bold text-xs flex items-center justify-center gap-2">
+                    <Phone size={14} className="text-[#C8961A]" />
+                    +254 792 021 795
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

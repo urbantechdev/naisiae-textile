@@ -37,6 +37,7 @@ export default function ReturnsPage({ cart, setCart, wishlist, setWishlist }: an
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />

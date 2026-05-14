@@ -1,23 +1,31 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
+    
     // 0. Global Safety Net
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // --- Helpers ---
+    // 1. Helpers
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function isEmailVerified() {
+    function emailVerified() {
       return isSignedIn() && request.auth.token.email_verified == true;
     }
 
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    function isAdmin() {
+      return emailVerified() && (
+        request.auth.token.email == 'naisiaetext@gmail.com' ||
+        request.auth.token.email == 'support@naisiaetextile.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
     }
 
     function incoming() {
@@ -28,66 +36,143 @@ service cloud.firestore {
       return resource.data;
     }
 
-    function isAdmin() {
-      return isSignedIn() && (
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
-        request.auth.token.email == 'urbaninteriorkenya@gmail.com'
-      );
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
-    // --- Collections ---
-
-    // Products: Anyone can read, only admin can write
-    match /products/{productId} {
-      allow read: if true;
-      allow create: if isAdmin() && isValidProduct(incoming()) && isValidId(productId);
-      allow update: if isAdmin() && isValidProduct(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['name', 'category', 'description', 'price', 'oldPrice', 'imageUrl', 'badge', 'tag', 'color', 'stroke', 'sortOrder', 'active', 'updatedAt']);
-      allow delete: if isAdmin();
-    }
-
+    // 2. Validation Blueprints (Schema Guardians)
+    
     function isValidProduct(data) {
-      return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
-             data.category is string && data.category.size() > 0 &&
-             data.price is number && data.price >= 0;
+      return data.keys().hasAll(['name', 'category', 'price']) &&
+             data.name is string && data.name.size() <= 200 &&
+             data.category is string && data.category.size() <= 100 &&
+             data.price is number && data.price >= 0 &&
+             (data.get('active', true) is boolean);
     }
 
-    // Users: Users can read/write their own profile, only admin can list or change roles
-    match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow create: if isSignedIn() && request.auth.uid == userId && 
-                    incoming().role == 'user'; // Prevent self-assigning admin
-      allow update: if isSignedIn() && request.auth.uid == userId && 
-                    !incoming().diff(existing()).affectedKeys().hasAny(['role']) &&
-                    isValidUser(incoming());
-      allow update: if isAdmin(); // Admin can change anything (including roles)
-    }
-
-    function isValidUser(data) {
-      return data.email is string && data.email.size() > 0 &&
-             data.role in ['admin', 'user'];
-    }
-
-    // Quotes: Anyone can create, only admin can read/list/delete
-    match /quotes/{quoteId} {
-      allow create: if isSignedIn() && isValidQuote(incoming()) && isValidId(quoteId);
-      allow get: if isAdmin() || (isSignedIn() && existing().uid == request.auth.uid);
-      allow list: if isAdmin();
-      allow update: if isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly(['status']);
-      allow delete: if isAdmin();
+    function isValidReview(data) {
+      return data.keys().hasAll(['productId', 'rating', 'comment', 'status']) &&
+             isValidId(data.productId) &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() <= 1000 &&
+             data.status in ['pending', 'approved', 'rejected'] &&
+             (data.get('userId', null) == null || data.userId == request.auth.uid);
     }
 
     function isValidQuote(data) {
-      return data.name is string && data.name.size() > 0 &&
-             data.phone is string && data.phone.size() > 0 &&
-             data.service is string && data.service.size() > 0;
+      return data.keys().hasAll(['name', 'phone', 'service']) &&
+             data.name is string && data.name.size() <= 200 &&
+             data.phone is string && data.phone.size() <= 50 &&
+             data.service is string && data.service.size() <= 100;
     }
 
-    // Analytics: Strictly additions
+    function isValidUser(data) {
+      return data.email is string && data.email.size() <= 255;
+    }
+
+    // 3. Collection Rules
+
+    match /settings/{id} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /mega_menus/{id} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{id} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /products/{id} {
+      allow get: if true;
+      allow list: if resource.data.active == true || isAdmin();
+      allow create: if isAdmin() && isValidId(id) && isValidProduct(incoming());
+      allow update: if isAdmin() && isValidProduct(incoming()) && (
+        // Action: Update details
+        incoming().diff(existing()).affectedKeys().hasAny(['name', 'category', 'price', 'description', 'active', 'imageUrl', 'badge', 'tags', 'oldPrice', 'sortOrder', 'updatedAt'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /promotions/{id} {
+      allow get: if true;
+      allow list: if resource.data.active == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /services/{id} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+
+    match /portfolio/{id} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+
+    match /reviews/{id} {
+      allow get: if true;
+      allow list: if resource.data.status == 'approved' || isAdmin();
+      allow create: if emailVerified() && isValidId(id) && isValidReview(incoming()) && 
+                    exists(/databases/$(database)/documents/products/$(incoming().productId));
+      allow update: if (isAdmin() || (isOwner(existing().userId) && incoming().userId == existing().userId)) &&
+                    isValidReview(incoming()) && (
+                      isAdmin() || (
+                        // User can only update if it's still pending
+                        existing().status == 'pending' &&
+                        incoming().diff(existing()).affectedKeys().hasOnly(['comment', 'rating'])
+                      )
+                    );
+      allow delete: if isAdmin() || isOwner(resource.data.userId);
+    }
+
+    match /discountRules/{id} {
+      allow get: if true;
+      allow list: if resource.data.active == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /system/{id} {
+      allow get, list: if true;
+    }
+
+    match /analytics/{id} {
+      // Analytics should be mostly write-only for users or handled carefully
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+    
     match /analytics/{dayId}/events/{eventId} {
-      allow create: if true; // Open creation for tracking
-      allow read: if isAdmin();
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /quotes/{id} {
+      allow create: if isValidQuote(incoming());
+      allow read, write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(incoming()) && incoming().role == 'user';
+      allow update: if (isOwner(userId) || isAdmin()) && (
+        isAdmin() || (incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'lastLogin']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /wishlists/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /admins/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }

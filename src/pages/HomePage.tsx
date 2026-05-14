@@ -92,7 +92,16 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const searchResults = useMemo(() => {
+    if (searchQuery.length < 2) return [];
+    const lower = searchQuery.toLowerCase();
+    return products.filter(p => 
+      p.name.toLowerCase().includes(lower) || 
+      p.category.toLowerCase().includes(lower) ||
+      p.tags?.some((t: string) => t.toLowerCase().includes(lower))
+    ).slice(0, 8);
+  }, [searchQuery, products]);
+
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [compareList, setCompareList] = useState<any[]>([]);
@@ -274,7 +283,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
     });
 
     // Fetch Discount Rules
-    const unsubscribeDiscountRules = onSnapshot(collection(db, 'discountRules'), (snapshot) => {
+    const qDiscountRules = query(collection(db, 'discountRules'), where('active', '==', true));
+    const unsubscribeDiscountRules = onSnapshot(qDiscountRules, (snapshot) => {
       setDiscountRules(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'discountRules');
@@ -517,6 +527,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         compareCount={compareList.length}
         setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
         setIsCompareModalOpen={setIsCompareModalOpen}
@@ -685,34 +696,34 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
           <span className="text-[7px] font-black uppercase tracking-[5px] text-white group-hover:text-[#C8961A] transition-colors">Explore Cabinet</span>
         </motion.div>
 
-        {/* Static Float Search Bar Overlay (Refined Glass) */}
-        <div className="absolute inset-x-0 bottom-24 z-30 pointer-events-none flex justify-center px-6 lg:px-0">
+        {/* Static Float Search Bar Overlay (Refined Glass) - Top Center */}
+        <div className="absolute inset-x-0 top-24 lg:top-28 z-30 pointer-events-none flex justify-center px-6 lg:px-0">
           <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
+            transition={{ delay: 0.8 }}
             className="w-full max-w-2xl pointer-events-auto"
           >
             <div className="relative group">
               <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none">
-                <Search className="text-white/20 group-focus-within:text-[#C8961A] transition-all" size={24} />
+                <Search className="text-white/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
               </div>
               <input 
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => searchQuery.length > 0 && setShowSearchSuggestions(true)}
+                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                placeholder="Search collection..."
-                className="w-full bg-white/5 backdrop-blur-[40px] border border-white/10 rounded-full pl-20 pr-10 py-7 text-white text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:ring-[15px] focus:ring-[#C8961A]/10 transition-all shadow-[0_30px_100px_rgba(0,0,0,0.5)] placeholder:text-white/20"
+                placeholder="Find Your Uniform..."
+                className="w-full bg-white/10 backdrop-blur-[40px] border border-white/20 rounded-full pl-20 pr-10 py-6 text-white text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:ring-[15px] focus:ring-[#C8961A]/10 transition-all shadow-[0_30px_100px_rgba(0,0,0,0.5)] placeholder:text-white/40"
               />
               <AnimatePresence>
                 {showSearchSuggestions && searchResults.length > 0 && (
                   <motion.div 
-                    initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                    initial={{ opacity: 0, scale: 0.98, y: -10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                    className="absolute bottom-full left-0 right-0 mb-8 bg-white/95 backdrop-blur-3xl rounded-[3rem] shadow-4xl border border-white/20 overflow-hidden max-h-[500px] overflow-y-auto"
+                    exit={{ opacity: 0, scale: 0.98, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-3xl rounded-[3rem] shadow-4xl border border-white/20 overflow-hidden max-h-[500px] overflow-y-auto z-50"
                   >
                     <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center px-8">
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Match Results</span>
@@ -1758,69 +1769,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         </button>
       </div>
 
+      {/* Mobile Menu Handled by Navbar */}
       <AnimatePresence>
-        {/* Mobile Menu Overlay */}
-        {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm lg:hidden"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            <motion.div 
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute left-0 top-0 bottom-0 w-[300px] bg-[#0A1628] p-6 shadow-2xl flex flex-col"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-10">
-                <div className="font-display text-2xl tracking-[4px] text-transparent bg-clip-text bg-gradient-to-r from-[#F59E0B] via-[#FCD34D] to-[#D97706]">NAISIAE</div>
-                <button onClick={() => setIsMenuOpen(false)} className="text-white/60 hover:text-white p-2 bg-white/5 rounded-lg">
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="flex flex-col gap-1 overflow-y-auto">
-                {[
-                  { name: 'School Uniforms', icon: <ShoppingBag size={18} /> },
-                  { name: 'Knitting', icon: <ShoppingBag size={18} /> },
-                  { name: 'Branding', icon: <ShoppingBag size={18} /> },
-                  { name: 'About Us', icon: <UserIcon size={18} /> },
-                  { name: 'Get Quote', icon: <Plus size={18} />, onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); } },
-                ].map((item) => (
-                  <button 
-                    key={item.name}
-                    onClick={() => {
-                      if (item.onClick) item.onClick();
-                      else setIsMenuOpen(false);
-                    }}
-                    className="py-4 px-2 border-b border-white/5 text-white/90 font-sans text-base font-semibold tracking-wide uppercase hover:text-[#C8961A] transition-colors flex justify-between items-center group text-left"
-                  >
-                    <span className="flex items-center gap-4">
-                      <span className="text-[#F59E0B]/50 group-hover:text-[#F59E0B] transition-colors">{item.icon}</span>
-                      {item.name}
-                    </span>
-                    <ChevronRight size={16} className="text-white/20 group-hover:text-[#C8961A] group-hover:translate-x-1 transition-all" />
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-auto space-y-4 pt-10">
-                <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-                  <div className="text-[10px] font-bold text-[#C8961A] uppercase tracking-widest mb-1">Direct Line</div>
-                  <div className="text-white font-bold flex items-center gap-2"><Phone size={14} /> +254 792 021 795</div>
-                </div>
-                <div className="text-center text-[10px] text-white/30 uppercase tracking-widest">
-                  Uhuru Market, Nairobi, Kenya
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-
         {/* Cart Drawer */}
           {(isCartOpen || isWishlistOpen) && (
           <motion.div 

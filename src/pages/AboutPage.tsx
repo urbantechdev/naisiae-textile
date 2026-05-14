@@ -38,6 +38,7 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />

@@ -82,6 +82,7 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />

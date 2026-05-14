@@ -67,6 +67,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
         wishlistCount={wishlist.length}
         setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />

@@ -186,75 +186,100 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     // Real-time products
-    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-    const unsubscribeProducts = onSnapshot(q, (snapshot) => {
+    const unsubscribeProducts = onSnapshot(collection(db, 'products'), (snapshot) => {
       const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-      setProducts(items);
-      setStats(prev => ({ ...prev, activeProducts: items.filter(i => i.active).length }));
+      // Sort in memory to avoid index requirements
+      const sortedItems = items.sort((a: any, b: any) => {
+        const dateA = a.createdAt?.seconds || 0;
+        const dateB = b.createdAt?.seconds || 0;
+        return dateB - dateA;
+      });
+      setProducts(sortedItems);
+      setStats(prev => ({ ...prev, activeProducts: sortedItems.filter(i => i.active).length }));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'products');
     });
 
-    const qCategories = query(collection(db, 'categories'), orderBy('sortOrder', 'asc'));
-    const unsubscribeCategories = onSnapshot(qCategories, (snapshot) => {
-      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
+    const unsubscribeCategories = onSnapshot(collection(db, 'categories'), (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setCategories(items.sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0)));
     }, error => handleFirestoreError(error, OperationType.GET, 'categories'));
 
-    const qServices = query(collection(db, 'services'), orderBy('sortOrder', 'asc'));
-    const unsubscribeServices = onSnapshot(qServices, (snapshot) => {
-      setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
+    const unsubscribeServices = onSnapshot(collection(db, 'services'), (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setServices(items.sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0)));
     }, error => handleFirestoreError(error, OperationType.GET, 'services'));
 
-    const qPortfolio = query(collection(db, 'portfolio'), orderBy('sortOrder', 'asc'));
-    const unsubscribePortfolio = onSnapshot(qPortfolio, (snapshot) => {
-      setPortfolio(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
+    const unsubscribePortfolio = onSnapshot(collection(db, 'portfolio'), (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setPortfolio(items.sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0)));
     }, error => handleFirestoreError(error, OperationType.GET, 'portfolio'));
 
     // Real-time quotes
-    const qQuotes = query(collection(db, 'quotes'), orderBy('createdAt', 'desc'));
-    const unsubscribeQuotes = onSnapshot(qQuotes, (snapshot) => {
+    const unsubscribeQuotes = onSnapshot(collection(db, 'quotes'), (snapshot) => {
       const qs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
-      setQuotes(qs);
+      const sortedQuotes = qs.sort((a: any, b: any) => {
+        const dateA = a.createdAt?.seconds || 0;
+        const dateB = b.createdAt?.seconds || 0;
+        return dateB - dateA;
+      });
+      setQuotes(sortedQuotes);
       setStats(prev => ({ 
         ...prev, 
-        totalQuotes: qs.length,
-        totalPotentialRevenue: qs.reduce((acc, q) => acc + (Number(q.total) || 0), 0)
+        totalQuotes: sortedQuotes.length,
+        totalPotentialRevenue: sortedQuotes.reduce((acc, q) => acc + (Number(q.total) || 0), 0)
       }));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'quotes');
     });
 
     // Real-time Analytics
-    const qAnalytics = query(collection(db, 'analytics'), orderBy('date', 'desc'), limit(30));
-    const unsubscribeAnalytics = onSnapshot(qAnalytics, (snapshot) => {
-      const docs = snapshot.docs.map(doc => doc.data());
-      setAnalyticsDocs(docs);
-      const totalViews = docs.reduce((acc, doc) => acc + (doc.views || 0), 0);
+    const unsubscribeAnalytics = onSnapshot(collection(db, 'analytics'), (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      const sortedDocs = docs.sort((a: any, b: any) => {
+        if (a.date < b.date) return 1;
+        if (a.date > b.date) return -1;
+        return 0;
+      }).slice(0, 30);
+      setAnalyticsDocs(sortedDocs);
+      const totalViews = sortedDocs.reduce((acc, doc) => acc + (doc.views || 0), 0);
       setStats(prev => ({ ...prev, totalViews }));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'analytics_summary');
     });
 
     // Real-time users
-    const qUsers = query(collection(db, 'users'), orderBy('lastLogin', 'desc'));
-    const unsubscribeUsers = onSnapshot(qUsers, (snapshot) => {
-      setUsers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubscribeUsers = onSnapshot(collection(db, 'users'), (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setUsers(items.sort((a: any, b: any) => {
+        const dateA = a.lastLogin?.seconds || 0;
+        const dateB = b.lastLogin?.seconds || 0;
+        return dateB - dateA;
+      }));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'users');
     });
 
     // Real-time wishlists
-    const qWishlists = query(collection(db, 'wishlists'), orderBy('updatedAt', 'desc'));
-    const unsubscribeWishlists = onSnapshot(qWishlists, (snapshot) => {
-      setWishlists(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubscribeWishlists = onSnapshot(collection(db, 'wishlists'), (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setWishlists(items.sort((a: any, b: any) => {
+        const dateA = a.updatedAt?.seconds || 0;
+        const dateB = b.updatedAt?.seconds || 0;
+        return dateB - dateA;
+      }));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'wishlists');
     });
 
     // Real-time promotions
-    const qPromos = query(collection(db, 'promotions'), orderBy('createdAt', 'desc'));
-    const unsubscribePromos = onSnapshot(qPromos, (snapshot) => {
-      setPromotions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubscribePromos = onSnapshot(collection(db, 'promotions'), (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      setPromotions(items.sort((a: any, b: any) => {
+        const dateA = a.createdAt?.seconds || 0;
+        const dateB = b.createdAt?.seconds || 0;
+        return dateB - dateA;
+      }));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'promotions');
     });
@@ -918,28 +943,71 @@ export default function AdminDashboard() {
           />
           {globalSearchQuery && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-100 overflow-hidden z-50 max-h-80 overflow-y-auto">
-              {products.filter(p => p.name.toLowerCase().includes(globalSearchQuery.toLowerCase()) || p.category?.toLowerCase().includes(globalSearchQuery.toLowerCase())).slice(0, 5).map(product => (
-                <div 
-                  key={product.id} 
-                  className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0"
-                  onClick={() => {
-                    setActiveView('products');
-                    setGlobalSearchQuery('');
-                    // could select product here...
-                  }}
-                >
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center">
-                    {product.imageUrl ? <img src={product.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" /> : <Package size={14} className="text-slate-300" />}
+              {(() => {
+                const search = globalSearchQuery.toLowerCase();
+                
+                const productResults = products.filter(p => 
+                  p.name?.toLowerCase().includes(search) || 
+                  p.category?.toLowerCase().includes(search) ||
+                  p.id?.toLowerCase().includes(search) ||
+                  p.tags?.some((t: string) => t.toLowerCase().includes(search))
+                ).slice(0, 5).map(p => ({ ...p, type: 'product', icon: <Package size={14} className="text-slate-300" /> }));
+
+                const categoryResults = productCategories.filter(c => 
+                  c?.toLowerCase().includes(search)
+                ).slice(0, 3).map(c => ({ id: c, name: c, type: 'category', icon: <Filter size={14} className="text-indigo-300" /> }));
+
+                const serviceResults = services.filter(s => 
+                  s.title?.toLowerCase().includes(search) || 
+                  s.description?.toLowerCase().includes(search)
+                ).slice(0, 3).map(s => ({ ...s, name: s.title, type: 'service', icon: <Zap size={14} className="text-amber-300" /> }));
+
+                const allResults = [...productResults, ...categoryResults, ...serviceResults];
+
+                if (allResults.length === 0) {
+                  return <div className="p-4 text-center text-sm text-slate-500 font-medium italic">No matches for "{globalSearchQuery}"</div>;
+                }
+
+                return allResults.map((item, idx) => (
+                  <div 
+                    key={`${item.type}-${item.id || idx}`} 
+                    className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 group"
+                    onClick={() => {
+                      if (item.type === 'product') {
+                        setActiveView('products');
+                        setEditingItem(item);
+                        setIsModalOpen(true);
+                      } else if (item.type === 'category') {
+                        setActiveView('products');
+                        setProductCategoryFilter(item.name);
+                      } else if (item.type === 'service') {
+                        setActiveView('services');
+                      }
+                      setGlobalSearchQuery('');
+                    }}
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center group-hover:bg-white transition-colors border border-slate-200 shadow-sm">
+                      {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" /> : item.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold text-[#0A1628] truncate">{item.name}</p>
+                        <span className={`text-[7px] font-black uppercase px-1 rounded-sm border ${
+                          item.type === 'product' ? 'bg-slate-100 text-slate-500 border-slate-200' :
+                          item.type === 'category' ? 'bg-indigo-50 text-indigo-500 border-indigo-100' :
+                          'bg-amber-50 text-amber-500 border-amber-100'
+                        }`}>
+                          {item.type}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">
+                        {item.type === 'category' ? 'Store Category' : item.category || item.tagline || 'Textile Service'}
+                      </p>
+                    </div>
+                    <ChevronRight size={14} className="text-slate-200 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#0A1628] truncate">{product.name}</p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">{product.category}</p>
-                  </div>
-                </div>
-              ))}
-              {products.filter(p => p.name.toLowerCase().includes(globalSearchQuery.toLowerCase()) || p.category?.toLowerCase().includes(globalSearchQuery.toLowerCase())).length === 0 && (
-                <div className="p-4 text-center text-sm text-slate-500">No products found for "{globalSearchQuery}"</div>
-              )}
+                ));
+              })()}
             </div>
           )}
         </div>
@@ -4018,6 +4086,33 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
     ]
   });
 
+  const safeSave = async (data: any, isAutoSave = false) => {
+    try {
+      await onSave(data);
+      if (!isAutoSave) {
+        setToast({ message: 'Site settings synchronized successfully!', type: 'success' });
+      }
+    } catch (err: any) {
+      console.error("Settings save error:", err);
+      let errorMessage = 'Failed to save settings.';
+      try {
+        const parsed = JSON.parse(err.message);
+        if (parsed.error) {
+          if (parsed.error.includes('permission') || parsed.error.includes('insufficient')) {
+            errorMessage = 'Permission Denied: You do not have authority to update site settings.';
+          } else {
+            errorMessage = `Save Error: ${parsed.error}`;
+          }
+        }
+      } catch (e) {
+        if (err.message && !err.message.includes('[object Object]')) {
+          errorMessage = `Save Error: ${err.message}`;
+        }
+      }
+      setToast({ message: errorMessage, type: 'error' });
+    }
+  };
+
   const handleImageError = (id: string) => {
     setImageErrors(prev => ({ ...prev, [id]: true }));
   };
@@ -4069,7 +4164,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
     setFormData(updated);
     // Only auto-save these fields to avoid partial hero slide states
     if (['siteName', 'siteTagline', 'sharingTitle', 'sharingDescription'].includes(field)) {
-      onSave(updated);
+      safeSave(updated, true);
     }
   };
 
@@ -4171,7 +4266,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                       onChange={e => handleUpdate('siteLogo', e.target.value)}
                       onBlur={() => {
                         autoResolveImage(formData.siteLogo, 'siteLogo');
-                        onSave(formData);
+                        safeSave(formData, true);
                       }}
                       placeholder="https://..."
                       className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#C8102E] outline-none transition-all"
@@ -4202,7 +4297,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                       onChange={e => handleUpdate('footerLogo', e.target.value)}
                       onBlur={() => {
                         autoResolveImage(formData.footerLogo, 'footerLogo');
-                        onSave(formData);
+                        safeSave(formData, true);
                       }}
                       placeholder="https://..."
                       className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#C8102E] outline-none transition-all"
@@ -4241,7 +4336,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                       onChange={e => handleUpdate('favicon', e.target.value)}
                       onBlur={() => {
                         autoResolveImage(formData.favicon, 'favicon');
-                        onSave(formData);
+                        safeSave(formData, true);
                       }}
                       placeholder="https://..."
                       className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#C8102E] outline-none transition-all"
@@ -4536,7 +4631,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
               <input 
                 value={formData.sharingTitle}
                 onChange={e => setFormData({ ...formData, sharingTitle: e.target.value })}
-                onBlur={e => onSave({ ...formData, sharingTitle: e.target.value })}
+                onBlur={e => safeSave({ ...formData, sharingTitle: e.target.value }, true)}
                 className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
               />
             </div>
@@ -4546,7 +4641,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 rows={3}
                 value={formData.sharingDescription}
                 onChange={e => setFormData({ ...formData, sharingDescription: e.target.value })}
-                onBlur={e => onSave({ ...formData, sharingDescription: e.target.value })}
+                onBlur={e => safeSave({ ...formData, sharingDescription: e.target.value }, true)}
                 className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors" 
               />
             </div>
@@ -4570,7 +4665,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                   onBlur={e => {
                     const val = e.target.value;
                     autoResolveImage(val, 'sharingImage');
-                    onSave({ ...formData, sharingImage: val });
+                    safeSave({ ...formData, sharingImage: val }, true);
                   }}
                   placeholder="https://images.unsplash.com/..."
                   className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[11px] focus:bg-white focus:border-[#C8102E] outline-none transition-all font-bold" 
@@ -4600,14 +4695,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
 
       <div className="flex justify-end pt-8 mt-12 border-t border-slate-100">
         <button 
-          onClick={async () => {
-            try {
-              await onSave(formData);
-              setToast({ message: 'Site settings synchronized successfully!', type: 'success' });
-            } catch (err) {
-              setToast({ message: 'Failed to save settings.', type: 'error' });
-            }
-          }}
+          onClick={() => safeSave(formData)}
           className="px-10 py-5 bg-gradient-to-r from-[#0A1628] to-[#1C3560] text-white rounded-3xl font-black text-xs uppercase tracking-[3px] transition-all hover:scale-[1.05] active:scale-[0.98] shadow-2xl shadow-[#1C3560]/30 flex items-center gap-4 group"
         >
           <Save size={20} className="group-hover:rotate-12 transition-transform" />

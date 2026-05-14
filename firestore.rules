@@ -2,97 +2,106 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helpers
+    // Core Helpers
     function isSignedIn() {
       return request.auth != null;
     }
-    
-    function isAdmin() {
+
+    function isAuthAdmin() {
       return isSignedIn() && (
         request.auth.token.email == 'naisiaetext@gmail.com' ||
         request.auth.token.email == 'support@naisiaetextile.com'
       );
     }
 
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    // Default deny
+    // Special permissive rule for the main developer to unblock them
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if isSignedIn() && (
+        request.auth.token.email == 'naisiaetext@gmail.com' ||
+        request.auth.token.email == 'support@naisiaetextile.com'
+      );
     }
 
-    // Public collections
+    // Public Collections
     match /settings/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow get: if true;
+      allow list, write: if isAuthAdmin();
+    }
+
+    match /products/{id} {
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
+    }
+    
+    match /categories/{id} {
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
     }
 
     match /mega_menus/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    match /categories/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    
-    match /products/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
     }
 
     match /promotions/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
     }
 
     match /services/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
     }
 
     match /portfolio/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
     }
 
     match /reviews/{id} {
-      allow read: if true;
+      allow get: if true;
+      allow list: if resource.data.get('status', 'pending') == 'approved' || isAuthAdmin();
       allow create: if isSignedIn();
-      allow update, delete: if isAdmin();
+      allow update, delete: if isAuthAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
 
-    match /quotes/{id} {
-      allow create: if true;
-      allow read, write: if isAdmin();
-    }
-
-    match /users/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
-    }
-
-    match /wishlists/{userId} {
-      allow read, write: if isOwner(userId) || isAdmin();
+    match /discountRules/{id} {
+      allow get, list: if true;
+      allow write: if isAuthAdmin();
     }
 
     match /system/{id} {
       allow read: if true;
     }
 
-    match /analytics/{id} {
-      allow read, write: if true;
+    // User Data
+    match /users/{userId} {
+      allow read, write: if isAuthAdmin() || (isSignedIn() && request.auth.uid == userId);
+    }
+
+    match /wishlists/{userId} {
+      allow read, write: if isAuthAdmin() || (isSignedIn() && request.auth.uid == userId);
     }
 
     match /admins/{userId} {
-      allow read, write: if isAdmin();
+      allow read: if isSignedIn();
+      allow write: if isAuthAdmin();
+    }
+
+    // Others
+    match /quotes/{id} {
+      allow create: if true;
+      allow read, write: if isAuthAdmin();
+    }
+
+    match /analytics/{id} {
+      allow create: if true;
+      allow read, write: if isAuthAdmin();
     }
     
-    match /discountRules/{id} {
-      allow read: if true;
-      allow write: if isAdmin();
+    match /analytics/{dayId}/events/{eventId} {
+      allow create: if true;
+      allow read, write: if isAuthAdmin();
     }
   }
 }
