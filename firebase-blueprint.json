@@ -55,17 +55,31 @@
       },
       "required": ["name", "phone", "service"]
     },
-    "analytic": {
+    "analytic_event": {
       "title": "Analytic Event",
-      "description": "Record of a user action for tracking.",
+      "description": "Individual event record for tracking user behavior.",
       "type": "object",
       "properties": {
-        "type": { "type": "string", "enum": ["view", "click", "order"] },
-        "target": { "type": "string" },
-        "path": { "type": "string" },
-        "metadata": { "type": "object" },
-        "timestamp": { "type": "string", "format": "date-time" }
-      }
+        "type": { "type": "string", "enum": ["view", "click", "order", "share"] },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "category": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "date", "createdAt"]
+    },
+    "analytic_summary": {
+      "title": "Analytic Summary",
+      "description": "Daily summary of total views.",
+      "type": "object",
+      "properties": {
+        "views": { "type": "number" },
+        "date": { "type": "string", "format": "date" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["views", "date", "updatedAt"]
     },
     "promotion": {
       "title": "Promotion",
@@ -242,9 +256,9 @@
       "schema": "quote",
       "description": "Incoming quote requests from the website form."
     },
-    "/analytics/{dayId}/events/{eventId}": {
-      "schema": "analytic",
-      "description": "Timed events for dashboard analytics."
+    "/analytics/{docId}": {
+      "schema": "analytic_event",
+      "description": "Collection of tracking events and daily summaries (summary IDs are YYYY-MM-DD)."
     },
     "/promotions/{promoId}": {
       "schema": "promotion",

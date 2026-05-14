@@ -70,6 +70,23 @@ service cloud.firestore {
       return data.email is string && data.email.size() <= 255;
     }
 
+    function isValidAnalyticEvent(data) {
+      // type, date, createdAt are required. optional: productId, productName, category, userId
+      return data.keys().hasAll(['type', 'date', 'createdAt']) &&
+             data.keys().size() <= 8 &&
+             data.type in ['view', 'click', 'order', 'share'] &&
+             data.date is string && data.date.size() <= 20 &&
+             data.createdAt == request.time;
+    }
+
+    function isValidAnalyticSummary(data) {
+      return data.keys().hasAll(['views', 'date', 'updatedAt']) &&
+             data.keys().size() == 3 &&
+             data.views is number &&
+             data.date is string && data.date.size() <= 20 &&
+             data.updatedAt == request.time;
+    }
+
     // 3. Collection Rules
 
     match /settings/{id} {
@@ -142,13 +159,21 @@ service cloud.firestore {
     }
 
     match /analytics/{id} {
-      // Analytics should be mostly write-only for users or handled carefully
-      allow create: if true;
-      allow read, update, delete: if isAdmin();
+      allow create: if (
+        (!id.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') && isValidAnalyticEvent(incoming())) ||
+        (id.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') && isValidAnalyticSummary(incoming()))
+      );
+      allow update: if (
+        id.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        isValidAnalyticSummary(incoming()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['views', 'updatedAt']) &&
+        incoming().views == existing().get('views', 0) + 1
+      ) || isAdmin();
+      allow read, delete: if isAdmin();
     }
     
     match /analytics/{dayId}/events/{eventId} {
-      allow create: if true;
+      allow create: if isValidAnalyticEvent(incoming());
       allow read, update, delete: if isAdmin();
     }
 
