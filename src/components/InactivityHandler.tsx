@@ -43,8 +43,13 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
         resetTimer();
         
         const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        let lastActivity = Date.now();
         const handleActivity = () => {
-          if (!showWarning) resetTimer();
+          const now = Date.now();
+          if (now - lastActivity > 1000) { // Throttle to once per second
+            if (!showWarning) resetTimer();
+            lastActivity = now;
+          }
         };
 
         events.forEach(event => window.addEventListener(event, handleActivity));

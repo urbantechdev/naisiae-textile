@@ -297,21 +297,22 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
-            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hidden sm:flex">
-               <button onClick={() => setIsWishlistOpen(true)} title="Wishlist" className="p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
+             <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hidden sm:flex">
+               <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
                  <Heart size={20} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform"} />
                  {wishlistCount > 0 && (
                    <span className="absolute top-1 right-1 w-2 h-2 bg-[#F0A500] rounded-full animate-ping"></span>
                  )}
                </button>
                <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-               <button onClick={() => setIsCompareModalOpen?.(true)} title="Compare" className="p-2 text-white/50 hover:text-[#C8961A] transition-colors relative group">
+               <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-2 text-white/50 hover:text-[#C8961A] transition-colors relative group">
                  <GitCompare size={20} className="group-hover:rotate-45 transition-transform" />
                </button>
             </div>
 
             <button 
               onClick={() => setIsCartOpen(true)}
+              aria-label="Open Shopping Cart"
               className="group relative p-4 bg-[#C8961A] text-[#0A1628] hover:bg-white transition-all duration-500 rounded-2xl shadow-2xl active:scale-90"
             >
               <ShoppingBag size={22} className="relative z-10" />
@@ -383,8 +384,9 @@ export function Navbar({
                           <img 
                             src={dynamicMenu.featured?.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80"} 
                             className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" 
-                            alt="Featured" 
+                            alt="Featured Collection" 
                             loading="lazy"
+                            decoding="async"
                             referrerPolicy="no-referrer"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/20 to-transparent"></div>
@@ -435,6 +437,7 @@ export function Navbar({
                 </div>
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
+                  aria-label="Close Mobile Menu"
                   className="p-3 text-white/50 hover:text-[#C8961A] bg-white/5 rounded-2xl hover:bg-[#C8961A]/10 transition-all border border-white/5"
                 >
                   <X size={20} />
@@ -456,6 +459,7 @@ export function Navbar({
                   {searchQuery && (
                     <button 
                       onClick={() => setSearchQuery('')}
+                      aria-label="Clear Search"
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white"
                     >
                       <X size={14} />

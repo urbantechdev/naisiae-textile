@@ -533,8 +533,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         setIsCompareModalOpen={setIsCompareModalOpen}
       />
 
-      {/* High-End Cinematic Hero Slider Section */}
-      <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
+      {/* High-End Cinematic Hero Slider Section - Refined with Gradient Separation */}
+      <section id="hero" className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
         {/* Living Background Image Layer with Ken Burns effect */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence mode="popLayout">
@@ -555,75 +555,158 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 className="w-full h-full object-cover object-center"
                 alt={siteSettings?.heroImages?.[currentSlide]?.title || 'Hero'}
                 loading="eager"
+                decoding="async"
                 referrerPolicy="no-referrer"
                 fetchPriority="high"
+                width="1920"
+                height="1080"
               />
-              {/* Complex Cinematic Lighting System */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
-              <div className="absolute inset-0 bg-black/10"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-transparent"></div>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.1),_transparent_70%)]"></div>
+              
+              {/* Complex Cinematic Gradient Separation System */}
+              {/* Primary Dark Anchor for Text (Left to Center) */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628] to-transparent z-10"></div>
+              
+              {/* Secondary Atmospheric Gradient for Depth & Soft Transition */}
+              <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-[#0A1628]/50 via-[#0A1628]/20 to-transparent z-10"></div>
+              
+              {/* Bottom Fade for Smooth Section Transitions */}
+              <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
+              
+              {/* Subtle Light Accents */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.1),_transparent_70%)] z-10"></div>
+              
+              {/* Global Grain/Noise Overlay for Cinematic Texture */}
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-20"></div>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Brand Content Intersection */}
-        <div className="relative z-20 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex items-center">
-          <div className="max-w-5xl">
+        {/* Brand Content Container - Flexed Left */}
+        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex items-center">
+          <div className="max-w-4xl w-full">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentSlide}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="space-y-12"
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                className="space-y-10 lg:space-y-14"
               >
+                {/* Status Indicator */}
                 <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="inline-flex items-center gap-4 px-6 py-2 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-full"
+                  className="inline-flex items-center gap-4 px-6 py-2.5 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-full group cursor-default"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C8961A] animate-pulse"></span>
-                  <span className="text-[10px] font-black uppercase tracking-[5px] text-white">
+                  <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse shadow-[0_0_15px_rgba(200,150,26,0.5)]"></span>
+                  <span className="text-[10px] font-black uppercase tracking-[5px] text-white/90">
                     {siteSettings?.siteTagline || "EST. 1994 • NAIROBI, KENYA"}
                   </span>
                 </motion.div>
 
-                <div className="space-y-6">
+                {/* Typography Epicenter */}
+                <div className="space-y-8">
                   <motion.h1 
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="font-display font-medium text-6xl md:text-8xl lg:text-[120px] text-white leading-[0.85] tracking-[-0.04em] text-shadow-2xl"
+                    className="font-display font-medium text-4xl md:text-6xl lg:text-7xl text-white leading-[0.85] tracking-[-0.04em]"
                   >
-                    {siteSettings?.heroImages?.[currentSlide]?.title || "CRAFTING"} <br/>
-                    <span className="text-[#C8961A] italic">{siteSettings?.heroImages?.[currentSlide]?.subtitle ? 'PRECELLENCE' : 'LEGACY'}</span>
+                    <span className="block overflow-hidden">
+                      <motion.span 
+                        initial={{ y: "100%" }}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                        className="block"
+                      >
+                        {siteSettings?.heroImages?.[currentSlide]?.title || "CRAFTING"}
+                      </motion.span>
+                    </span>
+                    <span className="text-[#C8961A] italic inline-block relative">
+                      {siteSettings?.heroImages?.[currentSlide]?.subtitle ? 'PRECELLENCE' : 'LEGACY'}
+                      <motion.div 
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ delay: 1.2, duration: 1 }}
+                        className="absolute -bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
+                      />
+                    </span>
                   </motion.h1>
+
                   <motion.p 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    className="text-white/60 max-w-2xl text-lg md:text-2xl leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-8"
+                    transition={{ delay: 0.8 }}
+                    className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-8"
                   >
                     {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Engineered textiles for the modern institution. Quality guaranteed for generations."}
                   </motion.p>
                 </div>
 
+                {/* Search Bar Integration (Text-Area Context) */}
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
-                  className="flex flex-wrap gap-6 pt-6"
+                  transition={{ delay: 0.95 }}
+                  className="max-w-xl group relative"
+                >
+                  <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                    <Search className="text-white/30 group-focus-within:text-[#C8961A] transition-all" size={20} />
+                  </div>
+                  <input 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                    placeholder="Search premium inventory..."
+                    className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl pl-16 pr-6 py-5 text-white text-lg outline-none focus:bg-white/10 focus:border-[#C8961A]/50 transition-all placeholder:text-white/20"
+                  />
+                  <AnimatePresence>
+                    {showSearchSuggestions && searchResults.length > 0 && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute top-full left-0 right-0 mt-3 bg-[#0A1628] border border-white/10 rounded-2xl shadow-3xl overflow-hidden max-h-80 overflow-y-auto z-[60]"
+                      >
+                        {searchResults.map((product) => (
+                          <div 
+                            key={product.id}
+                            onClick={() => {
+                              setSelectedQuickViewProduct(product);
+                              setSearchQuery('');
+                            }}
+                            className="p-4 hover:bg-white/5 cursor-pointer flex items-center gap-4 transition-colors"
+                          >
+                            <img src={product.imageUrl} className="w-12 h-12 rounded-lg object-contain bg-white/10" alt={product.name} loading="lazy" decoding="async" />
+                            <div>
+                              <p className="text-xs font-black text-white uppercase tracking-wider">{product.name}</p>
+                              <p className="text-[10px] text-white/40 uppercase font-bold mt-0.5">{product.category}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* Primary Action Suite */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1 }}
+                  className="flex flex-wrap gap-6"
                 >
                   <Link
                     to={siteSettings?.heroImages?.[currentSlide]?.link || "/products"}
-                    className="group relative px-12 py-6 bg-[#C8102E] text-white rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.4)]"
+                    className="group relative px-12 py-6 bg-[#C8102E] text-white rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.3)]"
                   >
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                     <span className="relative z-10 text-[11px] font-black uppercase tracking-[4px] flex items-center gap-4">
-                      Explore Inventory <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                      Browse Shop <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
                     </span>
                   </Link>
                   <button
@@ -631,7 +714,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     className="px-12 py-6 bg-white/5 backdrop-blur-2xl border border-white/20 text-white rounded-2xl transition-all duration-500 hover:bg-white hover:text-[#0A1628] shadow-2xl"
                   >
                     <span className="text-[11px] font-black uppercase tracking-[4px] flex items-center gap-4">
-                      Custom Quotation <Scissors size={18} />
+                      Get Quotation <Scissors size={18} />
                     </span>
                   </button>
                 </motion.div>
@@ -640,124 +723,43 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
           </div>
         </div>
 
-        {/* High-End Cinematic Hero Content Overlay */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <div className="w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex items-center">
-            <div className="max-w-5xl pointer-events-auto">
-              {/* ... (Existing hero content is already above this in my logic? Wait, I need to be careful) */}
-            </div>
-          </div>
-        </div>
-
-        {/* Luxurious Slider Pagination & Social Indicators */}
-        <div className="absolute bottom-12 right-12 z-30 flex items-center gap-8">
-          <div className="hidden lg:flex items-center gap-6 pr-8 border-r border-white/10 uppercase tracking-[4px] text-[8px] font-black text-white/40">
-            <span>Follow Our Journey</span>
-            <div className="flex gap-4">
-              <Link to="#" className="hover:text-[#C8961A] transition-colors">FB</Link>
-              <Link to="#" className="hover:text-[#C8961A] transition-colors">IG</Link>
-              <Link to="#" className="hover:text-[#C8961A] transition-colors">LI</Link>
-            </div>
-          </div>
-          <div className="flex items-center gap-5">
-            {siteSettings?.heroImages?.map((_: any, idx: number) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                className="group relative flex flex-col items-center gap-4 py-2"
-              >
-                <span className={`text-[10px] font-black transition-all ${currentSlide === idx ? 'text-[#C8961A] translate-y-0 opacity-100' : 'text-white/20 translate-y-2 opacity-0'}`}>
-                  0{idx + 1}
-                </span>
-                <div className="relative w-12 h-[2px] bg-white/10 overflow-hidden rounded-full">
-                  <motion.div 
-                    initial={false}
-                    animate={{ 
-                      scaleX: currentSlide === idx ? 1 : 0,
-                      opacity: currentSlide === idx ? 1 : 0
-                    }}
-                    transition={{ duration: 0.8 }}
-                    className="absolute inset-0 bg-[#C8961A] origin-left"
-                  />
-                </div>
-              </button>
-            ))}
-          </div>
+        {/* Luxurious Slider Pagination - Anchored Right */}
+        <div className="absolute bottom-12 right-12 z-40 flex items-center gap-5">
+          {siteSettings?.heroImages?.map((_: any, idx: number) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+              className="group relative flex flex-col items-center gap-4 py-2"
+            >
+              <span className={`text-[10px] font-black transition-all ${currentSlide === idx ? 'text-[#C8961A] translate-y-0 opacity-100' : 'text-white/20 translate-y-2 opacity-0'}`}>
+                0{idx + 1}
+              </span>
+              <div className="relative w-12 h-[2px] bg-white/10 overflow-hidden rounded-full">
+                <motion.div 
+                  initial={false}
+                  animate={{ 
+                    scaleX: currentSlide === idx ? 1 : 0,
+                    opacity: currentSlide === idx ? 1 : 0
+                  }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute inset-0 bg-[#C8961A] origin-left"
+                />
+              </div>
+            </button>
+          ))}
         </div>
 
         {/* Cinematic Scroll Indicator */}
         <motion.div 
           animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 opacity-30 hover:opacity-100 transition-opacity cursor-pointer group"
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-4 opacity-40 hover:opacity-100 transition-opacity cursor-pointer group"
           onClick={() => document.getElementById('specialties')?.scrollIntoView({ behavior: 'smooth' })}
         >
-          <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-white to-transparent group-hover:via-[#C8961A] transition-colors"></div>
-          <span className="text-[7px] font-black uppercase tracking-[5px] text-white group-hover:text-[#C8961A] transition-colors">Explore Cabinet</span>
+          <span className="text-[8px] font-black uppercase tracking-[6px] text-white group-hover:text-[#C8961A] transition-colors">Scroll To Explore</span>
+          <div className="w-[1px] h-20 bg-gradient-to-b from-white/0 via-white/50 to-white/0 lg:group-hover:via-[#C8961A] transition-colors"></div>
         </motion.div>
-
-        {/* Static Float Search Bar Overlay (Refined Glass) - Top Center */}
-        <div className="absolute inset-x-0 top-24 lg:top-28 z-30 pointer-events-none flex justify-center px-6 lg:px-0">
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="w-full max-w-2xl pointer-events-auto"
-          >
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none">
-                <Search className="text-white/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
-              </div>
-              <input 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                placeholder="Find Your Uniform..."
-                className="w-full bg-white/10 backdrop-blur-[40px] border border-white/20 rounded-full pl-20 pr-10 py-6 text-white text-xl outline-none focus:bg-white focus:text-[#0A1628] focus:ring-[15px] focus:ring-[#C8961A]/10 transition-all shadow-[0_30px_100px_rgba(0,0,0,0.5)] placeholder:text-white/40"
-              />
-              <AnimatePresence>
-                {showSearchSuggestions && searchResults.length > 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.98, y: -10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-3xl rounded-[3rem] shadow-4xl border border-white/20 overflow-hidden max-h-[500px] overflow-y-auto z-50"
-                  >
-                    <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center px-8">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Match Results</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-[#C8961A]">{searchResults.length} Products Found</span>
-                    </div>
-                    {searchResults.map((product) => (
-                      <div 
-                        key={product.id}
-                        onClick={() => {
-                          const el = document.getElementById(`product-${product.id}`);
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
-                          setSearchQuery('');
-                        }}
-                        className="p-6 hover:bg-[#C8961A]/5 cursor-pointer flex items-center gap-6 transition-colors group"
-                      >
-                        <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden shrink-0 border border-slate-100 group-hover:border-[#C8961A]/30">
-                          <img src={product.imageUrl} className="w-full h-full object-contain p-2" alt="" loading="lazy" referrerPolicy="no-referrer" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-black text-[#0A1628] uppercase tracking-wide truncate">{product.name}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{product.category}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-black text-[#C8102E]">KES {product.price.toLocaleString()}</p>
-                          <p className="text-[8px] font-bold text-slate-300 uppercase mt-1">Available</p>
-                        </div>
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        </div>
       </section>
 
       {/* Featured Categories (Connected to Admin) */}
@@ -1083,7 +1085,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                 {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" loading="lazy" referrerPolicy="no-referrer" />
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
                 ) : (
                   <Package size={40} className="text-[#C8961A]/20" />
                 )}
@@ -1093,6 +1095,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
                   <button 
                     onClick={() => toggleWishlist(product)}
+                    aria-label={wishlist.find(i => i.id === product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                     className={`w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
                       wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:bg-[#C8102E] hover:text-white"
                     }`}
@@ -1101,24 +1104,26 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   </button>
                   <button 
                     onClick={() => handleShareProduct(product)}
+                    aria-label="Share Product"
                     className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-[#C8102E] hover:text-white transition-colors"
                   >
                     <Share2 size={16} />
                   </button>
                   <button 
                     onClick={() => setSelectedQuickViewProduct(product)}
+                    aria-label="Quick View"
                     className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-[#C8102E] hover:text-white transition-colors"
                   >
                     <Search size={16} />
                   </button>
                   <button 
                     onClick={() => toggleCompare(product)}
+                    aria-label="Compare Product"
                     className={`w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-all ${
                       compareList.find(i => i.id === product.id) 
                         ? "bg-[#C8961A] text-white scale-110" 
                         : "text-slate-400 hover:bg-[#C8961A] hover:text-white"
                     }`}
-                    title="Compare Product"
                   >
                     <GitCompare size={16} />
                   </button>
