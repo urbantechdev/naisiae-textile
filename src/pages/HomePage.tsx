@@ -535,19 +535,30 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
       {/* High-End Cinematic Hero Slider Section - Refined with Gradient Separation */}
       <section id="hero" className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
-        {/* Living Background Image Layer with Ken Burns effect */}
+        {/* Living Background Image Layer - Image slides while overlays stay static */}
         <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="popLayout">
+          {/* Static Overlays - Partitioned Gradient for Right Side Visibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-45% to-transparent to-65% z-10"></div>
+          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.1),_transparent_70%)] z-10"></div>
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-20"></div>
+
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0, scale: 1.15, filter: 'blur(10px)' }}
+              initial={{ opacity: 0, x: 100, scale: 1.05 }}
               animate={{ 
                 opacity: 1, 
+                x: 0,
                 scale: 1,
-                filter: 'blur(0px)',
-                transition: { duration: 2.5, ease: [0.22, 1, 0.36, 1] }
+                transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
               }}
-              exit={{ opacity: 0, scale: 0.95, filter: 'blur(5px)', transition: { duration: 1.8 } }}
+              exit={{ 
+                opacity: 0, 
+                x: -100,
+                scale: 0.95,
+                transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+              }}
               className="absolute inset-0"
             >
               <img 
@@ -561,165 +572,128 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 width="1920"
                 height="1080"
               />
-              
-              {/* Complex Cinematic Gradient Separation System */}
-              {/* Primary Dark Anchor for Text (Left to Center) */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-[#0A1628] to-transparent z-10"></div>
-              
-              {/* Secondary Atmospheric Gradient for Depth & Soft Transition */}
-              <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-[#0A1628]/50 via-[#0A1628]/20 to-transparent z-10"></div>
-              
-              {/* Bottom Fade for Smooth Section Transitions */}
-              <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
-              
-              {/* Subtle Light Accents */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.1),_transparent_70%)] z-10"></div>
-              
-              {/* Global Grain/Noise Overlay for Cinematic Texture */}
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-20"></div>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Brand Content Container - Flexed Left */}
+        {/* Brand Content Container - Left Aligned for Image Visibility */}
         <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex items-center">
-          <div className="max-w-4xl w-full">
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={currentSlide}
-                initial={{ opacity: 0, x: -40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-10 lg:space-y-14"
-              >
-                {/* Status Indicator */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="inline-flex items-center gap-4 px-6 py-2.5 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-full group cursor-default"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse shadow-[0_0_15px_rgba(200,150,26,0.5)]"></span>
-                  <span className="text-[10px] font-black uppercase tracking-[5px] text-white/90">
-                    {siteSettings?.siteTagline || "EST. 1994 • NAIROBI, KENYA"}
-                  </span>
-                </motion.div>
-
-                {/* Typography Epicenter */}
-                <div className="space-y-8">
-                  <motion.h1 
-                    initial={{ opacity: 0, y: 30 }}
+          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-10 lg:gap-14">
+            {/* Static Search Bar - Left Aligned */}
+            <div className="max-w-xl group relative w-full">
+              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                <Search className="text-[#0A1628]/30 group-focus-within:text-[#C8961A] transition-all" size={20} />
+              </div>
+              <input 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                placeholder="Search premium inventory..."
+                className="w-full bg-white border-none rounded-2xl pl-16 pr-6 py-4 text-[#0A1628] text-lg outline-none focus:ring-2 focus:ring-[#C8961A]/50 transition-all placeholder:text-[#0A1628]/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+              />
+              <AnimatePresence>
+                {showSearchSuggestions && searchResults.length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="font-display font-medium text-4xl md:text-6xl lg:text-7xl text-white leading-[0.85] tracking-[-0.04em]"
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-slate-100 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.4)] overflow-hidden max-h-80 overflow-y-auto z-[60]"
                   >
-                    <span className="block overflow-hidden">
-                      <motion.span 
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        className="block"
+                    {searchResults.map((product) => (
+                      <div 
+                        key={product.id}
+                        onClick={() => {
+                          setSelectedQuickViewProduct(product);
+                          setSearchQuery('');
+                        }}
+                        className="p-4 hover:bg-slate-50 cursor-pointer flex items-center gap-4 transition-colors border-b border-slate-50 last:border-none"
                       >
-                        {siteSettings?.heroImages?.[currentSlide]?.title || "CRAFTING"}
-                      </motion.span>
-                    </span>
-                    <span className="text-[#C8961A] italic inline-block relative">
-                      {siteSettings?.heroImages?.[currentSlide]?.subtitle ? 'PRECELLENCE' : 'LEGACY'}
-                      <motion.div 
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ delay: 1.2, duration: 1 }}
-                        className="absolute -bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
-                      />
-                    </span>
-                  </motion.h1>
+                        <img src={product.imageUrl} className="w-12 h-12 rounded-lg object-contain bg-slate-100" alt={product.name} loading="lazy" decoding="async" />
+                        <div>
+                          <p className="text-xs font-black text-[#0A1628] uppercase tracking-wider">{product.name}</p>
+                          <p className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">{product.category}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-                  <motion.p 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-8"
-                  >
-                    {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Engineered textiles for the modern institution. Quality guaranteed for generations."}
-                  </motion.p>
-                </div>
-
-                {/* Search Bar Integration (Text-Area Context) */}
+            <div className="min-h-[280px] lg:min-h-[320px] flex flex-col justify-center">
+              <AnimatePresence mode="wait">
                 <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.95 }}
-                  className="max-w-xl group relative"
+                  key={currentSlide}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="space-y-8"
                 >
-                  <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                    <Search className="text-white/30 group-focus-within:text-[#C8961A] transition-all" size={20} />
+                  {/* Typography Epicenter */}
+                  <div className="space-y-8">
+                    <motion.h1 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="font-display font-medium text-4xl md:text-6xl lg:text-7xl text-white leading-[0.85] tracking-[-0.04em]"
+                    >
+                      <span className="block overflow-hidden">
+                        <motion.span 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.8 }}
+                          className="block"
+                        >
+                          {siteSettings?.heroImages?.[currentSlide]?.title || "CRAFTING"}
+                        </motion.span>
+                      </span>
+                      <span className="text-[#C8961A] italic inline-block relative">
+                        {siteSettings?.heroImages?.[currentSlide]?.subtitle ? 'PRECELLENCE' : 'LEGACY'}
+                        <motion.div 
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ delay: 0.8, duration: 1 }}
+                          className="absolute -bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
+                        />
+                      </span>
+                    </motion.h1>
+
+                    <motion.p 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-8"
+                    >
+                      {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Engineered textiles for the modern institution. Quality guaranteed for generations."}
+                    </motion.p>
                   </div>
-                  <input 
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                    placeholder="Search premium inventory..."
-                    className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl pl-16 pr-6 py-5 text-white text-lg outline-none focus:bg-white/10 focus:border-[#C8961A]/50 transition-all placeholder:text-white/20"
-                  />
-                  <AnimatePresence>
-                    {showSearchSuggestions && searchResults.length > 0 && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute top-full left-0 right-0 mt-3 bg-[#0A1628] border border-white/10 rounded-2xl shadow-3xl overflow-hidden max-h-80 overflow-y-auto z-[60]"
-                      >
-                        {searchResults.map((product) => (
-                          <div 
-                            key={product.id}
-                            onClick={() => {
-                              setSelectedQuickViewProduct(product);
-                              setSearchQuery('');
-                            }}
-                            className="p-4 hover:bg-white/5 cursor-pointer flex items-center gap-4 transition-colors"
-                          >
-                            <img src={product.imageUrl} className="w-12 h-12 rounded-lg object-contain bg-white/10" alt={product.name} loading="lazy" decoding="async" />
-                            <div>
-                              <p className="text-xs font-black text-white uppercase tracking-wider">{product.name}</p>
-                              <p className="text-[10px] text-white/40 uppercase font-bold mt-0.5">{product.category}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </motion.div>
+              </AnimatePresence>
+            </div>
 
-                {/* Primary Action Suite */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 }}
-                  className="flex flex-wrap gap-6"
-                >
-                  <Link
-                    to={siteSettings?.heroImages?.[currentSlide]?.link || "/products"}
-                    className="group relative px-12 py-6 bg-[#C8102E] text-white rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.3)]"
-                  >
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                    <span className="relative z-10 text-[11px] font-black uppercase tracking-[4px] flex items-center gap-4">
-                      Browse Shop <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
-                    </span>
-                  </Link>
-                  <button
-                    onClick={() => setIsQuoteModalOpen(true)}
-                    className="px-12 py-6 bg-white/5 backdrop-blur-2xl border border-white/20 text-white rounded-2xl transition-all duration-500 hover:bg-white hover:text-[#0A1628] shadow-2xl"
-                  >
-                    <span className="text-[11px] font-black uppercase tracking-[4px] flex items-center gap-4">
-                      Get Quotation <Scissors size={18} />
-                    </span>
-                  </button>
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
+            {/* Static Action Suite - Enhanced for Mobile */}
+            <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-4 w-full">
+              <Link
+                to="/products"
+                className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#C8102E] text-white rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.2)] flex items-center justify-center lg:min-w-[220px]"
+              >
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
+                  Shop <ChevronRight size={18} className="hidden sm:block group-hover:translate-x-2 transition-transform" />
+                </span>
+              </Link>
+              <button
+                onClick={() => setIsQuoteModalOpen(true)}
+                className="flex-1 lg:flex-none group px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-2xl border border-white/10 text-white rounded-xl sm:rounded-2xl transition-all duration-500 hover:bg-white hover:text-[#0A1628] shadow-2xl flex items-center justify-center lg:min-w-[220px]"
+              >
+                <span className="text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
+                  Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform" />
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1391,32 +1365,32 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       {/* Product Quick View Modal */}
       <AnimatePresence>
         {selectedQuickViewProduct && (
-          <div className="fixed inset-0 z-[100] flex items-end lg:items-center justify-center p-0 lg:p-8 pt-16 lg:pt-8">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedQuickViewProduct(null)}
-              className="absolute inset-0 bg-[#0A1628]/90 backdrop-blur-md"
+              className="absolute inset-0 bg-[#0A1628]/95 backdrop-blur-md"
             ></motion.div>
             
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 40 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-              className="relative w-full max-w-5xl bg-white lg:rounded-[2rem] rounded-t-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row h-[92vh] lg:h-auto lg:max-h-[85vh] mt-auto lg:mt-0"
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-5xl bg-white rounded-3xl lg:rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row h-auto max-h-[90vh] lg:max-h-[85vh] z-10"
             >
               <button 
                 onClick={() => setSelectedQuickViewProduct(null)}
-                className="absolute top-4 right-4 lg:top-6 lg:right-6 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-colors shadow-lg"
+                className="absolute top-4 right-4 lg:top-8 lg:right-8 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-xl hover:scale-110"
                 aria-label="Close"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
               {/* Product Gallery Section */}
-              <div className="w-full lg:w-1/2 bg-slate-50 relative flex items-center justify-center p-6 lg:p-12 shrink-0 h-[35vh] sm:h-[40vh] lg:h-auto">
+              <div className="w-full lg:w-1/2 bg-slate-50 relative flex items-center justify-center p-6 lg:p-12 shrink-0 h-[30vh] sm:h-[40vh] lg:h-auto bg-gradient-to-br from-slate-50 to-slate-100">
                 <AnimatePresence mode="wait">
                   {(() => {
                     const activeImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url) || selectedQuickViewProduct.imageUrl;
@@ -1424,24 +1398,24 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     return activeImageUrl ? (
                       <motion.img 
                         key={activeImageUrl}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.05 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        exit={{ opacity: 0, scale: 1.1, rotate: 2 }}
+                        transition={{ duration: 0.4 }}
                         src={activeImageUrl} 
-                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-contain rounded-xl mix-blend-multiply"
+                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-contain drop-shadow-2xl mix-blend-multiply"
                         alt={selectedQuickViewProduct.name}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-slate-200">
-                        <ImageIcon size={120} />
+                        <ImageIcon size={100} />
                       </div>
                     );
                   })()}
                 </AnimatePresence>
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-4 lg:top-8 left-4 lg:left-8 bg-[#C8102E] text-white text-[9px] lg:text-[12px] font-black px-3 py-1 lg:px-4 lg:py-1.5 rounded-full tracking-[2px] uppercase shadow-lg z-10">
+                  <span className="absolute top-4 lg:top-10 left-4 lg:left-10 bg-[#C8102E] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-xl z-10 animate-pulse">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
@@ -1449,7 +1423,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
               {/* Product Info Section */}
               <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full">
-                <div className="flex-1 overflow-y-auto px-5 py-6 lg:p-10 scrollbar-hide">
+                <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-12 scrollbar-hide">
                   <div className="mb-6 lg:mb-8">
                     <div className="text-[9px] lg:text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
                       <span className="w-6 lg:w-8 h-[2px] bg-[#C8961A]"></span>
@@ -1458,11 +1432,20 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl lg:leading-[1.1] text-[#0A1628] leading-[1.1] mb-2 lg:mb-3">
                       {selectedQuickViewProduct.name}
                     </h2>
-                    <div className="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-6">
-                      <span className="text-xl lg:text-3xl font-black text-[#C8102E]">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
-                      {selectedQuickViewProduct.oldPrice && (
-                        <span className="text-xs lg:text-lg text-slate-400 line-through">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
-                      )}
+                    <div className="flex flex-wrap items-center gap-3 lg:gap-6 mb-6 lg:mb-8 bg-slate-50/80 backdrop-blur-sm p-4 lg:p-6 rounded-2xl border border-slate-100 shadow-sm">
+                      <div className="flex flex-col">
+                        <span className="text-[9px] lg:text-[10px] font-black uppercase text-slate-400 tracking-[2px] mb-1">MSRP Price</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl lg:text-4xl font-black text-[#C8102E] tracking-tight">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
+                          {selectedQuickViewProduct.oldPrice && (
+                            <span className="text-sm lg:text-lg text-slate-400 line-through decoration-red-500/30">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-100">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                        <span className="text-[9px] font-black uppercase text-green-700 tracking-wider">In Stock & Ready</span>
+                      </div>
                     </div>
                   </div>
                   
@@ -1720,17 +1703,22 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         addToCart(cartItem);
                         setSelectedQuickViewProduct(null);
                       }}
-                      className="w-full flex-1 bg-[#0A1628] hover:bg-[#C8102E] text-white h-12 lg:h-14 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] lg:tracking-[4px] transition-all flex items-center justify-center gap-3 lg:gap-4 shadow-xl hover:shadow-[#C8102E]/20 active:scale-[0.98]"
+                      className="relative overflow-hidden w-full flex-1 bg-[#0A1628] hover:bg-[#1C3560] text-white h-14 lg:h-16 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] lg:tracking-[4px] transition-all flex items-center shadow-2xl hover:shadow-[#0A1628]/30 active:scale-[0.98] group"
                     >
-                      <div className="flex flex-col items-start mr-auto pl-4 lg:pl-6 border-r border-white/10 pr-4 lg:pr-6">
-                        <span className="text-[7px] lg:text-[8px] opacity-60">Final Price</span>
-                        <span className="text-xs lg:text-sm">KES {(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                          const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                          return sum + (variant?.price || 0);
-                        }, 0)).toLocaleString()}</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                      <div className="relative flex items-center w-full h-full">
+                        <div className="flex flex-col items-start px-6 lg:px-8 border-r border-white/10 h-full justify-center bg-white/5">
+                          <span className="text-[8px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Total Value</span>
+                          <span className="text-sm lg:text-lg font-black tracking-tight">KES {(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                            const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                            return sum + (variant?.price || 0);
+                          }, 0)).toLocaleString()}</span>
+                        </div>
+                        <div className="flex-1 flex items-center justify-center gap-3 lg:gap-4 px-6">
+                          <ShoppingBag size={20} className="shrink-0 text-[#C8961A]" />
+                          <span className="whitespace-nowrap">Secure Add to Cart</span>
+                        </div>
                       </div>
-                      <ShoppingBag size={18} className="shrink-0" />
-                      <span className="flex-1 text-center pr-4 lg:pr-6">Add to Cart</span>
                     </button>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { auth } from '../services/firebase';
-import { motion, AnimatePresence } from 'framer-motion'; // Reverted to standard 'framer-motion' matching your Navbar setup
+import { motion, AnimatePresence } from 'motion/react';
 import { Clock, AlertTriangle, LogOut, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,23 +11,12 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(TIMEOUT_DURATION);
   const [showWarning, setShowWarning] = useState(false);
-  
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
-  const showWarningRef = useRef(false);
-
-  // Sync ref to avoid tearing down event listeners on state adjustments
-  useEffect(() => {
-    showWarningRef.current = showWarning;
-  }, [showWarning]);
 
   const logout = useCallback(async () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    if (countdownRef.current) clearInterval(countdownRef.current);
-    
     try {
       await auth.signOut();
-      setShowWarning(false);
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
@@ -35,76 +24,53 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
   }, [navigate]);
 
   const resetTimer = useCallback(() => {
+    setTimeLeft(TIMEOUT_DURATION);
+    setShowWarning(false);
+    
     if (timerRef.current) clearTimeout(timerRef.current);
     if (countdownRef.current) clearInterval(countdownRef.current);
 
-    setTimeLeft(TIMEOUT_DURATION);
-    setShowWarning(false);
-
-    // Set initial timeout to activate warning card
+    // Initial timeout to show warning
     timerRef.current = setTimeout(() => {
       setShowWarning(true);
     }, (TIMEOUT_DURATION - WARNING_THRESHOLD) * 1000);
   }, []);
 
-  // Structural Monitor Hook
   useEffect(() => {
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    let lastActivity = Date.now();
-    let isAttached = false;
-
-    const handleActivity = () => {
-      const now = Date.now();
-      // Throttle event checks to once per second
-      if (now - lastActivity > 1000) { 
-        if (!showWarningRef.current) {
-          resetTimer();
-        }
-        lastActivity = now;
-      }
-    };
-
-    const removeListeners = () => {
-      if (isAttached) {
-        events.forEach(event => window.removeEventListener(event, handleActivity));
-        isAttached = false;
-      }
-    };
-
-    const addListeners = () => {
-      if (!isAttached) {
-        events.forEach(event => window.addEventListener(event, handleActivity));
-        isAttached = true;
-      }
-    };
-
+    // Only monitor if logged in
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         resetTimer();
-        addListeners();
-      } else {
-        removeListeners();
-        if (timerRef.current) clearTimeout(timerRef.current);
-        if (countdownRef.current) clearInterval(countdownRef.current);
-        setShowWarning(false);
+        
+        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        let lastActivity = Date.now();
+        const handleActivity = () => {
+          const now = Date.now();
+          if (now - lastActivity > 1000) { // Throttle to once per second
+            if (!showWarning) resetTimer();
+            lastActivity = now;
+          }
+        };
+
+        events.forEach(event => window.addEventListener(event, handleActivity));
+        
+        return () => {
+          events.forEach(event => window.removeEventListener(event, handleActivity));
+          if (timerRef.current) clearTimeout(timerRef.current);
+          if (countdownRef.current) clearInterval(countdownRef.current);
+        };
       }
     });
 
-    return () => {
-      unsubscribe();
-      removeListeners();
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (countdownRef.current) clearInterval(countdownRef.current);
-    };
-  }, [resetTimer]);
+    return () => unsubscribe();
+  }, [resetTimer, showWarning]);
 
-  // Dedicated Visual Countdown Processor
   useEffect(() => {
     if (showWarning) {
       setTimeLeft(WARNING_THRESHOLD);
       
       countdownRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
+        setTimeLeft(prev => {
           if (prev <= 1) {
             if (countdownRef.current) clearInterval(countdownRef.current);
             logout();
@@ -120,13 +86,6 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
     };
   }, [showWarning, logout]);
 
-  // Clean minute:second text parser mapping
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   return (
     <>
       {children}
@@ -134,26 +93,22 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {showWarning && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            {/* Backdrop Layer */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
-              onClick={resetTimer} // Clicking backdrop safety feature saves progress
             />
             
-            {/* Modal Box */}
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-              className="relative bg-white rounded-[32px] w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 z-10"
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-white rounded-[32px] w-full max-w-md overflow-hidden shadow-2xl border border-slate-100"
             >
               <div className="p-10 text-center">
-                <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-500">
-                  <Clock size={40} className="animate-pulse" />
+                <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-500 animate-pulse">
+                  <Clock size={40} />
                 </div>
                 
                 <h2 className="text-2xl font-black text-slate-900 mb-2 tracking-tight uppercase">Inactivity Warning</h2>
@@ -161,9 +116,8 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
                   You have been inactive for a while. For your security, you will be logged out automatically in:
                 </p>
                 
-                {/* Dynamically Filtered Clock Array */}
-                <div className="text-6xl font-black text-[#C8102E] mb-10 font-mono tracking-tighter tabular-nums">
-                  {formatTime(timeLeft)}
+                <div className="text-6xl font-black text-[#C8102E] mb-10 font-mono tracking-tighter">
+                  00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

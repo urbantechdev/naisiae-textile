@@ -2395,17 +2395,16 @@ export default function AdminDashboard() {
                   e.preventDefault();
                   if (!newUserEmail) return;
                   try {
-                    await setDoc(doc(db, 'users', newUserEmail.replace(/\./g, '_')), {
+                    await setDoc(doc(db, 'invites', newUserEmail), {
                       email: newUserEmail,
                       role: newUserRole,
-                      displayName: newUserEmail.split('@')[0],
-                      createdAt: serverTimestamp()
+                      invitedAt: serverTimestamp()
                     });
-                    setToast({ message: `Access granted to ${newUserEmail}`, type: 'success' });
+                    setToast({ message: `Invitation sent to ${newUserEmail}`, type: 'success' });
                     setNewUserEmail('');
                     setIsAddUserModalOpen(false);
                   } catch (err) {
-                    handleFirestoreError(err, OperationType.CREATE, 'users');
+                    handleFirestoreError(err, OperationType.CREATE, 'invites');
                   }
                 }}
                 className="space-y-6"

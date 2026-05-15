@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { useNavigate, Link } from 'react-router-dom';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { LogIn, ShieldCheck, Mail, ArrowRight, Lock, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -25,17 +25,30 @@ export default function LoginPage() {
     }
     
     if (!userDoc.exists()) {
-      // First time login - set default role to 'user'
+      // First time login - check for active invitations
+      let role = (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') ? 'admin' : 'user';
+      
       try {
+        const inviteDoc = await getDoc(doc(db, 'invites', user.email));
+        if (inviteDoc.exists()) {
+          role = inviteDoc.data().role;
+          // Delete invitation after use
+          try {
+            await deleteDoc(doc(db, 'invites', user.email));
+          } catch (e) {
+            console.error("Failed to cleanup invitation:", e);
+          }
+        }
+
         await setDoc(doc(db, 'users', user.uid), {
           email: user.email,
           displayName: user.displayName || user.email.split('@')[0],
           photoURL: user.photoURL || '',
-          role: (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') ? 'admin' : 'user',
+          role: role,
           lastLogin: new Date().toISOString()
         });
         
-        if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
+        if (role === 'admin' || user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
           navigate('/admin');
         } else {
           setError('Access denied. You do not have administrator privileges.');
