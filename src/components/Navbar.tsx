@@ -15,7 +15,7 @@ import {
   Zap,
   Filter
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../services/firebase';
@@ -30,6 +30,7 @@ interface NavbarProps {
   setIsMenuOpen: (open: boolean) => void;
   setIsQuoteModalOpen: (open: boolean) => void;
   setIsCompareModalOpen?: (open: boolean) => void;
+  setSelectedQuickViewProduct?: (product: any) => void;
 }
 
 export function Navbar({ 
@@ -41,8 +42,11 @@ export function Navbar({
   setIsWishlistOpen,
   setIsMenuOpen,
   setIsQuoteModalOpen,
-  setIsCompareModalOpen
+  setIsCompareModalOpen,
+  setSelectedQuickViewProduct
 }: NavbarProps) {
+  const navigate = useNavigate();
+
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
@@ -212,7 +216,6 @@ export function Navbar({
   return (
     <div 
       className="fixed top-0 left-0 right-0 z-[100] transition-all duration-700"
-      onMouseLeave={() => setActiveMegaMenu(null)}
     >
       <AnimatePresence>
         {promotions.filter(p => p.type === 'top-bar').map(promo => (
@@ -242,13 +245,14 @@ export function Navbar({
       </AnimatePresence>
 
       <header 
-        className={`w-full transition-all duration-700 border-b border-white/5 ${
+        className={`w-full relative transition-all duration-700 border-b border-white/5 ${
           isScrolled 
-            ? 'bg-[#050B16]/95 backdrop-blur-2xl py-3 md:py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
-            : 'bg-[#050B16] py-5 md:py-8'
+            ? 'bg-[#050B16]/95 backdrop-blur-2xl py-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
+            : 'bg-[#050B16] py-0'
         }`}
+        onMouseLeave={() => setActiveMegaMenu(null)}
       >
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12 h-20 md:h-28 transition-all duration-700">
           {/* Brand Identity */}
           <Link to="/" className="group flex items-center gap-3 md:gap-5 shrink-0">
             <div className={`relative transition-all duration-700 ${isScrolled ? 'w-10 h-10 md:w-12 md:h-12' : 'w-12 h-12 md:w-16 md:h-16'}`}>
@@ -273,21 +277,21 @@ export function Navbar({
           </Link>
 
           {/* Centered Navigation */}
-          <nav className="hidden xl:flex items-center gap-12 flex-1 justify-center h-full">
+          <nav className="hidden xl:flex items-center gap-12 flex-1 justify-center h-full self-stretch">
             {navItems.map((item) => (
               <div 
                 key={item.id} 
-                className="relative h-16 flex items-center"
+                className="relative h-full flex items-center"
                 onMouseEnter={() => setActiveMegaMenu(item.mega ? item.id : null)}
               >
                 <Link 
                   to={item.link} 
-                  className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-500 relative group py-4 px-1 ${
+                  className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-500 relative group py-2 px-1 ${
                     isScrolled ? 'text-white/70' : 'text-white'
                   } hover:text-[#C8961A]`}
                 >
                   <span className="relative z-10">{item.name}</span>
-                  <span className={`absolute -bottom-2 left-0 h-[1.5px] bg-[#C8961A] transition-all duration-700 ${
+                  <span className={`absolute -bottom-1 left-0 h-[1.5px] bg-[#C8961A] transition-all duration-700 ${
                     activeMegaMenu === item.id ? 'w-full' : 'w-0'
                   } group-hover:w-full`}></span>
                 </Link>
@@ -342,36 +346,53 @@ export function Navbar({
         <AnimatePresence>
           {activeMegaMenu && (
             <motion.div 
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
-              className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] z-[90] pointer-events-auto"
+              className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] z-[150] overflow-hidden"
             >
-              <div className="max-w-[1440px] mx-auto grid grid-cols-12 gap-12 p-12 lg:px-12">
+              <div className="max-w-[1440px] mx-auto min-h-[450px]">
                 {(() => {
-                  const dynamicMenu = megaMenus.find(m => m.id === activeMegaMenu);
-                  if (!dynamicMenu) return null;
+                  const dynamicMenu = megaMenus.find(m => 
+                    m.id === activeMegaMenu || 
+                    m.name?.toLowerCase() === activeMegaMenu?.toLowerCase() ||
+                    m.slug === activeMegaMenu ||
+                    (activeMegaMenu === 'categories' && m.id === 'industries') ||
+                    (activeMegaMenu === 'industries' && m.id === 'categories')
+                  );
+
+                  if (!dynamicMenu || (!dynamicMenu.categories && !dynamicMenu.featured)) {
+                    return (
+                      <div className="flex flex-col items-center justify-center min-h-[450px] w-full text-slate-300 gap-4">
+                        <Package size={48} className="opacity-20 translate-y-2" />
+                        <p className="text-[10px] font-black uppercase tracking-[4px] opacity-40">Exploring Catalog Details...</p>
+                      </div>
+                    );
+                  }
 
                   return (
-                    <>
-                      <div className="col-span-8 grid grid-cols-3 gap-12">
+                    <div className="grid grid-cols-12 h-full">
+                      {/* Navigation Sections */}
+                      <div className="col-span-8 p-16 lg:p-20 grid grid-cols-3 gap-16 bg-slate-50/30">
                         {dynamicMenu.categories?.map((cat: any, idx: number) => (
-                          <div key={idx} className="space-y-6">
-                            <div className="flex items-center gap-3">
-                              <div className="w-6 h-0.5 bg-[#C8961A]"></div>
-                              <h4 className="text-[#0A1628] text-[11px] font-black tracking-[3px] uppercase">{cat.name}</h4>
+                          <div key={idx} className="space-y-8">
+                            <div className="space-y-2">
+                              <h4 className="text-[#0A1628] text-[10px] font-black tracking-[4px] uppercase opacity-40">{cat.name}</h4>
+                              <div className="w-8 h-1 bg-[#C8961A]"></div>
                             </div>
-                            <ul className="space-y-3">
+                            <ul className="space-y-4">
                               {cat.items?.map((sub: string, sIdx: number) => (
                                 <li key={sIdx}>
                                   <Link 
-                                    to={activeMegaMenu === 'products' ? `/products#${cat.name.toLowerCase()}` : `/?tab=${activeMegaMenu}&sub=${sub}#shop`}
-                                    className="text-slate-500 hover:text-[#0A1628] text-[12px] font-bold flex items-center justify-between group/link transition-all uppercase tracking-[1px] py-1 border-b border-transparent hover:border-slate-100"
+                                    to={activeMegaMenu === 'products' ? `/products?category=${cat.name.toLowerCase()}` : activeMegaMenu === 'services' ? `/services#${sub.toLowerCase().replace(/ /g, '-')}` : `/categories#${sub.toLowerCase().replace(/ /g, '-')}`}
+                                    className="group/link flex items-center gap-4 text-[#0A1628]/60 hover:text-[#0A1628] transition-all py-1"
+                                    onClick={() => setActiveMegaMenu(null)}
                                   >
-                                    {sub}
-                                    <ChevronRight size={12} className="opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all text-[#C8961A]" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[#C8961A] opacity-0 group-hover/link:opacity-100 transition-all scale-0 group-hover/link:scale-100"></div>
+                                    <span className="text-sm font-bold tracking-tight">{sub}</span>
+                                    <ChevronRight size={14} className="ml-auto opacity-0 group-hover/link:opacity-100 -translate-x-4 group-hover/link:translate-x-0 transition-all text-[#C8961A]" />
                                   </Link>
                                 </li>
                               ))}
@@ -380,30 +401,51 @@ export function Navbar({
                         ))}
                       </div>
 
-                      <div className="col-span-4 border-l border-slate-100 pl-12 flex flex-col justify-center">
-                        <div className="relative aspect-[16/10] rounded-3xl overflow-hidden group/feat shadow-2xl">
+                      {/* Featured Section */}
+                      <div className="col-span-4 bg-white p-12 border-l border-slate-50 flex flex-col">
+                        <div className="text-[9px] font-black tracking-[5px] uppercase text-[#C8961A] mb-8 text-center">Featured Highlights</div>
+                        
+                        <div className="relative group/feat aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl mb-8">
                           <img 
                             src={dynamicMenu.featured?.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80"} 
-                            className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" 
-                            alt="Featured Collection" 
-                            loading="lazy"
-                            decoding="async"
-                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover/feat:scale-110" 
+                            alt="Featured" 
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/20 to-transparent"></div>
-                          <div className="absolute bottom-6 left-6 right-6">
-                            <span className="text-[9px] text-[#C8961A] font-black uppercase tracking-[3px] mb-2 block font-sans">Special Edition</span>
-                            <h5 className="text-white text-2xl font-bold mb-4 line-clamp-1">{dynamicMenu.featured?.title || 'Our Premium Selection'}</h5>
-                            <Link 
-                              to={dynamicMenu.featured?.link || '/products'} 
-                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#0A1628] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl"
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                          
+                          <div className="absolute inset-0 flex flex-col justify-end p-10">
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.2 }}
+                              className="space-y-4"
                             >
-                              Shop Now <ChevronRight size={12} />
-                            </Link>
+                              <h5 className="text-white text-3xl font-display font-medium leading-tight">
+                                {dynamicMenu.featured?.title || 'Summer 2025 Institutional Wear'}
+                              </h5>
+                              <Link 
+                                to={dynamicMenu.featured?.link || '/products'}
+                                className="inline-flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl text-[10px] font-black uppercase tracking-[3px] hover:bg-white hover:text-[#0A1628] transition-all shadow-xl group/btn"
+                                onClick={() => setActiveMegaMenu(null)}
+                              >
+                                View Collection <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                              </Link>
+                            </motion.div>
+                          </div>
+                        </div>
+
+                        <div className="mt-auto grid grid-cols-2 gap-4">
+                          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center text-center">
+                            <Zap size={20} className="text-[#C8961A] mb-2" />
+                            <span className="text-[8px] font-black text-[#0A1628] uppercase tracking-widest">Fast Delivery</span>
+                          </div>
+                          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center text-center">
+                            <Heart size={20} className="text-[#C8961A] mb-2" />
+                            <span className="text-[8px] font-black text-[#0A1628] uppercase tracking-widest">Ethically Made</span>
                           </div>
                         </div>
                       </div>
-                    </>
+                    </div>
                   );
                 })()}
               </div>
@@ -480,14 +522,19 @@ export function Navbar({
                       {searchResults.length > 0 ? (
                         <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
                           {searchResults.map((item, idx) => (
-                            <Link 
+                            <div 
                               key={`${item.type}-${item.id || idx}`}
-                              to={item.type === 'product' ? '/products' : item.type === 'service' ? '/services' : '/categories'}
                               onClick={() => {
+                                if (item.type === 'product' && setSelectedQuickViewProduct) {
+                                  setSelectedQuickViewProduct(item);
+                                } else {
+                                  const target = item.type === 'product' ? '/products' : item.type === 'service' ? '/services' : '/categories';
+                                  navigate(target);
+                                }
                                 setIsMenuOpen(false);
                                 setSearchQuery('');
                               }}
-                              className="flex items-center gap-3 p-4 hover:bg-white/5 border-b border-white/5 last:border-0 group transition-all"
+                              className="flex items-center gap-3 p-4 hover:bg-white/5 border-b border-white/5 last:border-0 group transition-all cursor-pointer"
                             >
                               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-[#C8961A]/30">
                                 {item.imageUrl ? (
@@ -498,7 +545,7 @@ export function Navbar({
                                 <p className="text-xs font-bold text-white group-hover:text-[#C8961A] transition-colors truncate">{item.name}</p>
                                 <span className="text-[8px] font-black uppercase text-[#C8961A]/50 tracking-[1px]">{item.type}</span>
                               </div>
-                            </Link>
+                            </div>
                           ))}
                         </div>
                       ) : (

@@ -47,6 +47,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   const [activeTab, setActiveTab] = useState('all');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+  const [showAllWholesale, setShowAllWholesale] = useState(false);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -531,6 +533,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
         setIsCompareModalOpen={setIsCompareModalOpen}
+        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
       />
 
       {/* High-End Cinematic Hero Slider Section - Refined with Gradient Separation */}
@@ -538,7 +541,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         {/* Living Background Image Layer - Image slides while overlays stay static */}
         <div className="absolute inset-0 z-0">
           {/* Static Overlays - Partitioned Gradient for Right Side Visibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-45% to-transparent to-65% z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-[40%] via-[#0A1628]/95 via-[45%] to-transparent to-[75%] z-10"></div>
           <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.1),_transparent_70%)] z-10"></div>
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-20"></div>
@@ -546,18 +549,16 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0, x: 100, scale: 1.05 }}
+              initial={{ opacity: 0, scale: 1.05 }}
               animate={{ 
                 opacity: 1, 
-                x: 0,
                 scale: 1,
-                transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+                transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] }
               }}
               exit={{ 
                 opacity: 0, 
-                x: -100,
-                scale: 0.95,
-                transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+                scale: 1.05,
+                transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] }
               }}
               className="absolute inset-0"
             >
@@ -576,53 +577,11 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
           </AnimatePresence>
         </div>
 
-        {/* Brand Content Container - Left Aligned for Image Visibility */}
-        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex items-center">
-          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-10 lg:gap-14">
-            {/* Static Search Bar - Left Aligned */}
-            <div className="max-w-xl group relative w-full">
-              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                <Search className="text-[#0A1628]/30 group-focus-within:text-[#C8961A] transition-all" size={20} />
-              </div>
-              <input 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                placeholder="Search premium inventory..."
-                className="w-full bg-white border-none rounded-2xl pl-16 pr-6 py-4 text-[#0A1628] text-lg outline-none focus:ring-2 focus:ring-[#C8961A]/50 transition-all placeholder:text-[#0A1628]/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
-              />
-              <AnimatePresence>
-                {showSearchSuggestions && searchResults.length > 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-slate-100 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.4)] overflow-hidden max-h-80 overflow-y-auto z-[60]"
-                  >
-                    {searchResults.map((product) => (
-                      <div 
-                        key={product.id}
-                        onClick={() => {
-                          setSelectedQuickViewProduct(product);
-                          setSearchQuery('');
-                        }}
-                        className="p-4 hover:bg-slate-50 cursor-pointer flex items-center gap-4 transition-colors border-b border-slate-50 last:border-none"
-                      >
-                        <img src={product.imageUrl} className="w-12 h-12 rounded-lg object-contain bg-slate-100" alt={product.name} loading="lazy" decoding="async" />
-                        <div>
-                          <p className="text-xs font-black text-[#0A1628] uppercase tracking-wider">{product.name}</p>
-                          <p className="text-[10px] text-slate-400 uppercase font-bold mt-0.5">{product.category}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            <div className="min-h-[280px] lg:min-h-[320px] flex flex-col justify-center">
+        {/* Brand Content Container - Desktop: Split Layout with Search on Right */}
+        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between py-20 lg:py-0 gap-10">
+          {/* Left Column: Text Content */}
+          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-8 lg:gap-12 order-2 lg:order-1">
+            <div className="min-h-[220px] lg:min-h-[280px] flex flex-col justify-center">
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={currentSlide}
@@ -630,15 +589,15 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  className="space-y-8"
+                  className="space-y-6 lg:space-y-8"
                 >
                   {/* Typography Epicenter */}
-                  <div className="space-y-8">
+                  <div className="space-y-6 lg:space-y-8">
                     <motion.h1 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="font-display font-medium text-4xl md:text-6xl lg:text-7xl text-white leading-[0.85] tracking-[-0.04em]"
+                      className="font-display font-medium text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
                     >
                       <span className="block overflow-hidden">
                         <motion.span 
@@ -656,7 +615,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
                           transition={{ delay: 0.8, duration: 1 }}
-                          className="absolute -bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
+                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
                         />
                       </span>
                     </motion.h1>
@@ -665,7 +624,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4 }}
-                      className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-8"
+                      className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                     >
                       {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Engineered textiles for the modern institution. Quality guaranteed for generations."}
                     </motion.p>
@@ -675,7 +634,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             </div>
 
             {/* Static Action Suite - Enhanced for Mobile */}
-            <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-4 w-full">
+            <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
               <Link
                 to="/products"
                 className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#C8102E] text-white rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.2)] flex items-center justify-center lg:min-w-[220px]"
@@ -693,6 +652,59 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform" />
                 </span>
               </button>
+            </div>
+          </div>
+
+          {/* Right Column: Search Hub (Desktop: Centered Right) */}
+          <div className="max-w-xl w-full flex flex-col items-center justify-center lg:items-end order-1 lg:order-2 mt-12 lg:mt-0">
+            <div className="w-full lg:max-w-md group relative">
+              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                <Search className="text-[#0A1628]/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
+              </div>
+              <input 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                placeholder="Search products"
+                className="w-full bg-white border border-slate-200 lg:border-white/20 rounded-3xl pl-16 pr-6 py-5 lg:py-8 text-[#0A1628] text-xl lg:text-2xl outline-none focus:ring-4 focus:ring-[#C8961A]/30 transition-all placeholder:text-slate-400 shadow-2xl"
+              />
+              <AnimatePresence>
+                {showSearchSuggestions && searchResults.length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-4 bg-white border border-slate-100 rounded-3xl shadow-[0_40px_80px_rgba(0,0,0,0.5)] overflow-hidden max-h-[400px] overflow-y-auto z-[60]"
+                  >
+                    {searchResults.map((product) => (
+                      <div 
+                        key={product.id}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Prevent input blur immediately
+                          setSelectedQuickViewProduct(product);
+                          setSearchQuery('');
+                          setShowSearchSuggestions(false);
+                        }}
+                        className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors border-b border-slate-50 last:border-none group/search"
+                      >
+                        <div className="w-16 h-16 rounded-xl bg-slate-100 p-2 flex items-center justify-center overflow-hidden shrink-0">
+                          <img src={product.imageUrl} className="w-full h-full object-contain transition-transform group-hover/search:scale-110" alt={product.name} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-black text-[#0A1628] uppercase tracking-wider mb-1">{product.name}</p>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
+                            <span className="text-xs font-bold text-slate-400">KES {product.price.toLocaleString()}</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A] group-hover/search:translate-x-1 transition-all" size={20} />
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -800,99 +812,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         </div>
       </section>
 
-      {/* Wholesale Excellence Block */}
-      <section className="py-12 bg-slate-50">
-        <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
-          <div className="bg-[#0A1628] rounded-[2rem] lg:rounded-[3.5rem] overflow-hidden relative group shadow-2xl">
-            {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#C8961A] via-transparent to-transparent"></div>
-            </div>
-            
-            <div className="flex flex-col lg:flex-row items-center">
-              <div className="lg:w-1/2 p-8 lg:p-20 relative z-10">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-4">
-                    <div className="w-8 h-[2px] bg-[#C8961A]"></div> Wholesale Excellence
-                  </div>
-                  <h2 className="font-display text-5xl lg:text-8xl text-white leading-[0.85] mb-8">
-                    Bulk Orders & <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
-                  </h2>
-                  <p className="text-white/60 text-sm lg:text-base leading-relaxed mb-12 max-w-lg font-medium">
-                    Naisiae Textiles Limited specializes in high-volume production for schools, distributors, and corporate institutions. Our wholesale program offers the most competitive rates in Kenya with guaranteed turnaround times.
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-4">
-                    <button 
-                      onClick={() => setIsQuoteModalOpen(true)}
-                      className="px-8 lg:px-12 py-5 bg-[#C8102E] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white hover:text-[#C8102E] transition-all shadow-xl shadow-black/40 active:scale-95"
-                    >
-                      Request Bulk Pricing
-                    </button>
-                    <button 
-                      onClick={() => {
-                          const el = document.getElementById('wholesale-deals');
-                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }}
-                      className="px-8 lg:px-12 py-5 bg-white/5 border border-white/10 text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:bg-white/10 transition-all active:scale-95"
-                    >
-                      Shop Wholesale
-                    </button>
-                  </div>
-
-                  <div className="mt-12 grid grid-cols-3 gap-6 lg:gap-10 border-t border-white/5 pt-10">
-                    <div>
-                      <div className="text-[#C8961A] font-display text-3xl leading-none mb-1">KES 500k+</div>
-                      <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Monthly Capacity</div>
-                    </div>
-                    <div>
-                      <div className="text-[#C8961A] font-display text-3xl leading-none mb-1">100+</div>
-                      <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Partner Schools</div>
-                    </div>
-                    <div>
-                      <div className="text-[#C8961A] font-display text-3xl leading-none mb-1">48HR</div>
-                      <div className="text-[9px] text-white/40 uppercase font-black tracking-widest">Quote Response</div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-              
-              <div className="lg:w-1/2 w-full aspect-video lg:aspect-auto self-stretch relative overflow-hidden">
-                <motion.img 
-                  initial={{ scale: 1.2, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 1.5 }}
-                  viewport={{ once: true }}
-                  src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1600&auto=format&fit=crop" 
-                  className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
-                  alt="Wholesale Textiles"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent lg:via-[#0A1628]/20"></div>
-                
-                {/* Floating Discount Badge */}
-                <motion.div 
-                  initial={{ y: 20, rotate: 0 }}
-                  whileInView={{ y: 0, rotate: 12 }}
-                  transition={{ type: 'spring', delay: 0.5 }}
-                  viewport={{ once: true }}
-                  className="absolute top-10 right-10 bg-[#C8961A] text-white p-6 lg:p-10 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center border-4 border-[#0A1628]"
-                >
-                  <span className="text-[10px] font-black uppercase tracking-widest leading-none opacity-80 mb-1">Up To</span>
-                  <span className="font-display text-6xl lg:text-8xl leading-none">40%</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest leading-none">Off Bulk Orders</span>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Wholesale Deals Products */}
       <section id="wholesale-deals" className="py-20 bg-white border-b border-slate-100">
         <div className="max-w-[1440px] mx-auto px-8">
@@ -908,10 +827,10 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             </Link>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
             {products
               .filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate'))
-              .slice(0, 5)
+              .slice(0, showAllWholesale ? undefined : 6)
               .map(product => (
                 <motion.div 
                   key={product.id}
@@ -927,13 +846,13 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     <span className="absolute top-3 left-3 bg-[#C8961A] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">Wholesale</span>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-bold text-[14px] mb-1 leading-tight line-clamp-1">{product.name}</h3>
+                    <h3 className="font-bold text-[13px] mb-1 leading-tight line-clamp-1">{product.name}</h3>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[14px] font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
+                      <span className="text-[13px] font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
                     </div>
                     <button 
                       onClick={() => setSelectedQuickViewProduct(product)}
-                      className="w-full py-2 bg-slate-50 hover:bg-[#1C3560] hover:text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all"
+                      className="w-full py-2 bg-slate-50 hover:bg-[#1C3560] hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
                     >
                       View Details
                     </button>
@@ -941,7 +860,21 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 </motion.div>
               ))
             }
-            {products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')).length === 0 && (
+          </div>
+
+          <div className="mt-12 flex justify-center">
+             {products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')).length > 6 && (
+               <button 
+                onClick={() => setShowAllWholesale(!showAllWholesale)}
+                className="px-10 py-4 bg-slate-100/50 hover:bg-[#C8961A] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group"
+               >
+                 {showAllWholesale ? 'Show Less' : 'View More Wholesale Items'} 
+                 <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />
+               </button>
+             )}
+          </div>
+
+          {products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')).length === 0 && (
               <div className="col-span-full py-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
                 <Package className="mx-auto text-slate-300 mb-4" size={40} />
                 <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Wholesale Collection Launching Soon</p>
@@ -949,7 +882,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               </div>
             )}
           </div>
-        </div>
       </section>
 
       {/* Featured Products */}
@@ -1050,12 +982,12 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
           <button className="text-[#15284A] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto">View All Products →</button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {displayProducts.length > 0 ? displayProducts.map((product) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
+          {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => (
             <motion.div 
               key={product.id}
               whileHover={{ y: -6 }}
-              className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
+              className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                 {product.imageUrl ? (
@@ -1064,59 +996,33 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <Package size={40} className="text-[#C8961A]/20" />
                 )}
                 {product.badge && (
-                  <span className="absolute top-3 left-3 bg-[#C8102E] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">{product.badge}</span>
+                  <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded tracking-widest uppercase">{product.badge}</span>
                 )}
                 <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
                   <button 
                     onClick={() => toggleWishlist(product)}
-                    aria-label={wishlist.find(i => i.id === product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
-                    className={`w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
+                    className={`w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
                       wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:bg-[#C8102E] hover:text-white"
                     }`}
                   >
-                    <Heart size={16} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
-                  </button>
-                  <button 
-                    onClick={() => handleShareProduct(product)}
-                    aria-label="Share Product"
-                    className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-[#C8102E] hover:text-white transition-colors"
-                  >
-                    <Share2 size={16} />
-                  </button>
-                  <button 
-                    onClick={() => setSelectedQuickViewProduct(product)}
-                    aria-label="Quick View"
-                    className="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-[#C8102E] hover:text-white transition-colors"
-                  >
-                    <Search size={16} />
-                  </button>
-                  <button 
-                    onClick={() => toggleCompare(product)}
-                    aria-label="Compare Product"
-                    className={`w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-all ${
-                      compareList.find(i => i.id === product.id) 
-                        ? "bg-[#C8961A] text-white scale-110" 
-                        : "text-slate-400 hover:bg-[#C8961A] hover:text-white"
-                    }`}
-                  >
-                    <GitCompare size={16} />
+                    <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
                   </button>
                 </div>
               </div>
-              <div className="p-4 cursor-pointer" onClick={() => setSelectedQuickViewProduct(product)}>
-                <div className="text-[10px] text-[#15284A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-                <h3 className="font-bold text-[15px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
-                <p className="text-[#6B7280] text-xs leading-relaxed mb-4 line-clamp-2">{product.description}</p>
-                <div className="flex items-center gap-3">
-                  <span className="text-xl font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
-                  {product.oldPrice && <span className="text-xs text-gray-400 line-through">KES {product.oldPrice.toLocaleString()}</span>}
+              <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-1" onClick={() => setSelectedQuickViewProduct(product)}>
+                <div className="text-[8px] sm:text-[9px] text-[#15284A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
+                <div className="mt-auto pt-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[15px] sm:text-lg font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
+                  </div>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                    className="mt-3 w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                  className="mt-4 w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-3 rounded-lg font-bold text-xs uppercase tracking-widest transition-colors"
-                >
-                  Add to Cart
-                </button>
               </div>
             </motion.div>
           )) : (
@@ -1124,6 +1030,107 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               <p>No products found. Add some from the admin panel!</p>
             </div>
           )}
+        </div>
+
+        {displayProducts.length > 12 && (
+          <div className="mt-16 flex justify-center">
+            <button 
+              onClick={() => setShowAllFeatured(!showAllFeatured)}
+              className="px-12 py-5 bg-[#0A1628] text-white hover:bg-[#C8961A] transition-all rounded-full flex items-center gap-4 text-[11px] font-black uppercase tracking-[3px] shadow-2xl active:scale-95"
+            >
+              {showAllFeatured ? 'Show Less' : 'View More Products'} 
+              <ChevronRight size={16} className={`transition-transform duration-500 ${showAllFeatured ? '-rotate-90' : 'rotate-90'}`} />
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* Wholesale Excellence Block (Now before footer, full-width, compact) */}
+      <section className="bg-[#0A1628] overflow-hidden relative group shadow-2xl w-full border-t border-white/5">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#C8961A] via-transparent to-transparent"></div>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row items-center w-full">
+          <div className="lg:w-1/2 p-6 lg:p-12 relative z-10 w-full">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center gap-3 text-[#C8961A] text-[9px] font-black tracking-[3px] uppercase mb-3">
+                <div className="w-6 h-[1.5px] bg-[#C8961A]"></div> Specialized Wholesale
+              </div>
+              <h2 className="font-display text-4xl lg:text-5xl text-white leading-[0.9] mb-4">
+                Institutional <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
+              </h2>
+              <p className="text-white/60 text-xs lg:text-sm leading-relaxed mb-6 max-w-lg font-medium">
+                High-volume production for schools and corporate institutions. The most competitive rates in Kenya with guaranteed turnaround.
+              </p>
+              
+              <div className="flex flex-wrap gap-3">
+                <button 
+                  onClick={() => setIsQuoteModalOpen(true)}
+                  className="px-6 lg:px-8 py-3.5 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl hover:bg-white hover:text-[#C8102E] transition-all shadow-xl active:scale-95"
+                >
+                  Bulk Pricing
+                </button>
+                <button 
+                  onClick={() => {
+                      const el = document.getElementById('wholesale-deals');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  className="px-6 lg:px-8 py-3.5 bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl hover:bg-white/10 transition-all active:scale-95"
+                >
+                  View Deals
+                </button>
+              </div>
+
+              <div className="mt-8 grid grid-cols-3 gap-4 lg:gap-8 border-t border-white/5 pt-6">
+                <div>
+                  <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">500k+</div>
+                  <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Capacity</div>
+                </div>
+                <div>
+                  <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">100+</div>
+                  <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Partners</div>
+                </div>
+                <div>
+                  <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">48H</div>
+                  <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Response</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          <div className="lg:w-1/2 w-full h-[250px] lg:h-auto self-stretch relative overflow-hidden">
+            <motion.img 
+              initial={{ scale: 1.1, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+              src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1600&auto=format&fit=crop" 
+              className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-1000"
+              alt="Wholesale Textiles"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent"></div>
+            
+            {/* Floating Discount Badge - Compact */}
+            <motion.div 
+              initial={{ y: 10, rotate: 0 }}
+              whileInView={{ y: 0, rotate: 8 }}
+              transition={{ type: 'spring', delay: 0.3 }}
+              viewport={{ once: true }}
+              className="absolute top-1/2 left-1/2 lg:top-8 lg:right-8 lg:left-auto -translate-x-1/2 -translate-y-1/2 lg:translate-x-0 lg:translate-y-0 bg-[#C8961A] text-white p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-2xl flex flex-col items-center justify-center border-2 border-[#0A1628]"
+            >
+              <span className="text-[8px] font-black uppercase tracking-widest leading-none opacity-80 mb-0.5">Up To</span>
+              <span className="font-display text-4xl lg:text-6xl leading-none">40%</span>
+              <span className="text-[8px] font-black uppercase tracking-widest leading-none">Off Bulk</span>
+            </motion.div>
+          </div>
         </div>
       </section>
 
