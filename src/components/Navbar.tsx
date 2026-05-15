@@ -11,11 +11,12 @@ import {
   X,
   Phone,
   Zap,
-  Filter
+  Filter,
+  Plus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
-import { motion, AnimatePresence } from 'framer-motion'; // Clean import mapping
+import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '../services/firebase';
 
 interface NavbarProps {
@@ -36,7 +37,7 @@ const DEFAULT_MEGA_MENUS = [
     id: 'products',
     name: 'Products',
     featured: { 
-      title: 'School Uniform Collection 2025',
+      title: 'School Uniform Collection 2026',
       image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
       link: '/products'
     },
@@ -113,7 +114,7 @@ export function Navbar({
       setMegaMenus(menus.length === 0 ? DEFAULT_MEGA_MENUS : menus);
     }, (error) => {
       console.error('Mega menus fetch error:', error);
-      setMegaMenus(DEFAULT_MEGA_MENUS.slice(0, 2)); // Dynamic recovery subset fallback
+      setMegaMenus(DEFAULT_MEGA_MENUS.slice(0, 2));
     });
     
     const unsubSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
@@ -143,7 +144,6 @@ export function Navbar({
     };
   }, []);
 
-  // Fixed React internal assignment references inside search pipeline
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
@@ -214,9 +214,11 @@ export function Navbar({
             ? 'bg-[#050B16]/95 backdrop-blur-2xl py-3 md:py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
             : 'bg-[#050B16] py-5 md:py-8'
         }`}
-        onMouseLeave={() => setActiveMegaMenu(null)}
       >
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12">
+        <div 
+          className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12"
+          onMouseLeave={() => setActiveMegaMenu(null)} // Keeps menu stable until mouse exits navbar inner container
+        >
           {/* Brand Identity */}
           <Link to="/" className="group flex items-center gap-3 md:gap-5 shrink-0">
             <div className={`relative transition-all duration-700 ${isScrolled ? 'w-10 h-10 md:w-12 md:h-12' : 'w-12 h-12 md:w-16 md:h-16'}`}>
@@ -265,7 +267,7 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
-             <div className="items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border white/10 hidden sm:flex">
+             <div className="items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
                <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
                  <Heart size={18} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform md:w-5 md:h-5"} />
                  {wishlistCount > 0 && (
@@ -317,8 +319,10 @@ export function Navbar({
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] z-[90] pointer-events-auto"
+              onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
+              onMouseLeave={() => setActiveMegaMenu(null)}
             >
-              <div className="max-w-[1440px] mx-auto grid grid-cols-12 gap-12 p-12 lg:px-12">
+              <div className="max-w-[1440px] mx-auto grid grid-cols-12 gap-12 p-12 lg:px-20">
                 {(() => {
                   const dynamicMenu = megaMenus.find(m => m.id === activeMegaMenu);
                   if (!dynamicMenu) return null;
@@ -479,7 +483,7 @@ export function Navbar({
                 </AnimatePresence>
               </div>
 
-              {/* Navigation Action Container (Fixed Link-in-Button bug) */}
+              {/* Navigation Action Container */}
               <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
                 {[
                   { name: 'Home', link: '/', icon: <ShoppingBag size={18} /> },
