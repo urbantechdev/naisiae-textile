@@ -27,6 +27,50 @@ const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
 
 import { InactivityHandler } from './components/InactivityHandler';
 
+// Dynamic SEO Engine to enforce branding permanently across all routes
+function DynamicSEOEngine() {
+  useEffect(() => {
+    const updateSEO = () => {
+      const path = window.location.pathname;
+      let title = "UHURU MARKET UNIFORMS | Naisiae Textiles Nairobi";
+      let description = "Official website for UHURU MARKET UNIFORMS by Naisiae Textiles. Premium school, corporate, and hospital uniform manufacturing based in Uhuru Market, Nairobi.";
+
+      if (path === '/products') {
+        title = "Our Uniform Products | UHURU MARKET UNIFORMS";
+        description = "Browse our full catalog of custom-tailored garments. High-quality primary & secondary school uniforms, games kits, and specialized corporate wear.";
+      } else if (path === '/categories') {
+        title = "Uniform Categories & Options | UHURU MARKET UNIFORMS";
+        description = "Explore our uniform manufacturing categories including Education, Hospitality, Medical, Security, and Corporate branding solutions in Nairobi.";
+      } else if (path === '/services') {
+        title = "Bulk Manufacturing & Branding Services | UHURU MARKET UNIFORMS";
+        description = "From heavy-duty industrial stitching to custom embroidery and screen printing. Discover our mass-scale textile production capabilities.";
+      } else if (path === '/portfolio') {
+        title = "Our Work & Past Projects | UHURU MARKET UNIFORMS";
+        description = "See examples of bulk uniform orders we have successfully delivered across Kenya. Check out our design quality and finished tailoring work.";
+      } else if (path === '/contact') {
+        title = "Contact Us | UHURU MARKET UNIFORMS";
+        description = "Get in touch with UHURU MARKET UNIFORMS by Naisiae Textiles. Call +254792021795 or visit our workshop at Uhuru Market, KCB Lane, Nairobi.";
+      }
+
+      // Force apply changes securely to the DOM
+      document.title = title;
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute("content", description);
+      }
+    };
+
+    // Run immediately on page render
+    updateSEO();
+
+    // Listen for inner routing navigation events
+    window.addEventListener('popstate', updateSEO);
+    return () => window.removeEventListener('popstate', updateSEO);
+  }, []);
+
+  return null;
+}
+
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,14 +98,12 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        // Super admin check by email (bypass verification for primary admin if needed)
         if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
           setIsAdmin(true);
           setLoading(false);
           return;
         }
 
-        // Only require verification for other admin roles if they have it
         if (user.emailVerified) {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists() && userDoc.data().role === 'admin') {
@@ -70,7 +112,6 @@ export default function App() {
             setIsAdmin(false);
           }
         } else {
-          // Stay strict for non-super admins
           setIsAdmin(false);
         }
       } else {
@@ -92,6 +133,7 @@ export default function App() {
 
   return (
     <Router>
+      <DynamicSEOEngine /> {/* Injected right here to capture and control all route shifts */}
       <InactivityHandler>
         <Suspense fallback={
           <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
@@ -126,4 +168,3 @@ export default function App() {
     </Router>
   );
 }
-
