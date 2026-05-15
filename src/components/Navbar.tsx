@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ShoppingBag, 
   Heart, 
@@ -10,14 +10,12 @@ import {
   Search,
   X,
   Phone,
-  User as UserIcon,
-  Plus,
   Zap,
   Filter
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion'; // Clean import mapping
 import { db } from '../services/firebase';
 
 interface NavbarProps {
@@ -31,6 +29,50 @@ interface NavbarProps {
   setIsQuoteModalOpen: (open: boolean) => void;
   setIsCompareModalOpen?: (open: boolean) => void;
 }
+
+// Fallback static configuration isolated outside of execution context
+const DEFAULT_MEGA_MENUS = [
+  {
+    id: 'products',
+    name: 'Products',
+    featured: { 
+      title: 'School Uniform Collection 2025',
+      image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
+      link: '/products'
+    },
+    categories: [
+      { name: 'Primary Schools', items: ['Sweaters', 'Shorts', 'Dresses', 'Blazers'] },
+      { name: 'Secondary Schools', items: ['Trousers', 'Skirts', 'Blouses', 'Ties'] },
+      { name: 'Branding', items: ['Embroidery', 'Screen Printing', 'Heat Press'] }
+    ]
+  },
+  {
+    id: 'services',
+    name: 'Services',
+    featured: {
+      title: 'Custom Textile Solutions',
+      image: 'https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80',
+      link: '/services'
+    },
+    categories: [
+      { name: 'Manufacturing', items: ['Wholesale Production', 'Custom Patterns', 'Bulk Orders'] },
+      { name: 'Corporate', items: ['Staff Uniforms', 'Promotional Wear', 'Identity Branding'] }
+    ]
+  },
+  {
+    id: 'categories',
+    name: 'Categories',
+    featured: {
+      title: 'Explore Our Catalog',
+      image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80',
+      link: '/categories'
+    },
+    categories: [
+      { name: 'Shop By Sector', items: ['Healthcare', 'Education', 'Hospitality', 'Security'] },
+      { name: 'Shop By Type', items: ['Woven Labels', 'Embossed Logos', 'Printed Fabrics'] }
+    ]
+  }
+];
 
 export function Navbar({ 
   cartCount, 
@@ -51,104 +93,27 @@ export function Navbar({
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     
-    // Fetch products for global search
+    // Subscriptions
     const qProducts = query(collection(db, 'products'), where('active', '==', true));
     const unsubProducts = onSnapshot(qProducts, (snapshot) => {
       setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, error => console.error('Products fetch error:', error));
 
-    // Fetch services for global search
     const unsubServices = onSnapshot(collection(db, 'services'), (snapshot) => {
       setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
+    }, error => console.error('Services fetch error:', error));
     
     const unsubMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
-      let menus: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      
-      // If no data in DB, provide default fallbacks so the UI isn't broken
-      if (menus.length === 0) {
-        menus = [
-          {
-            id: 'products',
-            name: 'Products',
-            featured: { 
-              title: 'School Uniform Collection 2025',
-              image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
-              link: '/products'
-            },
-            categories: [
-              { name: 'Primary Schools', items: ['Sweaters', 'Shorts', 'Dresses', 'Blazers'] },
-              { name: 'Secondary Schools', items: ['Trousers', 'Skirts', 'Blouses', 'Ties'] },
-              { name: 'Branding', items: ['Embroidery', 'Screen Printing', 'Heat Press'] }
-            ]
-          },
-          {
-            id: 'services',
-            name: 'Services',
-            featured: {
-              title: 'Custom Textile Solutions',
-              image: 'https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80',
-              link: '/services'
-            },
-            categories: [
-              { name: 'Manufacturing', items: ['Wholesale Production', 'Custom Patterns', 'Bulk Orders'] },
-              { name: 'Corporate', items: ['Staff Uniforms', 'Promotional Wear', 'Identity Branding'] }
-            ]
-          },
-          {
-            id: 'categories',
-            name: 'Categories',
-            featured: {
-              title: 'Explore Our Catalog',
-              image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80',
-              link: '/categories'
-            },
-            categories: [
-              { name: 'Shop By Sector', items: ['Healthcare', 'Education', 'Hospitality', 'Security'] },
-              { name: 'Shop By Type', items: ['Woven Labels', 'Embossed Logos', 'Printed Fabrics'] }
-            ]
-          }
-        ];
-      }
-      setMegaMenus(menus);
+      const menus = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMegaMenus(menus.length === 0 ? DEFAULT_MEGA_MENUS : menus);
     }, (error) => {
       console.error('Mega menus fetch error:', error);
-      // Fallback for demo/missing data
-      setMegaMenus([
-        {
-          id: 'products',
-          name: 'Products',
-          featured: { 
-            title: 'School Uniform Collection 2025',
-            image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
-            link: '/products'
-          },
-          categories: [
-            { name: 'Primary Schools', items: ['Sweaters', 'Shorts', 'Dresses', 'Blazers'] },
-            { name: 'Secondary Schools', items: ['Trousers', 'Skirts', 'Blouses', 'Ties'] },
-            { name: 'Branding', items: ['Embroidery', 'Screen Printing', 'Heat Press'] }
-          ]
-        },
-        {
-          id: 'services',
-          name: 'Services',
-          featured: {
-            title: 'Custom Textile Solutions',
-            image: 'https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80',
-            link: '/services'
-          },
-          categories: [
-            { name: 'Manufacturing', items: ['Wholesale Production', 'Custom Patterns', 'Bulk Orders'] },
-            { name: 'Corporate', items: ['Staff Uniforms', 'Promotional Wear', 'Identity Branding'] }
-          ]
-        }
-      ]);
+      setMegaMenus(DEFAULT_MEGA_MENUS.slice(0, 2)); // Dynamic recovery subset fallback
     });
     
     const unsubSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
@@ -178,25 +143,30 @@ export function Navbar({
     };
   }, []);
 
-  const searchResults = React.useMemo(() => {
+  // Fixed React internal assignment references inside search pipeline
+  const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
     
-    const prodResults = products.filter(p => 
-      p.name?.toLowerCase().includes(q) || 
-      p.category?.toLowerCase().includes(q) ||
-      p.tags?.some((t: string) => t.toLowerCase().includes(q))
-    ).slice(0, 4).map(p => ({ ...p, type: 'product', icon: <Package size={14} className="text-[#C8961A]" /> }));
+    const prodResults = products
+      .filter(p => 
+        p.name?.toLowerCase().includes(q) || 
+        p.category?.toLowerCase().includes(q) ||
+        p.tags?.some((t: string) => t.toLowerCase().includes(q))
+      )
+      .slice(0, 4)
+      .map(p => ({ ...p, type: 'product', icon: <Package size={14} className="text-[#C8961A]" /> }));
 
-    const serviceResults = services.filter(s => 
-      s.title?.toLowerCase().includes(q) || 
-      s.description?.toLowerCase().includes(q)
-    ).slice(0, 2).map(s => ({ ...s, name: s.title, type: 'service', icon: <Zap size={14} className="text-[#C8961A]" /> }));
+    const serviceResults = services
+      .filter(s => s.title?.toLowerCase().includes(q) || s.description?.toLowerCase().includes(q))
+      .slice(0, 2)
+      .map(s => ({ ...s, name: s.title, type: 'service', icon: <Zap size={14} className="text-[#C8961A]" /> }));
 
     const categories = Array.from(new Set(products.map(p => p.category))).filter((c): c is string => !!c);
-    const catResults = categories.filter(c => 
-      c.toLowerCase().includes(q)
-    ).slice(0, 2).map(c => ({ id: c, name: c, type: 'category', icon: <Filter size={14} className="text-[#C8961A]" /> }));
+    const catResults = categories
+      .filter(c => c.toLowerCase().includes(q))
+      .slice(0, 2)
+      .map(c => ({ id: c, name: c, type: 'category', icon: <Filter size={14} className="text-[#C8961A]" /> }));
 
     return [...prodResults, ...catResults, ...serviceResults];
   }, [searchQuery, products, services]);
@@ -261,7 +231,7 @@ export function Navbar({
               )}
             </div>
             <div className="flex flex-col">
-              <span className={`font-display text-lg md:text-xl lg:text-3xl tracking-[4px] md:tracking-[8px] uppercase transition-all duration-700 leading-none text-white`}>
+              <span className="font-display text-lg md:text-xl lg:text-3xl tracking-[4px] md:tracking-[8px] uppercase transition-all duration-700 leading-none text-white">
                 {siteSettings?.siteName?.split(' ')[0] || 'NAISIAE'}
               </span>
               <span className="text-[7px] md:text-[8px] tracking-[3px] md:tracking-[5px] text-[#C8961A] uppercase font-black mt-1 group-hover:translate-x-1 transition-transform">
@@ -295,7 +265,7 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
-             <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
+             <div className="items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border white/10 hidden sm:flex">
                <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/50 hover:text-[#F0A500] transition-colors relative group">
                  <Heart size={18} className={wishlistCount > 0 ? "fill-[#F0A500] text-[#F0A500]" : "group-hover:scale-110 transition-transform md:w-5 md:h-5"} />
                  {wishlistCount > 0 && (
@@ -331,12 +301,14 @@ export function Navbar({
             <button 
               onClick={() => setIsMenuOpen(true)} 
               className="xl:hidden p-3 md:p-4 text-white hover:bg-white/10 rounded-xl md:rounded-2xl transition-colors"
+              aria-label="Open Navigation Menu"
             >
               <Menu size={24} className="md:w-7 md:h-7" />
             </button>
           </div>
         </div>
 
+        {/* Desktop Mega Menu Dropdown */}
         <AnimatePresence>
           {activeMegaMenu && (
             <motion.div 
@@ -384,7 +356,7 @@ export function Navbar({
                             className="w-full h-full object-cover transition-transform duration-1000 group-hover/feat:scale-110" 
                             alt="Featured Collection" 
                             loading="lazy"
-                            decoding="async"
+                            decode="async"
                             referrerPolicy="no-referrer"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/20 to-transparent"></div>
@@ -409,7 +381,7 @@ export function Navbar({
         </AnimatePresence>
       </header>
 
-      {/* Mobile Menu & Search Portal */}
+      {/* Mobile Sidebar Navigation */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
@@ -442,7 +414,7 @@ export function Navbar({
                 </button>
               </div>
 
-              {/* Enhanced Mobile Search */}
+              {/* Mobile Search Input */}
               <div className="p-6 border-b border-white/5 bg-[#0A1628]/30">
                 <div className="relative group">
                   <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#C8961A]' : 'text-white/30 group-focus-within:text-[#C8961A]'}`} size={16} />
@@ -451,7 +423,6 @@ export function Navbar({
                     placeholder="Search catalog, styles..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearching(true)}
                     className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/20 outline-none focus:ring-2 focus:ring-[#C8961A]/30 focus:border-[#C8961A]/50 transition-all font-medium"
                   />
                   {searchQuery && (
@@ -465,7 +436,7 @@ export function Navbar({
                   )}
                 </div>
 
-                {/* Dropdown Results for Mobile Search */}
+                {/* Search Dropdown Panel */}
                 <AnimatePresence>
                   {searchQuery && (
                     <motion.div 
@@ -508,7 +479,7 @@ export function Navbar({
                 </AnimatePresence>
               </div>
 
-              {/* Navigation Links */}
+              {/* Navigation Action Container (Fixed Link-in-Button bug) */}
               <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
                 {[
                   { name: 'Home', link: '/', icon: <ShoppingBag size={18} /> },
@@ -516,36 +487,47 @@ export function Navbar({
                   { name: 'Services', link: '/services', icon: <Zap size={18} /> },
                   { name: 'Portfolio', link: '/portfolio', icon: <ChevronRight size={18} /> },
                   { name: 'Catalog Quote', onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
-                ].map((item) => (
-                  <button 
-                    key={item.name}
-                    onClick={() => {
-                      if (item.onClick) item.onClick();
-                      else setIsMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
-                      item.highlight 
-                        ? 'bg-[#C8961A] text-[#0A1628] hover:bg-white' 
-                        : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    {item.link ? (
-                      <Link to={item.link} className="flex items-center gap-4 w-full">
-                        <span className={`${item.highlight ? '' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
-                        <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
+                ].map((item) => {
+                  const commonStyle = `w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
+                    item.highlight 
+                      ? 'bg-[#C8961A] text-[#0A1628] hover:bg-white' 
+                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                  }`;
+
+                  if (item.link) {
+                    return (
+                      <Link 
+                        key={item.name} 
+                        to={item.link} 
+                        onClick={() => setIsMenuOpen(false)}
+                        className={commonStyle}
+                      >
+                        <div className="flex items-center gap-4 w-full">
+                          <span className={item.highlight ? '' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'}>{item.icon}</span>
+                          <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
+                        </div>
+                        <ChevronRight size={14} className={item.highlight ? 'opacity-50' : 'text-white/10 group-hover:text-[#C8961A]'} />
                       </Link>
-                    ) : (
+                    );
+                  }
+
+                  return (
+                    <button 
+                      key={item.name}
+                      onClick={item.onClick}
+                      className={commonStyle}
+                    >
                       <div className="flex items-center gap-4 w-full text-left">
-                        <span className={`${item.highlight ? '' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
+                        <span className={item.highlight ? '' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'}>{item.icon}</span>
                         <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
                       </div>
-                    )}
-                    <ChevronRight size={14} className={item.highlight ? 'opacity-50' : 'text-white/10 group-hover:text-[#C8961A]'} />
-                  </button>
-                ))}
+                      <ChevronRight size={14} className={item.highlight ? 'opacity-50' : 'text-white/10 group-hover:text-[#C8961A]'} />
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Footer Branding */}
+              {/* Footer Assistance */}
               <div className="p-6 mt-auto border-t border-white/5">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
                   <div className="text-[8px] font-black text-[#C8961A] uppercase tracking-[3px] mb-2">Request Assistance</div>
@@ -562,4 +544,3 @@ export function Navbar({
     </div>
   );
 }
-
