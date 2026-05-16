@@ -893,20 +893,50 @@ export default function AdminDashboard() {
     }
   };
 
+  async function handleDeleteProduct(id: string) {
+    if (confirm('Are you sure you want to delete this product? It will be removed from the public site immediately.')) {
+      try {
+        await deleteDoc(doc(db, 'products', id));
+      } catch (error) {
+        handleFirestoreError(error, OperationType.DELETE, `products/${id}`);
+      }
+    }
+  }
+
+  async function handleDeletePromotion(id: string) {
+    if (confirm('Delete this promotional campaign?')) {
+      try {
+        await deleteDoc(doc(db, 'promotions', id));
+      } catch (error) {
+        handleFirestoreError(error, OperationType.DELETE, `promotions/${id}`);
+      }
+    }
+  }
+
   return (
-    <div className="flex flex-col h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
-          />
-        )}
-      </AnimatePresence>
+    <div className="flex h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
+      <AdminSidebar 
+        activeView={activeView}
+        setActiveView={setActiveView}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+        handleLogout={handleLogout}
+      />
+
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        {/* Mobile Sidebar Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
+            />
+          )}
+        </AnimatePresence>
 
       {/* Mobile Sidebar */}
       <div className={`fixed inset-y-0 left-0 bg-[#0A1628] w-[280px] z-[70] transform transition-transform duration-300 lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -943,38 +973,28 @@ export default function AdminDashboard() {
       </div>
 
       {/* Top Header */}
-      <header className="h-16 bg-[#0A1628] text-white flex items-center justify-between px-4 lg:px-8 shrink-0 relative z-50">
+      <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 shrink-0 relative z-50">
         <div className="flex items-center gap-4">
-          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 hover:text-[#C8102E] hover:bg-slate-50 transition-colors rounded-lg">
             <Menu size={24} />
           </button>
           
-          {siteSettings?.siteLogo ? (
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white border border-white/10 hidden sm:flex">
-              <img src={siteSettings.siteLogo} alt="Site Logo" className="w-full h-full object-contain p-1" />
-            </div>
-          ) : (
-            <div className="w-10 h-10 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-lg rotate-3 overflow-hidden shadow-lg shadow-[#C8102E]/20 shrink-0 hidden sm:flex">
-              <span className="-rotate-3 text-white">NT</span>
-            </div>
-          )}
-          
-          <h1 className="font-display text-xl tracking-[2px] leading-none pt-1 text-[#C8961A] hidden sm:block">
-            Admin Panel
+          <h1 className="font-display text-lg tracking-[2px] leading-none pt-1 text-[#0A1628] uppercase font-black">
+            {activeView}
           </h1>
         </div>
 
-        <div className="hidden md:flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-2 border border-white/5 focus-within:ring-2 focus-within:ring-[#C8961A]/50 transition-all flex-1 max-w-md mx-4 relative">
-          <Search size={16} className="text-white/50" />
+        <div className="hidden md:flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-2 border border-slate-100 focus-within:ring-2 focus-within:ring-[#C8102E]/10 transition-all flex-1 max-w-md mx-4 relative">
+          <Search size={16} className="text-slate-300" />
           <input 
             type="text" 
-            placeholder="Global search products..." 
+            placeholder="Search catalog..." 
             value={globalSearchQuery}
             onChange={(e) => setGlobalSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none text-sm w-full placeholder:text-white/30 text-white" 
+            className="bg-transparent border-none outline-none text-xs w-full placeholder:text-slate-400 text-slate-700" 
           />
           {globalSearchQuery && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-100 overflow-hidden z-50 max-h-80 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl shadow-black/10 border border-slate-100 overflow-hidden z-[60] max-h-80 overflow-y-auto">
               {(() => {
                 const search = globalSearchQuery.toLowerCase();
                 
@@ -1046,17 +1066,23 @@ export default function AdminDashboard() {
 
         <div className="flex items-center gap-4 relative">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-bold text-white">{auth.currentUser?.displayName || 'Administrator'}</p>
-            <p className="text-[10px] text-white/50">{auth.currentUser?.email || 'support@naisiaetextile.com'}</p>
+            <p className="text-xs font-black text-[#0A1628] leading-none">
+              {auth.currentUser?.displayName || 'Administrator'}
+            </p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              {auth.currentUser?.email || 'System Admin'}
+            </p>
           </div>
           <button 
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            className="w-10 h-10 rounded-full bg-[#1C3560] flex items-center justify-center text-white border-2 border-white/20 shadow-md hover:border-[#C8961A] transition-colors focus:outline-none overflow-hidden"
+            className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[#1C3560] shadow-sm hover:border-[#C8961A]/50 transition-all overflow-hidden group"
           >
             {auth.currentUser?.photoURL ? (
-              <img src={auth.currentUser.photoURL} alt="Profile" className="w-full h-full object-cover" />
+              <img src={auth.currentUser.photoURL} alt="Profile" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
             ) : (
-              auth.currentUser?.displayName?.charAt(0) || <UserIcon size={14} />
+              <div className="w-full h-full bg-[#1C3560] flex items-center justify-center text-white font-black text-sm">
+                {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={14} />}
+              </div>
             )}
           </button>
           
@@ -1105,25 +1131,9 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      {/* Main Tabs Navigation */}
-      <nav className="bg-white border-b border-[#E2E8F0] px-4 lg:px-8 overflow-x-auto scrollbar-hide hidden lg:flex gap-2 shrink-0 z-40 shadow-sm relative pt-3">
-        <TabItem active={activeView === 'overview'} onClick={() => setActiveView('overview')} icon={<LayoutDashboard size={14} />} label="Overview" />
-        <TabItem active={activeView === 'products'} onClick={() => setActiveView('products')} icon={<Package size={14} />} label="Products" badge={lowStockProductsCount} />
-        <TabItem active={activeView === 'quotes'} onClick={() => setActiveView('quotes')} icon={<MessageSquare size={14} />} label="Quotes" badge={newQuotesCount} />
-        <TabItem active={activeView === 'wishlists'} onClick={() => setActiveView('wishlists')} icon={<Heart size={14} />} label="Wishlists" />
-        <TabItem active={activeView === 'promotions'} onClick={() => setActiveView('promotions')} icon={<Megaphone size={14} />} label="Marketing" />
-        <TabItem active={activeView === 'content'} onClick={() => setActiveView('content')} icon={<Edit2 size={14} />} label="Pages Content" />
-        <TabItem active={activeView === 'appearance'} onClick={() => setActiveView('appearance')} icon={<Palette size={14} />} label="Layout" />
-        <TabItem active={activeView === 'reviews'} onClick={() => setActiveView('reviews')} icon={<Star size={14} />} label="Reviews" badge={pendingReviewsCount} />
-        <TabItem active={activeView === 'users'} onClick={() => setActiveView('users')} icon={<Users size={14} />} label="Team" />
-        <TabItem active={activeView === 'analytics'} onClick={() => setActiveView('analytics')} icon={<BarChart3 size={14} />} label="Analytics" />
-        <TabItem active={activeView === 'settings'} onClick={() => setActiveView('settings')} icon={<Settings size={14} />} label="Settings" />
-      </nav>
-
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto w-full relative bg-[#F1F5F9]">
-
-        <div className="p-8">
+      <main className="flex-1 overflow-y-auto w-full relative bg-[#F1F5F9] pb-24 lg:pb-8">
+        <div className="p-4 lg:p-10">
           <AnimatePresence mode="wait">
             {activeView === 'overview' && (
               <motion.div 
@@ -2071,7 +2081,7 @@ export default function AdminDashboard() {
                       const totalCount = topCategories.reduce((acc, c) => acc + (c.count || 0), 0);
                       const percentage = totalCount > 0 ? Math.round((cat.count / totalCount) * 100) : 0;
                       return (
-                        <div key={cat.name} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
+                        <div key={`${cat.name}-${i}`} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
                           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Rank #{i+1}</p>
                           <h4 className="text-sm font-bold text-[#1E293B]">{cat.name}</h4>
                           <div className="mt-2 flex items-center gap-2">
@@ -2915,27 +2925,160 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
     </div>
+  </main>
+
+  <AdminBottomNav 
+    activeView={activeView}
+    setActiveView={setActiveView}
+    badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+  />
+</div>
+</div>
+);
+}
+
+function AdminSidebar({ 
+  activeView, 
+  setActiveView, 
+  isCollapsed, 
+  setIsCollapsed, 
+  badges, 
+  handleLogout 
+}: any) {
+  const navItems = [
+    { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'products', label: 'Inventory', icon: Package, badge: badges.lowStockProductsCount },
+    { id: 'quotes', label: 'Requests', icon: MessageSquare, badge: badges.newQuotesCount },
+    { id: 'wishlists', label: 'Wishlists', icon: Heart },
+    { id: 'promotions', label: 'Marketing', icon: Megaphone },
+    { id: 'content', label: 'Pages', icon: Edit2 },
+    { id: 'appearance', label: 'Design', icon: Palette },
+    { id: 'reviews', label: 'Reviews', icon: Star, badge: badges.pendingReviewsCount },
+    { id: 'users', label: 'Team', icon: Users },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ];
+
+  return (
+    <aside 
+      className={`hidden lg:flex flex-col bg-[#0A1628] text-white transition-all duration-300 relative z-50 shadow-2xl ${isCollapsed ? 'w-20' : 'w-72'}`}
+    >
+      <div className="p-6 flex items-center justify-between border-b border-white/5 h-16 shrink-0 bg-[#070D18]">
+        {!isCollapsed && (
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-8 h-8 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold rotate-3 shrink-0 shadow-lg shadow-[#C8102E]/20">
+              <span className="-rotate-3 text-white text-xs">NT</span>
+            </div>
+            <span className="font-display font-black text-[#C8961A] tracking-[2px] uppercase text-[10px] truncate">
+              Admin Portal
+            </span>
+          </div>
+        )}
+        {isCollapsed && (
+          <div className="w-8 h-8 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold rotate-3 mx-auto shadow-lg shadow-[#C8102E]/20">
+            <span className="-rotate-3 text-white text-xs">NT</span>
+          </div>
+        )}
+      </div>
+
+      <nav className="flex-1 overflow-y-auto py-8 px-4 space-y-1.5 scrollbar-hide">
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveView(item.id)}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all relative group ${
+              activeView === item.id 
+                ? 'bg-[#1C3560] text-white shadow-xl shadow-black/10' 
+                : 'text-white/50 hover:text-white hover:bg-white/5'
+            } ${isCollapsed ? 'justify-center' : ''}`}
+            title={isCollapsed ? item.label : ''}
+          >
+            <div className={`shrink-0 transition-transform duration-300 group-hover:scale-110 ${activeView === item.id ? 'text-[#C8961A]' : 'text-white/40'}`}>
+              <item.icon size={20} />
+            </div>
+            {!isCollapsed && (
+              <span className={`text-[10px] font-black uppercase tracking-[2px] truncate ${activeView === item.id ? 'text-white' : ''}`}>
+                {item.label}
+              </span>
+            )}
+            {!isCollapsed && item.badge > 0 && (
+              <span className={`ml-auto px-2 py-0.5 rounded-full text-[8px] font-black shadow-lg ${
+                activeView === item.id ? 'bg-[#C8102E] text-white' : 'bg-white/10 text-slate-400'
+              }`}>
+                {item.badge}
+              </span>
+            )}
+            {isCollapsed && item.badge > 0 && (
+              <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0A1628]" />
+            )}
+            {activeView === item.id && (
+              <motion.div 
+                layoutId="sidebarActive"
+                className="absolute left-0 w-1 h-6 bg-[#C8102E] rounded-r-full shadow-[0_0_10px_rgba(200,16,46,0.6)]"
+              />
+            )}
+          </button>
+        ))}
+      </nav>
+
+      <div className="p-4 border-t border-white/5 shrink-0 bg-[#070D18]/50">
+        <button 
+          onClick={handleLogout}
+          className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all ${isCollapsed ? 'justify-center' : ''}`}
+        >
+          <LogOut size={20} />
+          {!isCollapsed && <span className="text-[10px] font-black uppercase tracking-[2px]">Sign Out</span>}
+        </button>
+      </div>
+
+      <button 
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-20 bg-[#C8961A] text-white w-7 h-7 rounded-full flex items-center justify-center shadow-xl border-2 border-[#0A1628] hover:bg-white hover:text-[#0A1628] transition-all z-50 hover:scale-110 active:scale-95"
+      >
+        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+      </button>
+    </aside>
   );
+}
 
-  async function handleDeleteProduct(id: string) {
-    if (confirm('Are you sure you want to delete this product? It will be removed from the public site immediately.')) {
-      try {
-        await deleteDoc(doc(db, 'products', id));
-      } catch (error) {
-        handleFirestoreError(error, OperationType.DELETE, `products/${id}`);
-      }
-    }
-  }
+function AdminBottomNav({ activeView, setActiveView, badges }: any) {
+  const items = [
+    { id: 'overview', label: 'Dash', icon: LayoutDashboard },
+    { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
+    { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
+    { id: 'promotions', label: 'Marketing', icon: Megaphone },
+    { id: 'settings', label: 'Meta', icon: Settings },
+  ];
 
-  async function handleDeletePromotion(id: string) {
-    if (confirm('Delete this promotional campaign?')) {
-      try {
-        await deleteDoc(doc(db, 'promotions', id));
-      } catch (error) {
-        handleFirestoreError(error, OperationType.DELETE, `promotions/${id}`);
-      }
-    }
-  }
+  return (
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/95 backdrop-blur-md border-t border-white/5 flex items-center justify-around px-4 z-[60] pb-5">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => setActiveView(item.id)}
+          className={`relative flex flex-col items-center justify-center gap-1.5 w-16 h-full transition-all ${
+            activeView === item.id ? 'text-[#C8961A]' : 'text-white/30'
+          }`}
+        >
+          <div className={`p-2 rounded-xl transition-all ${activeView === item.id ? 'bg-[#C8961A]/10 scale-110' : ''}`}>
+            <item.icon size={22} />
+          </div>
+          <span className="text-[7px] font-black uppercase tracking-[1px]">{item.label}</span>
+          {item.badge > 0 && (
+            <span className="absolute top-2 right-2 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[16px] shadow-lg border border-white/10 animate-bounce">
+              {item.badge}
+            </span>
+          )}
+          {activeView === item.id && (
+            <motion.div 
+              layoutId="mobileNavActiveIndicator"
+              className="absolute -bottom-1 w-8 h-1 bg-[#C8961A] rounded-full shadow-[0_0_10px_rgba(200,150,26,0.6)]"
+            />
+          )}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function MobileNavItem({ icon, label, active, onClick, danger = false, badge = 0 }: any) {
@@ -3092,7 +3235,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
     tags: initialData?.tags || (initialData?.tag ? [initialData.tag] : []),
     variants: initialData?.variants || [],
     subCategory: initialData?.subCategory || '',
-    stock: initialData?.stock || 0
+    stock: initialData?.stock || 0,
+    priceType: initialData?.priceType || 'fixed'
   });
 
   const sensors = useSensors(
@@ -3550,9 +3694,9 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                 Quick Colors
               </label>
               <div className="flex flex-wrap gap-2">
-                {commonColors.map(color => (
+                {commonColors.map((color, idx) => (
                   <button
-                    key={color.name}
+                    key={`${color.name}-${idx}`}
                     type="button"
                     onClick={() => quickAddColor(color.name)}
                     className="group relative flex items-center gap-2 bg-white px-2.5 py-2 rounded-xl border border-slate-200 hover:border-[#F59E0B] hover:shadow-md transition-all active:scale-95"
@@ -3852,7 +3996,34 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="space-y-1.5 pt-[22px] sm:pt-0">
+          <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Sourcing Mode</label>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setFormData({...formData, priceType: 'fixed'})}
+              className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                formData.priceType === 'fixed' 
+                  ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
+                  : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+              }`}
+            >
+              Fixed Price
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({...formData, priceType: 'wholesale'})}
+              className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                formData.priceType === 'wholesale' 
+                  ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
+                  : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+              }`}
+            >
+              Inquiry Only
+            </button>
+          </div>
+        </div>
         <div className="space-y-1.5 flex flex-col justify-end">
           <div className="flex items-center justify-between px-1">
             <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (/-)</label>
@@ -4733,8 +4904,15 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
           Save & Synchronize All Settings
         </button>
       </div>
-    </div>
-  );
+
+    <AdminBottomNav 
+      activeView={activeView}
+      setActiveView={setActiveView}
+      badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+    />
+  </div>
+</div>
+);
 }
 
 function DiscountRuleForm({ initialData, onSubmit, setToast }: any) {

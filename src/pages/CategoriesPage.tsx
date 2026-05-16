@@ -6,17 +6,11 @@ import { ChevronRight, ShoppingBag, Heart, Menu } from 'lucide-react';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
-interface PageProps {
-  cart: any[];
-  setCart: React.Dispatch<React.SetStateAction<any[]>>;
-  wishlist: any[];
-  setWishlist: React.Dispatch<React.SetStateAction<any[]>>;
-}
+import { useCart } from '../context/CartContext';
 
-export default function CategoriesPage({ cart, setCart, wishlist, setWishlist }: PageProps) {
+export default function CategoriesPage() {
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [majorCategories, setMajorCategories] = useState<any[]>([]);
 
@@ -67,9 +61,7 @@ export default function CategoriesPage({ cart, setCart, wishlist, setWishlist }:
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
       <Navbar 
-        cartCount={cart.length}
-        wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
+        wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}

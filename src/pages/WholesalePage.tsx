@@ -23,24 +23,29 @@ import { Footer } from '../components/Footer';
 import { Navbar } from '../components/Navbar';
 import { db, auth, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
+import { useCart } from '../context/CartContext';
 
-interface WholesalePageProps {
-  cart: any[];
-  setCart: (cart: any[]) => void;
-  wishlist: any[];
-  setWishlist: (wishlist: any[]) => void;
-}
-
-export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: WholesalePageProps) {
+export default function WholesalePage() {
+  const { 
+    cart, 
+    addToCart, 
+    isCartOpen, 
+    setIsCartOpen, 
+    wishlist, 
+    toggleWishlist: toggleWishlistGlobal, 
+    isInWishlist,
+    isWishlistOpen,
+    setIsWishlistOpen
+  } = useCart();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [inquiryQty, setInquiryQty] = useState(50);
+  const [customizationDetails, setCustomizationDetails] = useState('');
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' } | null>(null);
 
@@ -85,47 +90,19 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
 
   const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
 
-  const addToCart = (product: any) => {
-    const existing = cart.find(item => item.id === product.id);
-    if (existing) {
-      setCart(cart.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
-    }
-    setToast({ message: 'Added to your order!', type: 'success' });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  const toggleWishlist = async (product: any) => {
-    const exists = wishlist.find(p => p.id === product.id);
-    let newWishlist;
-    if (exists) {
-      newWishlist = wishlist.filter(p => p.id !== product.id);
-    } else {
-      newWishlist = [...wishlist, product];
-    }
-    setWishlist(newWishlist);
-
-    if (auth.currentUser) {
-      try {
-        await setDoc(doc(db, 'wishlists', auth.currentUser.uid), {
-          items: newWishlist,
-          updatedAt: serverTimestamp(),
-          email: auth.currentUser.email,
-          displayName: auth.currentUser.displayName
-        }, { merge: true });
-      } catch (err) {
-        console.error("Wishlist sync failed:", err);
-      }
-    }
+  const toggleWishlist = (product: any) => {
+    const exists = isInWishlist(product.id);
+    toggleWishlistGlobal(product);
+    setToast({ 
+      message: exists ? "Removed from your collection." : "Added to your collection!", 
+      type: exists ? 'warning' : 'success' 
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0A1628]">
       <Navbar 
-        cartCount={cart.length}
         wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
@@ -172,9 +149,9 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
           {/* Filters */}
           <div className="flex flex-col lg:flex-row gap-8 justify-between items-center mb-12 border-b border-slate-50 pb-12">
             <div className="flex flex-wrap gap-3">
-              {categories.map(cat => (
+              {categories.map((cat, idx) => (
                 <button
-                  key={cat}
+                  key={`${cat}-${idx}`}
                   onClick={() => setActiveCategory(cat)}
                   className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all ${
                     activeCategory === cat 
@@ -327,12 +304,45 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
                     {selectedProduct.name}
                   </h2>
                   <div className="flex items-center gap-6 mb-8">
-                    <span className="text-3xl font-black text-[#C8102E]">{selectedProduct.price.toLocaleString()}/-</span>
-                    <span className="text-sm font-black uppercase tracking-[3px] text-slate-300">Unit Bulk Price</span>
+                    <span className="text-3xl font-black text-[#C8102E]">
+                      {selectedProduct.priceType === 'wholesale' ? 'Price on Inquiry' : `${selectedProduct.price.toLocaleString()}/-`}
+                    </span>
+                    <span className="text-sm font-black uppercase tracking-[3px] text-slate-300">
+                      {selectedProduct.priceType === 'wholesale' ? 'Custom Bulk Request' : 'Unit Bulk Price'}
+                    </span>
                   </div>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-10">
+                  <p className="text-slate-500 text-sm leading-relaxed mb-6">
                     {selectedProduct.description || "Institutional grade apparel engineered for Kenya's leading organizations. Durable fabric with industrial-strength stitching."}
                   </p>
+
+                  {selectedProduct.priceType === 'wholesale' && (
+                    <div className="space-y-6 mb-10 p-6 bg-orange-50/50 rounded-[30px] border border-orange-100/50">
+                      <div className="flex flex-col sm:flex-row gap-6">
+                        <div className="flex-1 space-y-2">
+                          <label className="text-[10px] font-black uppercase text-[#C8961A] tracking-widest ml-1">Inquiry Quantity</label>
+                          <div className="relative">
+                            <input 
+                              type="number" 
+                              min="1"
+                              value={inquiryQty}
+                              onChange={(e) => setInquiryQty(parseInt(e.target.value) || 1)}
+                              className="w-full bg-white border border-orange-200 rounded-2xl px-5 py-4 text-sm font-black outline-none focus:border-[#C8102E] transition-all"
+                            />
+                            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-orange-300 uppercase tracking-widest">PCS</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-[#C8961A] tracking-widest ml-1">Customization / Branding Details</label>
+                        <textarea 
+                          placeholder="Please specify size range, logo placement (embroidery/print), or any specific fabric requirements..."
+                          value={customizationDetails}
+                          onChange={(e) => setCustomizationDetails(e.target.value)}
+                          className="w-full bg-white border border-orange-200 rounded-2xl px-5 py-4 text-xs font-medium outline-none focus:border-[#C8102E] transition-all min-h-[120px] resize-none"
+                        ></textarea>
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="grid grid-cols-2 gap-8 mb-10 pt-10 border-t border-slate-100">
                     <div>
@@ -348,10 +358,21 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
 
                 <div className="flex gap-4">
                   <button 
-                    onClick={() => { addToCart(selectedProduct); setSelectedProduct(null); }}
+                    onClick={() => { 
+                      addToCart({
+                        ...selectedProduct,
+                        price: selectedProduct.priceType === 'wholesale' ? 0 : selectedProduct.price,
+                        quantity: selectedProduct.priceType === 'wholesale' ? inquiryQty : 1,
+                        customization: selectedProduct.priceType === 'wholesale' ? customizationDetails : undefined
+                      }); 
+                      setSelectedProduct(null); 
+                      // Reset inputs
+                      setInquiryQty(50);
+                      setCustomizationDetails('');
+                    }}
                     className="flex-1 bg-[#0A1628] hover:bg-[#C8102E] text-white py-5 rounded-[20px] font-black text-[12px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
                   >
-                    <ShoppingBag size={20} /> Wholesale Request
+                    <ShoppingBag size={20} /> {selectedProduct.priceType === 'wholesale' ? 'Add to Inquiry' : 'Wholesale Request'}
                   </button>
                   <button 
                     onClick={() => toggleWishlist(selectedProduct)}
@@ -429,8 +450,12 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onCli
         </div>
         <h3 className="font-display text-3xl text-[#0A1628] leading-none mb-3 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
         <div className="flex items-center justify-between">
-          <span className="text-xl font-black text-[#1C3560]">{product.price.toLocaleString()}/-</span>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">Wholesale Unit</span>
+          <span className="text-xl font-black text-[#1C3560]">
+            {product.priceType === 'wholesale' ? 'Price on Inquiry' : `${product.price.toLocaleString()}/-`}
+          </span>
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+            {product.priceType === 'wholesale' ? 'Bulk Inquiry' : 'Wholesale Unit'}
+          </span>
         </div>
       </div>
     </motion.div>

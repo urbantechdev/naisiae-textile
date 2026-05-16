@@ -6,17 +6,11 @@ import { ExternalLink, ShoppingBag, Heart, Menu, ChevronRight, X } from 'lucide-
 import { db } from '../services/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
-interface PageProps {
-  cart: any[];
-  setCart: React.Dispatch<React.SetStateAction<any[]>>;
-  wishlist: any[];
-  setWishlist: React.Dispatch<React.SetStateAction<any[]>>;
-}
+import { useCart } from '../context/CartContext';
 
-export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: PageProps) {
+export default function PortfolioPage() {
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
@@ -79,9 +73,7 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
   return (
     <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#0A1628]">
       <Navbar 
-        cartCount={cart.length}
-        wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
+        wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
@@ -101,7 +93,7 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {projects.map((project, idx) => (
                 <motion.div 
-                    key={project.title}
+                    key={`${project.title}-${idx}`}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
@@ -190,15 +182,46 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
                 <div className="h-0.5 w-12 bg-[#0A1628] mb-8"></div>
                 
                 <p className="text-slate-500 text-base lg:text-lg leading-relaxed font-light mb-10 italic">
-                  {selectedProject.description}
+                  {selectedProject.description || "A comprehensive custom textile solution developed with precision and care, ensuring institutional legacy through superior craftsmanship."}
                 </p>
 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 py-3 border-b border-slate-100">
+                <div className="grid grid-cols-2 gap-6 mb-10">
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Specifications</h3>
+                    <div className="space-y-2">
+                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                         <div className="w-1 h-1 rounded-full bg-slate-300"></div> Double-knit weave
+                       </p>
+                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                         <div className="w-1 h-1 rounded-full bg-slate-300"></div> High-tensile thread
+                       </p>
+                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                         <div className="w-1 h-1 rounded-full bg-slate-300"></div> Institutional Grade
+                       </p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Impact</h3>
+                    <div className="space-y-2">
+                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                         <div className="w-1 h-1 rounded-full bg-slate-300"></div> 500+ Students clad
+                       </p>
+                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                         <div className="w-1 h-1 rounded-full bg-slate-300"></div> 3 Year Lifecycle
+                       </p>
+                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                         <div className="w-1 h-1 rounded-full bg-slate-300"></div> Brand Perfection
+                       </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4 border-t border-slate-100 pt-8">
+                  <div className="flex items-center gap-4 py-3 border-b border-slate-100/50">
                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest w-24">Deliverable</span>
                     <span className="text-xs font-bold text-[#0A1628]">Custom Textile Design & Bulk Production</span>
                   </div>
-                  <div className="flex items-center gap-4 py-3 border-b border-slate-100">
+                  <div className="flex items-center gap-4 py-3 border-b border-slate-100/50">
                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest w-24">Partner</span>
                     <span className="text-xs font-bold text-[#0A1628]">{selectedProject.title}</span>
                   </div>

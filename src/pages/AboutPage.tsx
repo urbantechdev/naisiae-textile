@@ -7,12 +7,13 @@ import { Footer } from '../components/Footer';
 import { doc, onSnapshot, query, collection, where } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any) {
+import { useCart } from '../context/CartContext';
+
+export default function AboutPage() {
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -34,9 +35,7 @@ export default function AboutPage({ cart, setCart, wishlist, setWishlist }: any)
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
-        wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
+        wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}

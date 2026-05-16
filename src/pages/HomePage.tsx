@@ -34,15 +34,22 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
+import { useCart } from '../context/CartContext';
 
-interface PageProps {
-  cart: any[];
-  setCart: React.Dispatch<React.SetStateAction<any[]>>;
-  wishlist: any[];
-  setWishlist: React.Dispatch<React.SetStateAction<any[]>>;
-}
-
-export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageProps) {
+export default function HomePage() {
+  const { 
+    cart, 
+    addToCart, 
+    isCartOpen, 
+    setIsCartOpen, 
+    isWishlistOpen,
+    setIsWishlistOpen,
+    wishlist, 
+    toggleWishlist: toggleWishlistGlobal, 
+    isInWishlist,
+    clearCart,
+    cartTotal
+  } = useCart();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('all');
   const [activeTag, setActiveTag] = useState<string | null>(null);
@@ -83,8 +90,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   }, [location.search]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [activeModalPromo, setActiveModalPromo] = useState<any>(null);
@@ -193,6 +198,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         initialVariants[type] = variantsByType[type][0].value;
       });
       setSelectedVariants(initialVariants);
+      setInquiryUnits(selectedQuickViewProduct.priceType === 'wholesale' ? 50 : 1);
+      setInquiryCustomization('');
     }
   }, [selectedQuickViewProduct]);
 
@@ -201,6 +208,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [quoteForm, setQuoteForm] = useState({ name: '', email: '', phone: '', service: 'General Enquiry', details: '' });
+  const [inquiryUnits, setInquiryUnits] = useState(50);
+  const [inquiryCustomization, setInquiryCustomization] = useState('');
 
   useEffect(() => {
     if (selectedQuickViewProduct) {
@@ -299,27 +308,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       handleFirestoreError(error, OperationType.GET, 'mega_menus');
     });
 
-    // Local storage persistence
-    const savedCart = localStorage.getItem('nt_cart');
-    const savedWishlist = localStorage.getItem('nt_wishlist');
-    if (savedCart) setCart(JSON.parse(savedCart));
-    if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
-
-    // Firebase Wishlist Sync
-    let unsubscribeWishlist: any;
-    if (auth.currentUser) {
-      const wishlistRef = doc(db, 'wishlists', auth.currentUser.uid);
-      unsubscribeWishlist = onSnapshot(wishlistRef, (doc) => {
-        if (doc.exists()) {
-          const remoteItems = (doc.data() as any).items || [];
-          setWishlist(remoteItems);
-          lastWishlistRef.current = JSON.stringify(remoteItems); // Update ref to avoid reflecting back
-        }
-      }, (error) => {
-        handleFirestoreError(error, OperationType.GET, `wishlists/${auth.currentUser?.uid}`);
-      });
-    }
-
     // Record Analytics View
     const recordView = async () => {
       const today = new Date().toISOString().split('T')[0];
@@ -347,7 +335,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       unsubscribeSettings();
       unsubscribeDiscountRules();
       unsubscribeMegaMenus();
-      if (unsubscribeWishlist) unsubscribeWishlist();
     };
   }, []);
 
@@ -392,22 +379,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
   useEffect(() => {
     localStorage.setItem('nt_cart', JSON.stringify(cart));
   }, [cart]);
-
-  useEffect(() => {
-    const currentWishlistStr = JSON.stringify(wishlist);
-    localStorage.setItem('nt_wishlist', currentWishlistStr);
-    
-    // Sync to Firebase if logged in AND data has actually changed
-    if (auth.currentUser && currentWishlistStr !== lastWishlistRef.current) {
-      lastWishlistRef.current = currentWishlistStr;
-      setDoc(doc(db, 'wishlists', auth.currentUser.uid), { 
-        items: wishlist, 
-        email: auth.currentUser?.email, 
-        displayName: auth.currentUser?.displayName,
-        updatedAt: serverTimestamp() 
-      }, { merge: true });
-    }
-  }, [wishlist]);
 
   useEffect(() => {
     if (siteSettings) {
@@ -457,26 +428,12 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
     }
   }, [promotions]);
 
-  const addToCart = (product: any) => {
-    setCart(prev => {
-      const exists = prev.find(item => item.id === product.id);
-      if (exists) {
-        return prev.map(item => item.id === product.id ? { ...item, quantity: (item.quantity || 1) + 1 } : item);
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-    setIsCartOpen(true);
-  };
-
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
-  };
-
   const toggleWishlist = (product: any) => {
-    setWishlist(prev => {
-      const exists = prev.find(item => item.id === product.id);
-      if (exists) return prev.filter(item => item.id !== product.id);
-      return [...prev, product];
+    const exists = wishlist.some(p => p.id === product.id);
+    toggleWishlistGlobal(product);
+    setToast({ 
+      message: exists ? "Removed from your collection." : "Added to your collection!", 
+      type: exists ? 'warning' : 'success' 
     });
   };
 
@@ -490,7 +447,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
       return false;
     });
   const discountAmount = activeDiscount ? Math.round(subtotal * (activeDiscount.discountPercentage / 100)) : 0;
-  const cartTotal = subtotal - discountAmount;
 
   const handleCheckout = async () => {
     if (cart.length === 0) return;
@@ -510,7 +466,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
     try {
       await addDoc(collection(db, 'quotes'), quoteData);
       setOrderSuccess(true);
-      setCart([]);
+      clearCart();
       setTimeout(() => {
         setOrderSuccess(false);
         setIsCartOpen(false);
@@ -524,10 +480,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
       {/* Top Promotion Bar & Navbar */}
       <Navbar 
-        cartCount={cart.length}
         wishlistCount={wishlist.length}
         compareCount={compareList.length}
-        setIsCartOpen={setIsCartOpen}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
@@ -895,9 +849,9 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             
             {/* Category Tabs */}
             <div className="flex flex-wrap gap-4 mt-8">
-              {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map(tab => (
+              {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => (
                 <button
-                  key={tab}
+                  key={`${tab}-${idx}`}
                   onClick={() => {
                     setActiveTab(tab);
                     setActiveSubCategory(null);
@@ -924,9 +878,9 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 >
                   All Uniforms
                 </button>
-                {uniformSubCategories.map(subCat => (
+                {uniformSubCategories.map((subCat, idx) => (
                   <button
-                    key={subCat}
+                    key={`${subCat}-${idx}`}
                     onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
                     className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
                       activeSubCategory === subCat ? 'bg-[#C8102E] text-white shadow-md' : 'bg-white/50 text-slate-500 border border-slate-100 hover:bg-white'
@@ -947,9 +901,9 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 >
                   All items
                 </button>
-                {allTags.map(tag => (
+                {allTags.map((tag, idx) => (
                   <button 
-                    key={tag}
+                    key={`${tag}-${idx}`}
                     onClick={() => setActiveTag(activeTag === tag ? null : tag)}
                     className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#F59E0B]'}`}
                   >
@@ -1157,8 +1111,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
               </div>
               
               <div className="flex gap-2">
-                {compareList.map(item => (
-                  <div key={item.id} className="relative group/compare-item flex items-center justify-center">
+                {compareList.map((item, idx) => (
+                  <div key={`${item.id}-${idx}`} className="relative group/compare-item flex items-center justify-center">
                     {item.imageUrl ? (
                       <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-contain bg-white border-2 border-white/10" />
                     ) : (
@@ -1204,7 +1158,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
             <div className="flex items-center gap-4">
               <div className="flex -space-x-4">
                 {compareList.map((item, idx) => (
-                  <div key={item.id} className="w-10 h-10 rounded-full border-2 border-[#0A1628] overflow-hidden bg-white shadow-lg flex items-center justify-center">
+                  <div key={`${item.id}-${idx}`} className="w-10 h-10 rounded-full border-2 border-[#0A1628] overflow-hidden bg-white shadow-lg flex items-center justify-center">
                     {item.imageUrl ? (
                       <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" alt={item.name} />
                     ) : (
@@ -1277,8 +1231,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="flex flex-col justify-end pb-12">
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-[3px]">Specifications</p>
                   </div>
-                  {compareList.map(item => (
-                    <div key={item.id} className="text-center">
+                  {compareList.map((item, idx) => (
+                    <div key={`${item.id}-${idx}`} className="text-center">
                       <div className="aspect-square rounded-3xl bg-slate-50 border border-slate-100 p-6 mb-6 overflow-hidden flex items-center justify-center shadow-inner">
                         {item.imageUrl ? (
                           <img src={item.imageUrl} className="w-full h-full object-contain" alt={item.name} />
@@ -1295,8 +1249,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest">
                     Sub-Category
                   </div>
-                  {compareList.map(item => (
-                    <div key={item.id} className="py-8 border-t border-slate-100 text-center font-bold text-xs text-slate-600">
+                  {compareList.map((item, idx) => (
+                    <div key={`${item.id}-sub-${idx}`} className="py-8 border-t border-slate-100 text-center font-bold text-xs text-slate-600">
                       {item.subCategory || "-"}
                     </div>
                   ))}
@@ -1305,8 +1259,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest">
                     Unit Price
                   </div>
-                  {compareList.map(item => (
-                    <div key={item.id} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#C8102E]">
+                  {compareList.map((item, idx) => (
+                    <div key={`${item.id}-price-${idx}`} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#C8102E]">
                       {item.price.toLocaleString()}/-
                     </div>
                   ))}
@@ -1315,12 +1269,12 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest">
                     Available Sizes/Colors
                   </div>
-                  {compareList.map(item => (
-                    <div key={item.id} className="py-8 border-t border-slate-100 text-center">
+                  {compareList.map((item, idx) => (
+                    <div key={`${item.id}-variants-${idx}`} className="py-8 border-t border-slate-100 text-center">
                       <div className="flex flex-wrap justify-center gap-2 px-4">
                         {item.variants?.length > 0 ? (
-                          item.variants.slice(0, 5).map((v: any) => (
-                            <span key={v.id} className="px-2 py-1 bg-slate-100 text-[9px] font-bold text-slate-500 rounded border border-slate-200">
+                          item.variants.slice(0, 5).map((v: any, vIdx: number) => (
+                            <span key={`${v.id}-${vIdx}`} className="px-2 py-1 bg-slate-100 text-[9px] font-bold text-slate-500 rounded border border-slate-200">
                               {v.value}
                             </span>
                           ))
@@ -1336,8 +1290,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="py-8 border-t border-slate-100 flex items-center text-[10px] font-black text-[#64748B] uppercase tracking-widest leading-relaxed pr-8">
                     Product Description
                   </div>
-                  {compareList.map(item => (
-                    <div key={item.id} className="py-8 border-t border-slate-100 text-center">
+                  {compareList.map((item, idx) => (
+                    <div key={`${item.id}-desc-${idx}`} className="py-8 border-t border-slate-100 text-center">
                       <p className="text-xs text-slate-500 leading-relaxed max-w-[200px] mx-auto px-2">
                         {item.description || "Premium engineered textile with institutional-grade durability."}
                       </p>
@@ -1346,8 +1300,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
                   {/* Row: Action */}
                   <div className="pt-12"></div>
-                  {compareList.map(item => (
-                    <div key={item.id} className="pt-12 text-center">
+                  {compareList.map((item, idx) => (
+                    <div key={`${item.id}-action-${idx}`} className="pt-12 text-center">
                       <button 
                         onClick={() => { addToCart(item); setIsCompareModalOpen(false); }}
                         className="w-full max-w-[180px] bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[2px] transition-all"
@@ -1441,11 +1395,19 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     </h2>
                     <div className="flex flex-wrap items-center gap-3 lg:gap-6 mb-6 lg:mb-8 bg-slate-50/80 backdrop-blur-sm p-4 lg:p-6 rounded-2xl border border-slate-100 shadow-sm">
                       <div className="flex flex-col">
-                        <span className="text-[9px] lg:text-[10px] font-black uppercase text-slate-400 tracking-[2px] mb-1">MSRP Price</span>
+                        <span className="text-[9px] lg:text-[10px] font-black uppercase text-slate-400 tracking-[2px] mb-1">
+                          {selectedQuickViewProduct.priceType === 'wholesale' ? "Bulk Sourcing" : "MSRP Price"}
+                        </span>
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl lg:text-4xl font-black text-[#C8102E] tracking-tight">{selectedQuickViewProduct.price.toLocaleString()}/-</span>
-                          {selectedQuickViewProduct.oldPrice && (
-                            <span className="text-sm lg:text-lg text-slate-400 line-through decoration-red-500/30">{selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
+                          {selectedQuickViewProduct.priceType === 'wholesale' ? (
+                            <span className="text-2xl lg:text-3xl font-black text-[#0A1628] leading-none uppercase tracking-tight">Price on Inquiry</span>
+                          ) : (
+                            <>
+                              <span className="text-2xl lg:text-4xl font-black text-[#C8102E] tracking-tight">{selectedQuickViewProduct.price.toLocaleString()}/-</span>
+                              {selectedQuickViewProduct.oldPrice && (
+                                <span className="text-sm lg:text-lg text-slate-400 line-through decoration-red-500/30">{selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -1480,7 +1442,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                               
                               return (
                                 <button
-                                  key={opt.id}
+                                  key={`${type}-${opt.id || opt.value || idx}`}
                                   onClick={() => setSelectedVariants(prev => ({ ...prev, [type]: opt.value }))}
                                   className={`relative flex items-center justify-center transition-all ${
                                     isColor 
@@ -1511,6 +1473,56 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                     </div>
                   )}
 
+                  {/* Sourcing Quantity & Customization */}
+                  <div className="space-y-6 mb-8 pt-4 border-t border-slate-50">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Order Quantity Units</label>
+                        <div className="flex items-center bg-slate-50 rounded-xl border border-slate-100 p-1">
+                          <button 
+                            type="button"
+                            onClick={() => setInquiryUnits(Math.max(1, inquiryUnits - 1))}
+                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#C8102E] transition-all"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <input 
+                            type="number" 
+                            min="1"
+                            value={inquiryUnits}
+                            onChange={(e) => setInquiryUnits(parseInt(e.target.value) || 1)}
+                            className="bg-transparent border-none text-center text-sm font-black w-full outline-none"
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => setInquiryUnits(inquiryUnits + 1)}
+                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#C8102E] transition-all"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Sourcing Type</label>
+                        <div className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[10px] font-black uppercase text-[#0A1628]">
+                          {selectedQuickViewProduct.priceType === 'wholesale' ? 'Institutional Bulk' : 'Individual Retail'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {selectedQuickViewProduct.priceType === 'wholesale' && (
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Branding & Customization Details</label>
+                        <textarea 
+                          placeholder="Logo embroidery, Screen printing, Custom sizing, Specific fabric weight requirements..."
+                          value={inquiryCustomization}
+                          onChange={(e) => setInquiryCustomization(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C8961A]/30 transition-all h-24 resize-none"
+                        />
+                      </div>
+                    )}
+                  </div>
+
                   {/* Accordion Group */}
                   <div className="space-y-3 mb-4">
                     {/* Description & Tags Accordion */}
@@ -1522,13 +1534,38 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         </span>
                       </summary>
                       <div className="p-5 text-slate-500 text-sm leading-relaxed border-t border-slate-50 bg-white">
-                        <p className="mb-4">{selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</p>
+                        <p className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#C8961A] pl-4">{selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</p>
+                        
+                        <div className="grid grid-cols-2 gap-6 mb-8">
+                          <div className="space-y-3">
+                            <h4 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Fabric Specs</h4>
+                            <div className="space-y-2">
+                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> Anti-Pilling Tech
+                              </p>
+                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> Color-Lock Weave
+                              </p>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <h4 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Durability</h4>
+                            <div className="space-y-2">
+                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> 100+ Wash Cycle
+                              </p>
+                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> Institutional Grade
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                         
                         {/* Tags */}
                         {selectedQuickViewProduct.tags && selectedQuickViewProduct.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-50">
-                            {selectedQuickViewProduct.tags.map((tag: string) => (
-                              <span key={tag} className="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
+                            {selectedQuickViewProduct.tags.map((tag: string, i: number) => (
+                              <span key={`${tag}-${i}`} className="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
                                 #{tag}
                               </span>
                             ))}
@@ -1696,7 +1733,8 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
                     <button 
                       onClick={() => {
-                        const finalPrice = selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                        const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
+                        const finalPrice = basePrice + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
                           const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
                           return sum + (variant?.price || 0);
                         }, 0);
@@ -1704,26 +1742,34 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                         const cartItem = {
                           ...selectedQuickViewProduct,
                           price: finalPrice,
-                          selectedVariants: { ...selectedVariants }
+                          selectedVariants: { ...selectedVariants },
+                          quantity: inquiryUnits,
+                          customization: inquiryCustomization,
+                          priceType: selectedQuickViewProduct.priceType || 'fixed'
                         };
                         
-                        addToCart(cartItem);
+                        addToCart(cartItem, inquiryUnits);
                         setSelectedQuickViewProduct(null);
+                        setIsCartOpen(true);
                       }}
                       className="relative overflow-hidden w-full flex-1 bg-[#0A1628] hover:bg-[#1C3560] text-white h-14 lg:h-16 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] lg:tracking-[4px] transition-all flex items-center shadow-2xl hover:shadow-[#0A1628]/30 active:scale-[0.98] group"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                       <div className="relative flex items-center w-full h-full">
-                        <div className="flex flex-col items-start px-6 lg:px-8 border-r border-white/10 h-full justify-center bg-white/5">
-                          <span className="text-[8px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Total Value</span>
-                          <span className="text-sm lg:text-lg font-black tracking-tight">{(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                            const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                            return sum + (variant?.price || 0);
-                          }, 0)).toLocaleString()}/-</span>
-                        </div>
+                        {selectedQuickViewProduct.priceType !== 'wholesale' && (
+                          <div className="flex flex-col items-start px-6 lg:px-8 border-r border-white/10 h-full justify-center bg-white/5">
+                            <span className="text-[8px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Est. Total</span>
+                            <span className="text-sm lg:text-lg font-black tracking-tight">
+                              {( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                                const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                                return sum + (variant?.price || 0);
+                              }, 0)) * inquiryUnits ).toLocaleString()}/-
+                            </span>
+                          </div>
+                        )}
                         <div className="flex-1 flex items-center justify-center gap-3 lg:gap-4 px-6">
                           <ShoppingBag size={20} className="shrink-0 text-[#C8961A]" />
-                          <span className="whitespace-nowrap">Secure Add to Cart</span>
+                          <span className="whitespace-nowrap">{selectedQuickViewProduct.priceType === 'wholesale' ? "Initiate Bulk Inquiry" : "Add to Collection"}</span>
                         </div>
                       </div>
                     </button>
@@ -1773,156 +1819,6 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
 
       {/* Mobile Menu Handled by Navbar */}
       <AnimatePresence>
-        {/* Cart Drawer */}
-          {(isCartOpen || isWishlistOpen) && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
-            onClick={() => { setIsCartOpen(false); setIsWishlistOpen(false); }}
-          >
-            <motion.div 
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="p-6 border-b flex items-center justify-between">
-                <div>
-                  <h2 className="font-display text-2xl text-[#0A1628] leading-none mb-1">
-                    {isCartOpen ? 'Your Shopping Cart' : 'Your Wishlist'}
-                  </h2>
-                  <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">
-                    {isCartOpen ? `${cart.length} Items Selected` : `${wishlist.length} Items Saved`}
-                  </p>
-                </div>
-                <button 
-                  onClick={() => { setIsCartOpen(false); setIsWishlistOpen(false); }}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
-                {(isCartOpen ? cart : wishlist).length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
-                    <ShoppingBag size={40} className="mb-4" />
-                    <p className="font-bold text-sm">Your {isCartOpen ? 'cart' : 'wishlist'} is empty</p>
-                    <button 
-                      onClick={() => { setIsCartOpen(false); setIsWishlistOpen(false); }}
-                      className="mt-4 text-[#C8102E] text-xs font-bold border-b border-[#C8102E]"
-                    >
-                      Browse Products
-                    </button>
-                  </div>
-                ) : (
-                  (isCartOpen ? cart : wishlist).map((item) => (
-                    <div key={item.id} className="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100 items-center">
-                      <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
-                        {item.imageUrl ? (
-                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-contain p-1" />
-                        ) : (
-                          <Package size={24} className="text-slate-200" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start mb-1">
-                          <h4 className="text-sm font-bold text-[#0A1628] leading-tight">{item.name}</h4>
-                          {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-1">
-                              {Object.entries(item.selectedVariants).map(([type, val]) => (
-                                <span key={type} className="text-[8px] font-black uppercase text-[#C8961A] bg-[#C8961A]/10 px-1.5 py-0.5 rounded tracking-tighter">
-                                  {type}: {val as string}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          <button 
-                            onClick={() => isCartOpen ? removeFromCart(item.id) : toggleWishlist(item)}
-                            className="p-1 text-slate-300 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                        <div className="flex justify-between items-center mt-2">
-                          <span className="text-[#C8102E] font-black text-sm">{item.price.toLocaleString()}/-</span>
-                          {isCartOpen && (
-                            <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-md border border-slate-200">
-                              <button 
-                                onClick={() => setCart(prev => prev.map(i => i.id === item.id ? { ...i, quantity: Math.max(1, (i.quantity || 1) - 1) } : i))}
-                                className="text-xs font-bold w-4 h-4 flex items-center justify-center hover:bg-slate-100 rounded"
-                              >
-                                -
-                              </button>
-                              <span className="text-xs font-black w-4 text-center">{item.quantity || 1}</span>
-                              <button 
-                                onClick={() => setCart(prev => prev.map(i => i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i))}
-                                className="text-xs font-bold w-4 h-4 flex items-center justify-center hover:bg-slate-100 rounded"
-                              >
-                                +
-                              </button>
-                            </div>
-                          )}
-                          {!isCartOpen && (
-                            <button 
-                              onClick={() => { addToCart(item); toggleWishlist(item); }}
-                              className="text-[10px] font-bold text-[#C8102E] uppercase"
-                            >
-                              Add to Cart
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {isCartOpen && cart.length > 0 && (
-                <div className="p-6 bg-slate-50 border-t">
-                  <div className="flex justify-between items-end mb-6">
-                    <div>
-                      <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-[2px]">Subtotal</div>
-                      {activeDiscount ? (
-                        <>
-                          <div className="text-sm font-bold text-slate-400 line-through">{subtotal.toLocaleString()}/-</div>
-                          <div className="flex items-center gap-2">
-                            <div className="text-2xl font-black text-[#C8102E]">{cartTotal.toLocaleString()}/-</div>
-                            <span className="text-[9px] font-black bg-[#C8102E] text-white px-2 py-0.5 rounded uppercase tracking-widest leading-none">
-                              {activeDiscount.discountPercentage}% OFF
-                            </span>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-2xl font-black text-[#0A1628]">{cartTotal.toLocaleString()}/-</div>
-                      )}
-                    </div>
-                    <div className="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded">VAT Included</div>
-                  </div>
-                  <button 
-                    onClick={handleCheckout}
-                    disabled={orderSuccess}
-                    className="w-full bg-[#C8102E] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl shadow-[#C8102E]/20 flex items-center justify-center gap-2 hover:bg-[#8B0000] transition-all disabled:bg-green-600"
-                  >
-                    {orderSuccess ? (
-                      <><CheckCircle2 size={18} /> Quote Sent!</>
-                    ) : (
-                      'Request Wholesale Quote'
-                    )}
-                  </button>
-                  <p className="text-[10px] text-center text-[#64748B] mt-4 leading-relaxed">
-                    Our team will review your cart and send a formal invoice/quote with bulk discounts to your email within 24 hours.
-                  </p>
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-
         {/* Quote Request Modal */}
         {isQuoteModalOpen && (
           <motion.div 

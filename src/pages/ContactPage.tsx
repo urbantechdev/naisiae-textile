@@ -6,12 +6,13 @@ import { Footer } from '../components/Footer';
 import { doc, onSnapshot, query, collection, where, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../services/firebase';
 
-export default function ContactPage({ cart, setCart, wishlist, setWishlist }: any) {
+import { useCart } from '../context/CartContext';
+
+export default function ContactPage() {
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -63,9 +64,7 @@ export default function ContactPage({ cart, setCart, wishlist, setWishlist }: an
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
-        cartCount={cart.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0)}
-        wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
+        wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}

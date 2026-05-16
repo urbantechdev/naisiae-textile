@@ -9,6 +9,7 @@
         "category": { "type": "string" },
         "description": { "type": "string" },
         "price": { "type": "number" },
+        "priceType": { "type": "string", "enum": ["fixed", "wholesale"] },
         "oldPrice": { "type": "number" },
         "imageUrl": { "type": "string" },
         "badge": { "type": "string" },

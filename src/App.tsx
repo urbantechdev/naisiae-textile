@@ -24,8 +24,12 @@ const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 
 import { InactivityHandler } from './components/InactivityHandler';
+import { CartProvider, useCart } from './context/CartContext';
+import { CartModal } from './components/CartModal';
+import { WishlistModal } from './components/WishlistModal';
 
 // Dynamic SEO Engine to enforce branding permanently across all routes
 function DynamicSEOEngine() {
@@ -75,24 +79,6 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [cart, setCart] = useState<any[]>([]);
-  const [wishlist, setWishlist] = useState<any[]>([]);
-
-  useEffect(() => {
-    // Initial load from localStorage
-    const savedCart = localStorage.getItem('nt_cart');
-    const savedWishlist = localStorage.getItem('nt_wishlist');
-    if (savedCart) setCart(JSON.parse(savedCart));
-    if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('nt_cart', JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    localStorage.setItem('nt_wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -133,38 +119,50 @@ export default function App() {
 
   return (
     <Router>
-      <DynamicSEOEngine /> {/* Injected right here to capture and control all route shifts */}
-      <InactivityHandler>
-        <Suspense fallback={
-          <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C8961A]"></div>
-          </div>
-        }>
-          <Routes>
-            <Route path="/" element={<HomePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/about" element={<AboutPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/wholesale" element={<WholesalePage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/contact" element={<ContactPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/privacy" element={<PrivacyPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/terms" element={<TermsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/shipping" element={<ShippingPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/returns" element={<ReturnsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            
-            {/* New Routes */}
-            <Route path="/services" element={<ServicesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/products" element={<ProductsPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/portfolio" element={<PortfolioPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            <Route path="/categories" element={<CategoriesPage cart={cart} setCart={setCart} wishlist={wishlist} setWishlist={setWishlist} />} />
-            
-            <Route path="/login" element={<LoginPage />} />
-            <Route 
-              path="/admin/*" 
-              element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />} 
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </InactivityHandler>
+      <CartProvider>
+        <DynamicSEOEngine />
+        <AppContent isAdmin={isAdmin} />
+      </CartProvider>
     </Router>
+  );
+}
+
+function AppContent({ isAdmin }: any) {
+  const { isCartOpen, setIsCartOpen, isWishlistOpen, setIsWishlistOpen } = useCart();
+
+  return (
+    <InactivityHandler>
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C8961A]"></div>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/wholesale" element={<WholesalePage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/shipping" element={<ShippingPage />} />
+          <Route path="/returns" element={<ReturnsPage />} />
+          
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          
+          <Route path="/login" element={<LoginPage />} />
+          <Route 
+            path="/admin/*" 
+            element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />} 
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
+    </InactivityHandler>
   );
 }

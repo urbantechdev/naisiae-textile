@@ -19,13 +19,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../services/firebase';
+import { useCart } from '../context/CartContext';
 
 interface NavbarProps {
-  cartCount: number;
   wishlistCount: number;
   compareCount?: number;
   isMenuOpen: boolean;
-  setIsCartOpen: (open: boolean) => void;
   setIsWishlistOpen: (open: boolean) => void;
   setIsMenuOpen: (open: boolean) => void;
   setIsQuoteModalOpen: (open: boolean) => void;
@@ -34,17 +33,16 @@ interface NavbarProps {
 }
 
 export function Navbar({ 
-  cartCount, 
   wishlistCount,
   compareCount = 0,
   isMenuOpen,
-  setIsCartOpen,
   setIsWishlistOpen,
   setIsMenuOpen,
   setIsQuoteModalOpen,
   setIsCompareModalOpen,
   setSelectedQuickViewProduct
 }: NavbarProps) {
+  const { cartCount, setIsCartOpen } = useCart();
   const navigate = useNavigate();
 
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
@@ -407,7 +405,7 @@ export function Navbar({
                             </div>
                             <ul className="space-y-5 pl-10">
                               {cat.items?.map((sub: string, sIdx: number) => (
-                                <li key={sIdx}>
+                                <li key={`${sub}-${sIdx}`}>
                                   <Link 
                                     to={activeMegaMenu === 'products' ? `/products?category=${cat.name.toLowerCase()}` : normalizedActive === 'services' ? `/services#${sub.toLowerCase().replace(/ /g, '-')}` : `/categories#${sub.toLowerCase().replace(/ /g, '-')}`}
                                     className="group/link flex items-center gap-4 text-slate-400 hover:text-[#C8102E] transition-all py-1.5"
@@ -601,9 +599,9 @@ export function Navbar({
                   { name: 'Services', link: '/services', icon: <Zap size={18} /> },
                   { name: 'Portfolio', link: '/portfolio', icon: <ChevronRight size={18} /> },
                   { name: 'Catalog Quote', onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
-                ].map((item) => (
+                ].map((item, idx) => (
                   <button 
-                    key={item.name}
+                    key={`${item.name}-${idx}`}
                     onClick={() => {
                       if (item.onClick) item.onClick();
                       else setIsMenuOpen(false);

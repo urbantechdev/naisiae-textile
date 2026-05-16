@@ -83,7 +83,7 @@ async function startServer() {
 
           const metaTags = `
             <title>${name} | Uhuru Market Uniforms</title>
-            <meta property="og:title" content="${name} - KES ${price.toLocaleString()} | Uhuru Market Uniforms" />
+            <meta property="og:title" content="${name} - ${price.toLocaleString()}/- | Uhuru Market Uniforms" />
             <meta property="og:description" content="${description}" />
             <meta property="og:image" content="${imageUrl}" />
             <meta property="og:type" content="product" />

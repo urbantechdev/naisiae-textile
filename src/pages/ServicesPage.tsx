@@ -6,17 +6,11 @@ import { ChevronRight, Scissors, Ruler, Palette, ShoppingBag, Heart, Menu } from
 import { db } from '../services/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
-interface PageProps {
-  cart: any[];
-  setCart: React.Dispatch<React.SetStateAction<any[]>>;
-  wishlist: any[];
-  setWishlist: React.Dispatch<React.SetStateAction<any[]>>;
-}
+import { useCart } from '../context/CartContext';
 
-export default function ServicesPage({ cart, setCart, wishlist, setWishlist }: PageProps) {
+export default function ServicesPage() {
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [services, setServices] = useState<any[]>([]);
 
@@ -69,9 +63,7 @@ export default function ServicesPage({ cart, setCart, wishlist, setWishlist }: P
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
       <Navbar 
-        cartCount={cart.length}
-        wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
+        wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}

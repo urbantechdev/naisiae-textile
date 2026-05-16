@@ -6,17 +6,11 @@ import { ChevronRight, Package, Grid, Layout, Scissors, HelpCircle, Phone } from
 import { collection, onSnapshot, query, where, orderBy, limit } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../services/firebase';
 
-interface PageProps {
-  cart: any[];
-  setCart: React.Dispatch<React.SetStateAction<any[]>>;
-  wishlist: any[];
-  setWishlist: React.Dispatch<React.SetStateAction<any[]>>;
-}
+import { useCart } from '../context/CartContext';
 
-export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: PageProps) {
+export default function ProductsPage() {
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const [products, setProducts] = useState<any[]>([]);
@@ -64,9 +58,7 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-[#0A1628]">
       <Navbar 
-        cartCount={cart.length}
-        wishlistCount={wishlist.length}
-        setIsCartOpen={setIsCartOpen}
+        wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
@@ -202,9 +194,9 @@ export default function ProductsPage({ cart, setCart, wishlist, setWishlist }: P
                         { title: 'Custom Patterns', desc: 'Unique checks, stripes, and solid weave variations.' },
                         { title: 'Signature Logos', desc: 'Exclusive high-density embroidery placements.' },
                         { title: 'Performance Fabrics', desc: 'Moisture-wicking, anti-pilling, and fade-resistant textiles.' }
-                    ].map(item => (
-                        <div key={item.title} className="flex gap-6">
-                            <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-[#C8102E] shrink-0 font-display text-xl">0{sections.length}</div>
+                    ].map((item, idx) => (
+                        <div key={`${item.title}-${idx}`} className="flex gap-6">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-[#C8102E] shrink-0 font-display text-xl">0{idx + 1}</div>
                             <div>
                                 <h4 className="font-black text-sm uppercase tracking-widest text-[#0A1628] mb-1">{item.title}</h4>
                                 <p className="text-xs text-slate-400 font-medium">{item.desc}</p>
