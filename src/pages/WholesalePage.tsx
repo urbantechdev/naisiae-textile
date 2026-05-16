@@ -327,7 +327,7 @@ export default function WholesalePage({ cart, setCart, wishlist, setWishlist }: 
                     {selectedProduct.name}
                   </h2>
                   <div className="flex items-center gap-6 mb-8">
-                    <span className="text-3xl font-black text-[#C8102E]">KES {selectedProduct.price.toLocaleString()}</span>
+                    <span className="text-3xl font-black text-[#C8102E]">{selectedProduct.price.toLocaleString()}/-</span>
                     <span className="text-sm font-black uppercase tracking-[3px] text-slate-300">Unit Bulk Price</span>
                   </div>
                   <p className="text-slate-500 text-sm leading-relaxed mb-10">
@@ -429,7 +429,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onCli
         </div>
         <h3 className="font-display text-3xl text-[#0A1628] leading-none mb-3 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
         <div className="flex items-center justify-between">
-          <span className="text-xl font-black text-[#1C3560]">KES {product.price.toLocaleString()}</span>
+          <span className="text-xl font-black text-[#1C3560]">{product.price.toLocaleString()}/-</span>
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">Wholesale Unit</span>
         </div>
       </div>

@@ -737,10 +737,42 @@ export default function AdminDashboard() {
     setToast({ message: "Populating sample catalogue...", type: 'info' });
     
     const samples = [
-      { name: 'Boys Primary Sweater', category: 'School Uniforms', price: 1200, wholesalePrice: 850, active: true, tags: ['Wholesale', 'Boys', 'Wool'], description: 'High-quality wool blend sweater for primary schools.' },
-      { name: 'Girls Highschool Skirt', category: 'School Uniforms', price: 1500, wholesalePrice: 1100, active: true, tags: ['Wholesale', 'Girls', 'Pleated'], description: 'Classic pleated school skirt with durable fabric.' },
-      { name: 'Corporate Polo Shirt', category: 'Corporate Wear', price: 1800, wholesalePrice: 1350, active: true, tags: ['Wholesale', 'Corporate', 'Cotton'], description: 'Premium cotton polo shirt with reinforced collar.' },
-      { name: 'Sports Tracksuit Set', category: 'Sports Kits', price: 2500, wholesalePrice: 1900, active: true, tags: ['Wholesale', 'Sports', 'Nylon'], description: 'Full tracksuit set for school and college sports teams.' }
+      { 
+        name: 'Boys Primary V-Neck Sweater', 
+        category: 'School Uniforms', 
+        price: 1200, 
+        wholesalePrice: 850, 
+        active: true, 
+        tags: ['Wholesale', 'Boys', 'Wool'], 
+        description: 'Meticulously crafted with a premium 70/30 wool-acrylic blend. Engineered for Kenyan primary school climates, providing thermal regulation and high-tensile resistance against daily wear. Features reinforced cuff ribbing and anti-pilling technology to maintain a crisp look throughout the school term.' 
+      },
+      { 
+        name: 'Girls Highschool Pleated Skirt', 
+        category: 'School Uniforms', 
+        price: 1500, 
+        wholesalePrice: 1100, 
+        active: true, 
+        tags: ['Wholesale', 'Girls', 'Pleated'], 
+        description: 'Elite grade Gabardine weave with permanent pleat-retention technology. Designed with a growth-friendly adjustable waistband and deep-stitched anti-fray hems. The breathable, stain-resistant finish ensures comfort and professional appearance from morning assembly to extracurricular activities.' 
+      },
+      { 
+        name: 'Corporate Pique Polo Shirt', 
+        category: 'Corporate Wear', 
+        price: 1800, 
+        wholesalePrice: 1350, 
+        active: true, 
+        tags: ['Wholesale', 'Corporate', 'Cotton'], 
+        description: '100% long-staple combed cotton pique with a substantial 220GSM weight. Features a structured rib-knit collar that resists curling and high-density stitching for custom brand embroidery. Perfect for high-end corporate events, client-facing roles, and modern professional branding.' 
+      },
+      { 
+        name: 'Institutional Sports Tracksuit Set', 
+        category: 'Sports Kits', 
+        price: 2500, 
+        wholesalePrice: 1900, 
+        active: true, 
+        tags: ['Wholesale', 'Sports', 'Nylon'], 
+        description: 'Advanced moisture-wicking performance nylon with a micro-mesh interior lining for rapid evaporation. Designed for athletic agility with articulated knee joints and aerodynamic silhouette. Specifically engineered for institutional teams requiring uniform aesthetics and high-performance functionality during cold morning training.' 
+      }
     ];
 
     try {
@@ -1193,7 +1225,7 @@ export default function AdminDashboard() {
                           <div className="min-width-0 flex-1">
                             <p className="text-xs font-bold truncate pr-4">{quote.name}</p>
                             <p className="text-[10px] text-gray-400 mt-0.5">
-                              {quote.items ? `${quote.items.length} items` : quote.service} · KES {quote.total?.toLocaleString() || 'N/A'}
+                              {quote.items ? `${quote.items.length} items` : quote.service} · {quote.total?.toLocaleString() || 'N/A'}/-
                             </p>
                           </div>
                           <div className="text-right">
@@ -1430,8 +1462,8 @@ export default function AdminDashboard() {
                               
                               <div className="w-[150px] px-6 py-4 shrink-0">
                                 <div className="font-extrabold text-sm text-[#0A1628]">
-                                  KES {item.price.toLocaleString()}
-                                  {item.oldPrice > 0 && <span className="block text-[10px] text-gray-400 line-through font-normal">KES {item.oldPrice.toLocaleString()}</span>}
+                                  {item.price.toLocaleString()}/-
+                                  {item.oldPrice > 0 && <span className="block text-[10px] text-gray-400 line-through font-normal">{item.oldPrice.toLocaleString()}/-</span>}
                                 </div>
                               </div>
                               
@@ -1699,7 +1731,7 @@ export default function AdminDashboard() {
                               <td className="px-6 py-4">
                                 <div className="flex flex-col gap-1">
                                   {quote.items ? (
-                                    <span className="text-xs font-bold text-[#0A1628]">{quote.items.length} Items · KES {quote.total?.toLocaleString()}</span>
+                                    <span className="text-xs font-bold text-[#0A1628]">{quote.items.length} Items · {quote.total?.toLocaleString()}/-</span>
                                   ) : (
                                     <p className="text-[10px] text-[#64748B] line-clamp-1">{quote.details || 'No details'}</p>
                                   )}
@@ -1798,7 +1830,7 @@ export default function AdminDashboard() {
                                 </td>
                                 <td className="px-6 py-5">
                                   <span className="text-xs font-bold text-slate-600">
-                                    {rule.type === 'quantity' ? `${rule.threshold} Items` : `KES ${rule.threshold.toLocaleString()}+`}
+                                    {rule.type === 'quantity' ? `${rule.threshold} Items` : `${rule.threshold.toLocaleString()}/-+`}
                                   </span>
                                 </td>
                                 <td className="px-6 py-5">
@@ -2521,7 +2553,7 @@ export default function AdminDashboard() {
                               {p.category}
                             </span>
                             <span className="text-[10px] font-black text-blue-600">
-                              KES {p.price.toLocaleString()}
+                              {p.price.toLocaleString()}/-
                             </span>
                           </div>
                           {p.aiAnalysis?.isIssueFound && (
@@ -2766,12 +2798,12 @@ export default function AdminDashboard() {
                             <tr key={i}>
                               <td className="px-4 py-3 font-medium">{item.name}</td>
                               <td className="px-4 py-3 text-center">{item.quantity}</td>
-                              <td className="px-4 py-3 text-right">KES {item.price.toLocaleString()}</td>
+                              <td className="px-4 py-3 text-right">{item.price.toLocaleString()}/-</td>
                             </tr>
                           ))}
                           <tr className="bg-[#F8FAFC] font-black">
                             <td colSpan={2} className="px-4 py-3 text-right text-[#64748B] uppercase text-[10px]">Total Est. Value</td>
-                            <td className="px-4 py-3 text-right text-[#C8102E]">KES {selectedQuote.total?.toLocaleString()}</td>
+                            <td className="px-4 py-3 text-right text-[#C8102E]">{selectedQuote.total?.toLocaleString()}/-</td>
                           </tr>
                         </tbody>
                       </table>
@@ -3605,7 +3637,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Price Offset (KES)</label>
+                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Price Offset (/-)</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">+</span>
                   <input 
@@ -3702,7 +3734,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                     <div className="flex items-center gap-4 mt-1">
                       <div className="flex items-center gap-1.5">
                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Price +</span>
-                        <span className="text-[11px] text-[#C8102E] font-black">KES {v.price.toLocaleString()}</span>
+                        <span className="text-[11px] text-[#C8102E] font-black">{v.price.toLocaleString()}/-</span>
                       </div>
                       <div className="flex items-center gap-1.5 border-l border-slate-100 pl-4">
                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Stock</span>
@@ -3823,7 +3855,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-1.5 flex flex-col justify-end">
           <div className="flex items-center justify-between px-1">
-            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (KES)</label>
+            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (/-)</label>
             <button
               type="button"
               onClick={handleSuggestPrice}
@@ -3842,7 +3874,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
               onChange={e => setFormData({...formData, price: Number(e.target.value)})}
               className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">KES</div>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
           </div>
           {pricingReasoning && (
             <motion.div 
@@ -3859,7 +3891,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           )}
         </div>
         <div className="space-y-1.5 pt-[22px] sm:pt-0">
-          <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (KES)</label>
+          <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (/-)</label>
           <div className="relative">
             <input 
               type="number" 
@@ -3879,7 +3911,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
               onChange={e => setFormData({...formData, oldPrice: Number(e.target.value)})}
               className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">KES</div>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
           </div>
         </div>
         <div className="space-y-1.5 pt-[22px] sm:pt-0">
@@ -4749,12 +4781,12 @@ function DiscountRuleForm({ initialData, onSubmit, setToast }: any) {
             className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm outline-none font-bold"
           >
             <option value="quantity">Units Quantity</option>
-            <option value="total">Order Total Value (KES)</option>
+            <option value="total">Order Total Value (/-)</option>
           </select>
         </div>
         <div className="space-y-1.5">
           <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">
-            {formData.type === 'quantity' ? 'Min. Item Count' : 'Min. Order Value (KES)'}
+            {formData.type === 'quantity' ? 'Min. Item Count' : 'Min. Order Value (/-)'}
           </label>
           <input 
             type="number"

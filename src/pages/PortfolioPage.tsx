@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { motion } from 'motion/react';
-import { ExternalLink, ShoppingBag, Heart, Menu, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ExternalLink, ShoppingBag, Heart, Menu, ChevronRight, X } from 'lucide-react';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
@@ -19,6 +19,7 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
+  const [selectedProject, setSelectedProject] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -105,7 +106,8 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
                     viewport={{ once: true }}
-                    className="group"
+                    className="group cursor-pointer"
+                    onClick={() => setSelectedProject(project)}
                 >
                     <div className="aspect-[3/4] rounded-[3.5rem] overflow-hidden mb-10 relative">
                         <img src={project.image} alt={project.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.05]" />
@@ -143,6 +145,79 @@ export default function PortfolioPage({ cart, setCart, wishlist, setWishlist }: 
       </section>
 
       <Footer />
+
+      {/* Project Detail Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 lg:p-8 overflow-hidden">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProject(null)}
+              className="absolute inset-0 bg-[#0A1628]/95 backdrop-blur-xl"
+            ></motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              className="relative w-full max-w-4xl bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+            >
+              <button 
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-6 right-6 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-red-500 transition-all border border-slate-100 shadow-xl"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="w-full md:w-1/2 h-[300px] md:h-auto bg-slate-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src={selectedProject.image} 
+                  className="w-full h-full object-cover" 
+                  alt={selectedProject.title} 
+                />
+              </div>
+
+              <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-center overflow-y-auto">
+                <span className="text-[10px] font-black uppercase text-[#C8961A] tracking-[4px] mb-4">
+                  {selectedProject.tag} Project
+                </span>
+                <h2 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-8 uppercase italic">
+                  {selectedProject.title}
+                </h2>
+                
+                <div className="h-0.5 w-12 bg-[#0A1628] mb-8"></div>
+                
+                <p className="text-slate-500 text-base lg:text-lg leading-relaxed font-light mb-10 italic">
+                  {selectedProject.description}
+                </p>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 py-3 border-b border-slate-100">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest w-24">Deliverable</span>
+                    <span className="text-xs font-bold text-[#0A1628]">Custom Textile Design & Bulk Production</span>
+                  </div>
+                  <div className="flex items-center gap-4 py-3 border-b border-slate-100">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest w-24">Partner</span>
+                    <span className="text-xs font-bold text-[#0A1628]">{selectedProject.title}</span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => {
+                    setSelectedProject(null);
+                    setIsQuoteModalOpen(true);
+                  }}
+                  className="mt-12 w-full py-5 bg-[#0A1628] text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-[#C8102E] transition-all shadow-xl active:scale-95"
+                >
+                  Inquire For Your Project
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

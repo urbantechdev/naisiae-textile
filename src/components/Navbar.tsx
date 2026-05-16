@@ -351,48 +351,71 @@ export function Navbar({
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
-              className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] z-[150] overflow-hidden"
+              className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] z-[150] overflow-hidden"
             >
-              <div className="max-w-[1440px] mx-auto min-h-[450px]">
+              <div className="max-w-[1440px] mx-auto min-h-[480px] flex">
                 {(() => {
+                  // Normalize for better matching
+                  const normalizedActive = activeMegaMenu?.toLowerCase();
                   const dynamicMenu = megaMenus.find(m => 
-                    m.id === activeMegaMenu || 
-                    m.name?.toLowerCase() === activeMegaMenu?.toLowerCase() ||
-                    m.slug === activeMegaMenu ||
-                    (activeMegaMenu === 'categories' && m.id === 'industries') ||
-                    (activeMegaMenu === 'industries' && m.id === 'categories')
+                    m.id?.toLowerCase() === normalizedActive || 
+                    m.name?.toLowerCase() === normalizedActive ||
+                    m.slug?.toLowerCase() === normalizedActive ||
+                    (normalizedActive === 'categories' && m.id === 'industries') ||
+                    (normalizedActive === 'industries' && m.id === 'categories')
                   );
 
-                  if (!dynamicMenu || (!dynamicMenu.categories && !dynamicMenu.featured)) {
+                  const hasCategories = dynamicMenu?.categories && dynamicMenu.categories.length > 0;
+                  const hasFeatured = dynamicMenu?.featured && (dynamicMenu.featured.image || dynamicMenu.featured.title);
+
+                  if (!dynamicMenu || (!hasCategories && !hasFeatured)) {
                     return (
-                      <div className="flex flex-col items-center justify-center min-h-[450px] w-full text-slate-300 gap-4">
-                        <Package size={48} className="opacity-20 translate-y-2" />
-                        <p className="text-[10px] font-black uppercase tracking-[4px] opacity-40">Exploring Catalog Details...</p>
+                      <div className="flex flex-col items-center justify-center w-full text-slate-200 gap-8 py-20">
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-[#C8961A]/5 blur-3xl rounded-full"></div>
+                          <Package size={64} className="opacity-40 relative z-10 text-[#0A1628]" />
+                          <motion.div 
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                            className="absolute -inset-6 border border-dashed border-[#C8961A]/20 rounded-full"
+                          />
+                        </div>
+                        <div className="text-center space-y-3 relative z-10">
+                          <h3 className="text-[#0A1628] text-xs font-black uppercase tracking-[8px] opacity-60">Synchronizing Repository</h3>
+                          <p className="text-[9px] font-medium tracking-[3px] opacity-40 text-slate-500 uppercase max-w-xs mx-auto leading-relaxed">
+                            Accessing our high-precision textile logistics and segment data...
+                          </p>
+                        </div>
                       </div>
                     );
                   }
 
                   return (
-                    <div className="grid grid-cols-12 h-full">
+                    <div className="grid grid-cols-12 w-full h-full">
                       {/* Navigation Sections */}
-                      <div className="col-span-8 p-16 lg:p-20 grid grid-cols-3 gap-16 bg-slate-50/30">
+                      <div className={`p-16 lg:p-20 grid gap-16 relative ${hasFeatured ? 'col-span-8 grid-cols-3' : 'col-span-12 grid-cols-4'}`}>
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#0A1628]/[0.02] to-transparent pointer-events-none"></div>
+                        
                         {dynamicMenu.categories?.map((cat: any, idx: number) => (
-                          <div key={idx} className="space-y-8">
-                            <div className="space-y-2">
-                              <h4 className="text-[#0A1628] text-[10px] font-black tracking-[4px] uppercase opacity-40">{cat.name}</h4>
-                              <div className="w-8 h-1 bg-[#C8961A]"></div>
+                          <div key={idx} className="space-y-10 relative z-10">
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-4">
+                                <div className="w-6 h-[1.5px] bg-[#C8102E]"></div>
+                                <h4 className="text-[#0A1628] text-[10px] font-black tracking-[5px] uppercase">{cat.name}</h4>
+                              </div>
+                              <div className="text-[#0A1628]/30 text-[7px] font-black tracking-[3px] uppercase pl-10">Premium {dynamicMenu.name}</div>
                             </div>
-                            <ul className="space-y-4">
+                            <ul className="space-y-5 pl-10">
                               {cat.items?.map((sub: string, sIdx: number) => (
                                 <li key={sIdx}>
                                   <Link 
-                                    to={activeMegaMenu === 'products' ? `/products?category=${cat.name.toLowerCase()}` : activeMegaMenu === 'services' ? `/services#${sub.toLowerCase().replace(/ /g, '-')}` : `/categories#${sub.toLowerCase().replace(/ /g, '-')}`}
-                                    className="group/link flex items-center gap-4 text-[#0A1628]/60 hover:text-[#0A1628] transition-all py-1"
+                                    to={activeMegaMenu === 'products' ? `/products?category=${cat.name.toLowerCase()}` : normalizedActive === 'services' ? `/services#${sub.toLowerCase().replace(/ /g, '-')}` : `/categories#${sub.toLowerCase().replace(/ /g, '-')}`}
+                                    className="group/link flex items-center gap-4 text-slate-400 hover:text-[#C8102E] transition-all py-1.5"
                                     onClick={() => setActiveMegaMenu(null)}
                                   >
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#C8961A] opacity-0 group-hover/link:opacity-100 transition-all scale-0 group-hover/link:scale-100"></div>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[#C8102E] opacity-0 group-hover/link:opacity-100 transition-all scale-0 group-hover/link:scale-100 shadow-[0_0_15px_rgba(200,16,46,0.3)]"></div>
                                     <span className="text-sm font-bold tracking-tight">{sub}</span>
-                                    <ChevronRight size={14} className="ml-auto opacity-0 group-hover/link:opacity-100 -translate-x-4 group-hover/link:translate-x-0 transition-all text-[#C8961A]" />
+                                    <ChevronRight size={14} className="ml-auto opacity-0 group-hover/link:opacity-100 -translate-x-4 group-hover/link:translate-x-0 transition-all text-[#C8102E]" />
                                   </Link>
                                 </li>
                               ))}
@@ -402,49 +425,61 @@ export function Navbar({
                       </div>
 
                       {/* Featured Section */}
-                      <div className="col-span-4 bg-white p-12 border-l border-slate-50 flex flex-col">
-                        <div className="text-[9px] font-black tracking-[5px] uppercase text-[#C8961A] mb-8 text-center">Featured Highlights</div>
-                        
-                        <div className="relative group/feat aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl mb-8">
-                          <img 
-                            src={dynamicMenu.featured?.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80"} 
-                            className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover/feat:scale-110" 
-                            alt="Featured" 
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
-                          
-                          <div className="absolute inset-0 flex flex-col justify-end p-10">
-                            <motion.div
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.2 }}
-                              className="space-y-4"
-                            >
-                              <h5 className="text-white text-3xl font-display font-medium leading-tight">
-                                {dynamicMenu.featured?.title || 'Summer 2025 Institutional Wear'}
-                              </h5>
-                              <Link 
-                                to={dynamicMenu.featured?.link || '/products'}
-                                className="inline-flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl text-[10px] font-black uppercase tracking-[3px] hover:bg-white hover:text-[#0A1628] transition-all shadow-xl group/btn"
-                                onClick={() => setActiveMegaMenu(null)}
-                              >
-                                View Collection <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                              </Link>
-                            </motion.div>
+                      {hasFeatured && (
+                        <div className="col-span-4 bg-slate-50 p-12 lg:p-16 border-l border-slate-100 flex flex-col relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-full h-full opacity-5 pointer-events-none">
+                            <div className="absolute inset-x-0 top-0 h-full bg-gradient-to-br from-[#C8102E] via-transparent to-transparent"></div>
                           </div>
-                        </div>
 
-                        <div className="mt-auto grid grid-cols-2 gap-4">
-                          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center text-center">
-                            <Zap size={20} className="text-[#C8961A] mb-2" />
-                            <span className="text-[8px] font-black text-[#0A1628] uppercase tracking-widest">Fast Delivery</span>
+                          <div className="text-[10px] font-black tracking-[6px] uppercase text-[#0A1628]/30 mb-10 text-center relative z-10 italic">Seasonal Highlight</div>
+                          
+                          <div className="relative group/feat flex-1 rounded-[3rem] overflow-hidden shadow-2xl mb-10 border border-slate-200 group-hover:border-[#C8102E]/30 transition-all duration-700">
+                            <img 
+                              src={dynamicMenu.featured?.image || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80"} 
+                              className="w-full h-full object-cover transition-transform duration-[4000ms] group-hover/feat:scale-110" 
+                              alt="Featured Segment" 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                            
+                            <div className="absolute inset-0 flex flex-col justify-end p-10">
+                              <motion.div
+                                initial={{ opacity: 0, y: 40 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                                className="space-y-6"
+                              >
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2">
+                                    <Zap size={10} className="text-[#C8961A] fill-[#C8961A]" />
+                                    <span className="text-[#C8961A] text-[9px] font-black tracking-[4px] uppercase">Exclusive Access</span>
+                                  </div>
+                                  <h5 className="text-white text-3xl font-display font-medium leading-[1.1]">
+                                    {dynamicMenu.featured?.title || 'Advanced Textile Solutions 2025'}
+                                  </h5>
+                                </div>
+                                <Link 
+                                  to={dynamicMenu.featured?.link || '/products'}
+                                  className="inline-flex items-center gap-4 px-10 py-5 bg-[#C8102E] text-white rounded-2xl text-[10px] font-black uppercase tracking-[4px] hover:bg-[#0A1628] transition-all shadow-2xl group/btn active:scale-95 border border-transparent"
+                                  onClick={() => setActiveMegaMenu(null)}
+                                >
+                                  Enter Portal <ChevronRight size={14} className="group-hover/btn:translate-x-2 transition-transform" />
+                                </Link>
+                              </motion.div>
+                            </div>
                           </div>
-                          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center text-center">
-                            <Heart size={20} className="text-[#C8961A] mb-2" />
-                            <span className="text-[8px] font-black text-[#0A1628] uppercase tracking-widest">Ethically Made</span>
+
+                          <div className="mt-auto grid grid-cols-2 gap-4 relative z-10">
+                            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center group/icon hover:shadow-md transition-all cursor-pointer">
+                              <Zap size={22} className="text-[#C8102E] mb-3 group-hover:scale-110 group-hover:rotate-12 transition-transform" />
+                              <span className="text-[10px] font-black text-slate-400 group-hover:text-[#0A1628] uppercase tracking-[2px] transition-colors">Direct Sourcing</span>
+                            </div>
+                            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center group/icon hover:shadow-md transition-all cursor-pointer">
+                              <Heart size={22} className="text-[#C8102E] mb-3 group-hover:scale-110 group-hover:-rotate-12 transition-transform" />
+                              <span className="text-[10px] font-black text-slate-400 group-hover:text-[#0A1628] uppercase tracking-[2px] transition-colors">Heritage Craft</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   );
                 })()}
@@ -493,7 +528,7 @@ export function Navbar({
                   <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#C8961A]' : 'text-white/30 group-focus-within:text-[#C8961A]'}`} size={16} />
                   <input 
                     type="text" 
-                    placeholder="Search catalog, styles..." 
+                    placeholder="Search products..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearching(true)}

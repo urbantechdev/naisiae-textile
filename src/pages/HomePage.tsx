@@ -123,7 +123,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
     const shareData = {
       title: `${product.name} | Naisiae Textiles Limited`,
-      text: `Check out ${product.name} - ${product.description || 'Premium custom uniforms and branding.'}\nPrice: KES ${product.price?.toLocaleString()}`,
+      text: `Check out ${product.name} - ${product.description || 'Premium custom uniforms and branding.'}\nPrice: ${product.price?.toLocaleString()}/-`,
       url: shareUrl,
     };
 
@@ -578,9 +578,9 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
         </div>
 
         {/* Brand Content Container - Desktop: Split Layout with Search on Right */}
-        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between py-20 lg:py-0 gap-10">
+        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-44 pb-20 lg:py-0 gap-10">
           {/* Left Column: Text Content */}
-          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-8 lg:gap-12 order-2 lg:order-1">
+          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-8 lg:gap-12 order-1 lg:order-1">
             <div className="min-h-[220px] lg:min-h-[280px] flex flex-col justify-center">
               <AnimatePresence mode="wait">
                 <motion.div 
@@ -656,7 +656,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
           </div>
 
           {/* Right Column: Search Hub (Desktop: Centered Right) */}
-          <div className="max-w-xl w-full flex flex-col items-center justify-center lg:items-end order-1 lg:order-2 mt-12 lg:mt-0">
+          <div className="max-w-xl w-full flex flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-16 lg:mt-0">
             <div className="w-full lg:max-w-md group relative">
               <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
                 <Search className="text-[#0A1628]/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
@@ -696,7 +696,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                           <p className="text-sm font-black text-[#0A1628] uppercase tracking-wider mb-1">{product.name}</p>
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
-                            <span className="text-xs font-bold text-slate-400">KES {product.price.toLocaleString()}</span>
+                            <span className="text-xs font-bold text-slate-400">{product.price.toLocaleString()}/-</span>
                           </div>
                         </div>
                         <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A] group-hover/search:translate-x-1 transition-all" size={20} />
@@ -848,7 +848,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   <div className="p-4">
                     <h3 className="font-bold text-[13px] mb-1 leading-tight line-clamp-1">{product.name}</h3>
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[13px] font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
+                      <span className="text-[13px] font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
                     </div>
                     <button 
                       onClick={() => setSelectedQuickViewProduct(product)}
@@ -1014,7 +1014,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                 <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
                 <div className="mt-auto pt-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-[15px] sm:text-lg font-black text-[#C8102E]">KES {product.price.toLocaleString()}</span>
+                    <span className="text-[15px] sm:text-lg font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
                   </div>
                   <button 
                     onClick={(e) => { e.stopPropagation(); addToCart(product); }}
@@ -1307,7 +1307,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                   </div>
                   {compareList.map(item => (
                     <div key={item.id} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#C8102E]">
-                      KES {item.price.toLocaleString()}
+                      {item.price.toLocaleString()}/-
                     </div>
                   ))}
 
@@ -1443,9 +1443,9 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       <div className="flex flex-col">
                         <span className="text-[9px] lg:text-[10px] font-black uppercase text-slate-400 tracking-[2px] mb-1">MSRP Price</span>
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl lg:text-4xl font-black text-[#C8102E] tracking-tight">KES {selectedQuickViewProduct.price.toLocaleString()}</span>
+                          <span className="text-2xl lg:text-4xl font-black text-[#C8102E] tracking-tight">{selectedQuickViewProduct.price.toLocaleString()}/-</span>
                           {selectedQuickViewProduct.oldPrice && (
-                            <span className="text-sm lg:text-lg text-slate-400 line-through decoration-red-500/30">KES {selectedQuickViewProduct.oldPrice.toLocaleString()}</span>
+                            <span className="text-sm lg:text-lg text-slate-400 line-through decoration-red-500/30">{selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
                           )}
                         </div>
                       </div>
@@ -1716,10 +1716,10 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       <div className="relative flex items-center w-full h-full">
                         <div className="flex flex-col items-start px-6 lg:px-8 border-r border-white/10 h-full justify-center bg-white/5">
                           <span className="text-[8px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Total Value</span>
-                          <span className="text-sm lg:text-lg font-black tracking-tight">KES {(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                          <span className="text-sm lg:text-lg font-black tracking-tight">{(selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
                             const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
                             return sum + (variant?.price || 0);
-                          }, 0)).toLocaleString()}</span>
+                          }, 0)).toLocaleString()}/-</span>
                         </div>
                         <div className="flex-1 flex items-center justify-center gap-3 lg:gap-4 px-6">
                           <ShoppingBag size={20} className="shrink-0 text-[#C8961A]" />
@@ -1849,7 +1849,7 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                           </button>
                         </div>
                         <div className="flex justify-between items-center mt-2">
-                          <span className="text-[#C8102E] font-black text-sm">KES {item.price.toLocaleString()}</span>
+                          <span className="text-[#C8102E] font-black text-sm">{item.price.toLocaleString()}/-</span>
                           {isCartOpen && (
                             <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-md border border-slate-200">
                               <button 
@@ -1889,16 +1889,16 @@ export default function HomePage({ cart, setCart, wishlist, setWishlist }: PageP
                       <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-[2px]">Subtotal</div>
                       {activeDiscount ? (
                         <>
-                          <div className="text-sm font-bold text-slate-400 line-through">KES {subtotal.toLocaleString()}</div>
+                          <div className="text-sm font-bold text-slate-400 line-through">{subtotal.toLocaleString()}/-</div>
                           <div className="flex items-center gap-2">
-                            <div className="text-2xl font-black text-[#C8102E]">KES {cartTotal.toLocaleString()}</div>
+                            <div className="text-2xl font-black text-[#C8102E]">{cartTotal.toLocaleString()}/-</div>
                             <span className="text-[9px] font-black bg-[#C8102E] text-white px-2 py-0.5 rounded uppercase tracking-widest leading-none">
                               {activeDiscount.discountPercentage}% OFF
                             </span>
                           </div>
                         </>
                       ) : (
-                        <div className="text-2xl font-black text-[#0A1628]">KES {cartTotal.toLocaleString()}</div>
+                        <div className="text-2xl font-black text-[#0A1628]">{cartTotal.toLocaleString()}/-</div>
                       )}
                     </div>
                     <div className="text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded">VAT Included</div>

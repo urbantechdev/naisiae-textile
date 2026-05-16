@@ -78,13 +78,13 @@ export default function ShippingPage({ cart, setCart, wishlist, setWishlist }: a
                         title: "Nairobi Express", 
                         time: "24-48 Hours", 
                         desc: "Same-day or next-day delivery within Nairobi County and its environs.",
-                        price: "KES 350"
+                        price: "350/-"
                       },
                       { 
                         title: "Upcountry Delivery", 
                         time: "3-5 Business Days", 
                         desc: "Serving all 47 counties via our trusted courier partners (G4S, Wells Fargo, etc).",
-                        price: "From KES 500"
+                        price: "From 500/-"
                       },
                       { 
                         title: "Wholesale Bulk", 

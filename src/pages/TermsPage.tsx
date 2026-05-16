@@ -98,7 +98,7 @@ export default function TermsPage({ cart, setCart, wishlist, setWishlist }: any)
                   <span className="w-10 h-[2px] bg-[#C8102E]"></span> 3. Pricing & Payments
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
-                  All prices are in KES and inclusive of relevant taxes unless stated otherwise for wholesale bulk exports. We currenty accept M-Pesa, Bank Transfers, and Major Credit Cards.
+                  All prices are in Kenyan Shillings (/-) and inclusive of relevant taxes unless stated otherwise for wholesale bulk exports. We currenty accept M-Pesa, Bank Transfers, and Major Credit Cards.
                 </p>
               </div>
 
