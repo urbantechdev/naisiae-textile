@@ -49,6 +49,8 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   useEffect(() => {
     if (cart.length === 0 && !success) {
@@ -111,6 +113,9 @@ export default function CheckoutPage() {
         <Navbar 
           wishlistCount={wishlist.length}
           setIsWishlistOpen={setIsWishlistOpen}
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          setIsQuoteModalOpen={setIsQuoteModalOpen}
         />
         <div className="pt-40 pb-24 px-6 max-w-2xl mx-auto text-center">
           <motion.div 
@@ -151,6 +156,9 @@ export default function CheckoutPage() {
       <Navbar 
         wishlistCount={wishlist.length}
         setIsWishlistOpen={setIsWishlistOpen}
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
       
       <div className="pt-32 lg:pt-44 pb-24 px-6 max-w-[1440px] mx-auto">
@@ -196,7 +204,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
-                      <Mail size={12} className="text-[#C8961A]" /> Email Address
+                      <Mail size={12} className="text-[#C8961A]" /> 
                     </label>
                     <input 
                       required
@@ -204,7 +212,7 @@ export default function CheckoutPage() {
                       value={formData.email}
                       onChange={e => setFormData({...formData, email: e.target.value})}
                       className={`w-full bg-slate-50 border ${errors.email ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
-                      placeholder="procurement@school.com"
+                      placeholder=""
                     />
                     {errors.email && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.email}</p>}
                   </div>
@@ -304,7 +312,7 @@ export default function CheckoutPage() {
                 {cart.map((item, idx) => (
                   <div key={idx} className="flex gap-4">
                     <div className="w-16 h-16 bg-white/5 rounded-2xl overflow-hidden border border-white/10 p-1 shrink-0">
-                      <img src={item.imageUrl} className="w-full h-full object-contain" alt={item.name} />
+                      <img src={item.imageUrl} className="w-full h-full object-cover object-top" alt={item.name} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-[11px] font-black uppercase tracking-wider truncate mb-1">{item.name}</h4>

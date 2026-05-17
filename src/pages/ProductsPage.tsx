@@ -42,7 +42,7 @@ export default function ProductsPage() {
       title: 'Our Design Studio',
       subtitle: 'Contemporary Catalog',
       description: 'Explore our pre-vetted catalog of school uniforms, sports kits, and corporate office wear ready for your logo.',
-      image: 'https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
       action: 'Explore Design Catalog'
     },
     {
@@ -117,7 +117,7 @@ export default function ProductsPage() {
                         transition={{ delay: idx * 0.1 }}
                         className={`rounded-3xl overflow-hidden border border-slate-100 shadow-xl ${idx % 2 !== 0 ? 'mt-12' : ''}`}
                     >
-                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-contain" loading="lazy" referrerPolicy="no-referrer" />
+                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-cover object-top" loading="lazy" referrerPolicy="no-referrer" />
                         <div className="p-6 bg-white">
                             <h4 className="font-bold text-xs uppercase tracking-wider mb-2">{p.name}</h4>
                             <p className="text-[10px] font-black text-[#C8102E]">BULK PRICE ON REQUEST</p>
@@ -148,7 +148,7 @@ export default function ProductsPage() {
                         className="group text-left"
                     >
                         <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 relative">
-                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4] p-4" loading="lazy" referrerPolicy="no-referrer" />
+                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4]" loading="lazy" referrerPolicy="no-referrer" />
                              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                         </div>
                         <h3 className="text-2xl font-display uppercase tracking-widest mb-2">{p.name}</h3>

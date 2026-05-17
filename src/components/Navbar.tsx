@@ -571,7 +571,7 @@ export function Navbar({
                             >
                               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-[#C8961A]/30">
                                 {item.imageUrl ? (
-                                  <img src={item.imageUrl} className="w-full h-full object-cover rounded-lg" alt={item.name} />
+                                  <img src={item.imageUrl} className="w-full h-full object-cover object-top rounded-lg" alt={item.name} />
                                 ) : item.icon}
                               </div>
                               <div className="flex-1 min-w-0">

@@ -189,29 +189,29 @@ export default function PortfolioPage() {
                   <div className="space-y-4">
                     <h3 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Specifications</h3>
                     <div className="space-y-2">
-                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> Double-knit weave
-                       </p>
-                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       </div>
+                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> High-tensile thread
-                       </p>
-                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       </div>
+                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> Institutional Grade
-                       </p>
+                       </div>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <h3 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Impact</h3>
                     <div className="space-y-2">
-                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> 500+ Students clad
-                       </p>
-                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       </div>
+                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> 3 Year Lifecycle
-                       </p>
-                       <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       </div>
+                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> Brand Perfection
-                       </p>
+                       </div>
                     </div>
                   </div>
                 </div>

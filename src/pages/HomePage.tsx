@@ -14,6 +14,7 @@ import {
   Home,
   MessageSquare,
   Plus,
+  Minus,
   Trash2,
   CheckCircle2,
   Megaphone,
@@ -517,7 +518,7 @@ export default function HomePage() {
               className="absolute inset-0"
             >
               <img 
-                src={siteSettings?.heroImages?.[currentSlide]?.url || "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=1920&auto=format&fit=crop"} 
+                src={siteSettings?.heroImages?.[currentSlide]?.url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"} 
                 className="w-full h-full object-cover object-center"
                 alt={siteSettings?.heroImages?.[currentSlide]?.title || 'Hero'}
                 loading="eager"
@@ -644,7 +645,7 @@ export default function HomePage() {
                         className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors border-b border-slate-50 last:border-none group/search"
                       >
                         <div className="w-16 h-16 rounded-xl bg-slate-100 p-2 flex items-center justify-center overflow-hidden shrink-0">
-                          <img src={product.imageUrl} className="w-full h-full object-contain transition-transform group-hover/search:scale-110" alt={product.name} />
+                          <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-black text-[#0A1628] uppercase tracking-wider mb-1">{product.name}</p>
@@ -793,7 +794,7 @@ export default function HomePage() {
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" loading="lazy" referrerPolicy="no-referrer" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" loading="lazy" referrerPolicy="no-referrer" />
                     ) : (
                       <Package size={40} className="text-[#C8961A]/20" />
                     )}
@@ -945,7 +946,7 @@ export default function HomePage() {
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                 {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
                 ) : (
                   <Package size={40} className="text-[#C8961A]/20" />
                 )}
@@ -1114,7 +1115,7 @@ export default function HomePage() {
                 {compareList.map((item, idx) => (
                   <div key={`${item.id}-${idx}`} className="relative group/compare-item flex items-center justify-center">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-contain bg-white border-2 border-white/10" />
+                      <img src={item.imageUrl} className="w-12 h-12 rounded-xl object-cover object-top bg-white border-2 border-white/10" alt={item.name} />
                     ) : (
                       <div className="w-12 h-12 rounded-xl bg-white/10 border-2 border-white/5 flex items-center justify-center">
                         <Package size={16} className="text-white/20" />
@@ -1160,7 +1161,7 @@ export default function HomePage() {
                 {compareList.map((item, idx) => (
                   <div key={`${item.id}-${idx}`} className="w-10 h-10 rounded-full border-2 border-[#0A1628] overflow-hidden bg-white shadow-lg flex items-center justify-center">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" alt={item.name} />
+                      <img src={item.imageUrl} className="w-full h-full object-cover object-top p-0.5 bg-white" alt={item.name} />
                     ) : (
                       <Package size={14} className="text-[#0A1628]/20" />
                     )}
@@ -1235,7 +1236,7 @@ export default function HomePage() {
                     <div key={`${item.id}-${idx}`} className="text-center">
                       <div className="aspect-square rounded-3xl bg-slate-50 border border-slate-100 p-6 mb-6 overflow-hidden flex items-center justify-center shadow-inner">
                         {item.imageUrl ? (
-                          <img src={item.imageUrl} className="w-full h-full object-contain" alt={item.name} />
+                          <img src={item.imageUrl} className="w-full h-full object-cover object-top" alt={item.name} />
                         ) : (
                           <Package size={48} className="text-slate-200" />
                         )}
@@ -1364,7 +1365,7 @@ export default function HomePage() {
                         exit={{ opacity: 0, scale: 1.1, rotate: 2 }}
                         transition={{ duration: 0.4 }}
                         src={activeImageUrl} 
-                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-contain drop-shadow-2xl mix-blend-multiply"
+                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-cover object-top drop-shadow-2xl mix-blend-multiply"
                         alt={selectedQuickViewProduct.name}
                       />
                     ) : (
@@ -1436,7 +1437,7 @@ export default function HomePage() {
                             )}
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            {options.map((opt: any) => {
+                            {options.map((opt: any, idx: number) => {
                               const isColor = type.toLowerCase() === 'color';
                               const isSelected = selectedVariants[type] === opt.value;
                               
@@ -1551,12 +1552,12 @@ export default function HomePage() {
                           <div className="space-y-3">
                             <h4 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Durability</h4>
                             <div className="space-y-2">
-                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> 100+ Wash Cycle
-                              </p>
-                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              </div>
+                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> Institutional Grade
-                              </p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1867,7 +1868,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Email Address</label>
+                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1"></label>
                   <input required type="email" value={quoteForm.email} onChange={e => setQuoteForm({...quoteForm, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E]" />
                 </div>
                 <div className="space-y-1">

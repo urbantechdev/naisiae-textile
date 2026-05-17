@@ -116,13 +116,13 @@ export default function ContactPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Email Address</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2"></label>
                     <input 
                       type="email" 
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      placeholder="john@example.com"
+                      placeholder=""
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#C8102E]/20 outline-none transition-all"
                     />
                   </div>

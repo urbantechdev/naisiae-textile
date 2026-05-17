@@ -109,34 +109,22 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C8961A]"></div>
-      </div>
-    );
-  }
-
   return (
     <Router>
       <CartProvider>
         <DynamicSEOEngine />
-        <AppContent isAdmin={isAdmin} />
+        <AppContent isAdmin={isAdmin} loading={loading} />
       </CartProvider>
     </Router>
   );
 }
 
-function AppContent({ isAdmin }: any) {
+function AppContent({ isAdmin, loading }: any) {
   const { isCartOpen, setIsCartOpen, isWishlistOpen, setIsWishlistOpen } = useCart();
 
   return (
     <InactivityHandler>
-      <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[#0A1628]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#C8961A]"></div>
-        </div>
-      }>
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />

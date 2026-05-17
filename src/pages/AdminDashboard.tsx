@@ -738,40 +738,64 @@ export default function AdminDashboard() {
     
     const samples = [
       { 
-        name: 'Boys Primary V-Neck Sweater', 
+        name: 'Premium Primary V-Neck Sweater (Heavy Gauged)', 
         category: 'School Uniforms', 
-        price: 1200, 
-        wholesalePrice: 850, 
+        price: 1150, 
+        wholesalePrice: 750, 
         active: true, 
-        tags: ['Wholesale', 'Boys', 'Wool'], 
-        description: 'Meticulously crafted with a premium 70/30 wool-acrylic blend. Engineered for Kenyan primary school climates, providing thermal regulation and high-tensile resistance against daily wear. Features reinforced cuff ribbing and anti-pilling technology to maintain a crisp look throughout the school term.' 
+        imageUrl: 'https://images.unsplash.com/photo-1556740734-7935f29910d6?q=80&w=1024&auto=format&fit=crop',
+        tags: ['Wholesale', 'Boys', 'Girls', 'Wool'], 
+        description: 'Meticulously crafted with a premium 70/30 wool-acrylic blend. Engineered for Kenyan primary school climates, providing thermal regulation and high-tensile resistance against daily wear. Features reinforced cuff ribbing and anti-pilling technology.' 
       },
       { 
-        name: 'Girls Highschool Pleated Skirt', 
+        name: 'High School Box-Pleated Uniform Skirt', 
         category: 'School Uniforms', 
-        price: 1500, 
-        wholesalePrice: 1100, 
+        price: 1450, 
+        wholesalePrice: 950, 
         active: true, 
+        imageUrl: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?q=80&w=1024&auto=format&fit=crop',
         tags: ['Wholesale', 'Girls', 'Pleated'], 
-        description: 'Elite grade Gabardine weave with permanent pleat-retention technology. Designed with a growth-friendly adjustable waistband and deep-stitched anti-fray hems. The breathable, stain-resistant finish ensures comfort and professional appearance from morning assembly to extracurricular activities.' 
+        description: 'Elite grade Gabardine weave with permanent pleat-retention technology. Designed with a growth-friendly adjustable waistband and deep-stitched anti-fray hems. Breathable and stain-resistant finish.' 
       },
       { 
-        name: 'Corporate Pique Polo Shirt', 
+        name: 'Prestige Corporate Pique Polo (220GSM)', 
         category: 'Corporate Wear', 
-        price: 1800, 
-        wholesalePrice: 1350, 
+        price: 1650, 
+        wholesalePrice: 1200, 
         active: true, 
+        imageUrl: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1024&auto=format&fit=crop',
         tags: ['Wholesale', 'Corporate', 'Cotton'], 
-        description: '100% long-staple combed cotton pique with a substantial 220GSM weight. Features a structured rib-knit collar that resists curling and high-density stitching for custom brand embroidery. Perfect for high-end corporate events, client-facing roles, and modern professional branding.' 
+        description: '100% long-staple combed cotton pique with a substantial 220GSM weight. Features a structured rib-knit collar that resists curling and high-density stitching for custom brand embroidery.' 
       },
       { 
-        name: 'Institutional Sports Tracksuit Set', 
+        name: 'Elite Institutional Sports Tracksuit Set', 
         category: 'Sports Kits', 
-        price: 2500, 
-        wholesalePrice: 1900, 
+        price: 2850, 
+        wholesalePrice: 1950, 
         active: true, 
-        tags: ['Wholesale', 'Sports', 'Nylon'], 
-        description: 'Advanced moisture-wicking performance nylon with a micro-mesh interior lining for rapid evaporation. Designed for athletic agility with articulated knee joints and aerodynamic silhouette. Specifically engineered for institutional teams requiring uniform aesthetics and high-performance functionality during cold morning training.' 
+        imageUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1024&auto=format&fit=crop',
+        tags: ['Wholesale', 'Sports', 'Performace'], 
+        description: 'Advanced moisture-wicking performance fabric with a micro-mesh interior lining. Designed for athletic agility with an aerodynamic silhouette and specialized embroidery panels.' 
+      },
+      { 
+        name: 'Heavy Duty Industrial Dust Coat', 
+        category: 'Workwear', 
+        price: 1250, 
+        wholesalePrice: 900, 
+        active: true, 
+        imageUrl: 'https://images.unsplash.com/photo-1576091160550-217359f42f8c?q=80&w=1024&auto=format&fit=crop',
+        tags: ['Wholesale', 'Security', 'Safety'], 
+        description: 'Durable poly-cotton blend engineered for maximum protection and longevity in industrial environments. Features multiple reinforced pockets and a comfortable fit for all-day wear.' 
+      },
+      { 
+        name: 'Executive Long-Sleeve Corporate Shirt', 
+        category: 'Corporate Wear', 
+        price: 2200, 
+        wholesalePrice: 1600, 
+        active: true, 
+        imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1024&auto=format&fit=crop',
+        tags: ['Wholesale', 'Corporate', 'Executive'], 
+        description: 'Premium easy-iron cotton fabric with a modern fit. Features reinforced seams and a double-fused collar for a professional finish that lasts.' 
       }
     ];
 
@@ -863,10 +887,10 @@ export default function AdminDashboard() {
       for (let i = 0; i < SEED_URLS.length; i++) {
         const url = SEED_URLS[i];
         await addDoc(collection(db, 'products'), {
-          name: `Premium Textile Sample ${i + 1}`,
-          category: 'New Arrivals',
-          price: 0,
-          oldPrice: 0,
+          name: i % 3 === 0 ? `Heavy Duty Uniform Fabric ${i + 1}` : i % 3 === 1 ? `Executive Cotton Blend ${i + 1}` : `Anti-Pilling Knitwear ${i + 1}`,
+          category: 'Premium Textiles',
+          price: 950 + (i * 50),
+          oldPrice: 1200 + (i * 50),
           description: 'Waiting for product description and finalized specifications...',
           imageUrl: url,
           imageUrls: [url],
@@ -1039,7 +1063,7 @@ export default function AdminDashboard() {
                     }}
                   >
                     <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 flex items-center justify-center group-hover:bg-white transition-colors border border-slate-200 shadow-sm">
-                      {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" /> : item.icon}
+                      {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-cover object-top p-0.5 bg-white" alt={item.name} /> : item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -1273,7 +1297,7 @@ export default function AdminDashboard() {
                         <div className="relative">
                           <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
                              {product.imageUrl ? (
-                               <img src={product.imageUrl} className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform" />
+                               <img src={product.imageUrl} className="w-full h-full object-cover object-top p-1 group-hover:scale-110 transition-transform" alt={product.name} />
                              ) : (
                                <ImageIcon size={24} className="text-slate-300" />
                              )}
@@ -1536,7 +1560,7 @@ export default function AdminDashboard() {
                     <div key={promo.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
                       <div className="h-40 relative bg-slate-100">
                         {promo.imageUrl ? (
-                          <img src={promo.imageUrl} className="w-full h-full object-cover" />
+                          <img src={promo.imageUrl} className="w-full h-full object-cover object-top" alt={promo.title} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-300">
                             <ImageIcon size={40} />
@@ -1954,7 +1978,7 @@ export default function AdminDashboard() {
                           {list.items?.map((item: any) => (
                             <div key={item.id} className="flex gap-3 items-center bg-white p-2 rounded-lg border border-gray-50 flex items-center justify-center min-w-[32px] min-h-[32px]">
                               {item.imageUrl ? (
-                                <img src={item.imageUrl} className="w-8 h-8 rounded object-contain bg-white" />
+                                <img src={item.imageUrl} className="w-full h-full object-cover object-top bg-white" alt={item.name} />
                               ) : (
                                 <Package size={16} className="text-slate-200" />
                               )}
@@ -2452,13 +2476,13 @@ export default function AdminDashboard() {
                 className="space-y-6"
               >
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest ml-1">Member Email Address</label>
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest ml-1"></label>
                   <input 
                     required
                     type="email"
                     value={newUserEmail}
                     onChange={e => setNewUserEmail(e.target.value)}
-                    placeholder="teammate@naisiaetextile.com"
+                    placeholder=""
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm focus:border-[#C8102E] focus:bg-white outline-none transition-all font-bold"
                   />
                 </div>
@@ -2546,7 +2570,7 @@ export default function AdminDashboard() {
                       <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors bg-slate-50/30">
                         <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                           {p.imageUrl ? (
-                            <img src={p.imageUrl} className="w-full h-full object-contain p-1 bg-white" alt={p.name} />
+                            <img src={p.imageUrl} className="w-full h-full object-cover object-top" alt={p.name} />
                           ) : (
                             <span className="text-xl">🧥</span>
                           )}
@@ -2924,16 +2948,14 @@ export default function AdminDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  </main>
 
-  <AdminBottomNav 
-    activeView={activeView}
-    setActiveView={setActiveView}
-    badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
-  />
-</div>
-</div>
+      <AdminBottomNav 
+        activeView={activeView}
+        setActiveView={setActiveView}
+        badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+      />
+    </div>
+  </div>
 );
 }
 
@@ -3177,7 +3199,7 @@ function SortableImage({ url, index, onRemove }: any) {
       className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group bg-white shadow-sm flex items-center justify-center"
     >
       {url ? (
-        <img src={url} className="w-full h-full object-contain bg-white" alt="product" />
+        <img src={url} className="w-full h-full object-cover object-top" alt="Product Preview" />
       ) : (
         <ImageIcon size={24} className="text-slate-300" />
       )}
@@ -4113,7 +4135,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
           />
           <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
-            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-contain bg-white p-1" /> : <ImageIcon size={20} className="text-slate-300" />}
+            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
           </div>
         </div>
       </div>
@@ -4268,7 +4290,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
   );
 }
 
-const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=2670&auto=format&fit=crop';
+const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1556740734-7935f29910d6?q=80&w=2670&auto=format&fit=crop';
 
 function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampleData }: any) {
   const [uploading, setUploading] = useState<string | null>(null);
@@ -4876,7 +4898,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
 
               <div className="relative group overflow-hidden rounded-2xl border border-slate-200 aspect-video bg-slate-50 flex items-center justify-center">
                 {formData.sharingImage ? (
-                  <img src={formData.sharingImage} className="w-full h-full object-cover" />
+                  <img src={formData.sharingImage} className="w-full h-full object-cover" alt="Social Sharing Preview" />
                 ) : (
                   <div className="text-center">
                     <ImageIcon size={32} className="text-slate-200 mx-auto mb-2" />
@@ -4905,14 +4927,8 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
         </button>
       </div>
 
-    <AdminBottomNav 
-      activeView={activeView}
-      setActiveView={setActiveView}
-      badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
-    />
-  </div>
-</div>
-);
+    </div>
+  );
 }
 
 function DiscountRuleForm({ initialData, onSubmit, setToast }: any) {
@@ -5161,7 +5177,7 @@ function PromotionForm({ initialData, onSubmit, setToast }: any) {
         <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Campaign Visual (Image)</label>
         <div className="flex gap-4 items-center">
           <div className="w-24 h-24 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
-            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-contain bg-white p-2" /> : <ImageIcon size={24} className="text-slate-300" />}
+            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Rule Preview" /> : <ImageIcon size={24} className="text-slate-300" />}
           </div>
           <div className="flex-1 space-y-3">
              <div className="space-y-1">

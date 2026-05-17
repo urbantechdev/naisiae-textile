@@ -145,9 +145,29 @@ async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: "custom", 
     });
     app.use(vite.middlewares);
+    
+    // Controlled SPA fallback for development
+    app.use('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      const isHtmlRequest = req.headers.accept?.includes('text/html');
+      const hasExtension = url.includes('.') && !url.endsWith('.html');
+
+      if (isHtmlRequest || !hasExtension) {
+        try {
+          const templatePath = path.resolve(process.cwd(), 'index.html');
+          const template = fs.readFileSync(templatePath, 'utf-8');
+          const html = await vite.transformIndexHtml(url, template);
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+        } catch (e) {
+          next(e);
+        }
+      } else {
+        next();
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));

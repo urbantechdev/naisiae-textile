@@ -204,14 +204,14 @@ export default function LoginPage() {
               className="space-y-4"
             >
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-1">Email Address</label>
+                <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-1"></label>
                 <div className="relative group">
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#C8961A] transition-colors" />
                   <input 
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    placeholder="admin@naisiaetextile.com"
+                    placeholder=""
                     className="w-full h-12 bg-black/20 border border-white/5 rounded-xl pl-12 pr-4 text-sm text-white outline-none focus:border-[#C8961A]/50 transition-all font-medium"
                     required
                   />
