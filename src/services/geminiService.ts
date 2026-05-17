@@ -25,9 +25,9 @@ export async function generateProductDetails(base64Image: string, mimeType: stri
             },
           },
           {
-            text: `Analyze this image of a textile/apparel product and generate professional product details. 
+            text: `Analyze this image of a textile/apparel product and generate professional product details tailored for the Kenyan market. 
             Categories MUST be one of: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
-            Provide a competitive price suggestion in Kenyan Shillings (KSH).`,
+            Provide a competitive price suggestion in Kenyan Shillings (KSH) based on local Nairobi wholesale/retail trends (e.g., School Sweaters: 800-1500, Shirts: 400-800, Trousers: 1000-1800).`,
           },
         ],
       },
@@ -81,7 +81,9 @@ export async function generateProductDataFromText(name: string, category: string
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3.1-flash-lite",
-      contents: `Generate product details for: ${name} (Category: ${category}). Provide description, subCategory, price suggestion in KSH, and relevant tags.`,
+      contents: `Generate realistic product details for the Kenyan uniform market: ${name} (Category: ${category}). 
+      Provide a persuasive description highlighting durability, Kenyan market price suggestion in KSH, subCategory, and relevant tags.
+      Prices should reflect Uhuru Market/Nairobi Industrial Area competitiveness.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {

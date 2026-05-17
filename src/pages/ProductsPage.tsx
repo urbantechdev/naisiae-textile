@@ -9,9 +9,14 @@ import { db, handleFirestoreError, OperationType } from '../services/firebase';
 import { useCart } from '../context/CartContext';
 
 export default function ProductsPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
+  const { 
+    cartCount, 
+    wishlistCount, 
+    setIsCartOpen, 
+    setIsWishlistOpen,
+    setIsQuoteModalOpen
+  } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const [products, setProducts] = useState<any[]>([]);
 
@@ -59,10 +64,8 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-slate-50 font-sans text-[#0A1628]">
       <Navbar 
         wishlistCount={wishlistCount}
-        setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
-        setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
 
       {/* Floating Section Nav */}

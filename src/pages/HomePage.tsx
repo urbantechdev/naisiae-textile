@@ -49,7 +49,11 @@ export default function HomePage() {
     toggleWishlist: toggleWishlistGlobal, 
     isInWishlist,
     clearCart,
-    cartTotal
+    cartTotal,
+    isQuoteModalOpen,
+    setIsQuoteModalOpen,
+    siteSettings,
+    promotions
   } = useCart();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('all');
@@ -91,14 +95,11 @@ export default function HomePage() {
   }, [location.search]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [activeModalPromo, setActiveModalPromo] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
-  const [promotions, setPromotions] = useState<any[]>([]);
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
-  const [siteSettings, setSiteSettings] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const searchResults = useMemo(() => {
     if (searchQuery.length < 2) return [];
@@ -184,6 +185,7 @@ export default function HomePage() {
   };
   const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState<any>(null);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [activeThumbnailIndex, setActiveThumbnailIndex] = useState(0);
 
   useEffect(() => {
     if (selectedQuickViewProduct) {
@@ -201,6 +203,7 @@ export default function HomePage() {
       setSelectedVariants(initialVariants);
       setInquiryUnits(selectedQuickViewProduct.priceType === 'wholesale' ? 50 : 1);
       setInquiryCustomization('');
+      setActiveThumbnailIndex(0);
     }
   }, [selectedQuickViewProduct]);
 
@@ -208,7 +211,6 @@ export default function HomePage() {
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '', userName: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [quoteForm, setQuoteForm] = useState({ name: '', email: '', phone: '', service: 'General Enquiry', details: '' });
   const [inquiryUnits, setInquiryUnits] = useState(50);
   const [inquiryCustomization, setInquiryCustomization] = useState('');
 
@@ -270,28 +272,12 @@ export default function HomePage() {
       handleFirestoreError(error, OperationType.GET, 'products');
     });
 
-    const qPromos = query(collection(db, 'promotions'), where('active', '==', true));
-    const unsubscribePromos = onSnapshot(qPromos, (snapshot) => {
-      setPromotions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'promotions');
-    });
-
     // Fetch Categories
     const qCats = query(collection(db, 'categories'), orderBy('sortOrder', 'asc'));
     const unsubscribeCats = onSnapshot(qCats, (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, 'categories');
-    });
-
-    // Fetch Site Settings
-    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
-      if (snapshot.exists()) {
-        setSiteSettings(snapshot.data());
-      }
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'settings/site');
     });
 
     // Fetch Discount Rules
@@ -332,8 +318,7 @@ export default function HomePage() {
 
     return () => {
       unsubscribe();
-      unsubscribePromos();
-      unsubscribeSettings();
+      unsubscribeCats();
       unsubscribeDiscountRules();
       unsubscribeMegaMenus();
     };
@@ -483,10 +468,8 @@ export default function HomePage() {
       <Navbar 
         wishlistCount={wishlist.length}
         compareCount={compareList.length}
-        setIsWishlistOpen={setIsWishlistOpen}
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
-        setIsQuoteModalOpen={setIsQuoteModalOpen}
         setIsCompareModalOpen={setIsCompareModalOpen}
         setSelectedQuickViewProduct={setSelectedQuickViewProduct}
       />
@@ -498,8 +481,7 @@ export default function HomePage() {
           {/* Static Overlays - Partitioned Gradient for Right Side Visibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-[40%] via-[#0A1628]/95 via-[45%] to-transparent to-[75%] z-10"></div>
           <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.1),_transparent_70%)] z-10"></div>
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-20"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.05),_transparent_70%)] z-10"></div>
 
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
@@ -532,11 +514,11 @@ export default function HomePage() {
           </AnimatePresence>
         </div>
 
-        {/* Brand Content Container - Desktop: Split Layout with Search on Right */}
-        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-44 pb-20 lg:py-0 gap-10">
+          {/* Brand Content Container - Desktop: Split Layout with Search on Right */}
+        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-32 sm:pt-40 pb-12 lg:py-0 gap-8 lg:gap-10">
           {/* Left Column: Text Content */}
-          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-8 lg:gap-12 order-1 lg:order-1">
-            <div className="min-h-[220px] lg:min-h-[280px] flex flex-col justify-center">
+          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
+            <div className="min-h-[140px] sm:min-h-[180px] lg:min-h-[220px] flex flex-col justify-center">
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={currentSlide}
@@ -544,10 +526,10 @@ export default function HomePage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  className="space-y-6 lg:space-y-8"
+                  className="space-y-4 lg:space-y-8"
                 >
                   {/* Typography Epicenter */}
-                  <div className="space-y-6 lg:space-y-8">
+                  <div className="space-y-4 lg:space-y-8">
                     <motion.h1 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -588,6 +570,25 @@ export default function HomePage() {
               </AnimatePresence>
             </div>
 
+
+            {/* Mobile Search - Positioned here as requested */}
+            <div className="lg:hidden w-full mb-2">
+              <div className="w-full group relative">
+                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                  <Search className="text-[#0A1628]/30 group-focus-within:text-[#C8961A] transition-all" size={18} />
+                </div>
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+                  onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+                  placeholder="Find your institution or uniform..."
+                  className="w-full bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl pl-12 pr-6 py-4 text-[#0A1628] text-base outline-none focus:ring-4 focus:ring-[#C8961A]/10 focus:border-[#C8961A]/50 transition-all placeholder:text-slate-400 shadow-lg"
+                />
+              </div>
+            </div>
+
             {/* Static Action Suite - Enhanced for Mobile */}
             <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
               <Link
@@ -611,7 +612,7 @@ export default function HomePage() {
           </div>
 
           {/* Right Column: Search Hub (Desktop: Centered Right) */}
-          <div className="max-w-xl w-full flex flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-16 lg:mt-0">
+          <div className="hidden lg:flex max-w-xl w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-16 lg:mt-0">
             <div className="w-full lg:max-w-md group relative">
               <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
                 <Search className="text-[#0A1628]/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
@@ -1065,7 +1066,7 @@ export default function HomePage() {
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1 }}
               viewport={{ once: true }}
-              src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1600&auto=format&fit=crop" 
+              src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1600&auto=format&fit=crop" 
               className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-1000"
               alt="Wholesale Textiles"
               loading="lazy"
@@ -1352,32 +1353,83 @@ export default function HomePage() {
               </button>
 
               {/* Product Gallery Section */}
-              <div className="w-full lg:w-1/2 bg-slate-50 relative flex items-center justify-center p-6 lg:p-12 shrink-0 h-[30vh] sm:h-[40vh] lg:h-auto bg-gradient-to-br from-slate-50 to-slate-100">
+              <div className="w-full lg:w-1/2 bg-slate-50 relative flex flex-col items-center justify-center p-4 lg:p-12 shrink-0 h-auto lg:h-auto bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
                 <AnimatePresence mode="wait">
                   {(() => {
-                    const activeImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url) || selectedQuickViewProduct.imageUrl;
+                    const variantImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url);
+                    
+                    const galleryImages = [
+                      selectedQuickViewProduct.imageUrl,
+                      ...(selectedQuickViewProduct.imageUrls || [])
+                    ].filter((url, index, self) => url && self.indexOf(url) === index);
+
+                    const activeImageUrl = variantImageUrl || galleryImages[activeThumbnailIndex] || selectedQuickViewProduct.imageUrl;
                     
                     return activeImageUrl ? (
-                      <motion.img 
-                        key={activeImageUrl}
-                        initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
-                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                        exit={{ opacity: 0, scale: 1.1, rotate: 2 }}
-                        transition={{ duration: 0.4 }}
-                        src={activeImageUrl} 
-                        className="w-full h-full lg:h-auto lg:max-h-[60vh] object-cover object-top drop-shadow-2xl mix-blend-multiply"
-                        alt={selectedQuickViewProduct.name}
-                      />
+                      <div className="relative group/zoom w-full h-[40vh] sm:h-[50vh] lg:h-[65vh] flex items-center justify-center cursor-zoom-in bg-slate-50/50 rounded-3xl overflow-hidden shadow-inner">
+                        <motion.img 
+                          key={activeImageUrl}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 1.1 }}
+                          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                          src={activeImageUrl} 
+                          className="w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 group-hover/zoom:scale-125"
+                          alt={selectedQuickViewProduct.name}
+                        />
+                        
+                        {/* High-End Information Overlay */}
+                        <div className="absolute inset-x-0 bottom-0 p-8 flex justify-between items-end bg-gradient-to-t from-slate-200/50 to-transparent opacity-0 group-hover/zoom:opacity-100 transition-opacity pointer-events-none">
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628]">Precision Detail</p>
+                                <p className="text-[11px] font-bold text-slate-400">100% Genuine Textile Analysis</p>
+                            </div>
+                            <div className="bg-[#0A1628] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                <Search size={14} /> Full View Mode
+                            </div>
+                        </div>
+                      </div>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-200">
+                      <div className="w-full h-[40vh] flex items-center justify-center text-slate-200">
                         <ImageIcon size={100} />
                       </div>
                     );
                   })()}
                 </AnimatePresence>
+
+                {/* Thumbnails Gallery */}
+                {(() => {
+                  const galleryImages = [
+                    selectedQuickViewProduct.imageUrl,
+                    ...(selectedQuickViewProduct.imageUrls || [])
+                  ].filter((url, index, self) => url && self.indexOf(url) === index);
+
+                  if (galleryImages.length <= 1) return null;
+
+                  return (
+                    <div className="flex gap-3 mt-6 lg:mt-8 pb-2 max-w-full overflow-x-auto scrollbar-hide px-2">
+                      {galleryImages.map((url, idx) => (
+                        <button
+                          key={`${url}-${idx}`}
+                          onClick={() => setActiveThumbnailIndex(idx)}
+                          className={`relative w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
+                            activeThumbnailIndex === idx 
+                              ? 'border-[#C8102E] scale-105 shadow-md' 
+                              : 'border-white hover:border-slate-200'
+                          }`}
+                        >
+                          <img src={url} className="w-full h-full object-cover" alt={`view ${idx + 1}`} />
+                          {activeThumbnailIndex === idx && (
+                            <div className="absolute inset-0 bg-[#C8102E]/5" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-4 lg:top-10 left-4 lg:left-10 bg-[#C8102E] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-xl z-10 animate-pulse">
+                  <span className="absolute top-6 lg:top-10 left-6 lg:left-10 bg-[#C8102E] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-xl z-20 animate-pulse">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
@@ -1535,18 +1587,18 @@ export default function HomePage() {
                         </span>
                       </summary>
                       <div className="p-5 text-slate-500 text-sm leading-relaxed border-t border-slate-50 bg-white">
-                        <p className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#C8961A] pl-4">{selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</p>
+                        <div className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#C8961A] pl-4">{selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</div>
                         
                         <div className="grid grid-cols-2 gap-6 mb-8">
                           <div className="space-y-3">
                             <h4 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Fabric Specs</h4>
                             <div className="space-y-2">
-                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> Anti-Pilling Tech
-                              </p>
-                              <p className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              </div>
+                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> Color-Lock Weave
-                              </p>
+                              </div>
                             </div>
                           </div>
                           <div className="space-y-3">
@@ -1782,122 +1834,8 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-[#0A1628] border-t border-white/10 flex items-center justify-between px-2 py-1 pb-safe shadow-2xl">
-        <Link to="/" className="flex-1 flex flex-col items-center py-2 gap-1 text-[#C8961A]">
-          <Home size={20} />
-          <span className="text-[9px] font-bold tracking-tighter uppercase">Home</span>
-        </Link>
-        <button 
-          onClick={() => setIsMenuOpen(true)}
-          className="flex-1 flex flex-col items-center py-2 gap-1 text-white/60"
-        >
-          <Search size={20} />
-          <span className="text-[9px] font-bold tracking-tighter uppercase">Browse</span>
-        </button>
-        <div className="flex-1 -mt-8 flex flex-col items-center">
-          <Link to="/contact" className="w-14 h-14 bg-gradient-to-tr from-[#C8102E] to-[#8B0000] rounded-full border-4 border-[#0A1628] flex items-center justify-center text-white shadow-xl">
-            <Plus size={28} />
-          </Link>
-          <span className="text-[9px] font-black tracking-tighter uppercase text-[#F59E0B] mt-1">Get Quote</span>
-        </div>
-        <button 
-          onClick={() => setIsWishlistOpen(true)}
-          className={`flex-1 flex flex-col items-center py-2 gap-1 ${wishlist.length > 0 ? "text-[#C8961A]" : "text-white/60"}`}
-        >
-          <Heart size={20} className={wishlist.length > 0 ? "fill-current" : ""} />
-          <span className="text-[9px] font-bold tracking-tighter uppercase">Saved</span>
-        </button>
-        <button 
-          onClick={() => setIsCartOpen(true)}
-          className="flex-1 flex flex-col items-center py-2 gap-1 text-white/60 relative"
-        >
-          <ShoppingBag size={20} />
-          {cart.length > 0 && <span className="absolute top-1.5 right-1/3 bg-[#C8102E] text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border-2 border-[#0A1628]">{cart.length}</span>}
-          <span className="text-[9px] font-bold tracking-tighter uppercase">Cart</span>
-        </button>
-      </div>
-
       {/* Mobile Menu Handled by Navbar */}
-      <AnimatePresence>
-        {/* Quote Request Modal */}
-        {isQuoteModalOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setIsQuoteModalOpen(false)}
-          >
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="p-6 border-b flex items-center justify-between bg-[#F8FAFC]">
-                <div>
-                  <h2 className="font-display text-3xl text-[#0A1628] leading-none mb-1">Get Custom Quote</h2>
-                  <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">Expert branding & uniform consultations</p>
-                </div>
-                <button onClick={() => setIsQuoteModalOpen(false)} className="text-slate-400 p-2"><X size={20} /></button>
-              </div>
-
-              <form 
-                onSubmit={async (e) => { 
-                  e.preventDefault();
-                  try {
-                    await addDoc(collection(db, 'quotes'), { ...quoteForm, status: 'pending', createdAt: serverTimestamp(), uid: auth.currentUser?.uid || 'guest' });
-                    setOrderSuccess(true);
-                    setTimeout(() => { setOrderSuccess(false); setIsQuoteModalOpen(false); }, 2000);
-                  } catch (err) {
-                    handleFirestoreError(err, OperationType.WRITE, 'quotes');
-                  }
-                }}
-                className="p-6 space-y-4"
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Full Name</label>
-                    <input required value={quoteForm.name} onChange={e => setQuoteForm({...quoteForm, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E]" />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Phone Number</label>
-                    <input required value={quoteForm.phone} onChange={e => setQuoteForm({...quoteForm, phone: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E]" />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1"></label>
-                  <input required type="email" value={quoteForm.email} onChange={e => setQuoteForm({...quoteForm, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E]" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Service Type</label>
-                  <select value={quoteForm.service} onChange={e => setQuoteForm({...quoteForm, service: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#C8102E]">
-                    <option>School Uniforms</option>
-                    <option>Corporate Branding</option>
-                    <option>Custom Knitwear</option>
-                    <option>Screen Printing</option>
-                    <option>General Enquiry</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Request Details</label>
-                  <textarea rows={4} value={quoteForm.details} onChange={e => setQuoteForm({...quoteForm, details: e.target.value})} placeholder="Tell us what you need..." className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] resize-none" />
-                </div>
-                
-                <button 
-                  disabled={orderSuccess}
-                  className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all shadow-xl shadow-black/10 disabled:bg-green-600"
-                >
-                  {orderSuccess ? 'Message Sent Successfully!' : 'Send Request'}
-                </button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      
       {/* Promotion Modal Overlay */}
       <AnimatePresence>
         {showPromoModal && activeModalPromo && (

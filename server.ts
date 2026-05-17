@@ -145,17 +145,17 @@ async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "custom", 
+      appType: "spa", 
     });
     app.use(vite.middlewares);
     
-    // Controlled SPA fallback for development
-    app.use('*', async (req, res, next) => {
+    // Improved SPA fallback for development
+    app.get('*', async (req, res, next) => {
       const url = req.originalUrl;
       const isHtmlRequest = req.headers.accept?.includes('text/html');
-      const hasExtension = url.includes('.') && !url.endsWith('.html');
-
-      if (isHtmlRequest || !hasExtension) {
+      
+      // Only handle HTML requests or extension-less URLs
+      if (isHtmlRequest || !url.includes('.')) {
         try {
           const templatePath = path.resolve(process.cwd(), 'index.html');
           const template = fs.readFileSync(templatePath, 'utf-8');

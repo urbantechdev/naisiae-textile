@@ -30,6 +30,7 @@ import { InactivityHandler } from './components/InactivityHandler';
 import { CartProvider, useCart } from './context/CartContext';
 import { CartModal } from './components/CartModal';
 import { WishlistModal } from './components/WishlistModal';
+import { QuoteModal } from './components/QuoteModal';
 
 // Dynamic SEO Engine to enforce branding permanently across all routes
 function DynamicSEOEngine() {
@@ -124,7 +125,14 @@ function AppContent({ isAdmin, loading }: any) {
 
   return (
     <InactivityHandler>
-      <Suspense fallback={null}>
+      <Suspense fallback={
+        <div className="fixed inset-0 bg-[#0A1628] flex items-center justify-center z-[999]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-[#C8961A]/20 border-t-[#C8961A] rounded-full animate-spin"></div>
+            <div className="text-[#C8961A]/60 font-display text-sm tracking-[3px] animate-pulse">NAISIAE</div>
+          </div>
+        </div>
+      }>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -151,6 +159,7 @@ function AppContent({ isAdmin, loading }: any) {
       </Suspense>
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
+      <QuoteModal />
     </InactivityHandler>
   );
 }

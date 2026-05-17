@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
-import { onSnapshot, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { onSnapshot, doc, setDoc, serverTimestamp, query, collection, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 export interface CartItem {
@@ -36,11 +36,15 @@ interface CartContextType {
   setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isWishlistOpen: boolean;
   setIsWishlistOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isQuoteModalOpen: boolean;
+  setIsQuoteModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   // Wishlist Logic
   wishlist: any[];
   toggleWishlist: (product: any) => void;
   isInWishlist: (id: string) => boolean;
   wishlistCount: number;
+  siteSettings: any;
+  promotions: any[];
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -78,6 +82,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const lastWishlistRef = useRef<string>('');
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [siteSettings, setSiteSettings] = useState<any>({
+    siteName: 'Uhuru Market Uniforms',
+    siteTagline: 'Premium Uniforms & Branding',
+    heroImages: [
+      {
+        url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1920&auto=format&fit=crop',
+        title: 'CRAFTING',
+        subtitle: 'Engineered textiles for the modern institution. Quality guaranteed for generations.'
+      }
+    ]
+  });
+  const [promotions, setPromotions] = useState<any[]>([]);
   const [wishlist, setWishlist] = useState<any[]>(() => {
     try {
       const saved = localStorage.getItem('naisiae_wishlist_v1');
@@ -133,6 +150,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => unsubscribeAuth();
+  }, []);
+
+  // Fetch Site Settings and Promotions globally
+  useEffect(() => {
+    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
+      if (snapshot.exists()) setSiteSettings(snapshot.data());
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'settings/site');
+    });
+
+    const qPromos = query(collection(db, 'promotions'), where('active', '==', true));
+    const unsubscribePromos = onSnapshot(qPromos, (snapshot) => {
+      setPromotions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'promotions');
+    });
+    
+    return () => {
+      unsubscribeSettings();
+      unsubscribePromos();
+    };
   }, []);
 
   useEffect(() => {
@@ -264,10 +302,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsCartOpen,
     isWishlistOpen,
     setIsWishlistOpen,
+    isQuoteModalOpen,
+    setIsQuoteModalOpen,
     wishlist,
     toggleWishlist,
     isInWishlist,
-    wishlistCount
+    wishlistCount,
+    siteSettings,
+    promotions
   }), [
     cart, 
     addToCart, 
@@ -288,10 +330,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsCartOpen,
     isWishlistOpen,
     setIsWishlistOpen,
+    isQuoteModalOpen,
+    setIsQuoteModalOpen,
     wishlist,
     toggleWishlist,
     isInWishlist,
-    wishlistCount
+    wishlistCount,
+    siteSettings,
+    promotions
   ]);
 
   return (

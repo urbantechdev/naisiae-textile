@@ -13,7 +13,9 @@ import {
   User as UserIcon,
   Plus,
   Zap,
-  Filter
+  Filter,
+  Home,
+  MessageSquare
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
@@ -25,9 +27,9 @@ interface NavbarProps {
   wishlistCount: number;
   compareCount?: number;
   isMenuOpen: boolean;
-  setIsWishlistOpen: (open: boolean) => void;
   setIsMenuOpen: (open: boolean) => void;
-  setIsQuoteModalOpen: (open: boolean) => void;
+  setIsWishlistOpen?: (open: boolean) => void;
+  setIsQuoteModalOpen?: (open: boolean) => void;
   setIsCompareModalOpen?: (open: boolean) => void;
   setSelectedQuickViewProduct?: (product: any) => void;
 }
@@ -36,13 +38,11 @@ export function Navbar({
   wishlistCount,
   compareCount = 0,
   isMenuOpen,
-  setIsWishlistOpen,
   setIsMenuOpen,
-  setIsQuoteModalOpen,
   setIsCompareModalOpen,
   setSelectedQuickViewProduct
 }: NavbarProps) {
-  const { cartCount, setIsCartOpen } = useCart();
+  const { cartCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
   const navigate = useNavigate();
 
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
@@ -80,8 +80,8 @@ export function Navbar({
             id: 'products',
             name: 'Products',
             featured: { 
-              title: 'School Uniform Collection 2025',
-              image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80',
+              title: 'Primary School Essentials',
+              image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80',
               link: '/products'
             },
             categories: [
@@ -108,7 +108,7 @@ export function Navbar({
             name: 'Categories',
             featured: {
               title: 'Explore Our Catalog',
-              image: 'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80',
+              image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80',
               link: '/categories'
             },
             categories: [
@@ -642,6 +642,43 @@ export function Navbar({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile Bottom Navigation - Shared across all pages */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-[#0A1628] border-t border-white/10 flex items-center justify-between px-2 py-1 pb-safe shadow-2xl">
+        <Link to="/" className="flex-1 flex flex-col items-center py-2 gap-1 text-[#C8961A]">
+          <Home size={20} />
+          <span className="text-[9px] font-bold tracking-tighter uppercase">Home</span>
+        </Link>
+        <Link to="/products" className="flex-1 flex flex-col items-center py-2 gap-1 text-white/60">
+          <Package size={20} />
+          <span className="text-[9px] font-bold tracking-tighter uppercase">Product</span>
+        </Link>
+        <div className="flex-1 -mt-8 flex flex-col items-center">
+          <button 
+            onClick={() => setIsQuoteModalOpen(true)}
+            className="w-14 h-14 bg-gradient-to-tr from-[#C8102E] to-[#8B0000] rounded-full border-4 border-[#0A1628] flex items-center justify-center text-white shadow-xl active:scale-95 transition-transform"
+          >
+            <Plus size={28} />
+          </button>
+          <span className="text-[9px] font-black tracking-tighter uppercase text-[#F59E0B] mt-1">Get Quote</span>
+        </div>
+        <a 
+          href="https://wa.me/254792021795" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex-1 flex flex-col items-center py-2 gap-1 text-white/60"
+        >
+          <MessageSquare size={20} />
+          <span className="text-[9px] font-bold tracking-tighter uppercase">Chat</span>
+        </a>
+        <a 
+          href="tel:+254792021795"
+          className="flex-1 flex flex-col items-center py-2 gap-1 text-white/60"
+        >
+          <Phone size={20} />
+          <span className="text-[9px] font-bold tracking-tighter uppercase">Call</span>
+        </a>
+      </div>
     </div>
   );
 }
