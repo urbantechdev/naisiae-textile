@@ -59,155 +59,220 @@ async function startServer() {
 
   // Simple SEO middleware for social media crawlers
   app.get("/product/:productId", async (req, res, next) => {
-    const isBot = /bot|googlebot|facebookexternalhit|twitterbot|whatsapp|bingbot|linkedinbot/i.test(req.headers["user-agent"] || "");
-    
-    if (isBot) {
+    try {
       const productId = req.params.productId;
-      try {
-        const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf-8"));
-        const projectId = config.projectId;
-        const databaseId = config.firestoreDatabaseId || "(default)";
-        
-        // Fetch product via REST API (publicly accessible)
-        const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/products/${productId}`;
-        const response = await fetch(firestoreUrl);
-        const productData = await response.json();
-        
-        const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
-        
-        if (productData.fields) {
-          const name = productData.fields.name?.stringValue || "Product";
-          const description = productData.fields.description?.stringValue || "Quality school uniforms and corporate wear.";
-          const imageUrl = productData.fields.imageUrl?.stringValue || "";
-          const price = productData.fields.price?.doubleValue || productData.fields.price?.integerValue || 0;
-
-          const metaTags = `
-            <title>${name} | Uhuru Market Uniforms</title>
-            <meta name="description" content="${description}" />
-            <link rel="canonical" href="https://naisiaetextiles.com/product/${productId}" />
-            <meta property="og:title" content="${name} - ${price.toLocaleString()}/- | Uhuru Market Uniforms" />
-            <meta property="og:description" content="${description}" />
-            <meta property="og:image" content="${imageUrl}" />
-            <meta property="og:url" content="https://naisiaetextiles.com/product/${productId}" />
-            <meta property="og:type" content="product" />
-            <meta name="twitter:card" content="summary_large_image" />
-          `;
-          
-          let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
-          html = html.replace(/<meta name="description".*?\/>/, "");
-          html = html.replace(/<link rel="canonical".*?\/>/, "");
-          res.send(html);
-          return;
-        }
-      } catch (e) {
-        console.error("SEO Middleware error (Product):", e);
+      const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf-8"));
+      const projectId = config.projectId;
+      const databaseId = config.firestoreDatabaseId || "(default)";
+      
+      // Fetch settings for global state and logo preload
+      const settingsUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/settings/site`;
+      const settingsResponse = await fetch(settingsUrl);
+      const settingsData = await settingsResponse.json();
+      
+      let siteSettings = {
+        siteName: "Uhuru Market Uniforms",
+        siteTagline: "Naisiae Textiles Nairobi",
+        siteLogo: "",
+        sharingImage: ""
+      };
+      
+      if (settingsData.fields) {
+        siteSettings = {
+          siteName: settingsData.fields.siteName?.stringValue || "Uhuru Market Uniforms",
+          siteTagline: settingsData.fields.siteTagline?.stringValue || "Naisiae Textiles Nairobi",
+          siteLogo: settingsData.fields.siteLogo?.stringValue || "",
+          sharingImage: settingsData.fields.sharingImage?.stringValue || ""
+        };
       }
+
+      // Fetch product data
+      const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/products/${productId}`;
+      const response = await fetch(firestoreUrl);
+      const productData = await response.json();
+      
+      const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
+      
+      if (productData.fields) {
+        const name = productData.fields.name?.stringValue || "Product";
+        const description = productData.fields.description?.stringValue || "Quality School Uniforms and corporate wear.";
+        const imageUrl = productData.fields.imageUrl?.stringValue || "";
+        const price = productData.fields.price?.doubleValue || productData.fields.price?.integerValue || 0;
+
+        const logoUrl = siteSettings.siteLogo;
+        const preloadTags = logoUrl ? `<link rel="preload" as="image" href="${logoUrl}" fetchpriority="high">` : "";
+        const injectSettings = `<script>window.__PRELOADED_SETTINGS__ = ${JSON.stringify(siteSettings)};</script>`;
+
+        const metaTags = `
+          <title>${name} | Uhuru Market Uniforms Nairobi</title>
+          <meta name="description" content="${description}" />
+          <link rel="canonical" href="https://naisiaetextiles.com/product/${productId}" />
+          <meta property="og:title" content="${name} - ${price.toLocaleString()}/- | Uhuru Market Uniforms" />
+          <meta property="og:description" content="${description}" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:url" content="https://naisiaetextiles.com/product/${productId}" />
+          <meta property="og:type" content="product" />
+          <meta name="twitter:card" content="summary_large_image" />
+          ${preloadTags}
+          ${injectSettings}
+        `;
+        
+        let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
+        html = html.replace(/<meta name="description".*?\/>/, "");
+        html = html.replace(/<link rel="canonical".*?\/>/, "");
+        res.send(html);
+        return;
+      }
+    } catch (e) {
+      console.error("SEO Middleware error (Product):", e);
     }
     next();
   });
 
   app.get("/", async (req, res, next) => {
-    const isBot = /bot|googlebot|facebookexternalhit|twitterbot|whatsapp|bingbot|linkedinbot/i.test(req.headers["user-agent"] || "");
-    
-    if (isBot) {
-      try {
-        const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf-8"));
-        const projectId = config.projectId;
-        const databaseId = config.firestoreDatabaseId || "(default)";
-        
-        // Fetch settings via REST API
-        const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/settings/site`;
-        const response = await fetch(firestoreUrl);
-        const settingsData = await response.json();
-        
-        const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
-        
-        if (settingsData.fields) {
-          const title = settingsData.fields.sharingTitle?.stringValue || settingsData.fields.siteName?.stringValue || "Uhuru Market Uniforms";
-          const tagline = settingsData.fields.siteTagline?.stringValue || "Uniforms & Branding";
-          const description = settingsData.fields.sharingDescription?.stringValue || "Quality school uniforms and corporate wear.";
-          const imageUrl = settingsData.fields.sharingImage?.stringValue || settingsData.fields.siteLogo?.stringValue || "";
+    try {
+      const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf-8"));
+      const projectId = config.projectId;
+      const databaseId = config.firestoreDatabaseId || "(default)";
+      
+      // Fetch settings via REST API
+      const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/settings/site`;
+      const response = await fetch(firestoreUrl);
+      const settingsData = await response.json();
+      
+      const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
+      
+      if (settingsData.fields) {
+        const siteSettings = {
+          siteName: settingsData.fields.siteName?.stringValue || "Uhuru Market Uniforms",
+          siteTagline: settingsData.fields.siteTagline?.stringValue || "Naisiae Textiles Nairobi",
+          siteLogo: settingsData.fields.siteLogo?.stringValue || "",
+          sharingImage: settingsData.fields.sharingImage?.stringValue || "",
+          sharingTitle: settingsData.fields.sharingTitle?.stringValue || "",
+          sharingDescription: settingsData.fields.sharingDescription?.stringValue || ""
+        };
 
-          const metaTags = `
-            <title>${title} | ${tagline}</title>
-            <meta name="description" content="${description}" />
-            <link rel="canonical" href="https://naisiaetextiles.com/" />
-            <meta property="og:title" content="${title} | ${tagline}" />
-            <meta property="og:description" content="${description}" />
-            <meta property="og:image" content="${imageUrl}" />
-            <meta property="og:url" content="https://naisiaetextiles.com/" />
-            <meta property="og:type" content="website" />
-            <meta name="twitter:card" content="summary_large_image" />
-          `;
-          
-          let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
-          html = html.replace(/<meta name="description".*?\/>/, "");
-          html = html.replace(/<link rel="canonical".*?\/>/, "");
-          res.send(html);
-          return;
-        }
-      } catch (e) {
-        console.error("SEO Middleware error (Home):", e);
+        const title = siteSettings.sharingTitle || `${siteSettings.siteName} | ${siteSettings.siteTagline}`;
+        const tagline = siteSettings.siteTagline;
+        const description = siteSettings.sharingDescription || "Official website for Uhuru Market Uniforms. Premium school uniforms, corporate wear, and branding based in Nairobi.";
+        const imageUrl = siteSettings.sharingImage || siteSettings.siteLogo || "";
+
+        const logoUrl = siteSettings.siteLogo;
+        const preloadTags = logoUrl ? `<link rel="preload" as="image" href="${logoUrl}" fetchpriority="high">` : "";
+        const injectSettings = `<script>window.__PRELOADED_SETTINGS__ = ${JSON.stringify(siteSettings)};</script>`;
+
+        const metaTags = `
+          <title>${title} | ${tagline}</title>
+          <meta name="description" content="${description}" />
+          <link rel="canonical" href="https://naisiaetextiles.com/" />
+          <meta property="og:title" content="${title} | ${tagline}" />
+          <meta property="og:description" content="${description}" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:url" content="https://naisiaetextiles.com/" />
+          <meta property="og:type" content="website" />
+          <meta name="twitter:card" content="summary_large_image" />
+          ${preloadTags}
+          ${injectSettings}
+        `;
+        
+        let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
+        html = html.replace(/<meta name="description".*?\/>/, "");
+        html = html.replace(/<link rel="canonical".*?\/>/, "");
+        res.send(html);
+        return;
       }
+    } catch (e) {
+      console.error("SEO Middleware error (Home):", e);
     }
     next();
   });
 
-  // Generic Bot Metadata Middleware for handled routes
+  // Generic Metadata Middleware for handled routes
   app.get(["/products", "/categories", "/services", "/portfolio", "/contact", "/about", "/wholesale"], async (req, res, next) => {
-    const isBot = /bot|googlebot|facebookexternalhit|twitterbot|whatsapp|bingbot|linkedinbot/i.test(req.headers["user-agent"] || "");
-    
-    if (isBot) {
-      try {
-        const requestPath = req.path;
-        let title = "Uhuru Market Uniforms";
-        let description = "Premium uniform manufacturing and textile solutions in Nairobi.";
-        
-        if (requestPath === '/products') {
-          title = "Our Uniform Products | Uhuru Market Uniforms";
-          description = "Browse our full catalog of custom-tailored garments. High-quality school uniforms and specialized corporate wear.";
-        } else if (requestPath === '/categories') {
-          title = "Uniform Categories | Uhuru Market Uniforms";
-          description = "Explore our manufacturing categories including Education, Hospitality, Medical, and Corporate branding.";
-        } else if (requestPath === '/services') {
-          title = "Manufacturing Services | Uhuru Market Uniforms";
-          description = "Bulk textile production, heavy industrial stitching, embroidery and screen printing capabilities.";
-        } else if (requestPath === '/portfolio') {
-          title = "Our Projects | Uhuru Market Uniforms";
-          description = "See examples of bulk uniform orders we have successfully delivered across Kenya.";
-        } else if (requestPath === '/contact') {
-          title = "Contact Us | Uhuru Market Uniforms";
-          description = "Get in touch for bulk orders. Call +254792021795 or visit Uhuru Market, Nairobi.";
-        } else if (requestPath === '/about') {
-          title = "About Naisiae Textiles | Uhuru Market Uniforms";
-          description = "Leaders in institutional uniform manufacturing at Uhuru Market since inception.";
-        } else if (requestPath === '/wholesale') {
-          title = "Wholesale Uniform Deals | Uhuru Market Uniforms";
-          description = "Specialized bulk pricing for schools and institutions. Get factory-direct rates.";
-        }
-
-        const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
-        const canonical = `<link rel="canonical" href="https://naisiaetextiles.com${requestPath}" />`;
-        const metaTags = `
-          <title>${title}</title>
-          <meta name="description" content="${description}" />
-          ${canonical}
-          <meta property="og:title" content="${title}" />
-          <meta property="og:description" content="${description}" />
-          <meta property="og:url" content="https://naisiaetextiles.com${requestPath}" />
-          <meta property="og:type" content="website" />
-        `;
-        
-        // Remove existing tags that we are replacing to avoid duplicates
-        let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
-        html = html.replace(/<meta name="description".*?\/>/, "");
-        html = html.replace(/<link rel="canonical".*?\/>/, "");
-        
-        res.send(html);
-        return;
-      } catch (e) {
-        console.error("SEO Middleware error (Pages):", e);
+    try {
+      const requestPath = req.path;
+      let title = "Uhuru Market Uniforms | Naisiae Textiles Nairobi";
+      let description = "Official Uhuru Market Uniforms manufacturing and textile solutions. High-quality school uniforms and branding.";
+      
+      if (requestPath === '/products') {
+        title = "Our Products | Uhuru Market Uniforms Nairobi";
+        description = "Browse our full catalog of custom-tailored Uhuru Market Uniforms. High-quality garments for schools and institutions.";
+      } else if (requestPath === '/categories') {
+        title = "Uniform Categories | Uhuru Market Uniforms";
+        description = "Explore our manufacturing categories including School Uniforms, Hospitality, and Corporate branding in Nairobi.";
+      } else if (requestPath === '/services') {
+        title = "Manufacturing Services | Uhuru Market Uniforms";
+        description = "Bulk textile production, industrial stitching, and branding services at Uhuru Market, Nairobi.";
+      } else if (requestPath === '/portfolio') {
+        title = "Our Projects | Uhuru Market Uniforms Portfolio";
+        description = "See examples of bulk school uniform orders we have successfully delivered across Kenya.";
+      } else if (requestPath === '/contact') {
+        title = "Contact Us | Uhuru Market Uniforms Nairobi";
+        description = "Get in touch for bulk orders. Call +254792021795 or visit our Uhuru Market workshop.";
+      } else if (requestPath === '/about') {
+        title = "About Uhuru Market Uniforms - Naisiae Textiles";
+        description = "Leaders in institutional uniform manufacturing at Uhuru Market Nairobi.";
+      } else if (requestPath === '/wholesale') {
+        title = "Wholesale Deals | Uhuru Market Uniforms Nairobi";
+        description = "Specialized bulk pricing for schools and institutions. Get factory-direct rates from Uhuru Market.";
       }
+
+      const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
+      
+      // Fetch settings for LOGO and Global Preload
+      let siteSettings = {
+        siteName: "Naisiae Textiles Limited",
+        siteTagline: "School Uniforms & Branding",
+        siteLogo: "",
+        sharingImage: ""
+      };
+
+      try {
+        const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf-8"));
+        const projectId = config.projectId;
+        const databaseId = config.firestoreDatabaseId || "(default)";
+        const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/settings/site`;
+        const settingsResponse = await fetch(firestoreUrl);
+        const settingsData = await settingsResponse.json();
+        
+        if (settingsData.fields) {
+          siteSettings = {
+            siteName: settingsData.fields.siteName?.stringValue || "Naisiae Textiles Limited",
+            siteTagline: settingsData.fields.siteTagline?.stringValue || "School Uniforms & Branding",
+            siteLogo: settingsData.fields.siteLogo?.stringValue || "",
+            sharingImage: settingsData.fields.sharingImage?.stringValue || ""
+          };
+        }
+      } catch (e) {
+        console.error("Failed to fetch settings for preload:", e);
+      }
+
+      const logoUrl = siteSettings.siteLogo;
+      const preloadTags = logoUrl ? `<link rel="preload" as="image" href="${logoUrl}" fetchpriority="high">` : "";
+      const injectSettings = `<script>window.__PRELOADED_SETTINGS__ = ${JSON.stringify(siteSettings)};</script>`;
+
+      const canonical = `<link rel="canonical" href="https://naisiaetextiles.com${requestPath}" />`;
+      const metaTags = `
+        <title>${title}</title>
+        <meta name="description" content="${description}" />
+        ${canonical}
+        <meta property="og:title" content="${title}" />
+        <meta property="og:description" content="${description}" />
+        <meta property="og:url" content="https://naisiaetextiles.com${requestPath}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="${siteSettings.sharingImage || siteSettings.siteLogo || 'https://naisiaetextiles.com/og-image.jpg'}" />
+        ${preloadTags}
+        ${injectSettings}
+      `;
+      
+      let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
+      html = html.replace(/<meta name="description".*?\/>/, "");
+      html = html.replace(/<link rel="canonical".*?\/>/, "");
+      
+      res.send(html);
+      return;
+    } catch (e) {
+      console.error("SEO Middleware error (Pages):", e);
     }
     next();
   });

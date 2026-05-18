@@ -269,7 +269,7 @@ export function Navbar({
                 {siteSettings?.siteName?.split(' ')[0] || 'NAISIAE'}
               </span>
               <span className="text-[7px] md:text-[8px] tracking-[3px] md:tracking-[5px] text-[#C8961A] uppercase font-black mt-1 group-hover:translate-x-1 transition-transform">
-                {siteSettings?.siteTagline || 'Textiles Limited'}
+                {siteSettings?.siteTagline || 'School Uniforms & Branding'}
               </span>
             </div>
           </Link>

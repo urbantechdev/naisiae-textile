@@ -134,8 +134,8 @@ export default function HomePage() {
   const handleShareProduct = async (product: any) => {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
     const shareData = {
-      title: `${product.name} | Naisiae Textiles Limited`,
-      text: `Check out ${product.name} - ${product.description || 'School Uniforms and custom branding.'}\nPrice: ${product.price?.toLocaleString()}/-`,
+      title: `${product.name} | Uhuru Market Uniforms`,
+      text: `Check out ${product.name} - ${product.description || 'Quality textile solutions from Uhuru Market, Nairobi.'}\nPrice: ${product.price?.toLocaleString()}/-`,
       url: shareUrl,
     };
 
@@ -374,8 +374,8 @@ export default function HomePage() {
   useEffect(() => {
     if (siteSettings) {
       const siteName = siteSettings.siteName || 'Uhuru Market Uniforms';
-      const tagline = siteSettings.siteTagline || 'School Uniforms & Branding';
-      const description = siteSettings.sharingDescription || 'School Uniforms manufacturing and textile solutions in Nairobi. Custom branding, bulk orders, and quality fabrics.';
+      const tagline = siteSettings.siteTagline || 'Naisiae Textiles Nairobi';
+      const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms page. High-quality school uniforms, corporate wear, and industrial branding based in Nairobi. Buy direct from the source at Uhuru Market.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://naisiaetextiles.com/og-image.jpg';
 
       document.title = `${siteName} | ${tagline}`;

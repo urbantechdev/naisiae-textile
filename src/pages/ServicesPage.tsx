@@ -41,7 +41,7 @@ export default function ServicesPage() {
             {
               id: 'branding',
               title: 'Branding & Screen Printing',
-              description: 'Comprehensive branding solutions for promotional wear and corporate identity. We use premium inks and modern printing techniques that withstand industrial washing and heavy use.',
+              description: 'Comprehensive branding solutions for school uniforms and corporate identity. We use high-quality inks and modern printing techniques that withstand industrial washing and heavy use.',
               image: 'https://images.unsplash.com/photo-1534452285072-c5cee3316af7?auto=format&fit=crop&q=80',
               features: ['Plastisol Printing', 'Vinyl Heat Press', 'Sublimation', 'Corporate Gift Items']
             }

@@ -83,16 +83,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const lastWishlistRef = useRef<string>('');
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
-  const [siteSettings, setSiteSettings] = useState<any>({
-    siteName: 'Uhuru Market Uniforms',
-    siteTagline: 'Premium Uniforms & Branding',
-    heroImages: [
-      {
-        url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1920&auto=format&fit=crop',
-        title: 'CRAFTING',
-        subtitle: 'Engineered textiles for the modern institution. Quality guaranteed for generations.'
-      }
-    ]
+  const [siteSettings, setSiteSettings] = useState<any>(() => {
+    if (typeof window !== 'undefined' && (window as any).__PRELOADED_SETTINGS__) {
+      return (window as any).__PRELOADED_SETTINGS__;
+    }
+    return {
+      siteName: 'Naisiae Textiles Limited',
+      siteTagline: 'School Uniforms & Branding',
+      heroImages: [
+        {
+          url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1920&auto=format&fit=crop',
+          title: 'CRAFTING',
+          subtitle: 'Engineered textiles for the modern institution. Quality guaranteed for generations.'
+        }
+      ]
+    };
   });
   const [promotions, setPromotions] = useState<any[]>([]);
   const [wishlist, setWishlist] = useState<any[]>(() => {

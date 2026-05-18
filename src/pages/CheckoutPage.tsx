@@ -129,7 +129,7 @@ export default function CheckoutPage() {
             Inquiry <span className="text-[#C8961A]">Received</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg leading-relaxed mb-12">
-            Thank you for sourcing with Uhuru Market Uniforms. Our sourcing team is reviewing your request and will contact you via WhatsApp/Email within 12 hours with a formal quote and production timeline.
+            Thank you for sourcing with Naisiae Textiles Limited. Our sourcing team is reviewing your request and will contact you via WhatsApp/Email within 12 hours with a formal quote and production timeline.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 

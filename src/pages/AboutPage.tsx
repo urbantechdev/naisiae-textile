@@ -56,7 +56,7 @@ export default function AboutPage() {
               Excellence <br /> In Textiles.
             </h1>
             <p className="text-xl text-slate-500 leading-relaxed font-medium max-w-2xl">
-              We provide premium, institution-grade textiles specifically engineered for the Kenyan climate. 
+              We provide high-quality school uniforms specifically engineered for the Kenyan climate. 
               Since our inception, we've been outfitting the future leaders of our nation.
             </p>
           </motion.div>

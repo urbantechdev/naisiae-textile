@@ -57,7 +57,7 @@ export function Hero({
               src={`${heroImages[currentSlide]?.url || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e"}?q=80&w=1920&auto=format&fit=crop`}
               srcSet={`${heroImages[currentSlide]?.url}?q=60&w=800 800w, ${heroImages[currentSlide]?.url}?q=80&w=1280 1280w, ${heroImages[currentSlide]?.url}?q=80&w=1920 1920w`}
               sizes="100vw"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-contain md:object-cover object-right md:object-center"
               alt={heroImages[currentSlide]?.title || 'Hero'}
               loading="eager"
               decoding="async"
@@ -98,7 +98,7 @@ export function Hero({
                       </motion.span>
                     </span>
                     <span className="text-[#C8961A] italic inline-block relative">
-                      {heroImages[currentSlide]?.subtitle ? 'PRECELLENCE' : 'LEGACY'}
+                      {heroImages[currentSlide]?.subtitle ? 'SCHOOL UNIFORMS' : 'SCHOOL UNIFORMS'}
                       <motion.div 
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
@@ -114,7 +114,7 @@ export function Hero({
                     transition={{ delay: 0.4 }}
                     className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                   >
-                    {heroImages[currentSlide]?.subtitle || "Engineered textiles for the modern institution. Quality guaranteed for generations."}
+                    {heroImages[currentSlide]?.subtitle || "Engineered school uniforms for the modern institution. Quality guaranteed for generations."}
                   </motion.p>
                 </div>
               </motion.div>

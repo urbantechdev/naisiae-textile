@@ -20,14 +20,19 @@ export function Footer() {
             </div>
             <div className="leading-tight text-left">
               <div className="font-display text-2xl tracking-[2px] text-white uppercase">
-                {siteSettings?.siteName || 'Naisiae Textile'}
+                {siteSettings?.siteName || 'Uhuru Market Uniforms'}
               </div>
               <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold">
-                Uhuru Market, Nairobi
+                Naisiae Textiles, Jogoo Rd
               </div>
             </div>
           </div>
-          <p className="text-sm leading-relaxed max-w-sm">Your trusted partner for quality school uniforms, custom knitwear and professional branding services across Kenya.</p>
+          <p className="text-sm leading-relaxed max-w-sm mb-4">
+            Established at the heart of Nairobi, <strong>Uhuru Market Uniforms</strong> by Naisiae Textiles is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
+          </p>
+          <div className="text-[10px] text-white/20 italic max-w-xs">
+            Serving schools across Kenya from our specialized workshop at Uhuru Market stalls.
+          </div>
         </div>
         <div className="text-center md:text-left">
           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6 inline-block md:block">Company</h4>
