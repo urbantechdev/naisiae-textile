@@ -53,70 +53,80 @@ export function CatalogSection({
             {activeTab === 'all' ? 'Top Flash Deals' : activeTab}
           </h2>
           
-          <div className="flex flex-wrap gap-4 mt-8">
-            {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
-              const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
-              return (
+          <div className="mt-8">
+            <div className="flex items-center gap-6 overflow-x-auto pb-4 hide-scrollbar">
+              {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
+                const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
+                return (
+                  <button
+                    key={`${tab}-${idx}`}
+                    onClick={() => {
+                      setActiveTab(tab);
+                      setActiveSubCategory(null);
+                    }}
+                    className={`whitespace-nowrap text-[13px] font-black uppercase tracking-[2px] pb-2 transition-all border-b-2 shrink-0 ${
+                      isSelected 
+                        ? 'text-[#C8102E] border-[#C8102E]' 
+                        : 'text-slate-400 border-transparent hover:text-slate-600'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                );
+              })}
+              
+              {/* Show active tab if it's not in the hardcoded list */}
+              {!['all', 'school uniforms', 'college wear', 'corporate wear', 'sports kits'].includes(activeTab.toLowerCase()) && (
                 <button
-                  key={`${tab}-${idx}`}
                   onClick={() => {
-                    setActiveTab(tab);
+                    setActiveTab(activeTab);
                     setActiveSubCategory(null);
                   }}
-                  className={`text-[12px] font-black uppercase tracking-widest pb-2 transition-all border-b-2 ${
-                    isSelected 
-                      ? 'text-[#C8102E] border-[#C8102E]' 
-                      : 'text-slate-400 border-transparent hover:text-slate-600'
-                  }`}
+                  className="whitespace-nowrap text-[13px] font-black uppercase tracking-[2px] pb-2 transition-all border-b-2 text-[#C8102E] border-[#C8102E] shrink-0"
                 >
-                  {tab}
+                  {activeTab}
                 </button>
-              );
-            })}
-            
-            {/* Show active tab if it's not in the hardcoded list */}
-            {!['all', 'school uniforms', 'college wear', 'corporate wear', 'sports kits'].includes(activeTab.toLowerCase()) && (
-              <button
-                onClick={() => {
-                  setActiveTab(activeTab);
-                  setActiveSubCategory(null);
-                }}
-                className="text-[12px] font-black uppercase tracking-widest pb-2 transition-all border-b-2 text-[#C8102E] border-[#C8102E]"
-              >
-                {activeTab}
-              </button>
-            )}
+              )}
+            </div>
           </div>
 
           {activeTab === 'School Uniforms' && uniformSubCategories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4 px-1 py-1 bg-slate-50/50 rounded-xl border border-slate-100">
-              <button
-                onClick={() => setActiveSubCategory(null)}
-                className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
-                  !activeSubCategory ? 'bg-white text-[#C8102E] shadow-sm ring-1 ring-slate-200' : 'text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                All Uniforms
-              </button>
-              {uniformSubCategories.map((subCat, idx) => (
+            <div className="mt-4">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar">
                 <button
-                  key={`${subCat}-${idx}`}
-                  onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
-                  className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
-                    activeSubCategory === subCat ? 'bg-[#C8102E] text-white shadow-md' : 'bg-white/50 text-slate-500 border border-slate-100 hover:bg-white'
+                  onClick={() => setActiveSubCategory(null)}
+                  className={`whitespace-nowrap px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border shrink-0 ${
+                    !activeSubCategory 
+                      ? 'bg-[#0A1628] text-white border-[#0A1628]' 
+                      : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
                   }`}
                 >
-                  {subCat}
+                  All Uniforms
                 </button>
-              ))}
+                {uniformSubCategories.map((subCat, idx) => (
+                  <button
+                    key={`${subCat}-${idx}`}
+                    onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
+                    className={`whitespace-nowrap px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border shrink-0 ${
+                      activeSubCategory === subCat 
+                        ? 'bg-[#C8102E] text-white border-[#C8102E]' 
+                        : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
+                    }`}
+                  >
+                    {subCat}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
           
-          <div className="flex flex-col sm:flex-row gap-4 mt-6">
-            <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col lg:flex-row gap-4 mt-8 items-start lg:items-center">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
               <button 
                 onClick={() => setActiveTag(null)}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!activeTag ? 'bg-[#1C3560] text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                  !activeTag ? 'bg-[#1C3560] text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
               >
                 All items
               </button>
@@ -124,7 +134,9 @@ export function CatalogSection({
                 <button 
                   key={`${tag}-${idx}`}
                   onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#F59E0B]'}`}
+                  className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                    activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#F59E0B]'
+                  }`}
                 >
                   <span className={activeTag === tag ? 'text-white' : 'text-[#F59E0B]'}>#</span>
                   {tag}
@@ -132,7 +144,7 @@ export function CatalogSection({
               ))}
             </div>
 
-            <div className="relative flex-1 max-w-xs">
+            <div className="relative w-full lg:max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
               <input 
                 type="text"
