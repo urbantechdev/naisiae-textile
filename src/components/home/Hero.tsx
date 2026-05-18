@@ -40,7 +40,7 @@ export function Hero({
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, scale: 1.05 }}
+            initial={{ opacity: 0, scale: 1.03 }}
             animate={{ 
               opacity: 1, 
               scale: 1,
@@ -57,7 +57,7 @@ export function Hero({
               src={`${heroImages[currentSlide]?.url || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e"}?q=80&w=1920&auto=format&fit=crop`}
               srcSet={`${heroImages[currentSlide]?.url}?q=60&w=800 800w, ${heroImages[currentSlide]?.url}?q=80&w=1280 1280w, ${heroImages[currentSlide]?.url}?q=80&w=1920 1920w`}
               sizes="100vw"
-              className="w-full h-full object-contain md:object-cover object-right md:object-center"
+              className="w-full h-full object-cover object-left md:object-center"
               alt={heroImages[currentSlide]?.title || 'Hero'}
               loading="eager"
               decoding="async"
