@@ -137,7 +137,7 @@ export default function WholesalePage() {
               transition={{ delay: 0.2 }}
               className="max-w-2xl text-slate-400 text-lg md:text-xl font-medium leading-relaxed mb-10"
             >
-              Premium institutional wear, corporate apparel, and branding materials at competitive bulk pricing for schools and organizations across Kenya.
+              School Uniforms institutional wear, corporate apparel, and branding materials at competitive bulk pricing for schools and organizations across Kenya.
             </motion.p>
           </div>
         </div>

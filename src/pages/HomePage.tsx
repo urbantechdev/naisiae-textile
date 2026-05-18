@@ -33,6 +33,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Hero } from '../components/home/Hero';
+import { Specialties } from '../components/home/Specialties';
+import { WholesaleDeals } from '../components/home/WholesaleDeals';
+import { CatalogSection } from '../components/home/CatalogSection';
+import { InstitutionalWholesale } from '../components/home/InstitutionalWholesale';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
@@ -130,7 +135,7 @@ export default function HomePage() {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
     const shareData = {
       title: `${product.name} | Naisiae Textiles Limited`,
-      text: `Check out ${product.name} - ${product.description || 'Premium custom uniforms and branding.'}\nPrice: ${product.price?.toLocaleString()}/-`,
+      text: `Check out ${product.name} - ${product.description || 'School Uniforms and custom branding.'}\nPrice: ${product.price?.toLocaleString()}/-`,
       url: shareUrl,
     };
 
@@ -369,9 +374,9 @@ export default function HomePage() {
   useEffect(() => {
     if (siteSettings) {
       const siteName = siteSettings.siteName || 'Uhuru Market Uniforms';
-      const tagline = siteSettings.siteTagline || 'Premium Uniforms & Branding';
-      const description = siteSettings.sharingDescription || 'Premium uniform manufacturing and textile solutions in Nairobi. Custom branding, bulk orders, and quality fabrics.';
-      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://naisiaetextile.com/og-image.jpg';
+      const tagline = siteSettings.siteTagline || 'School Uniforms & Branding';
+      const description = siteSettings.sharingDescription || 'School Uniforms manufacturing and textile solutions in Nairobi. Custom branding, bulk orders, and quality fabrics.';
+      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://naisiaetextiles.com/og-image.jpg';
 
       document.title = `${siteName} | ${tagline}`;
       
@@ -474,621 +479,55 @@ export default function HomePage() {
         setSelectedQuickViewProduct={setSelectedQuickViewProduct}
       />
 
-      {/* High-End Cinematic Hero Slider Section - Refined with Gradient Separation */}
-      <section id="hero" className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
-        {/* Living Background Image Layer - Image slides while overlays stay static */}
-        <div className="absolute inset-0 z-0">
-          {/* Static Overlays - Partitioned Gradient for Right Side Visibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-[40%] via-[#0A1628]/95 via-[45%] to-transparent to-[75%] z-10"></div>
-          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.05),_transparent_70%)] z-10"></div>
+      {/* High-End Cinematic Hero Slider Section */}
+      <Hero 
+        siteSettings={siteSettings}
+        currentSlide={currentSlide}
+        setCurrentSlide={setCurrentSlide}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        showSearchSuggestions={showSearchSuggestions}
+        setShowSearchSuggestions={setShowSearchSuggestions}
+        searchResults={searchResults}
+        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+        setIsQuoteModalOpen={setIsQuoteModalOpen}
+      />
 
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1,
-                transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] }
-              }}
-              exit={{ 
-                opacity: 0, 
-                scale: 1.05,
-                transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] }
-              }}
-              className="absolute inset-0"
-            >
-              <img 
-                src={siteSettings?.heroImages?.[currentSlide]?.url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"} 
-                className="w-full h-full object-cover object-center"
-                alt={siteSettings?.heroImages?.[currentSlide]?.title || 'Hero'}
-                loading="eager"
-                decoding="async"
-                referrerPolicy="no-referrer"
-                fetchPriority="high"
-                width="1920"
-                height="1080"
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      <Specialties 
+        categories={categories}
+        setActiveTab={setActiveTab}
+      />
 
-          {/* Brand Content Container - Desktop: Split Layout with Search on Right */}
-        <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-32 sm:pt-40 pb-12 lg:py-0 gap-8 lg:gap-10">
-          {/* Left Column: Text Content */}
-          <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
-            <div className="min-h-[140px] sm:min-h-[180px] lg:min-h-[220px] flex flex-col justify-center">
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={currentSlide}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  className="space-y-4 lg:space-y-8"
-                >
-                  {/* Typography Epicenter */}
-                  <div className="space-y-4 lg:space-y-8">
-                    <motion.h1 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="font-display font-medium text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
-                    >
-                      <span className="block overflow-hidden">
-                        <motion.span 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.8 }}
-                          className="block"
-                        >
-                          {siteSettings?.heroImages?.[currentSlide]?.title || "CRAFTING"}
-                        </motion.span>
-                      </span>
-                      <span className="text-[#C8961A] italic inline-block relative">
-                        {siteSettings?.heroImages?.[currentSlide]?.subtitle ? 'PRECELLENCE' : 'LEGACY'}
-                        <motion.div 
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ delay: 0.8, duration: 1 }}
-                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
-                        />
-                      </span>
-                    </motion.h1>
+      <WholesaleDeals 
+        products={products}
+        showAllWholesale={showAllWholesale}
+        setShowAllWholesale={setShowAllWholesale}
+        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+      />
 
-                    <motion.p 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.4 }}
-                      className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
-                    >
-                      {siteSettings?.heroImages?.[currentSlide]?.subtitle || "Engineered textiles for the modern institution. Quality guaranteed for generations."}
-                    </motion.p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+      <CatalogSection 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activeTag={activeTag}
+        setActiveTag={setActiveTag}
+        activeSubCategory={activeSubCategory}
+        setActiveSubCategory={setActiveSubCategory}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        allTags={allTags}
+        uniformSubCategories={uniformSubCategories}
+        displayProducts={displayProducts}
+        showAllFeatured={showAllFeatured}
+        setShowAllFeatured={setShowAllFeatured}
+        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+        toggleWishlist={toggleWishlist}
+        addToCart={addToCart}
+        wishlist={wishlist}
+      />
 
-
-            {/* Mobile Search - Positioned here as requested */}
-            <div className="lg:hidden w-full mb-2">
-              <div className="w-full group relative">
-                <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                  <Search className="text-[#0A1628]/30 group-focus-within:text-[#C8961A] transition-all" size={18} />
-                </div>
-                <input 
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                  placeholder="Find your institution or uniform..."
-                  className="w-full bg-white/90 backdrop-blur-md border border-slate-200 rounded-xl pl-12 pr-6 py-4 text-[#0A1628] text-base outline-none focus:ring-4 focus:ring-[#C8961A]/10 focus:border-[#C8961A]/50 transition-all placeholder:text-slate-400 shadow-lg"
-                />
-              </div>
-            </div>
-
-            {/* Static Action Suite - Enhanced for Mobile */}
-            <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
-              <Link
-                to="/products"
-                className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#C8102E] text-white rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.2)] flex items-center justify-center lg:min-w-[220px]"
-              >
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
-                  Shop <ChevronRight size={18} className="hidden sm:block group-hover:translate-x-2 transition-transform" />
-                </span>
-              </Link>
-              <button
-                onClick={() => setIsQuoteModalOpen(true)}
-                className="flex-1 lg:flex-none group px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-2xl border border-white/10 text-white rounded-xl sm:rounded-2xl transition-all duration-500 hover:bg-white hover:text-[#0A1628] shadow-2xl flex items-center justify-center lg:min-w-[220px]"
-              >
-                <span className="text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
-                  Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform" />
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Right Column: Search Hub (Desktop: Centered Right) */}
-          <div className="hidden lg:flex max-w-xl w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-16 lg:mt-0">
-            <div className="w-full lg:max-w-md group relative">
-              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                <Search className="text-[#0A1628]/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
-              </div>
-              <input 
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-                placeholder="Search products"
-                className="w-full bg-white border border-slate-200 lg:border-white/20 rounded-3xl pl-16 pr-6 py-5 lg:py-8 text-[#0A1628] text-xl lg:text-2xl outline-none focus:ring-4 focus:ring-[#C8961A]/30 transition-all placeholder:text-slate-400 shadow-2xl"
-              />
-              <AnimatePresence>
-                {showSearchSuggestions && searchResults.length > 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-4 bg-white border border-slate-100 rounded-3xl shadow-[0_40px_80px_rgba(0,0,0,0.5)] overflow-hidden max-h-[400px] overflow-y-auto z-[60]"
-                  >
-                    {searchResults.map((product) => (
-                      <div 
-                        key={product.id}
-                        onMouseDown={(e) => {
-                          e.preventDefault(); // Prevent input blur immediately
-                          setSelectedQuickViewProduct(product);
-                          setSearchQuery('');
-                          setShowSearchSuggestions(false);
-                        }}
-                        className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors border-b border-slate-50 last:border-none group/search"
-                      >
-                        <div className="w-16 h-16 rounded-xl bg-slate-100 p-2 flex items-center justify-center overflow-hidden shrink-0">
-                          <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-black text-[#0A1628] uppercase tracking-wider mb-1">{product.name}</p>
-                          <div className="flex items-center gap-3">
-                            <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
-                            <span className="text-xs font-bold text-slate-400">{product.price.toLocaleString()}/-</span>
-                          </div>
-                        </div>
-                        <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A] group-hover/search:translate-x-1 transition-all" size={20} />
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-
-        {/* Luxurious Slider Pagination - Anchored Right */}
-        <div className="absolute bottom-12 right-12 z-40 flex items-center gap-5">
-          {siteSettings?.heroImages?.map((_: any, idx: number) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-              className="group relative flex flex-col items-center gap-4 py-2"
-            >
-              <span className={`text-[10px] font-black transition-all ${currentSlide === idx ? 'text-[#C8961A] translate-y-0 opacity-100' : 'text-white/20 translate-y-2 opacity-0'}`}>
-                0{idx + 1}
-              </span>
-              <div className="relative w-12 h-[2px] bg-white/10 overflow-hidden rounded-full">
-                <motion.div 
-                  initial={false}
-                  animate={{ 
-                    scaleX: currentSlide === idx ? 1 : 0,
-                    opacity: currentSlide === idx ? 1 : 0
-                  }}
-                  transition={{ duration: 0.8 }}
-                  className="absolute inset-0 bg-[#C8961A] origin-left"
-                />
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Cinematic Scroll Indicator */}
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-4 opacity-40 hover:opacity-100 transition-opacity cursor-pointer group"
-          onClick={() => document.getElementById('specialties')?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          <span className="text-[8px] font-black uppercase tracking-[6px] text-white group-hover:text-[#C8961A] transition-colors">Scroll To Explore</span>
-          <div className="w-[1px] h-20 bg-gradient-to-b from-white/0 via-white/50 to-white/0 lg:group-hover:via-[#C8961A] transition-colors"></div>
-        </motion.div>
-      </section>
-
-      {/* Featured Categories (Connected to Admin) */}
-      <section id="specialties" className="py-24 bg-white border-b border-slate-100">
-        <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-4">
-                <div className="w-8 h-[2px] bg-[#C8102E]"></div> Our Specialties
-              </div>
-              <h2 className="text-4xl lg:text-5xl font-display text-[#0A1628] leading-none mb-4">
-                Featured Categories
-              </h2>
-            </div>
-            <Link to="/products" className="hidden sm:flex text-sm font-bold text-[#0A1628] hover:text-[#C8102E] transition-colors items-center gap-2">
-              Explore Catalog <ChevronRight size={14} />
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
-            {categories.length > 0 ? (
-              categories.slice(0, 4).map((cat, idx) => (
-                <motion.div 
-                  key={cat.id || idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ y: -6 }}
-                  className="group relative h-[350px] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
-                  onClick={() => {
-                    setActiveTab(cat.title);
-                    const shopEl = document.getElementById('shop');
-                    if (shopEl) shopEl.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  <div className="absolute inset-0">
-                    {cat.image ? (
-                      <img src={cat.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.title} loading="lazy" referrerPolicy="no-referrer" />
-                    ) : (
-                      <div className="w-full h-full bg-slate-100 flex items-center justify-center"><Package size={40} className="text-slate-200" /></div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
-                  </div>
-                  <div className="absolute bottom-8 left-8 right-8">
-                    {cat.subtitle && <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[2px] mb-2">{cat.subtitle}</p>}
-                    <h3 className="text-xl font-bold text-white mb-4 line-clamp-2">{cat.title}</h3>
-                    <div className="flex items-center gap-2 text-white/60 text-[10px] font-black uppercase tracking-widest group-hover:text-white transition-colors">
-                      Shop Now <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              Array(4).fill(0).map((_, i) => (
-                <div key={i} className="h-[350px] bg-slate-50 rounded-3xl border border-dashed border-slate-200 flex flex-col items-center justify-center animate-pulse">
-                  <Package className="text-slate-200 mb-4" size={40} />
-                  <div className="w-1/2 h-2 bg-slate-200 rounded mb-2"></div>
-                  <div className="w-1/3 h-2 bg-slate-200 rounded"></div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Wholesale Deals Products */}
-      <section id="wholesale-deals" className="py-20 bg-white border-b border-slate-100">
-        <div className="max-w-[1440px] mx-auto px-8">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-                <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
-              </div>
-              <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">Wholesale Deals</h2>
-            </div>
-            <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#1C3560] hover:text-[#C8102E] transition-colors border-b-2 border-transparent hover:border-[#C8102E] pb-1 flex items-center gap-2">
-              View All Wholesale Items <ChevronRight size={14} />
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
-            {products
-              .filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate'))
-              .slice(0, showAllWholesale ? undefined : 6)
-              .map(product => (
-                <motion.div 
-                  key={product.id}
-                  whileHover={{ y: -6 }}
-                  className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" loading="lazy" referrerPolicy="no-referrer" />
-                    ) : (
-                      <Package size={40} className="text-[#C8961A]/20" />
-                    )}
-                    <span className="absolute top-3 left-3 bg-[#C8961A] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">Wholesale</span>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-bold text-[13px] mb-1 leading-tight line-clamp-1">{product.name}</h3>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[13px] font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
-                    </div>
-                    <button 
-                      onClick={() => setSelectedQuickViewProduct(product)}
-                      className="w-full py-2 bg-slate-50 hover:bg-[#1C3560] hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </motion.div>
-              ))
-            }
-          </div>
-
-          <div className="mt-12 flex justify-center">
-             {products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')).length > 6 && (
-               <button 
-                onClick={() => setShowAllWholesale(!showAllWholesale)}
-                className="px-10 py-4 bg-slate-100/50 hover:bg-[#C8961A] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group"
-               >
-                 {showAllWholesale ? 'Show Less' : 'View More Wholesale Items'} 
-                 <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />
-               </button>
-             )}
-          </div>
-
-          {products.filter(p => p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')).length === 0 && (
-              <div className="col-span-full py-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                <Package className="mx-auto text-slate-300 mb-4" size={40} />
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Wholesale Collection Launching Soon</p>
-                <p className="text-[11px] text-slate-400 mt-2 font-medium">Contact us directly for bulk pricing on any catalog item.</p>
-              </div>
-            )}
-          </div>
-      </section>
-
-      {/* Featured Products */}
-      <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8">
-        <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-10 gap-6">
-          <div>
-            <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-              <div className="w-7 h-0.5 bg-[#C8961A]"></div> Featured Products
-            </div>
-            <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">Top Flash Deals</h2>
-            
-            {/* Category Tabs */}
-            <div className="flex flex-wrap gap-4 mt-8">
-              {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => (
-                <button
-                  key={`${tab}-${idx}`}
-                  onClick={() => {
-                    setActiveTab(tab);
-                    setActiveSubCategory(null);
-                  }}
-                  className={`text-[12px] font-black uppercase tracking-widest pb-2 transition-all border-b-2 ${
-                    activeTab === tab 
-                      ? 'text-[#C8102E] border-[#C8102E]' 
-                      : 'text-slate-400 border-transparent hover:text-slate-600'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Sub-Category Filter for Uniforms */}
-            {activeTab === 'School Uniforms' && uniformSubCategories.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4 px-1 py-1 bg-slate-50/50 rounded-xl border border-slate-100">
-                <button
-                  onClick={() => setActiveSubCategory(null)}
-                  className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
-                    !activeSubCategory ? 'bg-white text-[#C8102E] shadow-sm ring-1 ring-slate-200' : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  All Uniforms
-                </button>
-                {uniformSubCategories.map((subCat, idx) => (
-                  <button
-                    key={`${subCat}-${idx}`}
-                    onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
-                    className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
-                      activeSubCategory === subCat ? 'bg-[#C8102E] text-white shadow-md' : 'bg-white/50 text-slate-500 border border-slate-100 hover:bg-white'
-                    }`}
-                  >
-                    {subCat}
-                  </button>
-                ))}
-              </div>
-            )}
-            
-            {/* Tag & Search Selection UI */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <div className="flex flex-wrap gap-2">
-                <button 
-                  onClick={() => setActiveTag(null)}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${!activeTag ? 'bg-[#1C3560] text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
-                >
-                  All items
-                </button>
-                {allTags.map((tag, idx) => (
-                  <button 
-                    key={`${tag}-${idx}`}
-                    onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#F59E0B]'}`}
-                  >
-                    <span className={activeTag === tag ? 'text-white' : 'text-[#F59E0B]'}>#</span>
-                    {tag}
-                  </button>
-                ))}
-              </div>
-
-              <div className="relative flex-1 max-w-xs">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                <input 
-                  type="text"
-                  placeholder="Quick filter products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold uppercase tracking-wider outline-none focus:bg-white focus:border-[#C8961A] transition-all"
-                />
-                {searchQuery && (
-                  <button 
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-          <button className="text-[#15284A] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto">View All Products →</button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
-          {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => (
-            <motion.div 
-              key={product.id}
-              whileHover={{ y: -6 }}
-              className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
-                {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
-                ) : (
-                  <Package size={40} className="text-[#C8961A]/20" />
-                )}
-                {product.badge && (
-                  <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded tracking-widest uppercase">{product.badge}</span>
-                )}
-                <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
-                  <button 
-                    onClick={() => toggleWishlist(product)}
-                    className={`w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
-                      wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:bg-[#C8102E] hover:text-white"
-                    }`}
-                  >
-                    <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
-                  </button>
-                </div>
-              </div>
-              <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-1" onClick={() => setSelectedQuickViewProduct(product)}>
-                <div className="text-[8px] sm:text-[9px] text-[#15284A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-                <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
-                <div className="mt-auto pt-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[15px] sm:text-lg font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
-                  </div>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                    className="mt-3 w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )) : (
-            <div className="col-span-full py-20 text-center text-gray-400">
-              <p>No products found. Add some from the admin panel!</p>
-            </div>
-          )}
-        </div>
-
-        {displayProducts.length > 12 && (
-          <div className="mt-16 flex justify-center">
-            <button 
-              onClick={() => setShowAllFeatured(!showAllFeatured)}
-              className="px-12 py-5 bg-[#0A1628] text-white hover:bg-[#C8961A] transition-all rounded-full flex items-center gap-4 text-[11px] font-black uppercase tracking-[3px] shadow-2xl active:scale-95"
-            >
-              {showAllFeatured ? 'Show Less' : 'View More Products'} 
-              <ChevronRight size={16} className={`transition-transform duration-500 ${showAllFeatured ? '-rotate-90' : 'rotate-90'}`} />
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* Wholesale Excellence Block (Now before footer, full-width, compact) */}
-      <section className="bg-[#0A1628] overflow-hidden relative group shadow-2xl w-full border-t border-white/5">
-        {/* Background Decorative Elements */}
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#C8961A] via-transparent to-transparent"></div>
-        </div>
-        
-        <div className="flex flex-col lg:flex-row items-center w-full">
-          <div className="lg:w-1/2 p-6 lg:p-12 relative z-10 w-full">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center gap-3 text-[#C8961A] text-[9px] font-black tracking-[3px] uppercase mb-3">
-                <div className="w-6 h-[1.5px] bg-[#C8961A]"></div> Specialized Wholesale
-              </div>
-              <h2 className="font-display text-4xl lg:text-5xl text-white leading-[0.9] mb-4">
-                Institutional <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
-              </h2>
-              <p className="text-white/60 text-xs lg:text-sm leading-relaxed mb-6 max-w-lg font-medium">
-                High-volume production for schools and corporate institutions. The most competitive rates in Kenya with guaranteed turnaround.
-              </p>
-              
-              <div className="flex flex-wrap gap-3">
-                <button 
-                  onClick={() => setIsQuoteModalOpen(true)}
-                  className="px-6 lg:px-8 py-3.5 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl hover:bg-white hover:text-[#C8102E] transition-all shadow-xl active:scale-95"
-                >
-                  Bulk Pricing
-                </button>
-                <button 
-                  onClick={() => {
-                      const el = document.getElementById('wholesale-deals');
-                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }}
-                  className="px-6 lg:px-8 py-3.5 bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl hover:bg-white/10 transition-all active:scale-95"
-                >
-                  View Deals
-                </button>
-              </div>
-
-              <div className="mt-8 grid grid-cols-3 gap-4 lg:gap-8 border-t border-white/5 pt-6">
-                <div>
-                  <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">500k+</div>
-                  <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Capacity</div>
-                </div>
-                <div>
-                  <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">100+</div>
-                  <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Partners</div>
-                </div>
-                <div>
-                  <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">48H</div>
-                  <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Response</div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-          
-          <div className="lg:w-1/2 w-full h-[250px] lg:h-auto self-stretch relative overflow-hidden">
-            <motion.img 
-              initial={{ scale: 1.1, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1 }}
-              viewport={{ once: true }}
-              src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1600&auto=format&fit=crop" 
-              className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-1000"
-              alt="Wholesale Textiles"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent"></div>
-            
-            {/* Floating Discount Badge - Compact */}
-            <motion.div 
-              initial={{ y: 10, rotate: 0 }}
-              whileInView={{ y: 0, rotate: 8 }}
-              transition={{ type: 'spring', delay: 0.3 }}
-              viewport={{ once: true }}
-              className="absolute top-1/2 left-1/2 lg:top-8 lg:right-8 lg:left-auto -translate-x-1/2 -translate-y-1/2 lg:translate-x-0 lg:translate-y-0 bg-[#C8961A] text-white p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-2xl flex flex-col items-center justify-center border-2 border-[#0A1628]"
-            >
-              <span className="text-[8px] font-black uppercase tracking-widest leading-none opacity-80 mb-0.5">Up To</span>
-              <span className="font-display text-4xl lg:text-6xl leading-none">40%</span>
-              <span className="text-[8px] font-black uppercase tracking-widest leading-none">Off Bulk</span>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <InstitutionalWholesale 
+        setIsQuoteModalOpen={setIsQuoteModalOpen}
+      />
 
       <Footer />
 
@@ -1295,7 +734,7 @@ export default function HomePage() {
                   {compareList.map((item, idx) => (
                     <div key={`${item.id}-desc-${idx}`} className="py-8 border-t border-slate-100 text-center">
                       <p className="text-xs text-slate-500 leading-relaxed max-w-[200px] mx-auto px-2">
-                        {item.description || "Premium engineered textile with institutional-grade durability."}
+                        {item.description || "School Uniforms engineered textile with institutional-grade durability."}
                       </p>
                     </div>
                   ))}
@@ -1587,7 +1026,7 @@ export default function HomePage() {
                         </span>
                       </summary>
                       <div className="p-5 text-slate-500 text-sm leading-relaxed border-t border-slate-50 bg-white">
-                        <div className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#C8961A] pl-4">{selectedQuickViewProduct.description || "Premium quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</div>
+                        <div className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#C8961A] pl-4">{selectedQuickViewProduct.description || "School Uniforms quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</div>
                         
                         <div className="grid grid-cols-2 gap-6 mb-8">
                           <div className="space-y-3">

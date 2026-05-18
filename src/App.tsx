@@ -63,6 +63,15 @@ function DynamicSEOEngine() {
       if (metaDescription) {
         metaDescription.setAttribute("content", description);
       }
+
+      // Update Canonical Tag
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', `https://naisiaetextiles.com${path === '/' ? '' : path}`);
     };
 
     // Run immediately on page render
@@ -85,7 +94,7 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
+        if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextiles.com') {
           setIsAdmin(true);
           setLoading(false);
           return;
@@ -126,11 +135,8 @@ function AppContent({ isAdmin, loading }: any) {
   return (
     <InactivityHandler>
       <Suspense fallback={
-        <div className="fixed inset-0 bg-[#0A1628] flex items-center justify-center z-[999]">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-[#C8961A]/20 border-t-[#C8961A] rounded-full animate-spin"></div>
-            <div className="text-[#C8961A]/60 font-display text-sm tracking-[3px] animate-pulse">NAISIAE</div>
-          </div>
+        <div className="fixed inset-0 bg-white flex items-center justify-center z-[999]">
+          <div className="w-8 h-8 border-2 border-[#C8102E]/20 border-t-[#C8102E] rounded-full animate-spin"></div>
         </div>
       }>
         <Routes>

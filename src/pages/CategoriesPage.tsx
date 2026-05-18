@@ -36,7 +36,7 @@ export default function CategoriesPage() {
             {
               id: 'casual',
               title: 'Casual Wear',
-              subtitle: 'Premium Everyday Styles',
+              subtitle: 'School Uniforms Everyday Styles',
               image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80',
               description: 'Comfortable, durable t-shirts, hoodies, and leisure wear.',
               link: '/?tab=Casual Wear#shop'

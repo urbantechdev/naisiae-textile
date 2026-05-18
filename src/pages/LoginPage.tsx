@@ -26,7 +26,7 @@ export default function LoginPage() {
     
     if (!userDoc.exists()) {
       // First time login - check for active invitations
-      let role = (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') ? 'admin' : 'user';
+      let role = (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextiles.com') ? 'admin' : 'user';
       
       try {
         const inviteDoc = await getDoc(doc(db, 'invites', user.email));
@@ -48,7 +48,7 @@ export default function LoginPage() {
           lastLogin: new Date().toISOString()
         });
         
-        if (role === 'admin' || user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
+        if (role === 'admin' || user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextiles.com') {
           navigate('/admin');
         } else {
           setError('Access denied. You do not have administrator privileges.');
@@ -62,7 +62,7 @@ export default function LoginPage() {
       const userData = userDoc.data();
       
       // AUTO-UPGRADE logic for the primary admin email
-      if ((user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') && userData.role !== 'admin') {
+      if ((user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextiles.com') && userData.role !== 'admin') {
         try {
           await setDoc(doc(db, 'users', user.uid), { role: 'admin' }, { merge: true });
           navigate('/admin');
@@ -72,7 +72,7 @@ export default function LoginPage() {
         }
       }
 
-      if (userData.role === 'admin' || user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextile.com') {
+      if (userData.role === 'admin' || user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextiles.com') {
         navigate('/admin');
       } else {
         setError('Access denied. You do not have administrator privileges.');

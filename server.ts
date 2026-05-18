@@ -83,14 +83,20 @@ async function startServer() {
 
           const metaTags = `
             <title>${name} | Uhuru Market Uniforms</title>
+            <meta name="description" content="${description}" />
+            <link rel="canonical" href="https://naisiaetextiles.com/product/${productId}" />
             <meta property="og:title" content="${name} - ${price.toLocaleString()}/- | Uhuru Market Uniforms" />
             <meta property="og:description" content="${description}" />
             <meta property="og:image" content="${imageUrl}" />
+            <meta property="og:url" content="https://naisiaetextiles.com/product/${productId}" />
             <meta property="og:type" content="product" />
             <meta name="twitter:card" content="summary_large_image" />
           `;
           
-          res.send(indexHtml.replace('<title>Uhuru Market Uniforms - Premium Uniforms & Branding</title>', metaTags));
+          let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
+          html = html.replace(/<meta name="description".*?\/>/, "");
+          html = html.replace(/<link rel="canonical".*?\/>/, "");
+          res.send(html);
           return;
         }
       } catch (e) {
@@ -124,14 +130,20 @@ async function startServer() {
 
           const metaTags = `
             <title>${title} | ${tagline}</title>
+            <meta name="description" content="${description}" />
+            <link rel="canonical" href="https://naisiaetextiles.com/" />
             <meta property="og:title" content="${title} | ${tagline}" />
             <meta property="og:description" content="${description}" />
             <meta property="og:image" content="${imageUrl}" />
+            <meta property="og:url" content="https://naisiaetextiles.com/" />
             <meta property="og:type" content="website" />
             <meta name="twitter:card" content="summary_large_image" />
           `;
           
-          res.send(indexHtml.replace('<title>Uhuru Market Uniforms - Premium Uniforms & Branding</title>', metaTags));
+          let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
+          html = html.replace(/<meta name="description".*?\/>/, "");
+          html = html.replace(/<link rel="canonical".*?\/>/, "");
+          res.send(html);
           return;
         }
       } catch (e) {
@@ -140,6 +152,67 @@ async function startServer() {
     }
     next();
   });
+
+  // Generic Bot Metadata Middleware for handled routes
+  app.get(["/products", "/categories", "/services", "/portfolio", "/contact", "/about", "/wholesale"], async (req, res, next) => {
+    const isBot = /bot|googlebot|facebookexternalhit|twitterbot|whatsapp|bingbot|linkedinbot/i.test(req.headers["user-agent"] || "");
+    
+    if (isBot) {
+      try {
+        const path = req.path;
+        let title = "Uhuru Market Uniforms";
+        let description = "Premium uniform manufacturing and textile solutions in Nairobi.";
+        
+        if (path === '/products') {
+          title = "Our Uniform Products | Uhuru Market Uniforms";
+          description = "Browse our full catalog of custom-tailored garments. High-quality school uniforms and specialized corporate wear.";
+        } else if (path === '/categories') {
+          title = "Uniform Categories | Uhuru Market Uniforms";
+          description = "Explore our manufacturing categories including Education, Hospitality, Medical, and Corporate branding.";
+        } else if (path === '/services') {
+          title = "Manufacturing Services | Uhuru Market Uniforms";
+          description = "Bulk textile production, heavy industrial stitching, embroidery and screen printing capabilities.";
+        } else if (path === '/portfolio') {
+          title = "Our Projects | Uhuru Market Uniforms";
+          description = "See examples of bulk uniform orders we have successfully delivered across Kenya.";
+        } else if (path === '/contact') {
+          title = "Contact Us | Uhuru Market Uniforms";
+          description = "Get in touch for bulk orders. Call +254792021795 or visit Uhuru Market, Nairobi.";
+        } else if (path === '/about') {
+          title = "About Naisiae Textiles | Uhuru Market Uniforms";
+          description = "Leaders in institutional uniform manufacturing at Uhuru Market since inception.";
+        } else if (path === '/wholesale') {
+          title = "Wholesale Uniform Deals | Uhuru Market Uniforms";
+          description = "Specialized bulk pricing for schools and institutions. Get factory-direct rates.";
+        }
+
+        const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
+        const canonical = `<link rel="canonical" href="https://naisiaetextiles.com${path}" />`;
+        const metaTags = `
+          <title>${title}</title>
+          <meta name="description" content="${description}" />
+          ${canonical}
+          <meta property="og:title" content="${title}" />
+          <meta property="og:description" content="${description}" />
+          <meta property="og:url" content="https://naisiaetextiles.com${path}" />
+          <meta property="og:type" content="website" />
+        `;
+        
+        // Remove existing tags that we are replacing to avoid duplicates
+        let html = indexHtml.replace(/<title>.*?<\/title>/, metaTags);
+        html = html.replace(/<meta name="description".*?\/>/, "");
+        html = html.replace(/<link rel="canonical".*?\/>/, "");
+        
+        res.send(html);
+        return;
+      } catch (e) {
+        console.error("SEO Middleware error (Pages):", e);
+      }
+    }
+    next();
+  });
+
+  console.log(`Starting server in ${process.env.NODE_ENV || 'development'} mode...`);
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
@@ -151,25 +224,28 @@ async function startServer() {
     
     // Improved SPA fallback for development
     app.get('*', async (req, res, next) => {
+      // Skip API routes
+      if (req.originalUrl.startsWith('/api/')) {
+        return next();
+      }
+
       const url = req.originalUrl;
-      const isHtmlRequest = req.headers.accept?.includes('text/html');
-      
-      // Only handle HTML requests or extension-less URLs
-      if (isHtmlRequest || !url.includes('.')) {
-        try {
-          const templatePath = path.resolve(process.cwd(), 'index.html');
-          const template = fs.readFileSync(templatePath, 'utf-8');
-          const html = await vite.transformIndexHtml(url, template);
-          res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-        } catch (e) {
-          next(e);
-        }
-      } else {
-        next();
+      try {
+        const templatePath = path.resolve(process.cwd(), 'index.html');
+        let template = fs.readFileSync(templatePath, 'utf-8');
+        // Inject Vite transform
+        const html = await vite.transformIndexHtml(url, template);
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+      } catch (e) {
+        console.error("Vite fallback error:", e);
+        next(e);
       }
     });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+    if (!fs.existsSync(distPath)) {
+      console.error(`ERROR: Production mode detected but 'dist' directory not found at ${distPath}`);
+    }
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));

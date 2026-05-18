@@ -61,7 +61,7 @@ export function Footer() {
               <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A] group-hover:bg-[#C8961A] group-hover:text-white transition-all"><Mail size={20} /></div>
               <div className="text-left">
                <div className="text-[10px] font-black uppercase text-white/30 tracking-widest">Email</div>
-               <div className="text-white font-bold text-sm truncate max-w-[200px]">{siteSettings?.contactEmail || 'support@naisiaetextile.com'}</div>
+               <div className="text-white font-bold text-sm truncate max-w-[200px]">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</div>
               </div>
             </div>
           </div>
