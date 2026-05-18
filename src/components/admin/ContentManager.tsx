@@ -22,11 +22,15 @@ function SortableItem({ id, children }: { id: string, children: React.ReactNode 
   );
 }
 
-export function ContentManager({ categories, services, portfolio, setToast, handleFirestoreError }: any) {
-  const [activeTab, setActiveTab] = useState('categories');
+export function ContentManager({ categories, services, portfolio, setToast, handleFirestoreError, initialTab }: any) {
+  const [activeTab, setActiveTab] = useState(initialTab || 'categories');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
   const [urlInput, setUrlInput] = useState('');
+
+  React.useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
 
   const handleSave = async () => {
     if (!editingItem || !editingItem.title) return;

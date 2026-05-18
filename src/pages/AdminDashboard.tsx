@@ -462,7 +462,9 @@ export default function AdminDashboard() {
     return matchesSearch && matchesCategory && matchesStatus && matchesPrice;
   });
 
-  const productCategories = Array.from(new Set(products.map(p => p.category)));
+  const productCategories = categories.length > 0 
+    ? categories.map(c => c.title || c.name).filter(Boolean)
+    : Array.from(new Set(products.map(p => p.category)));
 
   const filteredWishlists = wishlists.filter(list => {
     const search = wishlistSearch.toLowerCase();
@@ -914,6 +916,80 @@ export default function AdminDashboard() {
       setToast({ message: 'Error adding some images. Check console for details.', type: 'error' });
     } finally {
       setIsImporting(false);
+    }
+  };
+
+  const handleSaveQuoteStatus = async (quoteId: string, status: string) => {
+    try {
+      await updateDoc(doc(db, 'quotes', quoteId), {
+        status,
+        updatedAt: serverTimestamp()
+      });
+      setToast({ message: `Quote marked as ${status}`, type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `quotes/${quoteId}`);
+    }
+  };
+
+  const handleDeleteQuote = async (quoteId: string) => {
+    if (!confirm('Permanently delete this quote request?')) return;
+    try {
+      await deleteDoc(doc(db, 'quotes', quoteId));
+      setToast({ message: 'Quote deleted successfully', type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `quotes/${quoteId}`);
+    }
+  };
+
+  const handleSaveCategory = async (categoryData: any) => {
+    try {
+      if (categoryData.id) {
+        await updateDoc(doc(db, 'categories', categoryData.id), {
+          ...categoryData,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await addDoc(collection(db, 'categories'), {
+          ...categoryData,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      setToast({ message: 'Category saved successfully', type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'categories');
+    }
+  };
+
+  const handleSaveService = async (serviceData: any) => {
+    try {
+      if (serviceData.id) {
+        await updateDoc(doc(db, 'services', serviceData.id), {
+          ...serviceData,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await addDoc(collection(db, 'services'), {
+          ...serviceData,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      setToast({ message: 'Service updated successfully', type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'services');
+    }
+  };
+
+  const handleSaveSettings = async (settings: any) => {
+    try {
+      await setDoc(doc(db, 'settings', 'site'), {
+        ...settings,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      setToast({ message: 'Global settings updated!', type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'settings/site');
     }
   };
 
@@ -2351,7 +2427,7 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
-            {activeView === 'content' && (
+            {(activeView === 'content' || activeView === 'categories' || activeView === 'services') && (
               <motion.div 
                 key="content"
                 initial={{ opacity: 0, y: 10 }}
@@ -2364,7 +2440,8 @@ export default function AdminDashboard() {
                   services={services} 
                   portfolio={portfolio} 
                   setToast={setToast} 
-                  handleFirestoreError={handleFirestoreError} 
+                  handleFirestoreError={handleFirestoreError}
+                  initialTab={activeView === 'categories' ? 'categories' : activeView === 'services' ? 'services' : 'categories'}
                 />
               </motion.div>
             )}
@@ -3199,6 +3276,8 @@ function AdminSidebar({
   const navItems = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Inventory', icon: Package, badge: badges.lowStockProductsCount },
+    { id: 'categories', label: 'Categories', icon: Filter },
+    { id: 'services', label: 'Services', icon: Sparkles },
     { id: 'quotes', label: 'Requests', icon: MessageSquare, badge: badges.newQuotesCount },
     { id: 'wishlists', label: 'Wishlists', icon: Heart },
     { id: 'promotions', label: 'Marketing', icon: Megaphone },
@@ -3502,7 +3581,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
     })
   );
 
-  const categories = [
+  const categories = productCategories.length > 0 ? productCategories : [
     'School Uniforms',
     'College Wear',
     'Corporate Wear',
