@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   GitCompare,
   Share2,
-  Plus
+  Plus,
+  MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -303,13 +304,28 @@ export default function WholesalePage() {
                   <h2 className="font-display text-5xl lg:text-7xl text-[#0A1628] leading-[0.9] mb-4">
                     {selectedProduct.name}
                   </h2>
-                  <div className="flex items-center gap-6 mb-8">
-                    <span className="text-3xl font-black text-[#C8102E]">
-                      {selectedProduct.priceType === 'wholesale' ? 'Price on Inquiry' : `${selectedProduct.price.toLocaleString()}/-`}
+                  <div className="flex flex-col gap-3 mb-8">
+                    <span className="text-sm font-black uppercase tracking-[3px] text-[#C8961A]">
+                      Institutional Bulk Order
                     </span>
-                    <span className="text-sm font-black uppercase tracking-[3px] text-slate-300">
-                      {selectedProduct.priceType === 'wholesale' ? 'Custom Bulk Request' : 'Unit Bulk Price'}
-                    </span>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <a 
+                        href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedProduct.name}.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-14 rounded-2xl font-black text-[11px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-3 shadow-xl"
+                      >
+                        <MessageSquare size={18} />
+                        Enquire on WhatsApp
+                      </a>
+                      <a 
+                        href="tel:+254792021795"
+                        className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white h-14 rounded-2xl font-black text-[11px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-3 shadow-xl"
+                      >
+                        <Phone size={18} />
+                        Call Now
+                      </a>
+                    </div>
                   </div>
                   <p className="text-slate-500 text-sm leading-relaxed mb-6">
                     {selectedProduct.description || "Institutional grade apparel engineered for Kenya's leading organizations. Durable fabric with industrial-strength stitching."}
@@ -449,13 +465,32 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onCli
           <Package size={12} className="text-slate-300" />
         </div>
         <h3 className="font-display text-3xl text-[#0A1628] leading-none mb-3 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
-        <div className="flex items-center justify-between">
-          <span className="text-xl font-black text-[#1C3560]">
-            {product.priceType === 'wholesale' ? 'Price on Inquiry' : `${product.price.toLocaleString()}/-`}
-          </span>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
-            {product.priceType === 'wholesale' ? 'Bulk Inquiry' : 'Wholesale Unit'}
-          </span>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+              Bulk Inquiry Required
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <a 
+              href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${product.name}.`}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              rel="noopener noreferrer"
+              className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+            >
+              <MessageSquare size={12} />
+              Enquire
+            </a>
+            <a 
+              href="tel:+254792021795"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+            >
+              <Phone size={12} />
+              Call
+            </a>
+          </div>
         </div>
       </div>
     </motion.div>

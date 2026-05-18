@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Package, ChevronRight, Plus } from 'lucide-react';
+import { Package, ChevronRight, Plus, Phone, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface WholesaleDealsProps {
@@ -59,16 +59,23 @@ export function WholesaleDeals({
                   <span className="absolute top-3 left-3 bg-[#C8961A] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">Wholesale</span>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-[13px] mb-1 leading-tight line-clamp-1">{product.name}</h3>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[13px] font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
+                  <h3 className="font-bold text-[13px] mb-3 leading-tight line-clamp-2 min-h-[2.5rem]">{product.name}</h3>
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={() => setSelectedQuickViewProduct(product)}
+                      className="w-full py-2 bg-[#C8961A] text-white hover:bg-[#A67C16] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                    >
+                      <MessageSquare size={12} />
+                      Enquire
+                    </button>
+                    <a 
+                      href="tel:+254792021795"
+                      className="w-full py-2 bg-[#C8102E] hover:bg-[#9E0D24] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                    >
+                      <Phone size={12} />
+                      Call Now
+                    </a>
                   </div>
-                  <button 
-                    onClick={() => setSelectedQuickViewProduct(product)}
-                    className="w-full py-2 bg-slate-50 hover:bg-[#1C3560] hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
-                  >
-                    View Details
-                  </button>
                 </div>
               </motion.div>
             ))

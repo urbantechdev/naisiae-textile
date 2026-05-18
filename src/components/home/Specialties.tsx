@@ -39,8 +39,16 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
                 className="group relative h-[350px] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
                 onClick={() => {
                   setActiveTab(cat.title);
-                  const shopEl = document.getElementById('shop');
-                  if (shopEl) shopEl.scrollIntoView({ behavior: 'smooth' });
+                  const shopEl = document.getElementById('catalog-section') || document.getElementById('shop');
+                  if (shopEl) {
+                    const offset = 80; // Navbar height
+                    const elementPosition = shopEl.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
                 }}
               >
                 <div className="absolute inset-0">

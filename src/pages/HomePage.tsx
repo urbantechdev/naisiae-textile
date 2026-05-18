@@ -891,7 +891,7 @@ export default function HomePage() {
                           {selectedQuickViewProduct.priceType === 'wholesale' ? "Bulk Sourcing" : "MSRP Price"}
                         </span>
                         <div className="flex items-center gap-3">
-                          {selectedQuickViewProduct.priceType === 'wholesale' ? (
+                          {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
                             <span className="text-2xl lg:text-3xl font-black text-[#0A1628] leading-none uppercase tracking-tight">Price on Inquiry</span>
                           ) : (
                             <>
@@ -1223,48 +1223,69 @@ export default function HomePage() {
                       </button>
                     </div>
 
-                    <button 
-                      onClick={() => {
-                        const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
-                        const finalPrice = basePrice + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                          const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                          return sum + (variant?.price || 0);
-                        }, 0);
+                    {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
+                      <>
+                        <a 
+                          href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedQuickViewProduct.name}.`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-14 lg:h-16 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        >
+                          <MessageSquare size={20} />
+                          Enquire on WhatsApp
+                        </a>
+                        <a 
+                          href="tel:+254792021795"
+                          className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white h-14 lg:h-16 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-3 shadow-xl"
+                        >
+                          <Phone size={20} />
+                          Call Now
+                        </a>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
+                          const finalPrice = basePrice + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                            const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                            return sum + (variant?.price || 0);
+                          }, 0);
 
-                        const cartItem = {
-                          ...selectedQuickViewProduct,
-                          price: finalPrice,
-                          selectedVariants: { ...selectedVariants },
-                          quantity: inquiryUnits,
-                          customization: inquiryCustomization,
-                          priceType: selectedQuickViewProduct.priceType || 'fixed'
-                        };
-                        
-                        addToCart(cartItem, inquiryUnits);
-                        setSelectedQuickViewProduct(null);
-                        setIsCartOpen(true);
-                      }}
-                      className="relative overflow-hidden w-full flex-1 bg-[#0A1628] hover:bg-[#1C3560] text-white h-14 lg:h-16 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] lg:tracking-[4px] transition-all flex items-center shadow-2xl hover:shadow-[#0A1628]/30 active:scale-[0.98] group"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                      <div className="relative flex items-center w-full h-full">
-                        {selectedQuickViewProduct.priceType !== 'wholesale' && (
-                          <div className="flex flex-col items-start px-6 lg:px-8 border-r border-white/10 h-full justify-center bg-white/5">
-                            <span className="text-[8px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Est. Total</span>
-                            <span className="text-sm lg:text-lg font-black tracking-tight">
-                              {( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                                const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                                return sum + (variant?.price || 0);
-                              }, 0)) * inquiryUnits ).toLocaleString()}/-
-                            </span>
+                          const cartItem = {
+                            ...selectedQuickViewProduct,
+                            price: finalPrice,
+                            selectedVariants: { ...selectedVariants },
+                            quantity: inquiryUnits,
+                            customization: inquiryCustomization,
+                            priceType: selectedQuickViewProduct.priceType || 'fixed'
+                          };
+                          
+                          addToCart(cartItem, inquiryUnits);
+                          setSelectedQuickViewProduct(null);
+                          setIsCartOpen(true);
+                        }}
+                        className="relative overflow-hidden w-full flex-1 bg-[#0A1628] hover:bg-[#1C3560] text-white h-14 lg:h-16 rounded-2xl font-black text-[12px] lg:text-[14px] uppercase tracking-[2px] lg:tracking-[4px] transition-all flex items-center shadow-2xl hover:shadow-[#0A1628]/30 active:scale-[0.98] group"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                        <div className="relative flex items-center w-full h-full">
+                          {selectedQuickViewProduct.priceType !== 'wholesale' && (
+                            <div className="flex flex-col items-start px-6 lg:px-8 border-r border-white/10 h-full justify-center bg-white/5">
+                              <span className="text-[8px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Est. Total</span>
+                              <span className="text-sm lg:text-lg font-black tracking-tight">
+                                {( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                                  const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                                  return sum + (variant?.price || 0);
+                                }, 0)) * inquiryUnits ).toLocaleString()}/-
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex-1 flex items-center justify-center gap-3 lg:gap-4 px-6">
+                            <ShoppingBag size={20} className="shrink-0 text-[#C8961A]" />
+                            <span className="whitespace-nowrap">{selectedQuickViewProduct.priceType === 'wholesale' ? "Initiate Bulk Inquiry" : "Add to Collection"}</span>
                           </div>
-                        )}
-                        <div className="flex-1 flex items-center justify-center gap-3 lg:gap-4 px-6">
-                          <ShoppingBag size={20} className="shrink-0 text-[#C8961A]" />
-                          <span className="whitespace-nowrap">{selectedQuickViewProduct.priceType === 'wholesale' ? "Initiate Bulk Inquiry" : "Add to Collection"}</span>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

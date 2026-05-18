@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Search, ChevronRight, Heart, Package, X } from 'lucide-react';
+import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare } from 'lucide-react';
 
 interface CatalogSectionProps {
   activeTab: string;
@@ -42,31 +42,50 @@ export function CatalogSection({
   wishlist
 }: CatalogSectionProps) {
   return (
-    <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8">
+    <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8 scroll-mt-24">
+      <div id="shop" className="absolute -mt-24"></div>
       <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-10 gap-6">
         <div>
           <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
             <div className="w-7 h-0.5 bg-[#C8961A]"></div> Featured Products
           </div>
-          <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">Top Flash Deals</h2>
+          <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">
+            {activeTab === 'all' ? 'Top Flash Deals' : activeTab}
+          </h2>
           
           <div className="flex flex-wrap gap-4 mt-8">
-            {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => (
+            {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
+              const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
+              return (
+                <button
+                  key={`${tab}-${idx}`}
+                  onClick={() => {
+                    setActiveTab(tab);
+                    setActiveSubCategory(null);
+                  }}
+                  className={`text-[12px] font-black uppercase tracking-widest pb-2 transition-all border-b-2 ${
+                    isSelected 
+                      ? 'text-[#C8102E] border-[#C8102E]' 
+                      : 'text-slate-400 border-transparent hover:text-slate-600'
+                  }`}
+                >
+                  {tab}
+                </button>
+              );
+            })}
+            
+            {/* Show active tab if it's not in the hardcoded list */}
+            {!['all', 'school uniforms', 'college wear', 'corporate wear', 'sports kits'].includes(activeTab.toLowerCase()) && (
               <button
-                key={`${tab}-${idx}`}
                 onClick={() => {
-                  setActiveTab(tab);
+                  setActiveTab(activeTab);
                   setActiveSubCategory(null);
                 }}
-                className={`text-[12px] font-black uppercase tracking-widest pb-2 transition-all border-b-2 ${
-                  activeTab === tab 
-                    ? 'text-[#C8102E] border-[#C8102E]' 
-                    : 'text-slate-400 border-transparent hover:text-slate-600'
-                }`}
+                className="text-[12px] font-black uppercase tracking-widest pb-2 transition-all border-b-2 text-[#C8102E] border-[#C8102E]"
               >
-                {tab}
+                {activeTab}
               </button>
-            ))}
+            )}
           </div>
 
           {activeTab === 'School Uniforms' && uniformSubCategories.length > 0 && (
@@ -174,15 +193,37 @@ export function CatalogSection({
               <div className="text-[8px] sm:text-[9px] text-[#15284A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
               <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
               <div className="mt-auto pt-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-[15px] sm:text-lg font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
-                </div>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                  className="mt-3 w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors"
-                >
-                  Add to Cart
-                </button>
+                {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                      className="w-full bg-[#C8961A] hover:bg-[#A67C16] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+                    >
+                      <MessageSquare size={12} />
+                      Enquire
+                    </button>
+                    <a 
+                      href="tel:+254792021795"
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 text-center"
+                    >
+                      <Phone size={12} />
+                      Call Now
+                    </a>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[15px] sm:text-lg font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
+                    </div>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                      className="mt-3 w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors"
+                    >
+                      Add to Cart
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
