@@ -134,11 +134,7 @@ function AppContent({ isAdmin, loading }: any) {
 
   return (
     <InactivityHandler>
-      <Suspense fallback={
-        <div className="fixed inset-0 bg-white flex items-center justify-center z-[999]">
-          <div className="w-8 h-8 border-2 border-[#C8102E]/20 border-t-[#C8102E] rounded-full animate-spin"></div>
-        </div>
-      }>
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />

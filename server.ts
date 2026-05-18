@@ -159,42 +159,42 @@ async function startServer() {
     
     if (isBot) {
       try {
-        const path = req.path;
+        const requestPath = req.path;
         let title = "Uhuru Market Uniforms";
         let description = "Premium uniform manufacturing and textile solutions in Nairobi.";
         
-        if (path === '/products') {
+        if (requestPath === '/products') {
           title = "Our Uniform Products | Uhuru Market Uniforms";
           description = "Browse our full catalog of custom-tailored garments. High-quality school uniforms and specialized corporate wear.";
-        } else if (path === '/categories') {
+        } else if (requestPath === '/categories') {
           title = "Uniform Categories | Uhuru Market Uniforms";
           description = "Explore our manufacturing categories including Education, Hospitality, Medical, and Corporate branding.";
-        } else if (path === '/services') {
+        } else if (requestPath === '/services') {
           title = "Manufacturing Services | Uhuru Market Uniforms";
           description = "Bulk textile production, heavy industrial stitching, embroidery and screen printing capabilities.";
-        } else if (path === '/portfolio') {
+        } else if (requestPath === '/portfolio') {
           title = "Our Projects | Uhuru Market Uniforms";
           description = "See examples of bulk uniform orders we have successfully delivered across Kenya.";
-        } else if (path === '/contact') {
+        } else if (requestPath === '/contact') {
           title = "Contact Us | Uhuru Market Uniforms";
           description = "Get in touch for bulk orders. Call +254792021795 or visit Uhuru Market, Nairobi.";
-        } else if (path === '/about') {
+        } else if (requestPath === '/about') {
           title = "About Naisiae Textiles | Uhuru Market Uniforms";
           description = "Leaders in institutional uniform manufacturing at Uhuru Market since inception.";
-        } else if (path === '/wholesale') {
+        } else if (requestPath === '/wholesale') {
           title = "Wholesale Uniform Deals | Uhuru Market Uniforms";
           description = "Specialized bulk pricing for schools and institutions. Get factory-direct rates.";
         }
 
         const indexHtml = fs.readFileSync(path.join(process.cwd(), "index.html"), "utf-8");
-        const canonical = `<link rel="canonical" href="https://naisiaetextiles.com${path}" />`;
+        const canonical = `<link rel="canonical" href="https://naisiaetextiles.com${requestPath}" />`;
         const metaTags = `
           <title>${title}</title>
           <meta name="description" content="${description}" />
           ${canonical}
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
-          <meta property="og:url" content="https://naisiaetextiles.com${path}" />
+          <meta property="og:url" content="https://naisiaetextiles.com${requestPath}" />
           <meta property="og:type" content="website" />
         `;
         

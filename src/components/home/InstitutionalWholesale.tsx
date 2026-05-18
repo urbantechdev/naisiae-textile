@@ -77,18 +77,6 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent"></div>
-          
-          <motion.div 
-            initial={{ y: 10, rotate: 0 }}
-            whileInView={{ y: 0, rotate: 8 }}
-            transition={{ type: 'spring', delay: 0.3 }}
-            viewport={{ once: true }}
-            className="absolute top-1/2 left-1/2 lg:top-8 lg:right-8 lg:left-auto -translate-x-1/2 -translate-y-1/2 lg:translate-x-0 lg:translate-y-0 bg-[#C8961A] text-white p-4 lg:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-2xl flex flex-col items-center justify-center border-2 border-[#0A1628]"
-          >
-            <span className="text-[8px] font-black uppercase tracking-widest leading-none opacity-80 mb-0.5">Up To</span>
-            <span className="font-display text-4xl lg:text-6xl leading-none">40%</span>
-            <span className="text-[8px] font-black uppercase tracking-widest leading-none">Off Bulk</span>
-          </motion.div>
         </div>
       </div>
     </section>
