@@ -47,6 +47,8 @@ export function Navbar({
 
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
+  const [megaMenus, setMegaMenus] = useState<any[]>([]);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState<any[]>([]);
@@ -66,6 +68,10 @@ export function Navbar({
     // Fetch services for global search
     const unsubServices = onSnapshot(collection(db, 'services'), (snapshot) => {
       setServices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    const unsubMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
+      setMegaMenus(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
     
     const unsubSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
@@ -91,6 +97,7 @@ export function Navbar({
       unsubPromos();
       unsubProducts();
       unsubServices();
+      unsubMenus();
     };
   }, []);
 
@@ -119,10 +126,10 @@ export function Navbar({
 
   const navItems = [
     { name: 'Home', id: 'home', link: '/' },
-    { name: 'Products', id: 'products', link: '/products' },
-    { name: 'Services', id: 'services', link: '/services' },
+    { name: 'Products', id: 'products', link: '/products', mega: true },
+    { name: 'Services', id: 'services', link: '/services', mega: true },
     { name: 'Portfolio', id: 'portfolio', link: '/portfolio' },
-    { name: 'Categories', id: 'categories', link: '/categories' }
+    { name: 'Categories', id: 'categories', link: '/categories', mega: true }
   ];
 
   return (
@@ -162,6 +169,7 @@ export function Navbar({
             ? 'bg-[#050B16]/95 backdrop-blur-2xl py-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
             : 'bg-[#050B16] py-0'
         }`}
+        onMouseLeave={() => setActiveMegaMenu(null)}
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12 h-20 md:h-28 transition-all duration-700">
           {/* Brand Identity */}
@@ -193,6 +201,7 @@ export function Navbar({
               <div 
                 key={item.id} 
                 className="relative h-full flex items-center"
+                onMouseEnter={() => setActiveMegaMenu(item.mega ? item.id : null)}
               >
                 <Link 
                   to={item.link} 
@@ -201,7 +210,9 @@ export function Navbar({
                   } hover:text-[#C8961A]`}
                 >
                   <span className="relative z-10">{item.name}</span>
-                  <span className="absolute -bottom-1 left-0 h-[1.5px] bg-[#C8961A] transition-all duration-700 w-0 group-hover:w-full"></span>
+                  <span className={`absolute -bottom-1 left-0 h-[1.5px] bg-[#C8961A] transition-all duration-700 ${
+                    activeMegaMenu === item.id ? 'w-full' : 'w-0'
+                   } group-hover:w-full`}></span>
                 </Link>
               </div>
             ))}
@@ -250,6 +261,126 @@ export function Navbar({
             </button>
           </div>
         </div>
+
+        <AnimatePresence>
+          {activeMegaMenu && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              onMouseEnter={() => setActiveMegaMenu(activeMegaMenu)}
+              className="absolute top-full left-0 w-full bg-white border-t border-slate-100 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] z-[150] overflow-hidden"
+            >
+              <div className="max-w-[1440px] mx-auto min-h-[480px] flex">
+                {(() => {
+                  const normalizedActive = activeMegaMenu?.toLowerCase();
+                  const dynamicMenu = megaMenus.find(m => 
+                    m.id?.toLowerCase() === normalizedActive || 
+                    m.name?.toLowerCase() === normalizedActive
+                  );
+
+                  if (!dynamicMenu) {
+                    return (
+                      <div className="flex flex-col items-center justify-center w-full py-20 text-slate-300">
+                        <Package size={48} className="opacity-20 mb-4" />
+                        <p className="text-[10px] font-black uppercase tracking-widest">No dynamic content configured</p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="grid grid-cols-12 w-full h-full">
+                      <div className={`p-16 lg:p-20 grid gap-16 col-span-8 grid-cols-3 relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-[#0A1628]/[0.02] pointer-events-none"></div>
+                        {dynamicMenu.categories?.map((cat: any, idx: number) => (
+                          <div key={idx} className="space-y-8 relative z-10">
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-[1.5px] bg-[#C8102E]"></div>
+                                <h4 className="text-[#0A1628] text-[10px] font-black tracking-[5px] uppercase">{cat.name}</h4>
+                              </div>
+                              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[2px] pl-11">Institutional Excellence</p>
+                            </div>
+                            <ul className="space-y-5 pl-11">
+                              {cat.items?.map((sub: string, sIdx: number) => (
+                                <li key={`${sub}-${sIdx}`}>
+                                  <Link 
+                                    to={cat.link || (activeMegaMenu === 'products' ? `/products?category=${cat.name.toLowerCase()}` : '#')}
+                                    className="group/link flex items-center gap-4 text-slate-500 hover:text-[#C8102E] transition-all py-1"
+                                    onClick={() => setActiveMegaMenu(null)}
+                                  >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[#C8102E] opacity-0 group-hover/link:opacity-100 transition-all scale-0 group-hover/link:scale-100 shadow-[0_0_10px_rgba(200,16,46,0.5)]"></div>
+                                    <span className="text-sm font-bold tracking-tight group-hover/link:translate-x-1 transition-transform">{sub}</span>
+                                    <ChevronRight size={14} className="ml-auto opacity-0 group-hover/link:opacity-100 -translate-x-4 group-hover/link:translate-x-0 transition-all" />
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+
+                      {dynamicMenu.featured && (
+                        <div className="col-span-4 bg-slate-50 p-12 lg:p-16 border-l border-slate-100 flex flex-col relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-full h-full opacity-[0.03] pointer-events-none">
+                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                          </div>
+                          
+                          <div className="text-[10px] font-black tracking-[8px] uppercase text-[#0A1628]/30 mb-10 italic">Quarterly Spotlight</div>
+                          
+                          <div className="relative group/feat flex-1 rounded-[3.5rem] overflow-hidden shadow-2xl mb-10 border border-slate-200 transition-all duration-700 hover:border-[#C8961A]/30">
+                            {dynamicMenu.featured.image && (
+                              <img 
+                                src={dynamicMenu.featured.image} 
+                                className="w-full h-full object-cover transition-transform duration-[4000ms] group-hover/feat:scale-110" 
+                                alt="Featured"
+                              />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628] via-[#0A1628]/40 to-transparent"></div>
+                            <div className="absolute inset-0 flex flex-col justify-end p-10">
+                              <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                              >
+                                <div className="flex items-center gap-3 mb-3">
+                                  <Zap size={12} className="text-[#C8961A] fill-[#C8961A]" />
+                                  <span className="text-[#C8961A] text-[9px] font-black tracking-[4px] uppercase">Elite Collection</span>
+                                </div>
+                                <h5 className="text-white text-3xl font-display font-medium leading-[1.1] mb-8">
+                                  {dynamicMenu.featured.title}
+                                </h5>
+                                <Link 
+                                  to={dynamicMenu.featured.link || '#'}
+                                  className="inline-flex items-center gap-4 px-10 py-5 bg-[#C8102E] text-white rounded-2xl text-[10px] font-black uppercase tracking-[4px] hover:bg-white hover:text-[#0A1628] transition-all shadow-2xl active:scale-95"
+                                  onClick={() => setActiveMegaMenu(null)}
+                                >
+                                  Enter Boutique <ChevronRight size={14} />
+                                </Link>
+                              </motion.div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 relative z-10">
+                            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center group/icon hover:shadow-md transition-all">
+                              <GitCompare size={20} className="text-[#C8102E] mb-2 group-hover:rotate-45 transition-transform" />
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Quality Sync</span>
+                            </div>
+                            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center group/icon hover:shadow-md transition-all">
+                              <Heart size={20} className="text-[#C8102E] mb-2 group-hover:scale-110 transition-transform" />
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Heritage</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Mobile Menu & Search Portal */}

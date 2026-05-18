@@ -987,6 +987,7 @@ export default function AdminDashboard() {
           <MobileNavItem active={activeView === 'quotes'} onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} icon={<MessageSquare size={18} />} label="Quotes" badge={newQuotesCount} />
           <MobileNavItem active={activeView === 'wishlists'} onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} icon={<Heart size={18} />} label="Wishlists" />
           <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
+          <MobileNavItem active={activeView === 'mega-menu'} onClick={() => { setActiveView('mega-menu'); setIsMobileMenuOpen(false); }} icon={<Zap size={18} />} label="Mega Menu" />
           <MobileNavItem active={activeView === 'content'} onClick={() => { setActiveView('content'); setIsMobileMenuOpen(false); }} icon={<Edit2 size={18} />} label="Pages Content" />
           <MobileNavItem active={activeView === 'appearance'} onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} icon={<Palette size={18} />} label="Layout" />
           <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
@@ -2122,6 +2123,234 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
+            {activeView === 'mega-menu' && (
+              <motion.div 
+                key="mega-menu"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-8"
+              >
+                <div className="bg-white rounded-[32px] shadow-sm border border-[#E2E8F0] overflow-hidden">
+                  <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between bg-gradient-to-r from-white to-[#F8FAFC]">
+                    <div>
+                      <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Mega-Menu Architecture</h3>
+                      <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Expansive Real-Time Navigation Control</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-8 space-y-12">
+                    {megaMenus.length === 0 ? (
+                      <div className="py-20 text-center bg-slate-50 rounded-[40px] border-2 border-dashed border-slate-200">
+                        <div className="max-w-md mx-auto space-y-6">
+                          <Zap size={48} className="mx-auto text-[#C8961A]" />
+                          <h4 className="text-xl font-bold">No Menu Items Configured</h4>
+                          <p className="text-sm text-slate-500">Initialize your navigation tree with a single click to start building your expansive menu.</p>
+                          <button 
+                            onClick={async () => {
+                              const defaults = [
+                                { 
+                                  id: 'products',
+                                  name: 'Products', 
+                                  featured: { title: 'New Arrival: Premium Gabardine', image: SEED_URLS[0], link: '/products' },
+                                  categories: [
+                                    { name: 'Sectors', items: ['Primary Schools', 'Secondary Schools', 'Institutional', 'Hospitality'], link: '/products' },
+                                    { name: 'Apparel', items: ['Blazers', 'Trousers', 'Skirts', 'Shirts', 'Sweaters'], link: '/products' }
+                                  ]
+                                },
+                                { 
+                                  id: 'services',
+                                  name: 'Services', 
+                                  featured: { title: 'Institutional Branding', image: SEED_URLS[1], link: '/services' },
+                                  categories: [
+                                    { name: 'Manufacturing', items: ['Bulk Production', 'Custom Designing', 'Wholesale Supply'], link: '/services' }
+                                  ]
+                                },
+                                { 
+                                  id: 'categories',
+                                  name: 'Categories', 
+                                  featured: { title: 'Explore Industry Standards', image: SEED_URLS[2], link: '/categories' },
+                                  categories: [
+                                    { name: 'Shop By Type', items: ['Woolen Wear', 'Cotton Blends', 'Synthetic Tissues'], link: '/categories' }
+                                  ]
+                                }
+                              ];
+                              for (const menu of defaults) {
+                                await handleSaveMegaMenu(menu);
+                              }
+                            }}
+                            className="bg-[#0A1628] text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
+                          >
+                            Initialize Expansive Menu
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 gap-12">
+                        {megaMenus.map((menu) => (
+                          <div key={menu.id} className="bg-white border border-slate-100 rounded-[40px] p-10 shadow-sm hover:shadow-xl transition-all border-l-4 border-l-[#C8961A]">
+                            <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
+                              <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-[#0A1628] rounded-2xl flex items-center justify-center text-[#C8961A]">
+                                  <ChevronRight size={24} />
+                                </div>
+                                <h4 className="font-display text-3xl tracking-widest text-[#0A1628] uppercase">{menu.name}</h4>
+                              </div>
+                              <button 
+                                onClick={() => handleSaveMegaMenu(menu)}
+                                className="flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-xl active:scale-95"
+                              >
+                                <Save size={18} /> Update {menu.name}
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                              {/* Left: Featured Editor */}
+                              <div className="space-y-8 bg-slate-50 p-8 rounded-[32px]">
+                                <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] mb-6 flex items-center gap-2">
+                                  <Sparkles size={14} className="text-[#C8961A]" />
+                                  Visual Spotlight
+                                </h5>
+                                <div className="space-y-6">
+                                  <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Banner Title</label>
+                                    <input 
+                                      type="text" 
+                                      value={menu.featured?.title || ''} 
+                                      onChange={(e) => {
+                                        const updated = { ...menu, featured: { ...menu.featured, title: e.target.value } };
+                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                      }}
+                                      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Action Redirect</label>
+                                    <input 
+                                      type="text" 
+                                      value={menu.featured?.link || ''} 
+                                      onChange={(e) => {
+                                        const updated = { ...menu, featured: { ...menu.featured, link: e.target.value } };
+                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                      }}
+                                      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Image Asset URL</label>
+                                    <div className="aspect-[4/3] rounded-2xl mb-3 overflow-hidden bg-white border border-slate-200 flex items-center justify-center relative group">
+                                      {menu.featured?.image ? (
+                                        <img src={menu.featured.image} className="w-full h-full object-cover" alt="Featured" />
+                                      ) : (
+                                        <ImageIcon size={32} className="text-slate-200" />
+                                      )}
+                                    </div>
+                                    <input 
+                                      type="text" 
+                                      value={menu.featured?.image || ''} 
+                                      onChange={(e) => {
+                                        const updated = { ...menu, featured: { ...menu.featured, image: e.target.value } };
+                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                      }}
+                                      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Right: Expansive Column Editor */}
+                              <div className="lg:col-span-2 space-y-8">
+                                <div className="flex items-center justify-between">
+                                  <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] flex items-center gap-2">
+                                    <Menu size={14} className="text-[#C8961A]" />
+                                    Navigation Columns
+                                  </h5>
+                                  <button 
+                                    onClick={() => {
+                                      const updated = { 
+                                        ...menu, 
+                                        categories: [...(menu.categories || []), { name: 'New Column', items: ['Initial Link'], link: '#' }] 
+                                      };
+                                      setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                    }}
+                                    className="text-[10px] font-black text-[#C8961A] uppercase hover:underline"
+                                  >
+                                    + Add Architecture Column
+                                  </button>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                  {menu.categories?.map((cat: any, catIdx: number) => (
+                                    <div key={catIdx} className="p-6 bg-slate-50 rounded-[32px] border border-slate-100 relative group/col">
+                                      <button 
+                                        onClick={() => {
+                                          const updated = { ...menu, categories: menu.categories.filter((_: any, i: number) => i !== catIdx) };
+                                          setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                        }}
+                                        className="absolute -top-2 -right-2 w-8 h-8 bg-white text-red-500 rounded-full shadow-lg border border-red-50 flex items-center justify-center opacity-0 group-hover/col:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                      
+                                      <div className="space-y-4">
+                                        <div className="space-y-2">
+                                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Column Heading</label>
+                                          <input 
+                                            type="text" 
+                                            value={cat.name} 
+                                            onChange={(e) => {
+                                              const categories = [...menu.categories];
+                                              categories[catIdx].name = e.target.value;
+                                              const updated = { ...menu, categories };
+                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                            }}
+                                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                          />
+                                        </div>
+                                        <div className="space-y-2">
+                                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Direct Link (Optional)</label>
+                                          <input 
+                                            type="text" 
+                                            value={cat.link || ''} 
+                                            onChange={(e) => {
+                                              const categories = [...menu.categories];
+                                              categories[catIdx].link = e.target.value;
+                                              const updated = { ...menu, categories };
+                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                            }}
+                                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                          />
+                                        </div>
+                                        <div className="space-y-2">
+                                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Nested Links (Comma Separated)</label>
+                                          <textarea 
+                                            value={cat.items?.join(', ') || ''} 
+                                            onChange={(e) => {
+                                              const items = e.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                                              const categories = [...menu.categories];
+                                              categories[catIdx].items = items;
+                                              const updated = { ...menu, categories };
+                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                            }}
+                                            rows={3}
+                                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none resize-none"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {activeView === 'content' && (
               <motion.div 
                 key="content"
@@ -2973,6 +3202,7 @@ function AdminSidebar({
     { id: 'quotes', label: 'Requests', icon: MessageSquare, badge: badges.newQuotesCount },
     { id: 'wishlists', label: 'Wishlists', icon: Heart },
     { id: 'promotions', label: 'Marketing', icon: Megaphone },
+    { id: 'mega-menu', label: 'Navigation', icon: Zap },
     { id: 'content', label: 'Pages', icon: Edit2 },
     { id: 'appearance', label: 'Design', icon: Palette },
     { id: 'reviews', label: 'Reviews', icon: Star, badge: badges.pendingReviewsCount },
@@ -3068,7 +3298,7 @@ function AdminBottomNav({ activeView, setActiveView, badges }: any) {
     { id: 'overview', label: 'Dash', icon: LayoutDashboard },
     { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
     { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
-    { id: 'promotions', label: 'Marketing', icon: Megaphone },
+    { id: 'mega-menu', label: 'Menu', icon: Zap },
     { id: 'settings', label: 'Meta', icon: Settings },
   ];
 
