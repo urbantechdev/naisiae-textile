@@ -70,7 +70,7 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
             whileInView={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1 }}
             viewport={{ once: true }}
-            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b" 
+            src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=75&w=800&auto=format&fit=crop" 
             className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-1000"
             alt="Wholesale Textiles"
             loading="lazy"

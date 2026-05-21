@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import { GoogleGenAI } from "@google/genai";
+import compression from "compression";
 
 // ESM __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +24,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  app.use(compression());
   app.use(express.json({ limit: '10mb' }));
 
   // OpenHuman AI Chat Endpoint
@@ -156,7 +158,24 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    // Serve static assets with aggressive cache headers and etags for instant reload
+    app.use(express.static(distPath, {
+      maxAge: '1y',
+      etag: true,
+      immutable: true,
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.html')) {
+          // Instruct browsers never to cache HTML files so updates are received instantly
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        } else if (filePath.endsWith('.js') || filePath.endsWith('.css') || filePath.match(/\.(woff2?|eot|ttf|otf)$/)) {
+          // JS, CSS, and web fonts are fully versioned and can be cached aggressively
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else {
+          // Images and other static elements cached for 1 month
+          res.setHeader('Cache-Control', 'public, max-age=2592000');
+        }
+      }
+    }));
   }
 
   // Unified SEO & SPA Catch-all Middleware (Placed after static assets)
