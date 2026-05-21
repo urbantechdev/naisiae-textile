@@ -68,6 +68,22 @@ export default function ProductsPage() {
         setIsMenuOpen={setIsMenuOpen}
       />
 
+      {/* Section Header */}
+      <div className="py-24 px-6 bg-[#0A1628] text-white text-center">
+        <div className="max-w-7xl mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display text-7xl md:text-9xl tracking-tighter italic mb-8"
+          >
+            Our <span className="text-[#C8961A]">Products</span>
+          </motion.h1>
+          <p className="text-white/40 text-sm font-black uppercase tracking-[5px] max-w-xl mx-auto">
+            Industrial grade school uniforms and corporate textiles engineered for durability.
+          </p>
+        </div>
+      </div>
+
       {/* Floating Section Nav */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-40">
         <div className="max-w-[1440px] mx-auto px-8 flex justify-center gap-12">

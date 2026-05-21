@@ -73,11 +73,42 @@ export function Footer() {
         </div>
       </div>
       <div className="max-w-[1440px] mx-auto px-8 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest gap-6 sm:gap-2">
-        <div className="flex items-center gap-3 order-2 md:order-1">
-          <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
-          <Link to="/admin" className="text-white/5 hover:text-[#C8961A]/20 transition-colors" title="Management">
-            <ShieldCheck size={10} />
-          </Link>
+        <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 order-2 md:order-1 text-center md:text-left">
+          <div className="flex items-center gap-2">
+            <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
+            <Link to="/admin" className="text-white/5 hover:text-[#C8961A]/20 transition-colors" title="Management">
+              <ShieldCheck size={10} />
+            </Link>
+          </div>
+          <a 
+            href="https://urbantechdev.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-[#C8102E] transition-all duration-300 flex items-center gap-3 group border-l border-white/10 pl-6 ml-6 hidden md:flex opacity-100"
+          >
+            <span className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Developed by</span>
+            <img 
+              src="https://i.pinimg.com/736x/db/1d/a7/db1da77cd40c393aa9193e28d40ebffa.jpg" 
+              alt="Urban Technology Developers" 
+              className="h-6 w-auto object-contain rounded-sm brightness-110 contrast-110"
+              referrerPolicy="no-referrer"
+            />
+          </a>
+          {/* Mobile version */}
+          <a 
+            href="https://urbantechdev.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="md:hidden transition-all mt-4 flex flex-col items-center gap-2 opacity-100"
+          >
+            <span className="text-[8px] uppercase tracking-widest font-black text-[#C8961A]">Developed by </span>
+            <img 
+              src="https://i.pinimg.com/736x/db/1d/a7/db1da77cd40c393aa9193e28d40ebffa.jpg" 
+              alt="Urban Technology Developers" 
+              className="h-5 w-auto object-contain rounded-sm brightness-110 contrast-110"
+              referrerPolicy="no-referrer"
+            />
+          </a>
         </div>
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 order-1 md:order-2">
           <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>

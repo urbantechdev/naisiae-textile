@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
@@ -40,11 +40,16 @@ import {
   Zap,
   Percent,
   Palette,
-  Maximize2
+  Maximize2,
+  Headset,
+  Phone,
+  Link as LinkIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ContentManager } from '../components/admin/ContentManager';
+import ChatSettings from '../components/admin/ChatSettings';
+import ChatWorkspace from '../components/admin/ChatWorkspace';
 import { 
   collection, 
   addDoc, 
@@ -154,10 +159,20 @@ export default function AdminDashboard() {
   const [editingDiscountRule, setEditingDiscountRule] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [selectedQuoteIds, setSelectedQuoteIds] = useState<string[]>([]);
+  
+  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com' || 
+                       auth.currentUser?.email === 'support@naisiaetextiles.com' ||
+                       users.find(u => u.uid === auth.currentUser?.uid)?.role === 'super' ||
+                       users.find(u => u.uid === auth.currentUser?.uid)?.role === 'admin';
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<BatchAnalysisResult | null>(null);
   const [stagedProducts, setStagedProducts] = useState<any[] | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
+  const [newChatNotification, setNewChatNotification] = useState<any>(null);
+  const [chats, setChats] = useState<any[]>([]);
+  const prevChatsRef = useRef<any[]>([]);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const [chartData, setChartData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -307,6 +322,40 @@ export default function AdminDashboard() {
       handleFirestoreError(error, OperationType.GET, 'settings/site');
     });
 
+    // Real-time Chats for Notifications
+    const unsubscribeChats = onSnapshot(collection(db, 'chats'), (snapshot) => {
+      const currentChats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      
+      // Notify logic
+      if (prevChatsRef.current.length > 0) {
+        currentChats.forEach(chat => {
+          const prevChat = prevChatsRef.current.find(c => c.id === chat.id);
+          
+          // New chat or new message in existing chat from user
+          const isNewChat = !prevChat;
+          const hasNewMessage = prevChat && chat.lastUpdate?.seconds > prevChat.lastUpdate?.seconds;
+          const isFromUser = chat.lastSender !== 'admin';
+
+          if ((isNewChat || hasNewMessage) && isFromUser) {
+            // Trigger Notification
+            setNewChatNotification(chat);
+            
+            // Play Sound
+            if (isSoundEnabled) {
+              const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-emergency-alert-alarm-1002.mp3');
+              audio.volume = 0.8;
+              audio.play().catch(e => console.log('Audio play blocked:', e));
+            }
+          }
+        });
+      }
+      
+      setChats(currentChats);
+      prevChatsRef.current = currentChats;
+    }, (error) => {
+      console.error("Chat snapshot error:", error);
+    });
+
     // Real-time discount rules
     const unsubscribeDiscountRules = onSnapshot(collection(db, 'discountRules'), (snapshot) => {
       setDiscountRules(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -397,6 +446,7 @@ export default function AdminDashboard() {
       unsubscribeWishlists();
       unsubscribePromos();
       unsubscribeSettings();
+      unsubscribeChats();
       unsubscribeDiscountRules();
       unsubscribeReviews();
     };
@@ -1015,6 +1065,76 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex h-screen bg-[#F1F5F9] overflow-hidden text-[#1E293B]">
+      {/* Big Chat Notification Popup */}
+      <AnimatePresence>
+        {newChatNotification && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 pointer-events-none"
+          >
+            <div className="bg-[#0A1628] text-white p-10 rounded-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 max-w-xl w-full pointer-events-auto relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4">
+                <button onClick={() => setNewChatNotification(null)} className="p-2 hover:bg-white/10 rounded-full text-white/40 hover:text-white transition-all">
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-6 mb-8">
+                <div className="w-20 h-20 bg-[#C8961A] rounded-[28px] flex items-center justify-center text-white shadow-2xl shadow-[#C8961A]/20">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  >
+                    <MessageSquare size={40} />
+                  </motion.div>
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                    Urgent Message
+                  </div>
+                  <h3 className="text-3xl font-display leading-[1]">New Client Inquiry</h3>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-3xl p-6 mb-8 border border-white/5">
+                <p className="text-white/60 text-[10px] uppercase font-black tracking-widest mb-3">Recent Message Body:</p>
+                <p className="text-lg font-medium leading-relaxed italic">
+                  "{newChatNotification.lastMessage || 'No message preview available...'}"
+                </p>
+                <div className="mt-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-bold text-[#C8961A]">CS</div>
+                  <div className="text-[11px] text-white/40 tracking-wider">Session Ref: {newChatNotification.id}</div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => {
+                    setActiveView('live-support');
+                    setNewChatNotification(null);
+                  }}
+                  className="flex-1 bg-white text-[#0A1628] h-16 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
+                >
+                  <Headset size={18} /> Open Command Center
+                </button>
+                <button 
+                   onClick={() => setNewChatNotification(null)}
+                   className="px-8 h-16 rounded-2xl border border-white/10 text-white/40 font-bold hover:text-white hover:bg-white/5 transition-all text-sm"
+                >
+                  Dismiss
+                </button>
+              </div>
+              
+              <div className="mt-6 flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[3px] text-white/20">
+                <Zap size={10} className="text-[#C8961A]" /> Naisiae Sync Protocol Active
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AdminSidebar 
         activeView={activeView}
         setActiveView={setActiveView}
@@ -1022,6 +1142,7 @@ export default function AdminDashboard() {
         setIsCollapsed={setIsSidebarCollapsed}
         badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
         handleLogout={handleLogout}
+        siteLogo={siteSettings?.siteLogo}
       />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
@@ -1043,15 +1164,15 @@ export default function AdminDashboard() {
         <div className="p-4 border-b border-white/5 flex items-center justify-between">
            <div className="flex items-center gap-3">
              {siteSettings?.siteLogo ? (
-               <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 flex items-center justify-center bg-white">
-                 <img src={siteSettings.siteLogo} alt="Site Logo" className="w-full h-full object-contain p-1" />
+               <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+                 <img src={siteSettings.siteLogo} alt="Site Logo" className="w-full h-full object-contain" />
                </div>
              ) : (
-               <div className="w-8 h-8 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold text-sm rotate-3 overflow-hidden shrink-0">
-                 <span className="-rotate-3 text-white">NT</span>
+               <div className="w-10 h-10 flex items-center justify-center font-bold text-xl shrink-0">
+                 <span className="text-white">NT</span>
                </div>
              )}
-             <span className="font-display font-bold text-[#C8961A] tracking-wider uppercase text-sm">Admin Panel</span>
+             <span className="font-display font-medium text-[#C8961A] tracking-widest uppercase text-sm">Admin Panel</span>
            </div>
            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
              <X size={20} />
@@ -1063,6 +1184,8 @@ export default function AdminDashboard() {
           <MobileNavItem active={activeView === 'quotes'} onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} icon={<MessageSquare size={18} />} label="Quotes" badge={newQuotesCount} />
           <MobileNavItem active={activeView === 'wishlists'} onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} icon={<Heart size={18} />} label="Wishlists" />
           <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
+          <MobileNavItem active={activeView === 'live-support'} onClick={() => { setActiveView('live-support'); setIsMobileMenuOpen(false); }} icon={<Headset size={18} />} label="Live Support" />
+          <MobileNavItem active={activeView === 'chat-settings'} onClick={() => { setActiveView('chat-settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Messaging" />
           <MobileNavItem active={activeView === 'mega-menu'} onClick={() => { setActiveView('mega-menu'); setIsMobileMenuOpen(false); }} icon={<Zap size={18} />} label="Mega Menu" />
           <MobileNavItem active={activeView === 'content'} onClick={() => { setActiveView('content'); setIsMobileMenuOpen(false); }} icon={<Edit2 size={18} />} label="Pages Content" />
           <MobileNavItem active={activeView === 'appearance'} onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} icon={<Palette size={18} />} label="Layout" />
@@ -1813,15 +1936,57 @@ export default function AdminDashboard() {
 
                 {activeTab === 'all' ? (
                   <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
-                    <div className="p-6 border-b border-[#E2E8F0]">
-                      <h3 className="font-bold text-[#1E293B]">Client Requests</h3>
-                      <p className="text-xs text-[#64748B]">Manage incoming quotes and product enquiries</p>
+                    <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center">
+                      <div>
+                        <h3 className="font-bold text-[#1E293B]">Client Requests</h3>
+                        <p className="text-xs text-[#64748B]">Manage incoming quotes and product enquiries</p>
+                      </div>
+                      
+                      {selectedQuoteIds.length > 0 && isSuperAdmin && (
+                        <motion.button
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          onClick={async () => {
+                            if (confirm(`Delete ${selectedQuoteIds.length} selected quotes?`)) {
+                              try {
+                                setLoading(true);
+                                await Promise.all(selectedQuoteIds.map(id => deleteDoc(doc(db, 'quotes', id))));
+                                setSelectedQuoteIds([]);
+                                setToast({ message: 'Quotes deleted successfully', type: 'success' });
+                              } catch (error) {
+                                console.error("Bulk delete failed:", error);
+                                setToast({ message: 'Failed to delete some quotes', type: 'error' });
+                              } finally {
+                                setLoading(false);
+                              }
+                            }
+                          }}
+                          className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all border border-red-100"
+                        >
+                          <Trash2 size={14} />
+                          Delete ({selectedQuoteIds.length})
+                        </motion.button>
+                      )}
                     </div>
 
                     <div className="overflow-x-auto">
                       <table className="w-full text-left">
                         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
                           <tr>
+                            <th className="px-6 py-4 w-10">
+                              <input 
+                                type="checkbox"
+                                checked={quotes.length > 0 && selectedQuoteIds.length === quotes.length}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedQuoteIds(quotes.map(q => q.id));
+                                  } else {
+                                    setSelectedQuoteIds([]);
+                                  }
+                                }}
+                                className="rounded border-slate-300 text-[#1C3560] focus:ring-[#1C3560]"
+                              />
+                            </th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Client</th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Service/Product</th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Details</th>
@@ -1831,7 +1996,21 @@ export default function AdminDashboard() {
                         </thead>
                         <tbody className="divide-y divide-[#F1F5F9]">
                           {quotes.map((quote) => (
-                            <tr key={quote.id} className="hover:bg-slate-50/50 transition-colors group">
+                            <tr key={quote.id} className={`hover:bg-slate-50/50 transition-colors group ${selectedQuoteIds.includes(quote.id) ? 'bg-blue-50/30' : ''}`}>
+                              <td className="px-6 py-4">
+                                <input 
+                                  type="checkbox"
+                                  checked={selectedQuoteIds.includes(quote.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedQuoteIds(prev => [...prev, quote.id]);
+                                    } else {
+                                      setSelectedQuoteIds(prev => prev.filter(id => id !== quote.id));
+                                    }
+                                  }}
+                                  className="rounded border-slate-300 text-[#1C3560] focus:ring-[#1C3560]"
+                                />
+                              </td>
                               <td className="px-6 py-4">
                                 <p className="text-sm font-bold text-[#1E293B]">{quote.name}</p>
                                 <p className="text-[10px] text-[#64748B] tracking-wide">{quote.email}</p>
@@ -1878,20 +2057,23 @@ export default function AdminDashboard() {
                                   >
                                     <Eye size={16} />
                                   </button>
-                                  <button 
-                                    onClick={async () => {
-                                      try {
-                                        if (confirm('Delete this quote?')) {
-                                          await deleteDoc(doc(db, 'quotes', quote.id));
+                                  {isSuperAdmin && (
+                                    <button 
+                                      onClick={async () => {
+                                        try {
+                                          if (confirm('Delete this quote?')) {
+                                            await deleteDoc(doc(db, 'quotes', quote.id));
+                                            setToast({ message: 'Quote deleted', type: 'success' });
+                                          }
+                                        } catch (error) {
+                                          handleFirestoreError(error, OperationType.DELETE, `quotes/${quote.id}`);
                                         }
-                                      } catch (error) {
-                                        handleFirestoreError(error, OperationType.DELETE, `quotes/${quote.id}`);
-                                      }
-                                    }}
-                                    className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                      }}
+                                      className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -2197,6 +2379,14 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </motion.div>
+            )}
+
+            {activeView === 'live-support' && (
+              <ChatWorkspace setToast={setToast} handleFirestoreError={handleFirestoreError} />
+            )}
+
+            {activeView === 'chat-settings' && (
+              <ChatSettings setToast={setToast} handleFirestoreError={handleFirestoreError} />
             )}
 
             {activeView === 'mega-menu' && (
@@ -3136,7 +3326,34 @@ export default function AdminDashboard() {
                         <tbody className="divide-y divide-gray-50">
                           {selectedQuote.items.map((item: any, i: number) => (
                             <tr key={i}>
-                              <td className="px-4 py-3 font-medium">{item.name}</td>
+                              <td className="px-4 py-3 font-medium">
+                                <div>{item.name}</div>
+                                {item.variants && (
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {Object.entries(item.variants).map(([k, v]: any) => (
+                                      <span key={k} className="text-[8px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 font-bold uppercase tracking-wider">{k}: {v}</span>
+                                    ))}
+                                  </div>
+                                )}
+                                {item.brandingType && (
+                                  <div className="text-[9px] text-[#C8961A] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1.5">
+                                    <span>🪡 {item.brandingType} ({item.brandingPosition})</span>
+                                  </div>
+                                )}
+                                {item.customLogoUrl && (
+                                  <div className="mt-2 flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded border border-slate-200 bg-white overflow-hidden p-0.5 relative group">
+                                      <img src={item.customLogoUrl} className="w-full h-full object-contain" alt="User logo preview" />
+                                      <a href={item.customLogoUrl} download={`logo_${item.customLogoName || 'brand'}`} target="_blank" rel="noreferrer" className="absolute inset-0 bg-black/40 text-white flex items-center justify-center text-[7px] font-black opacity-0 hover:opacity-100 transition-opacity">DL</a>
+                                    </div>
+                                    <span className="text-[9px] text-[#0A1628] font-bold hover:underline">
+                                      <a href={item.customLogoUrl} download={item.customLogoName || 'logo'} target="_blank" rel="noreferrer">
+                                        {item.customLogoName || 'Custom Logo'} (Download)
+                                      </a>
+                                    </span>
+                                  </div>
+                                )}
+                              </td>
                               <td className="px-4 py-3 text-center">{item.quantity}</td>
                               <td className="px-4 py-3 text-right">{item.price.toLocaleString()}/-</td>
                             </tr>
@@ -3156,6 +3373,30 @@ export default function AdminDashboard() {
                     <h4 className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-2">Message Detail</h4>
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm text-[#1E293B] leading-relaxed">
                       {selectedQuote.details}
+                    </div>
+                  </div>
+                )}
+
+                {selectedQuote.customLogoUrl && (
+                  <div>
+                    <h4 className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-3">Attached corporate/school logo branding</h4>
+                    <div className="flex items-center gap-4 bg-[#F8FAFC] border border-slate-150 p-4 rounded-2xl max-w-sm">
+                      <div className="w-16 h-16 rounded-xl border border-slate-200 bg-white overflow-hidden p-1 flex items-center justify-center shadow-sm shrink-0">
+                        <img src={selectedQuote.customLogoUrl} className="max-w-full max-h-full object-contain" alt="Quote Attached Brand logo" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Client Asset</p>
+                        <p className="text-xs font-black text-[#0A1628] truncate mt-0.5">{selectedQuote.customLogoName || 'Custom Branding Logo'}</p>
+                        <a 
+                          href={selectedQuote.customLogoUrl} 
+                          download={selectedQuote.customLogoName || 'logo'} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="mt-1.5 inline-block text-[10px] font-black uppercase text-[#C8102E] hover:underline"
+                        >
+                          Download Brand Asset 📥
+                        </a>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -3271,7 +3512,8 @@ function AdminSidebar({
   isCollapsed, 
   setIsCollapsed, 
   badges, 
-  handleLogout 
+  handleLogout,
+  siteLogo
 }: any) {
   const navItems = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
@@ -3281,6 +3523,8 @@ function AdminSidebar({
     { id: 'quotes', label: 'Requests', icon: MessageSquare, badge: badges.newQuotesCount },
     { id: 'wishlists', label: 'Wishlists', icon: Heart },
     { id: 'promotions', label: 'Marketing', icon: Megaphone },
+    { id: 'live-support', label: 'Support', icon: Headset },
+    { id: 'chat-settings', label: 'Messaging', icon: Phone },
     { id: 'mega-menu', label: 'Navigation', icon: Zap },
     { id: 'content', label: 'Pages', icon: Edit2 },
     { id: 'appearance', label: 'Design', icon: Palette },
@@ -3294,21 +3538,33 @@ function AdminSidebar({
     <aside 
       className={`hidden lg:flex flex-col bg-[#0A1628] text-white transition-all duration-300 relative z-50 shadow-2xl ${isCollapsed ? 'w-20' : 'w-72'}`}
     >
-      <div className="p-6 flex items-center justify-between border-b border-white/5 h-16 shrink-0 bg-[#070D18]">
+      <div className="p-6 flex items-center justify-between border-b border-white/5 h-20 shrink-0 bg-[#070D18]">
         {!isCollapsed && (
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold rotate-3 shrink-0 shadow-lg shadow-[#C8102E]/20">
-              <span className="-rotate-3 text-white text-xs">NT</span>
-            </div>
+            {siteLogo ? (
+              <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+                <img src={siteLogo} alt="Logo" className="w-full h-full object-contain" />
+              </div>
+            ) : (
+              <div className="w-10 h-10 flex items-center justify-center font-bold shrink-0">
+                <span className="text-white text-lg">NT</span>
+              </div>
+            )}
             <span className="font-display font-black text-[#C8961A] tracking-[2px] uppercase text-[10px] truncate">
               Admin Portal
             </span>
           </div>
         )}
         {isCollapsed && (
-          <div className="w-8 h-8 bg-[#C8102E] rounded-lg flex items-center justify-center font-bold rotate-3 mx-auto shadow-lg shadow-[#C8102E]/20">
-            <span className="-rotate-3 text-white text-xs">NT</span>
-          </div>
+          siteLogo ? (
+            <div className="w-8 h-8 mx-auto shrink-0 flex items-center justify-center">
+              <img src={siteLogo} alt="Logo" className="w-full h-full object-contain" />
+            </div>
+          ) : (
+            <div className="w-8 h-8 flex items-center justify-center font-bold mx-auto">
+              <span className="text-white text-xs">NT</span>
+            </div>
+          )
         )}
       </div>
 
@@ -3377,6 +3633,7 @@ function AdminBottomNav({ activeView, setActiveView, badges }: any) {
     { id: 'overview', label: 'Dash', icon: LayoutDashboard },
     { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
     { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
+    { id: 'chat-settings', label: 'Messaging', icon: Phone },
     { id: 'mega-menu', label: 'Menu', icon: Zap },
     { id: 'settings', label: 'Meta', icon: Settings },
   ];
@@ -3569,6 +3826,37 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
     stock: initialData?.stock || 0,
     priceType: initialData?.priceType || 'fixed'
   });
+
+  const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+
+  const resolveImageUrl = async () => {
+    if (!urlInput) return;
+    try {
+      setToast({ message: 'Syncing image from URL...', type: 'info' });
+      const response = await fetch(`/api/resolve-image?url=${encodeURIComponent(urlInput)}`);
+      const data = await response.json();
+      if (data.resolvedUrl) {
+         setFormData({ 
+           ...formData, 
+           imageUrls: [...formData.imageUrls, data.resolvedUrl],
+           imageUrl: formData.imageUrls.length === 0 ? data.resolvedUrl : formData.imageUrl
+         });
+         setToast({ message: 'Image successfully synced to Naisiae Cloud!', type: 'success' });
+      } else {
+         throw new Error("Resolution yielded no asset.");
+      }
+    } catch (error) {
+      setFormData({ 
+        ...formData, 
+        imageUrls: [...formData.imageUrls, urlInput],
+        imageUrl: formData.imageUrls.length === 0 ? urlInput : formData.imageUrl
+      });
+      setToast({ message: 'Direct link applied as fallback.', type: 'success' });
+    }
+    setIsUrlModalOpen(false);
+    setUrlInput('');
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -3906,6 +4194,13 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Drag images to reorder. First image is primary.</p>
           </div>
           <div className="flex gap-2">
+            <button
+               type="button"
+               onClick={() => setIsUrlModalOpen(true)}
+               className="flex items-center gap-2 bg-slate-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-md active:scale-95"
+            >
+              <LinkIcon size={12} /> Import via URL
+            </button>
             {formData.imageUrls.length > 0 && (
               <button
                 type="button"
@@ -4595,6 +4890,69 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
         </button>
       </div>
+
+      {/* URL Import Modal */}
+      <AnimatePresence>
+        {isUrlModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsUrlModalOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden p-8"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h4 className="text-xl font-display text-[#0A1628]">Import from Web</h4>
+                <button onClick={() => setIsUrlModalOpen(false)} className="text-slate-400 hover:text-red-500 transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 leading-relaxed">Paste a Google Drive link, Pinterest image, or any public image URL. Naisiae Cloud will automatically resolve and sync the asset.</p>
+              
+              <div className="space-y-4">
+                <div className="relative">
+                  <input 
+                    autoFocus
+                    type="url"
+                    placeholder="https://example.com/image.jpg"
+                    value={urlInput}
+                    onChange={(e) => setUrlInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && resolveImageUrl()}
+                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#C8102E] focus:bg-white outline-none transition-all pr-12"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300">
+                    <LinkIcon size={18} />
+                  </div>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button 
+                    type="button"
+                    onClick={() => setIsUrlModalOpen(false)}
+                    className="flex-1 py-4 rounded-2xl bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={resolveImageUrl}
+                    className="flex-1 py-4 rounded-2xl bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#A00000] shadow-xl shadow-[#C8102E]/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 size={14} />
+                    Sync Asset
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </form>
   );
 }
@@ -4704,7 +5062,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
   const addHeroSlide = () => {
     setFormData(prev => ({
       ...prev,
-      heroImages: [...(prev.heroImages || []), { url: '', title: '', subtitle: '', link: '' }]
+      heroImages: [...(prev.heroImages || []), { url: '', videoUrl: '', title: '', subtitle: '', link: '' }]
     }));
   };
 
@@ -4774,9 +5132,9 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
           
           <div className="space-y-4">
             <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-              <div className="w-16 h-16 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-sm grow-0">
+              <div className="w-16 h-16 shrink-0 flex items-center justify-center overflow-hidden grow-0">
                 {formData.siteLogo ? (
-                  <img src={formData.siteLogo} className="max-w-[80%] max-h-[80%] object-contain" alt="Current Logo" />
+                  <img src={formData.siteLogo} className="max-w-full max-h-full object-contain" alt="Current Logo" referrerPolicy="no-referrer" />
                 ) : (
                   <Package size={24} className="text-slate-200" />
                 )}
@@ -4977,7 +5335,40 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
             return (
               <div key={idx} className="group relative bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="aspect-[16/9] bg-slate-100 relative group/image overflow-hidden">
-                  {slide.url && !hasError ? (
+                  {slide.videoUrl ? (
+                    slide.videoUrl.includes('youtube.com') || slide.videoUrl.includes('youtu.be') ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${
+                          slide.videoUrl.includes('v=') 
+                            ? slide.videoUrl.split('v=')[1].split('&')[0] 
+                            : slide.videoUrl.split('/').pop()
+                        }?autoplay=1&mute=1&controls=0&playlist=${
+                          slide.videoUrl.includes('v=') 
+                            ? slide.videoUrl.split('v=')[1].split('&')[0] 
+                            : slide.videoUrl.split('/').pop()
+                        }&loop=1`}
+                        className="w-full h-full pointer-events-none"
+                        allow="autoplay; encrypted-media"
+                        title="Hero Video Preview"
+                      />
+                    ) : slide.videoUrl.includes('vimeo.com') ? (
+                      <iframe
+                        src={`https://player.vimeo.com/video/${slide.videoUrl.split('/').pop()}?autoplay=1&muted=1&background=1`}
+                        className="w-full h-full pointer-events-none"
+                        allow="autoplay"
+                        title="Hero Video Preview"
+                      />
+                    ) : (
+                      <video 
+                        src={slide.videoUrl} 
+                        autoPlay 
+                        muted 
+                        loop 
+                        playsInline
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-110"
+                      />
+                    )
+                  ) : slide.url && !hasError ? (
                     <img 
                       src={slide.url} 
                       onError={() => handleImageError(`hero_${idx}`)}
@@ -5090,6 +5481,15 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                     onChange={e => updateHeroSlide(idx, 'link', e.target.value)}
                     className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
                     placeholder="e.g. /category/uniforms or https://..."
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider">Video URL (Optional - Overrides Image)</label>
+                  <input 
+                    value={slide.videoUrl || ''}
+                    onChange={e => updateHeroSlide(idx, 'videoUrl', e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8961A] outline-none transition-all placeholder:text-slate-300"
+                    placeholder="https://.../video.mp4"
                   />
                 </div>
               </div>

@@ -36,34 +36,39 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
     }, (TIMEOUT_DURATION - WARNING_THRESHOLD) * 1000);
   }, []);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    // Only monitor if logged in
+    // Track auth status safely
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        resetTimer();
-        
-        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-        let lastActivity = Date.now();
-        const handleActivity = () => {
-          const now = Date.now();
-          if (now - lastActivity > 1000) { // Throttle to once per second
-            if (!showWarning) resetTimer();
-            lastActivity = now;
-          }
-        };
-
-        events.forEach(event => window.addEventListener(event, handleActivity));
-        
-        return () => {
-          events.forEach(event => window.removeEventListener(event, handleActivity));
-          if (timerRef.current) clearTimeout(timerRef.current);
-          if (countdownRef.current) clearInterval(countdownRef.current);
-        };
-      }
+      setIsLoggedIn(!!user);
     });
+    return unsubscribe;
+  }, []);
 
-    return () => unsubscribe();
-  }, [resetTimer, showWarning]);
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    resetTimer();
+    
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    let lastActivity = Date.now();
+    const handleActivity = () => {
+      const now = Date.now();
+      if (now - lastActivity > 1000) { // Throttle to once per second
+        if (!showWarning) resetTimer();
+        lastActivity = now;
+      }
+    };
+
+    events.forEach(event => window.addEventListener(event, handleActivity));
+    
+    return () => {
+      events.forEach(event => window.removeEventListener(event, handleActivity));
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, [isLoggedIn, resetTimer, showWarning]);
 
   useEffect(() => {
     if (showWarning) {

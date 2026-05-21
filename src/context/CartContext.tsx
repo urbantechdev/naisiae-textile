@@ -14,6 +14,10 @@ export interface CartItem {
   subCategory?: string;
   priceType?: 'fixed' | 'wholesale';
   customization?: string;
+  brandingType?: string;
+  brandingPosition?: string;
+  customLogoUrl?: string;
+  customLogoName?: string;
 }
 
 interface CartContextType {

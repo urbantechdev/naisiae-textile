@@ -47,7 +47,7 @@ export function WholesaleDeals({
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
                   {product.imageUrl ? (
                     <img 
-                      src={`${product.imageUrl}?q=60&w=400`} 
+                      src={product.imageUrl} 
                       alt={product.name} 
                       className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
                       loading="lazy" 

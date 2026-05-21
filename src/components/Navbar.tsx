@@ -54,6 +54,30 @@ export function Navbar({
   const [products, setProducts] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [chatSettings, setChatSettings] = useState<any>(null);
+  const [isTrayMinimized, setIsTrayMinimized] = useState(() => {
+    try {
+      return localStorage.getItem('sourcing_picks_minimized') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const handleMinimize = (min: boolean) => {
+    setIsTrayMinimized(min);
+    try {
+      localStorage.setItem('sourcing_picks_minimized', String(min));
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  const seasonalPicks = React.useMemo(() => {
+    const wholesale = products.filter(p => 
+      p.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate', 'popular', 'hot', 'featured'].includes(t.toLowerCase()))
+    );
+    return (wholesale.length >= 3 ? wholesale : products).slice(0, 5);
+  }, [products]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -91,10 +115,17 @@ export function Navbar({
       setPromotions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
 
+    const unsubChat = onSnapshot(doc(db, 'settings', 'chat'), (snapshot) => {
+      if (snapshot.exists()) {
+        setChatSettings(snapshot.data());
+      }
+    });
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       unsubSettings();
       unsubPromos();
+      unsubChat();
       unsubProducts();
       unsubServices();
       unsubMenus();
@@ -539,6 +570,89 @@ export function Navbar({
         )}
       </AnimatePresence>
 
+      {/* Mobile Sliding Sourcing Highlights - Utilizing empty bottom space */}
+      {seasonalPicks.length >= 2 && (
+        <div className="lg:hidden fixed bottom-[68px] left-3 right-3 z-50">
+          <AnimatePresence>
+            {!isTrayMinimized ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 15 }}
+                className="bg-[#0A1628]/95 backdrop-blur-md rounded-2xl border border-white/10 p-2 shadow-2xl relative"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-1.5 pl-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C8961A] animate-pulse"></span>
+                    <span className="text-[9px] font-black text-[#C8961A] tracking-[1.5px] uppercase">Trending ({seasonalPicks.length})</span>
+                  </div>
+                  <button 
+                    onClick={() => handleMinimize(true)}
+                    className="text-white/40 hover:text-white text-[8px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded cursor-pointer transition-all active:scale-95"
+                  >
+                    Hide
+                  </button>
+                </div>
+
+                {/* Sliding Products Row (Horizontal swipeable carousel with calibrated medium card layout) */}
+                <div className="flex overflow-x-auto gap-2 py-1 px-0.5 scrollbar-hide snap-x focus:outline-none scroll-smooth">
+                  {seasonalPicks.map((p) => (
+                    <button 
+                      key={p.id}
+                      onClick={() => {
+                        if (setSelectedQuickViewProduct) {
+                          setSelectedQuickViewProduct(p);
+                        } else {
+                          navigate('/products');
+                        }
+                      }}
+                      className="flex-shrink-0 snap-start w-[138px] bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/30 rounded-lg p-1 flex items-center gap-2 transition-all text-left active:scale-95 relative group"
+                    >
+                      {/* Calibrated premium visual container */}
+                      <div className="w-8 h-8 rounded bg-white overflow-hidden shrink-0 border border-white/10 relative">
+                        {p.imageUrl ? (
+                          <img 
+                            src={p.imageUrl} 
+                            alt={p.name} 
+                            className="w-full h-full object-cover object-top" 
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                            <Package size={12} className="text-white/20" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[9px] font-bold text-white truncate max-w-[85px] leading-tight group-hover:text-[#C8961A] transition-colors">{p.name}</p>
+                        <p className="text-[7.5px] text-[#C8961A] font-black tracking-wide mt-0.5">
+                          {p.price ? `${p.price.toLocaleString()}/-` : 'Bulk Quote'}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex justify-end"
+              >
+                <button 
+                  onClick={() => handleMinimize(false)}
+                  className="bg-[#0A1628]/95 backdrop-blur-md border border-[#C8961A]/30 text-[#C8961A] hover:bg-[#C8961A] hover:text-[#0A1628] font-bold text-[8px] uppercase tracking-widest px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                >
+                  <span className="w-1 h-1 rounded-full bg-[#C8961A] inline-block animate-pulse"></span>
+                  Trending ({seasonalPicks.length})
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
       {/* Mobile Bottom Navigation - Shared across all pages */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-[#0A1628] border-t border-white/10 flex items-center justify-between px-2 py-1 pb-safe shadow-2xl">
         <Link to="/" className="flex-1 flex flex-col items-center py-2 gap-1 text-[#C8961A]">
@@ -559,7 +673,7 @@ export function Navbar({
           <span className="text-[9px] font-black tracking-tighter uppercase text-[#F59E0B] mt-1">Get Quote</span>
         </div>
         <a 
-          href="https://wa.me/254792021795" 
+          href={`https://wa.me/${(chatSettings?.whatsapp || '254792021795').replace(/\+/g, '')}?text=${encodeURIComponent(chatSettings?.message || 'Hello! I need assistance.')}`}
           target="_blank" 
           rel="noopener noreferrer"
           className="flex-1 flex flex-col items-center py-2 gap-1 text-white/60"

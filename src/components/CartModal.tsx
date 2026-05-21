@@ -172,6 +172,25 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                                 Unit: {item.price.toLocaleString()}/-
                               </span>
                             </div>
+
+                            {/* Logo Customization details inside Shopping Cart */}
+                            {item.brandingType && (
+                              <div className="pt-2 flex flex-col gap-1.5 border-t border-slate-50 mt-1.5">
+                                <span className="text-[8px] font-black uppercase tracking-wider text-[#C8961A] flex items-center gap-1">
+                                  🪡 {item.brandingType} ({item.brandingPosition})
+                                </span>
+                                {item.customLogoUrl && (
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="w-7 h-7 bg-white p-0.5 border border-slate-150 rounded-lg overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
+                                      <img src={item.customLogoUrl} className="max-w-full max-h-full object-contain" alt="mini logo attachment preview" />
+                                    </div>
+                                    <span className="text-[8px] text-slate-400 font-bold truncate max-w-[120px] uppercase">
+                                      {item.customLogoName || 'Custom Logo'}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
 
                           {/* Interactive Quantity Mutators */}

@@ -22,7 +22,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
+import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 
 export default function CheckoutPage() {
   const { 
@@ -47,6 +48,70 @@ export default function CheckoutPage() {
     institution: '',
     details: '',
   });
+
+  const [currentUser, setCurrentUser] = useState(auth.currentUser);
+  const [authLoading, setAuthLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      if (user) {
+        setFormData(prev => ({
+          ...prev,
+          name: user.displayName || prev.name || '',
+          email: user.email || prev.email || '',
+        }));
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setAuthLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (!userDoc.exists()) {
+          await setDoc(doc(db, 'users', user.uid), {
+            email: user.email,
+            displayName: user.displayName || user.email?.split('@')[0] || 'Client',
+            photoURL: user.photoURL || '',
+            role: 'user',
+            lastLogin: new Date().toISOString()
+          });
+        }
+      } catch (err) {
+        console.warn("Could not save initial user doc (non-fatal):", err);
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        name: user.displayName || prev.name || '',
+        email: user.email || prev.email || '',
+      }));
+    } catch (err) {
+      console.error("Google sign-in on checkout failed:", err);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setFormData(prev => ({
+        ...prev,
+        name: '',
+        email: '',
+      }));
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
+  };
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,24 +140,34 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
+      const quoteDetails = [
+        formData.institution ? `[Institution: ${formData.institution}]` : '',
+        formData.details ? `[Details: ${formData.details}]` : '',
+        appliedPromo?.code ? `[Promo Code: ${appliedPromo.code}]` : '',
+        `[Source: Checkout Page]`
+      ].filter(Boolean).join('\n');
+
       const quoteData = {
-        ...formData,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: 'Bulk Apparel Sourcing',
+        details: quoteDetails,
         items: cart.map(item => ({
           id: item.id,
           name: item.name,
           price: item.price,
           quantity: item.quantity,
-          variants: item.selectedVariants || null,
           customization: item.customization || null,
-          priceType: item.priceType || 'fixed'
+          variants: item.selectedVariants || null,
+          brandingType: item.brandingType || null,
+          brandingPosition: item.brandingPosition || null,
+          customLogoUrl: item.customLogoUrl || null,
+          customLogoName: item.customLogoName || null
         })),
-        subtotal: cartSubtotal,
-        discount: discountAmount,
         total: cartTotal,
-        promoCode: appliedPromo?.code || null,
         status: 'new',
         uid: auth.currentUser?.uid || 'guest',
-        source: 'checkout_page',
         createdAt: serverTimestamp()
       };
 
@@ -185,6 +260,50 @@ export default function CheckoutPage() {
                   <p className="text-xs font-medium text-slate-400">Please provide contact information for the procurement lead.</p>
                 </div>
               </div>
+
+              {/* Google Express Authentication Section */}
+              {!currentUser ? (
+                <div className="p-6 bg-slate-50 border border-slate-100 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-center sm:text-left">
+                    <h3 className="text-sm font-bold text-[#0A1628] flex items-center gap-1.5 justify-center sm:justify-start">
+                      ⚡ Express Sourcing Setup
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1 font-medium">Connect your Google account to auto-fill details instantly.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={authLoading}
+                    className="bg-white hover:bg-slate-100 border border-slate-200 text-[#0A1628] font-black text-[10px] uppercase tracking-[1.5px] px-5 py-3.5 rounded-xl flex items-center gap-2.5 shadow-sm active:scale-95 transition-all w-full sm:w-auto justify-center cursor-pointer"
+                  >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="Google" />
+                    {authLoading ? "Syncing..." : "Sign in with Google"}
+                  </button>
+                </div>
+              ) : (
+                <div className="p-4 bg-green-50/50 border border-green-100/40 rounded-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 self-start sm:self-center">
+                    <div className="w-9 h-9 rounded-full bg-[#C8961A]/10 border border-[#C8961A]/20 flex items-center justify-center font-bold text-xs text-[#0A1628] overflow-hidden shrink-0">
+                      {currentUser.photoURL ? (
+                        <img src={currentUser.photoURL} alt="User avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        currentUser.displayName?.charAt(0) || 'U'
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-black text-[#0A1628]">Profile Connected</h3>
+                      <p className="text-[10px] text-slate-500 font-bold truncate max-w-[200px] sm:max-w-xs">{currentUser.displayName || currentUser.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="text-[9px] font-black text-[#C8102E] hover:text-[#940F22] uppercase tracking-[1.5px] bg-white px-3.5 py-2 rounded-lg border border-slate-150 shadow-sm active:scale-95 transition-all cursor-pointer w-full sm:w-auto text-center"
+                  >
+                    Disconnect Profile
+                  </button>
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -333,6 +452,26 @@ export default function CheckoutPage() {
                             <p className="text-[9px] text-white/50 leading-relaxed italic line-clamp-2">
                               "{item.customization}"
                             </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Live logo and customization details inside Checkout summary */}
+                      {item.brandingType && (
+                        <div className="mt-2.5 p-2 bg-white/5 border border-white/10 rounded-xl space-y-2">
+                          <div className="inline-block px-2 py-0.5 bg-[#C8961A]/20 text-[#C8961A] text-[8px] font-black uppercase tracking-[1.5px] rounded border border-[#C8961A]/30">
+                            🪡 Custom Branding Active
+                          </div>
+                          <div className="text-[9px] text-white/70 font-bold uppercase tracking-wide">
+                            Method: {item.brandingType} · Position: {item.brandingPosition}
+                          </div>
+                          {item.customLogoUrl && (
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-white rounded-lg p-0.5 overflow-hidden shrink-0 flex items-center justify-center">
+                                <img src={item.customLogoUrl} className="max-w-full max-h-full object-contain" alt="mini logo preview" />
+                              </div>
+                              <span className="text-[8px] text-white/40 font-bold uppercase truncate max-w-[150px]">{item.customLogoName || 'Custom Logo'}</span>
+                            </div>
                           )}
                         </div>
                       )}

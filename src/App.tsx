@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { auth, db } from './services/firebase';
@@ -31,14 +31,17 @@ import { CartProvider, useCart } from './context/CartContext';
 import { CartModal } from './components/CartModal';
 import { WishlistModal } from './components/WishlistModal';
 import { QuoteModal } from './components/QuoteModal';
+import { FloatingChat } from './components/FloatingChat';
 
 // Dynamic SEO Engine to enforce branding permanently across all routes
 function DynamicSEOEngine() {
+  const location = useLocation();
+
   useEffect(() => {
     const updateSEO = () => {
-      const path = window.location.pathname;
-      let title = "UHURU MARKET UNIFORMS | Naisiae Textiles Nairobi";
-      let description = "Official website for UHURU MARKET UNIFORMS by Naisiae Textiles. Premium school, corporate, and hospital uniform manufacturing based in Uhuru Market, Nairobi.";
+      const path = location.pathname;
+      let title = "UHURU MARKET UNIFORMS & Institutional Apparel | Naisiae Textiles Nairobi";
+      let description = "Official website for UHURU MARKET UNIFORMS by Naisiae Textiles. Premium school, corporate, hospitality, and hospital uniform manufacturing based in Uhuru Market, Nairobi, Kenya.";
 
       if (path === '/products') {
         title = "Our Uniform Products | UHURU MARKET UNIFORMS";
@@ -53,8 +56,29 @@ function DynamicSEOEngine() {
         title = "Our Work & Past Projects | UHURU MARKET UNIFORMS";
         description = "See examples of bulk uniform orders we have successfully delivered across Kenya. Check out our design quality and finished tailoring work.";
       } else if (path === '/contact') {
-        title = "Contact Us | UHURU MARKET UNIFORMS";
-        description = "Get in touch with UHURU MARKET UNIFORMS by Naisiae Textiles. Call +254792021795 or visit our workshop at Uhuru Market, KCB Lane, Nairobi.";
+        title = "Contact Us & Visit Workshop | UHURU MARKET UNIFORMS";
+        description = "Get a custom apparel supply quote today. Visit us at Uhuru Market Along Jogoo Road, Nairobi, or call us directly at +254792021795.";
+      } else if (path === '/about') {
+        title = "Our Story & Manufacturing Heritage | UHURU MARKET UNIFORMS";
+        description = "Learn about Naisiae Textiles' high standards of apparel craftsmanship, raw material grading, and support for community-driven production at Uhuru Market, Nairobi.";
+      } else if (path === '/wholesale') {
+        title = "Institutional Bulk Orders & Wholesale Request | UHURU MARKET UNIFORMS";
+        description = "Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands across East Africa. Min. 50 units.";
+      } else if (path === '/checkout') {
+        title = "Review Bulk Sourcing & Checkout | UHURU MARKET UNIFORMS";
+        description = "Step-by-step verification of your wholesale inquiries, customizable branding preferences, and secure client profile syncing.";
+      } else if (path === '/privacy') {
+        title = "Privacy Policy | UHURU MARKET UNIFORMS";
+        description = "We respect and safeguard our clients' organizational and personal details under Kenyan data protection regulations.";
+      } else if (path === '/terms') {
+        title = "Terms of Service & Manufacturing Contracts | UHURU MARKET UNIFORMS";
+        description = "Understand bulk order production terms, factory SLA timelines, quality inspection standards, and contract invoicing procedures.";
+      } else if (path === '/shipping') {
+        title = "Shipping, Nationwide Logistics & Pickup | UHURU MARKET UNIFORMS";
+        description = "Find shipping estimates, prompt direct courier networks, and convenient self-pickup instructions at Uhuru Market, Jogoo Road-Nairobi.";
+      } else if (path === '/returns') {
+        title = "Returns Policy & Quality Guarantee | UHURU MARKET UNIFORMS";
+        description = "Read our terms for size corrections, fitting alterations, and manufacturing defect policies under our comprehensive quality assurance program.";
       }
 
       // Force apply changes securely to the DOM
@@ -72,15 +96,51 @@ function DynamicSEOEngine() {
         document.head.appendChild(canonical);
       }
       canonical.setAttribute('href', `https://naisiaetextiles.com${path === '/' ? '' : path}`);
+
+      // Manage Breadcrumb Structured Data dynamically for Rich Snippets
+      const schemaScriptId = 'dynamic-jsonld-seo';
+      let schemaScript = document.getElementById(schemaScriptId);
+      if (schemaScript) {
+        schemaScript.remove();
+      }
+
+      const breadcrumbs = [
+        { name: "Home", item: "https://naisiaetextiles.com" }
+      ];
+
+      if (path !== '/') {
+        const segments = path.split('/').filter(Boolean);
+        let currPath = '';
+        segments.forEach((seg) => {
+          currPath += `/${seg}`;
+          const formattedName = seg.charAt(0).toUpperCase() + seg.slice(1);
+          breadcrumbs.push({
+            name: title.split('|')[0].trim() || formattedName,
+            item: `https://naisiaetextiles.com${currPath}`
+          });
+        });
+      }
+
+      const breadcrumbListSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbs.map((b, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": b.name,
+          "item": b.item
+        }))
+      };
+
+      const newScript = document.createElement('script');
+      newScript.id = schemaScriptId;
+      newScript.type = 'application/ld+json';
+      newScript.innerHTML = JSON.stringify(breadcrumbListSchema);
+      document.head.appendChild(newScript);
     };
 
-    // Run immediately on page render
     updateSEO();
-
-    // Listen for inner routing navigation events
-    window.addEventListener('popstate', updateSEO);
-    return () => window.removeEventListener('popstate', updateSEO);
-  }, []);
+  }, [location.pathname]);
 
   return null;
 }
@@ -162,6 +222,7 @@ function AppContent({ isAdmin, loading }: any) {
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
       <QuoteModal />
+      <FloatingChat />
     </InactivityHandler>
   );
 }

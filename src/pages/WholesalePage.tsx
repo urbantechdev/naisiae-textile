@@ -263,143 +263,153 @@ export default function WholesalePage() {
               className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white w-full max-w-5xl rounded-[40px] overflow-hidden flex flex-col lg:flex-row relative z-10 shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white w-full max-w-5xl rounded-3xl md:rounded-[40px] overflow-hidden flex flex-col lg:flex-row relative z-10 shadow-2xl max-h-[92vh] md:max-h-[90vh]"
             >
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-6 right-6 z-20 w-12 h-12 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-lg border border-slate-100"
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 w-10 h-10 sm:w-12 sm:h-12 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-lg border border-slate-100 hover:scale-110 active:scale-95 cursor-pointer"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
-              <div className="lg:w-1/2 bg-slate-50 relative overflow-hidden flex items-center justify-center p-12">
+              <div className="w-full lg:w-1/2 bg-slate-50 relative overflow-hidden flex items-center justify-center p-6 sm:p-10 lg:p-12 shrink-0 h-48 sm:h-64 md:h-80 lg:h-auto">
                 {selectedProduct.imageUrl ? (
                   <img 
                     src={selectedProduct.imageUrl} 
-                    className="w-full h-auto max-h-[60vh] object-contain rounded-2xl drop-shadow-2xl"
+                    className="w-full h-full object-contain rounded-2xl drop-shadow-xl"
                     alt={selectedProduct.name}
                   />
                 ) : (
-                  <div className="w-full h-auto aspect-square flex items-center justify-center bg-slate-100 rounded-2xl">
-                    <Package size={80} className="text-slate-200" />
+                  <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-2xl">
+                    <Package size={60} className="text-slate-200" />
                   </div>
                 )}
                 
                 {selectedProduct.badge && (
-                  <span className="absolute top-12 left-12 bg-[#C8102E] text-white text-[12px] font-black px-6 py-2 rounded-full tracking-[3px] uppercase shadow-xl">
+                  <span className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-[#C8102E] text-white text-[10px] md:text-[12px] font-black px-4 md:px-6 py-1.5 md:py-2 rounded-full tracking-[2px] md:tracking-[3px] uppercase shadow-lg">
                     {selectedProduct.badge}
                   </span>
                 )}
               </div>
 
-              <div className="lg:w-1/2 p-12 lg:p-16 flex flex-col">
-                <div className="flex-1">
-                  <div className="text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-6 flex items-center gap-3">
-                    <span className="w-8 h-[2px] bg-[#C8961A]"></span>
+              <div className="w-full lg:w-1/2 flex flex-col min-h-0 bg-white">
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto p-6 sm:p-10 lg:p-12">
+                  <div className="text-[11px] text-[#C8961A] font-black tracking-[3px] uppercase mb-4 flex items-center gap-2">
+                    <span className="w-6 h-[1.5px] bg-[#C8961A]"></span>
                     {selectedProduct.category}
                   </div>
-                  <h2 className="font-display text-5xl lg:text-7xl text-[#0A1628] leading-[0.9] mb-4">
+                  <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#0A1628] leading-[1.1] mb-3">
                     {selectedProduct.name}
                   </h2>
-                  <div className="flex flex-col gap-3 mb-8">
-                    <span className="text-sm font-black uppercase tracking-[3px] text-[#C8961A]">
+                  <div className="mb-6">
+                    <span className="inline-block text-[10px] font-black uppercase tracking-[2px] text-[#C8961A] bg-[#C8961A]/10 px-3 py-1 rounded-md">
                       Institutional Bulk Order
                     </span>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <a 
-                        href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedProduct.name}.`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-14 rounded-2xl font-black text-[11px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-3 shadow-xl"
-                      >
-                        <MessageSquare size={18} />
-                        Enquire on WhatsApp
-                      </a>
-                      <a 
-                        href="tel:+254792021795"
-                        className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white h-14 rounded-2xl font-black text-[11px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-3 shadow-xl"
-                      >
-                        <Phone size={18} />
-                        Call Now
-                      </a>
-                    </div>
                   </div>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-6">
+                  
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
                     {selectedProduct.description || "Institutional grade apparel engineered for Kenya's leading organizations. Durable fabric with industrial-strength stitching."}
                   </p>
 
                   {selectedProduct.priceType === 'wholesale' && (
-                    <div className="space-y-6 mb-10 p-6 bg-orange-50/50 rounded-[30px] border border-orange-100/50">
-                      <div className="flex flex-col sm:flex-row gap-6">
-                        <div className="flex-1 space-y-2">
-                          <label className="text-[10px] font-black uppercase text-[#C8961A] tracking-widest ml-1">Inquiry Quantity</label>
-                          <div className="relative">
-                            <input 
-                              type="number" 
-                              min="1"
-                              value={inquiryQty}
-                              onChange={(e) => setInquiryQty(parseInt(e.target.value) || 1)}
-                              className="w-full bg-white border border-orange-200 rounded-2xl px-5 py-4 text-sm font-black outline-none focus:border-[#C8102E] transition-all"
-                            />
-                            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-orange-300 uppercase tracking-widest">PCS</span>
-                          </div>
+                    <div className="space-y-4 mb-8 p-4 sm:p-6 bg-orange-50/40 rounded-2xl border border-orange-100/40">
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider ml-1">Inquiry Quantity</label>
+                        <div className="relative">
+                          <input 
+                            type="number" 
+                            min="1"
+                            value={inquiryQty}
+                            onChange={(e) => setInquiryQty(parseInt(e.target.value) || 1)}
+                            className="w-full bg-white border border-orange-200 rounded-xl px-4 py-3 text-xs sm:text-sm font-black outline-none focus:border-[#C8102E] transition-all"
+                          />
+                          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest">PCS</span>
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-[#C8961A] tracking-widest ml-1">Customization / Branding Details</label>
+                      
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider ml-1">Customization / Branding Details</label>
                         <textarea 
-                          placeholder="Please specify size range, logo placement (embroidery/print), or any specific fabric requirements..."
+                          placeholder="Please specify size range, logo placement (embroidery/print), or specific fabric requirements..."
                           value={customizationDetails}
                           onChange={(e) => setCustomizationDetails(e.target.value)}
-                          className="w-full bg-white border border-orange-200 rounded-2xl px-5 py-4 text-xs font-medium outline-none focus:border-[#C8102E] transition-all min-h-[120px] resize-none"
+                          className="w-full bg-white border border-orange-200 rounded-xl px-4 py-3 text-[11px] font-medium outline-none focus:border-[#C8102E] transition-all min-h-[100px] resize-none"
                         ></textarea>
                       </div>
                     </div>
                   )}
                   
-                  <div className="grid grid-cols-2 gap-8 mb-10 pt-10 border-t border-slate-100">
+                  <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-100">
                     <div>
-                      <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[3px] mb-3">Material Grade</h4>
-                      <p className="text-xs font-bold text-[#0A1628]">Institutional Heavy Duty</p>
+                      <h4 className="text-[9px] font-black uppercase text-slate-400 tracking-[2px] mb-1">Material Grade</h4>
+                      <p className="text-[11px] sm:text-xs font-bold text-[#0A1628]">Institutional Heavy Duty</p>
                     </div>
                     <div>
-                      <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[3px] mb-3">Min. Bulk order</h4>
-                      <p className="text-xs font-bold text-[#0A1628]">50 Units (Varies)</p>
+                      <h4 className="text-[9px] font-black uppercase text-slate-400 tracking-[2px] mb-1">Min. Bulk order</h4>
+                      <p className="text-[11px] sm:text-xs font-bold text-[#0A1628]">50 Units (Varies)</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
-                  <button 
-                    onClick={() => { 
-                      addToCart({
-                        ...selectedProduct,
-                        price: selectedProduct.priceType === 'wholesale' ? 0 : selectedProduct.price,
-                        quantity: selectedProduct.priceType === 'wholesale' ? inquiryQty : 1,
-                        customization: selectedProduct.priceType === 'wholesale' ? customizationDetails : undefined
-                      }); 
-                      setSelectedProduct(null); 
-                      // Reset inputs
-                      setInquiryQty(50);
-                      setCustomizationDetails('');
-                    }}
-                    className="flex-1 bg-[#0A1628] hover:bg-[#C8102E] text-white py-5 rounded-[20px] font-black text-[12px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
-                  >
-                    <ShoppingBag size={20} /> {selectedProduct.priceType === 'wholesale' ? 'Add to Inquiry' : 'Wholesale Request'}
-                  </button>
-                  <button 
-                    onClick={() => toggleWishlist(selectedProduct)}
-                    className={`w-16 h-16 rounded-[20px] flex items-center justify-center border-2 transition-all ${
-                      wishlist.some(p => p.id === selectedProduct.id) 
-                        ? "bg-red-50 border-red-100 text-red-500" 
-                        : "border-slate-100 text-slate-400 hover:text-red-400 hover:border-red-100"
-                    }`}
-                  >
-                    <Heart size={24} className={wishlist.some(p => p.id === selectedProduct.id) ? "fill-current" : ""} />
-                  </button>
+                {/* Sticky/Fixed polished Interactive Action Footer */}
+                <div className="bg-white/95 backdrop-blur-md p-4 sm:p-6 lg:p-8 border-t border-slate-100 shrink-0 space-y-3 shadow-[0_-12px_30px_rgba(0,0,0,0.03)]">
+                  {/* Row 1: Inquiry Cart & Wishlist */}
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => { 
+                        addToCart({
+                          ...selectedProduct,
+                          price: selectedProduct.priceType === 'wholesale' ? 0 : selectedProduct.price,
+                          quantity: selectedProduct.priceType === 'wholesale' ? inquiryQty : 1,
+                          customization: selectedProduct.priceType === 'wholesale' ? customizationDetails : undefined
+                        }); 
+                        setSelectedProduct(null); 
+                        // Reset inputs
+                        setInquiryQty(50);
+                        setCustomizationDetails('');
+                      }}
+                      className="flex-grow bg-[#0A1628] hover:bg-[#C8102E] text-white h-12 sm:h-14 rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2.5 shadow-xl hover:shadow-[#0A1628]/10 active:scale-[0.98] cursor-pointer"
+                    >
+                      <ShoppingBag size={18} /> 
+                      <span>{selectedProduct.priceType === 'wholesale' ? 'Add to Inquiry' : 'Wholesale Request'}</span>
+                    </button>
+                    <button 
+                      onClick={() => toggleWishlist(selectedProduct)}
+                      className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center border-2 transition-all cursor-pointer shrink-0 ${
+                        wishlist.some(p => p.id === selectedProduct.id) 
+                          ? "bg-red-50 border-red-100 text-red-500" 
+                          : "border-slate-100 text-slate-400 hover:text-red-400 hover:border-red-100 bg-slate-50/50"
+                      }`}
+                      title="Add to Wishlist"
+                    >
+                      <Heart size={18} className={wishlist.some(p => p.id === selectedProduct.id) ? "fill-current scale-110" : "transition-transform hover:scale-110"} />
+                    </button>
+                  </div>
+
+                  {/* Row 2: Instant Contact */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <a 
+                      href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedProduct.name}.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#25D366] hover:bg-[#128C7E] text-white h-11 sm:h-12 rounded-xl flex items-center justify-center gap-2 font-black text-[10px] sm:text-[11px] uppercase tracking-[1.5px] transition-all shadow-md hover:shadow-[#25D366]/10 active:scale-[0.98] flex"
+                    >
+                      <MessageSquare size={16} />
+                      <span className="truncate">WhatsApp Inquiry</span>
+                    </a>
+                    <a 
+                      href="tel:+254792021795"
+                      className="bg-[#C8102E] hover:bg-[#A30D25] text-white h-11 sm:h-12 rounded-xl flex items-center justify-center gap-2 font-black text-[10px] sm:text-[11px] uppercase tracking-[1.5px] transition-all shadow-md hover:shadow-[#C8102E]/10 active:scale-[0.98] flex"
+                    >
+                      <Phone size={16} />
+                      <span>Call Now</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </motion.div>

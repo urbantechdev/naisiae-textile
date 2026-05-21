@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ChevronRight, Scissors } from 'lucide-react';
+import { Search, ChevronRight, Scissors, RefreshCw, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface HeroProps {
@@ -14,6 +14,7 @@ interface HeroProps {
   searchResults: any[];
   setSelectedQuickViewProduct: (product: any) => void;
   setIsQuoteModalOpen: (open: boolean) => void;
+  products?: any[];
 }
 
 export function Hero({
@@ -26,17 +27,58 @@ export function Hero({
   setShowSearchSuggestions,
   searchResults,
   setSelectedQuickViewProduct,
-  setIsQuoteModalOpen
+  setIsQuoteModalOpen,
+  products = []
 }: HeroProps) {
   const heroImages = siteSettings?.heroImages || [];
+  const [videoErrorSlides, setVideoErrorSlides] = React.useState<Record<number, boolean>>({});
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [shuffledProducts, setShuffledProducts] = React.useState<any[]>([]);
+
+  const reshuffle = React.useCallback(() => {
+    if (!products || products.length === 0) return;
+    const shuffled = [...products].sort(() => 0.5 - Math.random());
+    setShuffledProducts(shuffled.slice(0, 3));
+  }, [products]);
+
+  React.useEffect(() => {
+    if (products && products.length > 0) {
+      const shuffled = [...products].sort(() => 0.5 - Math.random());
+      setShuffledProducts(shuffled.slice(0, 3));
+    }
+  }, [products]);
+
+  React.useEffect(() => {
+    const checkMobileWidth = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobileWidth();
+    window.addEventListener('resize', checkMobileWidth);
+    return () => window.removeEventListener('resize', checkMobileWidth);
+  }, []);
+
+  const isNonEmbeddableUrl = (url?: string) => {
+    if (!url) return true;
+    const lower = url.toLowerCase();
+    return lower.includes('pinterest.com') ||
+           lower.includes('pin.it') ||
+           lower.includes('instagram.com') ||
+           lower.includes('facebook.com') ||
+           lower.includes('tiktok.com') ||
+           lower.includes('twitter.com') ||
+           lower.includes('x.com');
+  };
+
+  const videoUrl = heroImages[currentSlide]?.videoUrl;
+  const showVideo = !isMobile && videoUrl && !videoErrorSlides[currentSlide] && !isNonEmbeddableUrl(videoUrl);
   
   return (
-    <section id="hero" className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
+    <section id="hero" className="relative h-screen min-h-[600px] lg:min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-[40%] via-[#0A1628]/95 via-[45%] to-transparent to-[75%] z-10"></div>
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.05),_transparent_70%)] z-10"></div>
-
+ 
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={currentSlide}
@@ -53,17 +95,61 @@ export function Hero({
             }}
             className="absolute inset-0"
           >
-            <img 
-              src={`${heroImages[currentSlide]?.url || "https://images.unsplash.com/photo-1558769132-cb1aea458c5e"}?q=80&w=1920&auto=format&fit=crop`}
-              srcSet={`${heroImages[currentSlide]?.url}?q=60&w=800 800w, ${heroImages[currentSlide]?.url}?q=80&w=1280 1280w, ${heroImages[currentSlide]?.url}?q=80&w=1920 1920w`}
-              sizes="100vw"
-              className="w-full h-full object-cover object-left md:object-center"
-              alt={heroImages[currentSlide]?.title || 'Hero'}
-              loading="eager"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              fetchPriority="high"
-            />
+              {showVideo ? (
+                <div className="w-full h-full">
+                  {videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${
+                        videoUrl.includes('v=') 
+                          ? videoUrl.split('v=')[1].split('&')[0] 
+                          : videoUrl.split('/').pop()
+                      }?autoplay=1&mute=1&loop=1&playlist=${
+                        videoUrl.includes('v=') 
+                          ? videoUrl.split('v=')[1].split('&')[0] 
+                          : videoUrl.split('/').pop()
+                      }&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
+                      className="w-[100vw] h-[56.25vw] min-h-screen min-w-[177.77vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      allow="autoplay; encrypted-media; fullscreen"
+                      title="Hero Video"
+                    />
+                  ) : videoUrl.includes('vimeo.com') ? (
+                    <iframe
+                      src={`https://player.vimeo.com/video/${videoUrl.split('/').pop()}?autoplay=1&muted=1&loop=1&autopause=0&background=1`}
+                      className="w-[100vw] h-[56.25vw] min-h-screen min-w-[177.77vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      allow="autoplay; fullscreen"
+                      title="Hero Video"
+                    />
+                  ) : (
+                    <video 
+                      key={videoUrl}
+                      autoPlay 
+                      muted 
+                      loop 
+                      playsInline
+                      className="w-full h-full object-cover object-left md:object-center"
+                      onError={() => {
+                        console.warn("Hero video failed to load for url:", videoUrl, "Falling back to static image.");
+                        setVideoErrorSlides(prev => ({ ...prev, [currentSlide]: true }));
+                      }}
+                    >
+                      <source src={videoUrl} type="video/mp4" />
+                      <source src={videoUrl} type="video/webm" />
+                      <source src={videoUrl} type="video/ogg" />
+                    </video>
+                  )}
+                  <div className="absolute inset-0 bg-black/20 z-0"></div>
+                </div>
+              ) : (
+              <img 
+                src={heroImages[currentSlide]?.url ? heroImages[currentSlide].url : "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1280&auto=format&fit=crop"}
+                className="w-full h-full object-cover object-left md:object-center"
+                alt={heroImages[currentSlide]?.title || 'Hero'}
+                loading="eager"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                fetchPriority="high"
+              />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -81,32 +167,32 @@ export function Hero({
                 className="space-y-4 lg:space-y-8"
               >
                 <div className="space-y-4 lg:space-y-8">
-                  <motion.h1 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="font-display font-medium text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
-                  >
-                    <span className="block overflow-hidden">
-                      <motion.span 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.8 }}
-                        className="block"
-                      >
-                        {heroImages[currentSlide]?.title || "CRAFTING"}
-                      </motion.span>
-                    </span>
-                    <span className="text-[#C8961A] italic inline-block relative">
-                      {heroImages[currentSlide]?.subtitle ? 'SCHOOL UNIFORMS' : 'SCHOOL UNIFORMS'}
-                      <motion.div 
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ delay: 0.8, duration: 1 }}
-                        className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
-                      />
-                    </span>
-                  </motion.h1>
+                    <motion.h1 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="font-display font-medium text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
+                    >
+                      <span className="block overflow-hidden">
+                        <motion.span 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.8 }}
+                          className="block"
+                        >
+                          {heroImages[currentSlide]?.title || (currentSlide === 0 ? "UHURU MARKET" : "CRAFTING")}
+                        </motion.span>
+                      </span>
+                      <span className="text-[#C8961A] italic inline-block relative">
+                        {currentSlide === 0 ? "UNIFORMS" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
+                        <motion.div 
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ delay: 0.8, duration: 1 }}
+                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
+                        />
+                      </span>
+                    </motion.h1>
 
                   <motion.p 
                     initial={{ opacity: 0 }}
@@ -114,7 +200,7 @@ export function Hero({
                     transition={{ delay: 0.4 }}
                     className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                   >
-                    {heroImages[currentSlide]?.subtitle || "Engineered school uniforms for the modern institution. Quality guaranteed for generations."}
+                    {heroImages[currentSlide]?.subtitle || (currentSlide === 0 ? "Naisiae Textiles: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
                 </div>
               </motion.div>
@@ -209,6 +295,61 @@ export function Hero({
               )}
             </AnimatePresence>
           </div>
+
+          {/* Spotlight Picks Block */}
+          {shuffledProducts.length > 0 && (
+            <div className="w-full lg:max-w-md mt-6 bg-[#0A1628]/45 border border-white/10 rounded-3xl p-4 shadow-2xl relative text-left">
+              <div className="flex items-center justify-between mb-3 px-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse"></span>
+                  <span className="text-[10px] font-black text-[#C8961A] tracking-[2px] uppercase">Spotlight Picks</span>
+                </div>
+                <button 
+                  onClick={reshuffle}
+                  className="flex items-center gap-1.5 text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full cursor-pointer transition-all active:scale-95 group/shuffle"
+                >
+                  <RefreshCw size={10} className="group-hover/shuffle:rotate-180 transition-transform duration-500 text-[#C8961A]" />
+                  Reshuffle
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {shuffledProducts.map((p) => (
+                  <button
+                    key={`spotlight-${p.id}`}
+                    onClick={() => setSelectedQuickViewProduct(p)}
+                    className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/30 rounded-2xl p-1.5 flex flex-col items-start text-left transition-all active:scale-95 group/card"
+                  >
+                    <div className="w-full aspect-square bg-white rounded-xl overflow-hidden mb-2 relative border border-white/10 shrink-0">
+                      {p.imageUrl ? (
+                        <img 
+                          src={p.imageUrl} 
+                          alt={p.name} 
+                          className="w-full h-full object-cover object-top group-hover/card:scale-105 transition-transform duration-300"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                          <Package size={16} className="text-white/20" />
+                        </div>
+                      )}
+                      {p.priceType === 'wholesale' && (
+                        <div className="absolute top-1 left-1 bg-[#0A1628]/90 text-[#C8961A] text-[6px] font-black uppercase px-1 rounded-sm border border-white/10 tracking-widest">
+                          Bulk
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 w-full px-0.5">
+                      <p className="text-[10px] font-bold text-white truncate leading-tight group-hover/card:text-[#C8961A] transition-colors">{p.name}</p>
+                      <p className="text-[8px] text-[#C8961A] font-black tracking-wide mt-1">
+                        {p.price ? `${p.price.toLocaleString()}/-` : 'Bulk Price'}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
