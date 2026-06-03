@@ -7,7 +7,7 @@ export function Footer() {
   const { siteSettings } = useCart();
 
   return (
-    <footer className="bg-[#0A1628] text-white/40 pt-20 pb-32 md:pb-20 px-6 border-t border-white/5">
+    <footer className="bg-[#0E121C] text-white/40 pt-20 pb-32 md:pb-20 px-6 border-t border-white/5">
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16 px-4">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center gap-3 mb-6">
@@ -15,15 +15,15 @@ export function Footer() {
               {siteSettings?.siteLogo ? (
                 <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae Textile'} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-12 h-12 flex items-center justify-center font-black text-xl text-[#C8102E] bg-white rounded-xl border-4 border-[#C8102E]">NT</div>
+                <div className="w-12 h-12 flex items-center justify-center font-black text-xs text-white bg-gradient-to-tr from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] rounded-xl relative shadow-lg overflow-hidden select-none lowercase font-[Comfortaa]">canva</div>
               )}
             </div>
             <div className="leading-tight text-left">
-              <div className="font-display text-2xl tracking-[2px] text-white uppercase">
-                {siteSettings?.siteName || 'Uhuru Market Uniforms'}
+              <div className="font-display text-2xl tracking-tight text-white uppercase font-black bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] bg-clip-text text-transparent">
+                {siteSettings?.siteName || 'Naisiae'}
               </div>
-              <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold">
-                Naisiae Textiles, Jogoo Rd
+              <div className="text-[10px] tracking-[2px] text-[#00C4CC] uppercase font-bold">
+                Naisiae Textiles, Nairobi
               </div>
             </div>
           </div>
@@ -35,35 +35,35 @@ export function Footer() {
           </div>
         </div>
         <div className="text-center md:text-left">
-          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6 inline-block md:block">Company</h4>
+          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Company</h4>
           <ul className="space-y-4 text-sm font-bold">
-            <li><Link to="/about" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">About Us</Link></li>
-            <li><Link to="/contact" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Contact Us</Link></li>
-            <li><Link to="/portfolio" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Our Portfolio</Link></li>
-            <li><Link to="/services" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Services</Link></li>
+            <li><Link to="/about" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">About Us</Link></li>
+            <li><Link to="/contact" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Contact Us</Link></li>
+            <li><Link to="/portfolio" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Our Portfolio</Link></li>
+            <li><Link to="/services" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Services</Link></li>
           </ul>
         </div>
         <div className="text-center md:text-left">
-           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6 inline-block md:block">Support</h4>
+           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Support</h4>
            <ul className="space-y-4 text-sm font-bold">
-            <li><Link to="/terms" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Terms & Conditions</Link></li>
-            <li><Link to="/privacy" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Privacy Policy</Link></li>
-            <li><Link to="/shipping" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Shipping Policy</Link></li>
-            <li><Link to="/returns" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Returns & Refunds</Link></li>
+            <li><Link to="/terms" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Terms & Conditions</Link></li>
+            <li><Link to="/privacy" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Privacy Policy</Link></li>
+            <li><Link to="/shipping" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Shipping Policy</Link></li>
+            <li><Link to="/returns" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Returns & Refunds</Link></li>
           </ul>
         </div>
         <div className="text-center md:text-left">
-          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#C8102E] pb-2 mb-6 inline-block md:block">Contact</h4>
+          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Contact</h4>
           <div className="space-y-6 flex flex-col items-center md:items-start">
             <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A] group-hover:bg-[#C8961A] group-hover:text-white transition-all"><Phone size={20} /></div>
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00C4CC] group-hover:bg-[#00C4CC] group-hover:text-black transition-all"><Phone size={20} /></div>
               <div className="text-left">
                 <div className="text-[10px] font-black uppercase text-white/30 tracking-widest">Phone</div>
                 <div className="text-white font-bold text-sm">{siteSettings?.contactPhone || '+254 792 021 795'}</div>
               </div>
             </div>
             <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A] group-hover:bg-[#C8961A] group-hover:text-white transition-all"><Mail size={20} /></div>
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00C4CC] group-hover:bg-[#00C4CC] group-hover:text-black transition-all"><Mail size={20} /></div>
               <div className="text-left">
                <div className="text-[10px] font-black uppercase text-white/30 tracking-widest">Email</div>
                <div className="text-white font-bold text-sm truncate max-w-[200px]">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</div>
@@ -76,7 +76,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 order-2 md:order-1 text-center md:text-left">
           <div className="flex items-center gap-2">
             <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
-            <Link to="/admin" className="text-white/5 hover:text-[#C8961A]/20 transition-colors" title="Management">
+            <Link to="/admin" className="text-white/5 hover:text-[#00C4CC]/20 transition-colors" title="Management">
               <ShieldCheck size={10} />
             </Link>
           </div>

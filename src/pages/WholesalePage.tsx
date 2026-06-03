@@ -48,7 +48,6 @@ export default function WholesalePage() {
   const [inquiryQty, setInquiryQty] = useState(50);
   const [customizationDetails, setCustomizationDetails] = useState('');
   const [siteSettings, setSiteSettings] = useState<any>(null);
-  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' } | null>(null);
 
   useEffect(() => {
     const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
@@ -92,12 +91,7 @@ export default function WholesalePage() {
   const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
 
   const toggleWishlist = (product: any) => {
-    const exists = isInWishlist(product.id);
     toggleWishlistGlobal(product);
-    setToast({ 
-      message: exists ? "Removed from your collection." : "Added to your collection!", 
-      type: exists ? 'warning' : 'success' 
-    });
   };
 
   return (
@@ -233,23 +227,6 @@ export default function WholesalePage() {
           </div>
         </div>
       </section>
-
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className={`fixed bottom-8 right-8 z-[100] px-6 py-4 rounded-2xl shadow-2xl text-white font-bold flex items-center gap-3 ${
-              toast.type === 'success' ? 'bg-[#0A1628]' : toast.type === 'error' ? 'bg-red-600' : 'bg-orange-500'
-            }`}
-          >
-            <CheckCircle2 size={20} className="text-[#C8961A]" />
-            <span className="text-[12px] uppercase tracking-[3px] pt-1">{toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Quick View Modal */}
       <AnimatePresence>

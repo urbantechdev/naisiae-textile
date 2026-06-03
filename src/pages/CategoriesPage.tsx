@@ -13,49 +13,57 @@ export default function CategoriesPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [majorCategories, setMajorCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategoriesData = async () => {
       try {
-        const q = query(collection(db, 'categories'), orderBy('sortOrder', 'asc'));
-        const querySnapshot = await getDocs(q);
-        const cats = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        if (cats.length > 0) {
-          setMajorCategories(cats);
+        // Fetch explicit categories
+        const catSnap = await getDocs(query(collection(db, 'categories'), orderBy('sortOrder', 'asc')));
+        const explicitCats = catSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
+
+        // Fetch products to synthesize categories
+        const prodSnap = await getDocs(collection(db, 'products'));
+        const products = prodSnap.docs.map(doc => doc.data());
+        
+        const catMap = new Map<string, { count: number, image: string }>();
+        products.forEach(p => {
+          if (p.category) {
+            const entry = catMap.get(p.category) || { count: 0, image: p.imageUrl };
+            entry.count++;
+            if (p.imageUrl && !entry.image) entry.image = p.imageUrl;
+            catMap.set(p.category, entry);
+          }
+        });
+
+        const synthCats = Array.from(catMap.entries()).map(([name, data]) => {
+          const explicit = explicitCats.find(c => (c.title || c.name) === name);
+          return {
+            id: explicit?.id || name.toLowerCase().replace(/\s+/g, '-'),
+            title: name,
+            subtitle: explicit?.subtitle || `${data.count} Products Available`,
+            image: explicit?.image || data.image || "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80",
+            description: explicit?.description || `Explore our high-quality ${name.toLowerCase()} range tailored for institutional needs.`,
+            link: `/?tab=${encodeURIComponent(name)}#shop`
+          };
+        });
+
+        if (synthCats.length > 0) {
+          setMajorCategories(synthCats);
         } else {
-          // Default fallback
+          // Final fallback
           setMajorCategories([
-            {
-              id: 'school',
-              title: 'School Uniforms',
-              subtitle: 'Primary, Secondary & College',
-              image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80',
-              description: 'Comprehensive uniform kits engineered for daily school use.',
-              link: '/?tab=School Uniforms#shop'
-            },
-            {
-              id: 'casual',
-              title: 'Casual Wear',
-              subtitle: 'School Uniforms Everyday Styles',
-              image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80',
-              description: 'Comfortable, durable t-shirts, hoodies, and leisure wear.',
-              link: '/?tab=Casual Wear#shop'
-            },
-            {
-              id: 'corporate',
-              title: 'Corporate Wear',
-              subtitle: 'Professional Branch Identity',
-              image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-              description: 'Polished apparel for office environments and corporate teams.',
-              link: '/?tab=Corporate Wear#shop'
-            }
+            { id: 'school', title: 'School Uniforms', subtitle: 'Primary, Secondary & College', image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80', description: 'Comprehensive uniform kits engineered for daily school use.', link: '/?tab=School Uniforms#shop' },
+            { id: 'corporate', title: 'Corporate Wear', subtitle: 'Professional Identity', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80', description: 'Polished apparel for office environments and corporate teams.', link: '/?tab=Corporate Wear#shop' }
           ]);
         }
       } catch (error) {
         console.error("Error fetching categories: ", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchCategories();
+    fetchCategoriesData();
   }, []);
 
   return (

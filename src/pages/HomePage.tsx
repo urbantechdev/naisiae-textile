@@ -58,7 +58,8 @@ export default function HomePage() {
     isQuoteModalOpen,
     setIsQuoteModalOpen,
     siteSettings,
-    promotions
+    promotions,
+    setToast
   } = useCart();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('all');
@@ -121,15 +122,7 @@ export default function HomePage() {
   const [compareList, setCompareList] = useState<any[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [discountRules, setDiscountRules] = useState<any[]>([]);
-  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' | 'info' } | null>(null);
   const lastWishlistRef = useRef<string>('');
-
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => setToast(null), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
 
   const handleShareProduct = async (product: any) => {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
@@ -386,8 +379,8 @@ export default function HomePage() {
     if (siteSettings) {
       const siteName = siteSettings.siteName || 'Uhuru Market Uniforms';
       const tagline = siteSettings.siteTagline || 'Naisiae Textiles Nairobi';
-      const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms page. High-quality school uniforms, corporate wear, and industrial branding based in Nairobi. Buy direct from the source at Uhuru Market.';
-      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://naisiaetextiles.com/og-image.jpg';
+      const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Premium school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
+      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://i.pinimg.com/736x/9e/53/87/9e53875a7be529b36555f7cdb2f56c92.jpg';
 
       document.title = `${siteName} | ${tagline}`;
       
@@ -431,12 +424,7 @@ export default function HomePage() {
   }, [promotions]);
 
   const toggleWishlist = (product: any) => {
-    const exists = wishlist.some(p => p.id === product.id);
     toggleWishlistGlobal(product);
-    setToast({ 
-      message: exists ? "Removed from your collection." : "Added to your collection!", 
-      type: exists ? 'warning' : 'success' 
-    });
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
@@ -480,6 +468,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
+      {/* Screen Reader and Crawler SEO Identifier */}
+      <h1 className="sr-only">Naisiae Textiles is the Premier Manufacturer of Uhuru Market Uniforms, School Uniforms & Corporate Branding Apparel in Nairobi, Kenya</h1>
       {/* Top Promotion Bar & Navbar */}
       <Navbar 
         wishlistCount={wishlist.length}
@@ -793,11 +783,14 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-5xl bg-white rounded-3xl lg:rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row h-auto max-h-[90vh] lg:max-h-[85vh] z-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]"
+              className="relative w-full max-w-5xl bg-white rounded-3xl lg:rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row h-auto max-h-[90vh] lg:max-h-[85vh] z-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-[#8B3DFF]/15"
             >
+              {/* Canva Signature Top Gradient Stripe */}
+              <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] z-40" />
+
               <button 
                 onClick={() => setSelectedQuickViewProduct(null)}
-                className="absolute top-4 right-4 lg:top-8 lg:right-8 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-xl hover:scale-110 border border-slate-100"
+                className="absolute top-5 right-5 lg:top-8 lg:right-8 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-[#FF4F5A] transition-all shadow-xl hover:scale-110 border border-slate-100"
                 aria-label="Close"
               >
                 <X size={20} />
@@ -834,7 +827,7 @@ export default function HomePage() {
                           <motion.div 
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className={`absolute z-30 flex items-center justify-center p-1 bg-white/95 backdrop-blur-[2px] rounded-xl border-2 border-dashed border-[#C8961A]/40 shadow-xl transition-all duration-500 hover:scale-110 pointer-events-auto ${
+                            className={`absolute z-30 flex items-center justify-center p-1 bg-white/95 backdrop-blur-[2px] rounded-xl border-2 border-dashed border-[#00C4CC]/50 shadow-xl transition-all duration-500 hover:scale-110 pointer-events-auto ${
                               brandingPosition === 'Left Chest' ? 'top-[35%] left-[33%] w-10 h-10' :
                               brandingPosition === 'Right Chest' ? 'top-[35%] right-[33%] w-10 h-10' :
                               brandingPosition === 'Center Chest' ? 'top-[42%] left-[48%] -translate-x-1/2 w-14 h-14' :
@@ -849,7 +842,7 @@ export default function HomePage() {
                                 brandingType === 'Embroidery' ? 'contrast-[1.05] brightness-[1.02] [filter:drop-shadow(0_1.5px_1.5px_rgba(0,0,0,0.15))] font-serif outline-transparent' : 'mix-blend-multiply'
                               }`} 
                             />
-                            <div className="absolute -top-2.5 -right-2 bg-[#C8961A] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                            <div className="absolute -top-2.5 -right-2 bg-[#00C4CC] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                               {brandingType === 'Embroidery' ? 'Stitch' : 'Print'}
                             </div>
                           </motion.div>
@@ -858,10 +851,10 @@ export default function HomePage() {
                         {/* High-End Information Overlay */}
                         <div className="absolute inset-x-0 bottom-0 p-8 flex justify-between items-end bg-gradient-to-t from-slate-200/50 to-transparent opacity-0 group-hover/zoom:opacity-100 transition-opacity pointer-events-none">
                             <div className="space-y-1">
-                                <p className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628]">Precision Detail</p>
+                                <p className="text-[10px] font-black uppercase tracking-[3px] text-[#0E121C]">Precision Detail</p>
                                 <p className="text-[11px] font-bold text-slate-400">100% Genuine Textile Analysis</p>
                             </div>
-                            <div className="bg-[#0A1628] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <div className="bg-[#0E121C] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                                 <Search size={14} /> Full View Mode
                             </div>
                         </div>
@@ -891,13 +884,13 @@ export default function HomePage() {
                           onClick={() => setActiveThumbnailIndex(idx)}
                           className={`relative w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
                             activeThumbnailIndex === idx 
-                              ? 'border-[#C8102E] scale-105 shadow-md' 
+                              ? 'border-[#8B3DFF] scale-105 shadow-md' 
                               : 'border-white hover:border-slate-200'
                           }`}
                         >
                           <img src={url} className="w-full h-full object-cover" alt={`view ${idx + 1}`} />
                           {activeThumbnailIndex === idx && (
-                            <div className="absolute inset-0 bg-[#C8102E]/5" />
+                            <div className="absolute inset-0 bg-[#8B3DFF]/5" />
                           )}
                         </button>
                       ))}
@@ -906,7 +899,7 @@ export default function HomePage() {
                 })()}
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-6 lg:top-10 left-6 lg:left-10 bg-[#C8102E] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-xl z-20 animate-pulse">
+                  <span className="absolute top-6 lg:top-10 left-6 lg:left-10 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-[0_4px_12px_rgba(125,42,232,0.3)] z-20 animate-pulse">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
@@ -916,11 +909,11 @@ export default function HomePage() {
               <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full">
                 <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-12">
                   <div className="mb-6 lg:mb-8">
-                    <div className="text-[9px] lg:text-[12px] text-[#C8961A] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
-                      <span className="w-6 lg:w-8 h-[2px] bg-[#C8961A]"></span>
+                    <div className="text-[9px] lg:text-[12px] text-[#00C4CC] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
+                      <span className="w-6 lg:w-8 h-[2px] bg-[#00C4CC]"></span>
                       {selectedQuickViewProduct.category}
                     </div>
-                    <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl lg:leading-[1.1] text-[#0A1628] leading-[1.1] mb-2 lg:mb-3">
+                    <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl lg:leading-[1.1] text-[#0E121C] leading-[1.1] mb-2 lg:mb-3">
                       {selectedQuickViewProduct.name}
                     </h2>
                     <div className="flex flex-wrap items-center gap-3 lg:gap-6 mb-6 lg:mb-8 bg-slate-50/80 backdrop-blur-sm p-4 lg:p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -930,12 +923,12 @@ export default function HomePage() {
                         </span>
                         <div className="flex items-center gap-3">
                           {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
-                            <span className="text-2xl lg:text-3xl font-black text-[#0A1628] leading-none uppercase tracking-tight">Price on Inquiry</span>
+                            <span className="text-2xl lg:text-3xl font-black text-[#0E121C] leading-none uppercase tracking-tight bg-gradient-to-r from-[#7D2AE8] to-[#FF4F5A] bg-clip-text text-transparent">Price on Inquiry</span>
                           ) : (
                             <>
-                              <span className="text-2xl lg:text-4xl font-black text-[#C8102E] tracking-tight">{selectedQuickViewProduct.price.toLocaleString()}/-</span>
+                              <span className="text-2xl lg:text-4xl font-black bg-gradient-to-r from-[#7D2AE8] to-[#FF4F5A] bg-clip-text text-transparent tracking-tight">{selectedQuickViewProduct.price.toLocaleString()}/-</span>
                               {selectedQuickViewProduct.oldPrice && (
-                                <span className="text-sm lg:text-lg text-slate-400 line-through decoration-red-500/30">{selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
+                                <span className="text-sm lg:text-lg text-slate-400 line-through decoration-[#FF4F5A]/20">{selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
                               )}
                             </>
                           )}
@@ -976,8 +969,8 @@ export default function HomePage() {
                                   onClick={() => setSelectedVariants(prev => ({ ...prev, [type]: opt.value }))}
                                   className={`relative flex items-center justify-center transition-all ${
                                     isColor 
-                                      ? `w-10 h-10 rounded-full border-2 ${isSelected ? 'border-[#C8102E] scale-110 shadow-lg' : 'border-slate-100 hover:border-slate-300'}`
-                                      : `px-4 py-2 rounded-xl border-2 text-[10px] font-black uppercase tracking-wider ${isSelected ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-lg scale-105' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'}`
+                                      ? `w-10 h-10 rounded-full border-2 ${isSelected ? 'border-[#FF4F5A] scale-110 shadow-lg' : 'border-slate-100 hover:border-slate-300'}`
+                                      : `px-4 py-2 rounded-xl border-2 text-[10px] font-black uppercase tracking-wider ${isSelected ? 'bg-gradient-to-r from-[#7D2AE8] to-[#FF4F5A] text-white border-transparent shadow-[#8B3DFF]/20 scale-105' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'}`
                                   }`}
                                 >
                                   {isColor ? (
@@ -990,7 +983,7 @@ export default function HomePage() {
                                     opt.value
                                   )}
                                   {isSelected && isColor && (
-                                    <div className="absolute -top-1 -right-1 bg-[#C8102E] text-white rounded-full p-0.5 shadow-sm">
+                                    <div className="absolute -top-1 -right-1 bg-[#FF4F5A] text-white rounded-full p-0.5 shadow-sm">
                                       <CheckCircle2 size={10} />
                                     </div>
                                   )}
@@ -1012,7 +1005,7 @@ export default function HomePage() {
                           <button 
                             type="button"
                             onClick={() => setInquiryUnits(Math.max(1, inquiryUnits - 1))}
-                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#C8102E] transition-all"
+                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#FF4F5A] transition-all"
                           >
                             <Minus size={14} />
                           </button>
@@ -1026,7 +1019,7 @@ export default function HomePage() {
                           <button 
                             type="button"
                             onClick={() => setInquiryUnits(inquiryUnits + 1)}
-                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#C8102E] transition-all"
+                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#FF4F5A] transition-all"
                           >
                             <Plus size={14} />
                           </button>
@@ -1034,7 +1027,7 @@ export default function HomePage() {
                       </div>
                       <div className="space-y-2">
                         <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Sourcing Type</label>
-                        <div className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[10px] font-black uppercase text-[#0A1628]">
+                        <div className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[10px] font-black uppercase text-[#0E121C]">
                           {selectedQuickViewProduct.priceType === 'wholesale' ? 'Institutional Bulk' : 'Individual Retail'}
                         </div>
                       </div>
@@ -1043,8 +1036,8 @@ export default function HomePage() {
                     {/* Custom Logo Upload & Branding Section */}
                     <div className="bg-slate-50 border border-slate-100 rounded-3xl p-5 space-y-4">
                       <div className="flex items-center justify-between">
-                        <label className="text-[9px] font-black uppercase tracking-[2px] text-[#0A1628]">Custom Apparel Branding</label>
-                        <span className="text-[8.5px] font-black bg-[#C8961A]/10 text-[#C8961A] border border-[#C8961A]/20 px-2.5 py-1 rounded-full uppercase tracking-widest select-none">Setup Free</span>
+                        <label className="text-[9px] font-black uppercase tracking-[2px] text-[#0E121C]">Custom Apparel Branding</label>
+                        <span className="text-[8.5px] font-black bg-[#00C4CC]/10 text-[#008F94] border border-[#00C4CC]/20 px-2.5 py-1 rounded-full uppercase tracking-widest select-none">Setup Free</span>
                       </div>
                       
                       {/* Select Branding Type */}
@@ -1061,7 +1054,7 @@ export default function HomePage() {
                             onClick={() => setBrandingType(type.id)}
                             className={`flex flex-col items-center justify-center p-2 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
                               brandingType === type.id 
-                                ? 'bg-[#0A1628] border-[#0A1628] text-white shadow-md active:scale-95' 
+                                ? 'bg-gradient-to-r from-[#00C4CC] to-[#7D2AE8] border-transparent text-white shadow-md active:scale-95' 
                                 : 'bg-white border-slate-100 text-slate-500 hover:border-slate-200'
                             }`}
                           >
@@ -1084,7 +1077,7 @@ export default function HomePage() {
                               <select 
                                 value={brandingPosition}
                                 onChange={(e) => setBrandingPosition(e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#C8961A]/30 transition-all"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#8B3DFF]/30 transition-all"
                               >
                                 <option>Left Chest</option>
                                 <option>Right Chest</option>
@@ -1106,7 +1099,7 @@ export default function HomePage() {
                             <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Logo Attachment File</label>
                             
                             {!customLogoUrl ? (
-                              <label className="border-2 border-dashed border-slate-200 hover:border-[#C8961A]/40 bg-white rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50/50 group">
+                              <label className="border-2 border-dashed border-slate-200 hover:border-[#00C4CC]/40 bg-white rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50/50 group">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -1125,7 +1118,7 @@ export default function HomePage() {
                                     }
                                   }}
                                 />
-                                <ImageIcon size={22} className="text-slate-300 group-hover:text-[#C8961A]/60 transition-colors mb-1.5" />
+                                <ImageIcon size={22} className="text-slate-300 group-hover:text-[#00C4CC] transition-colors mb-1.5" />
                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Logo File</span>
                                 <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">PNG, JPG, SVG up to 5MB</span>
                               </label>
@@ -1165,7 +1158,7 @@ export default function HomePage() {
                           placeholder="Logo embroidery, Screen printing, Custom sizing, Specific fabric weight requirements..."
                           value={inquiryCustomization}
                           onChange={(e) => setInquiryCustomization(e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C8961A]/30 transition-all h-24 resize-none"
+                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#8B3DFF]/30 transition-all h-24 resize-none"
                         />
                       </div>
                     )}
@@ -1175,34 +1168,34 @@ export default function HomePage() {
                   <div className="space-y-3 mb-4">
                     {/* Description & Tags Accordion */}
                     <details open className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
-                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0A1628] bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0E121C] bg-slate-50 hover:bg-slate-100 transition-colors">
                         Product Details
                         <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
                           <ChevronDown size={18} />
                         </span>
                       </summary>
                       <div className="p-5 text-slate-500 text-sm leading-relaxed border-t border-slate-50 bg-white">
-                        <div className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#C8961A] pl-4">{selectedQuickViewProduct.description || "School Uniforms quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</div>
+                        <div className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#00C4CC] pl-4">{selectedQuickViewProduct.description || "School Uniforms quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</div>
                         
                         <div className="grid grid-cols-2 gap-6 mb-8">
                           <div className="space-y-3">
-                            <h4 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Fabric Specs</h4>
+                            <h4 className="text-[10px] font-black uppercase text-[#FF4F5A] tracking-widest">Fabric Specs</h4>
                             <div className="space-y-2">
-                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> Anti-Pilling Tech
                               </div>
-                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> Color-Lock Weave
                               </div>
                             </div>
                           </div>
                           <div className="space-y-3">
-                            <h4 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Durability</h4>
+                            <h4 className="text-[10px] font-black uppercase text-[#FF4F5A] tracking-widest">Durability</h4>
                             <div className="space-y-2">
-                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> 100+ Wash Cycle
                               </div>
-                              <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
                                  <div className="w-1 h-1 rounded-full bg-slate-200"></div> Institutional Grade
                               </div>
                             </div>
@@ -1224,7 +1217,7 @@ export default function HomePage() {
                     
                     {/* Features & Lead Time Accordion */}
                     <details className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
-                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0A1628] bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0E121C] bg-slate-50 hover:bg-slate-100 transition-colors">
                         Features & Lead Time
                         <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
                           <ChevronDown size={18} />
@@ -1233,14 +1226,14 @@ export default function HomePage() {
                       <div className="p-5 bg-white border-t border-slate-50">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
-                            <div className="text-[#C8961A] shrink-0"><ShieldCheck size={20} /></div>
+                            <div className="text-[#00C4CC] shrink-0"><ShieldCheck size={20} /></div>
                             <div>
                               <p className="text-[10px] font-black uppercase text-slate-400">Quality</p>
                               <p className="text-[11px] font-bold text-slate-800">Double Stitched</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
-                            <div className="text-[#C8961A] shrink-0"><Calendar size={20} /></div>
+                            <div className="text-[#00C4CC] shrink-0"><Calendar size={20} /></div>
                             <div>
                               <p className="text-[10px] font-black uppercase text-slate-400">Lead Time</p>
                               <p className="text-[11px] font-bold text-slate-800">7-14 Work Days</p>
@@ -1252,7 +1245,7 @@ export default function HomePage() {
 
                     {/* Customer Reviews Accordion */}
                     <details className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
-                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0A1628] bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0E121C] bg-slate-50 hover:bg-slate-100 transition-colors">
                         Customer Reviews ({productReviews.length})
                         <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
                           <ChevronDown size={18} />
@@ -1264,7 +1257,7 @@ export default function HomePage() {
                             {productReviews.map((review) => (
                               <div key={review.id} className="pb-6 border-b border-slate-50 last:border-0 last:pb-0">
                                 <div className="flex items-center justify-between mb-2">
-                                  <span className="text-[10px] font-black uppercase text-[#0A1628] tracking-wider">{review.userName}</span>
+                                  <span className="text-[10px] font-black uppercase text-[#0E121C] tracking-wider">{review.userName}</span>
                                   <div className="flex text-amber-400">
                                     {[...Array(5)].map((_, i) => (
                                       <Star key={i} size={10} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
@@ -1284,7 +1277,7 @@ export default function HomePage() {
 
                         {/* Review Form */}
                         <div className="bg-slate-50 rounded-2xl p-4 lg:p-6">
-                          <h4 className="text-[10px] font-black uppercase tracking-[2px] text-[#0A1628] mb-4">Submit a Review</h4>
+                          <h4 className="text-[10px] font-black uppercase tracking-[2px] text-[#0E121C] mb-4">Submit a Review</h4>
                           {reviewSubmitted ? (
                             <motion.div 
                               initial={{ opacity: 0, scale: 0.9 }}
@@ -1318,20 +1311,20 @@ export default function HomePage() {
                                   placeholder="Your Name (Optional)" 
                                   value={reviewForm.userName}
                                   onChange={e => setReviewForm(prev => ({ ...prev, userName: e.target.value }))}
-                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#C8102E] transition-colors"
+                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#FF4F5A] transition-colors"
                                 />
                                 <textarea 
                                   placeholder="Share your experience with this product..." 
                                   required
                                   value={reviewForm.comment}
                                   onChange={e => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-[#C8102E] transition-colors h-24 resize-none"
+                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-[#FF4F5A] transition-colors h-24 resize-none"
                                 ></textarea>
                               </div>
                               <button 
                                 type="submit" 
                                 disabled={isSubmittingReview}
-                                className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C8102E]/20"
+                                className="w-full bg-[#0E121C] hover:bg-[#FF4F5A] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg hover:shadow-[#FF4F5A]/20"
                               >
                                 {isSubmittingReview ? 'Submitting...' : 'Post Review'}
                               </button>
@@ -1352,8 +1345,8 @@ export default function HomePage() {
                         onClick={() => toggleCompare(selectedQuickViewProduct)}
                         className={`flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl flex items-center justify-center gap-2 lg:gap-0 border-2 transition-all duration-300 group cursor-pointer ${
                           compareList.find(i => i.id === selectedQuickViewProduct.id) 
-                            ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
-                            : "border-slate-100 text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] bg-slate-50/50"
+                            ? "bg-[#00C4CC]/10 border-[#00C4CC]/30 text-[#008F94]" 
+                            : "border-slate-100 text-slate-400 hover:border-[#00C4CC] hover:text-[#00C4CC] bg-slate-50/50"
                         }`}
                         title="Compare"
                       >
@@ -1364,8 +1357,8 @@ export default function HomePage() {
                         onClick={() => toggleWishlist(selectedQuickViewProduct)}
                         className={`flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl flex items-center justify-center gap-2 lg:gap-0 border-2 transition-all duration-300 group cursor-pointer ${
                           wishlist.find(i => i.id === selectedQuickViewProduct.id) 
-                            ? "bg-red-50 border-red-100 text-red-500" 
-                            : "border-slate-100 text-slate-400 hover:border-red-200 hover:text-red-400 bg-slate-50/50"
+                            ? "bg-[#FF4F5A]/10 border-[#FF4F5A]/30 text-[#FF4F5A]" 
+                            : "border-slate-100 text-slate-400 hover:border-[#FF4F5A] hover:text-[#FF4F5A] bg-slate-50/50"
                         }`}
                         title="Wishlist"
                       >
@@ -1374,7 +1367,7 @@ export default function HomePage() {
                       </button>
                       <button 
                         onClick={() => handleShareProduct(selectedQuickViewProduct)}
-                        className="flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl border-2 border-slate-100 flex items-center justify-center gap-2 lg:gap-0 text-slate-400 hover:border-[#F59E0B] hover:text-[#F59E0B] transition-all duration-300 bg-slate-50/50 group cursor-pointer"
+                        className="flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl border-2 border-slate-100 flex items-center justify-center gap-2 lg:gap-0 text-slate-400 hover:border-[#00C4CC] hover:text-[#00C4CC] transition-all duration-300 bg-slate-50/50 group cursor-pointer"
                         title="Share"
                       >
                         <Share2 size={17} className="group-hover:scale-110 transition-transform" />
@@ -1396,7 +1389,7 @@ export default function HomePage() {
                         </a>
                         <a 
                           href="tel:+254792021795"
-                          className="flex-1 bg-[#C8102E] hover:bg-[#A30D25] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[10px] sm:text-xs lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center gap-2.5 shadow-xl hover:shadow-[#C8102E]/10 active:scale-[0.98]"
+                          className="flex-1 bg-[#FF4F5A] hover:bg-[#E03B46] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[10px] sm:text-xs lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center gap-2.5 shadow-xl hover:shadow-[#FF4F5A]/10 active:scale-[0.98]"
                         >
                           <Phone size={18} className="shrink-0" />
                           <span>Call Now</span>
@@ -1428,13 +1421,13 @@ export default function HomePage() {
                           setSelectedQuickViewProduct(null);
                           setIsCartOpen(true);
                         }}
-                        className="order-1 lg:order-2 relative overflow-hidden w-full flex-1 bg-[#0A1628] hover:bg-[#1C3560] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[3px] transition-all flex items-center shadow-xl hover:shadow-[#0A1628]/10 active:scale-[0.98] group cursor-pointer"
+                        className="order-1 lg:order-2 relative overflow-hidden w-full flex-1 bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[3px] transition-all flex items-center shadow-xl hover:shadow-[#8B3DFF]/20 active:scale-[0.98] group cursor-pointer"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                        <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                         <div className="relative flex items-center w-full h-full">
                           {selectedQuickViewProduct.priceType !== 'wholesale' && (
-                            <div className="flex flex-col items-start px-4 lg:px-6 border-r border-white/10 h-full justify-center bg-white/5 shrink-0">
-                              <span className="text-[7.5px] lg:text-[9px] font-bold text-[#C8961A] uppercase tracking-widest mb-0.5">Est. Total</span>
+                            <div className="flex flex-col items-start px-4 lg:px-6 border-r border-white/10 h-full justify-center bg-white/10 shrink-0">
+                              <span className="text-[7.5px] lg:text-[9px] font-bold text-white uppercase tracking-widest mb-0.5 opacity-80">Est. Total</span>
                               <span className="text-xs lg:text-base font-black tracking-tight whitespace-nowrap">
                                 {( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
                                   const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
@@ -1444,7 +1437,7 @@ export default function HomePage() {
                             </div>
                           )}
                           <div className="flex-1 flex items-center justify-center gap-2.5 px-4">
-                            <ShoppingBag size={18} className="shrink-0 text-[#C8961A]" />
+                            <ShoppingBag size={18} className="shrink-0 text-white" />
                             <span className="whitespace-nowrap truncate">{selectedQuickViewProduct.priceType === 'wholesale' ? "Initiate Bulk Inquiry" : "Add to Collection"}</span>
                           </div>
                         </div>
@@ -1536,30 +1529,6 @@ export default function HomePage() {
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 border border-white/20 min-w-[300px]"
-            style={{ 
-              backgroundColor: toast.type === 'success' ? 'rgba(16, 185, 129, 0.9)' : 
-                               toast.type === 'error' ? 'rgba(239, 68, 68, 0.9)' : 
-                               toast.type === 'warning' ? 'rgba(245, 158, 11, 0.9)' : 'rgba(30, 41, 59, 0.9)',
-              color: 'white'
-            }}
-          >
-            {toast.type === 'success' && <CheckCircle2 size={18} />}
-            {toast.type === 'error' && <X size={18} />}
-            {toast.type === 'warning' && <Plus size={18} className="rotate-45" />}
-            {toast.type === 'info' && <MessageSquare size={18} />}
-            <span className="text-sm font-bold tracking-tight">{toast.message}</span>
-          </motion.div>
         )}
       </AnimatePresence>
     </div>

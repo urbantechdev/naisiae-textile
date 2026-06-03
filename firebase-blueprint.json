@@ -222,6 +222,23 @@
         "description": { "type": "string" },
         "sortOrder": { "type": "number" }
       }
+    },
+    "catalogue_page": {
+      "title": "Catalogue Page",
+      "description": "An interactive slide/page inside the Sourcing Catalogue.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "highlights": { 
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sortOrder": { "type": "number" }
+      },
+      "required": ["title", "category", "description", "imageUrl", "highlights", "sortOrder"]
     }
   },
   "firestore": {
@@ -236,6 +253,10 @@
     "/mega_menus/{menuId}": {
       "schema": "mega_menu",
       "description": "Advanced navigation menu structures."
+    },
+    "/catalogue_pages/{docId}": {
+      "schema": "catalogue_page",
+      "description": "Pages in the interactive sourcing catalogue modal."
     },
     "/categories/{docId}": {
       "schema": "category",

@@ -25,12 +25,12 @@ export function WholesaleDeals({
       <div className="max-w-[1440px] mx-auto px-8">
         <div className="flex justify-between items-end mb-12">
           <div>
-            <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-              <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
+            <div className="flex items-center gap-2.5 text-[#00C4CC] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
+              <div className="w-7 h-0.5 bg-[#00C4CC]"></div> Bulk Pricing Available
             </div>
-            <h2 className="font-display text-5xl tracking-tight leading-none text-[#0A1628]">Wholesale Deals</h2>
+            <h2 className="font-display text-5xl tracking-tight leading-none text-[#0E121C]">Wholesale Deals</h2>
           </div>
-          <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#1C3560] hover:text-[#C8102E] transition-colors border-b-2 border-transparent hover:border-[#C8102E] pb-1 flex items-center gap-2">
+          <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#7D2AE8] hover:text-[#FF4F5A] transition-colors border-b-2 border-transparent hover:border-[#FF4F5A] pb-1 flex items-center gap-2">
             View All Wholesale Items <ChevronRight size={14} />
           </Link>
         </div>
@@ -54,23 +54,23 @@ export function WholesaleDeals({
                       referrerPolicy="no-referrer" 
                     />
                   ) : (
-                    <Package size={40} className="text-[#C8961A]/20" />
+                    <Package size={40} className="text-[#00C4CC]/20" />
                   )}
-                  <span className="absolute top-3 left-3 bg-[#C8961A] text-white text-[10px] font-bold px-2.5 py-1 rounded tracking-widest uppercase">Wholesale</span>
+                  <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-[13px] mb-3 leading-tight line-clamp-2 min-h-[2.5rem]">{product.name}</h3>
+                  <h3 className="font-bold text-[13px] mb-3 leading-tight line-clamp-2 min-h-[2.5rem] text-[#0E121C]">{product.name}</h3>
                   <div className="flex flex-col gap-2">
                     <button 
                       onClick={() => setSelectedQuickViewProduct(product)}
-                      className="w-full py-2 bg-[#C8961A] text-white hover:bg-[#A67C16] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                      className="w-full py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                     >
                       <MessageSquare size={12} />
                       Enquire
                     </button>
                     <a 
                       href="tel:+254792021795"
-                      className="w-full py-2 bg-[#C8102E] hover:bg-[#9E0D24] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                      className="w-full py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                     >
                       <Phone size={12} />
                       Call Now
@@ -86,7 +86,7 @@ export function WholesaleDeals({
            {wholesaleProducts.length > 6 && (
              <button 
               onClick={() => setShowAllWholesale(!showAllWholesale)}
-              className="px-10 py-4 bg-slate-100/50 hover:bg-[#C8961A] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group"
+              className="px-10 py-4 bg-slate-100 hover:bg-[#7D2AE8] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
              >
                {showAllWholesale ? 'Show Less' : 'View More Wholesale Items'} 
                <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />

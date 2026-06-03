@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, ChevronRight, Scissors, RefreshCw, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 interface HeroProps {
   siteSettings: any;
@@ -30,6 +31,7 @@ export function Hero({
   setIsQuoteModalOpen,
   products = []
 }: HeroProps) {
+  const { setIsCatalogueModalOpen } = useCart();
   const heroImages = siteSettings?.heroImages || [];
   const [videoErrorSlides, setVideoErrorSlides] = React.useState<Record<number, boolean>>({});
   const [isMobile, setIsMobile] = React.useState(false);
@@ -73,11 +75,14 @@ export function Hero({
   const showVideo = !isMobile && videoUrl && !videoErrorSlides[currentSlide] && !isNonEmbeddableUrl(videoUrl);
   
   return (
-    <section id="hero" className="relative h-screen min-h-[600px] lg:min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0A1628]">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] from-[40%] via-[#0A1628]/95 via-[45%] to-transparent to-[75%] z-10"></div>
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A1628] to-transparent z-10"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(200,150,26,0.05),_transparent_70%)] z-10"></div>
+    <section id="hero" className="relative min-h-screen lg:h-screen lg:min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0E121C] py-12 lg:py-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Mobile-only gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0E121C] from-[40%] via-[#0E121C]/95 via-[45%] to-transparent to-[75%] z-10 lg:hidden"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,_rgba(139,61,255,0.09),_transparent_70%)] z-10 lg:hidden"></div>
+        
+        {/* Subtle bottom shadow overlay to transition into sections below */}
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0E121C] to-transparent z-10"></div>
  
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
@@ -154,7 +159,24 @@ export function Hero({
         </AnimatePresence>
       </div>
 
-      <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-32 sm:pt-40 pb-12 lg:py-0 gap-8 lg:gap-10">
+      {/* Dynamic Vertical Wave Partition dividing dark left and image right on desktop */}
+      <div className="absolute inset-y-0 left-0 w-[55vw] xl:w-[50vw] pointer-events-none hidden lg:block z-10 select-none">
+        <svg viewBox="0 0 550 1000" preserveAspectRatio="none" className="w-full h-full">
+          <defs>
+            <linearGradient id="vertical-wave-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#C8102E" />
+              <stop offset="50%" stopColor="#E94C36" />
+              <stop offset="100%" stopColor="#C8961A" />
+            </linearGradient>
+          </defs>
+          {/* Solid fill matching the left side's pure page bg */}
+          <path d="M 0,0 L 500,0 C 350,300 250,650 450,1000 L 0,1000 Z" className="fill-[#0E121C]" />
+          {/* Premium wave outline trace */}
+          <path d="M 500,0 C 350,300 250,650 450,1000" fill="none" stroke="url(#vertical-wave-grad)" strokeWidth="4" className="opacity-95" />
+        </svg>
+      </div>
+
+      <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-24 sm:pt-36 pb-24 lg:py-0 gap-8 lg:gap-10">
         <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
           <div className="min-h-[140px] sm:min-h-[180px] lg:min-h-[220px] flex flex-col justify-center">
             <AnimatePresence mode="wait">
@@ -171,25 +193,25 @@ export function Hero({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="font-display font-medium text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
+                      className="font-display font-black text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
                     >
                       <span className="block overflow-hidden">
                         <motion.span 
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.8 }}
-                          className="block"
+                          className="block lowercase font-[Comfortaa] lg:mb-2"
                         >
-                          {heroImages[currentSlide]?.title || (currentSlide === 0 ? "UHURU MARKET" : "CRAFTING")}
+                          {heroImages[currentSlide]?.title ? heroImages[currentSlide].title.toLowerCase() : (currentSlide === 0 ? "uhuru market" : "crafting")}
                         </motion.span>
                       </span>
-                      <span className="text-[#C8961A] italic inline-block relative">
+                      <span className="bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent italic inline-block relative pr-4">
                         {currentSlide === 0 ? "UNIFORMS" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
                         <motion.div 
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
                           transition={{ delay: 0.8, duration: 1 }}
-                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-[#C8961A] to-transparent origin-left"
+                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1.5 bg-gradient-to-r from-[#C8102E] via-[#C8961A] to-transparent origin-left"
                         />
                       </span>
                     </motion.h1>
@@ -198,7 +220,7 @@ export function Hero({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-white/60 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
+                    className="text-white/70 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                   >
                     {heroImages[currentSlide]?.subtitle || (currentSlide === 0 ? "Naisiae Textiles: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
@@ -235,7 +257,7 @@ export function Hero({
               </span>
             </Link>
             <button
-              onClick={() => setIsQuoteModalOpen(true)}
+              onClick={() => setIsCatalogueModalOpen(true)}
               className="flex-1 lg:flex-none group px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-2xl border border-white/10 text-white rounded-xl sm:rounded-2xl transition-all duration-500 hover:bg-white hover:text-[#0A1628] shadow-2xl flex items-center justify-center lg:min-w-[220px]"
             >
               <span className="text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
@@ -245,10 +267,10 @@ export function Hero({
           </div>
         </div>
 
-        <div className="hidden lg:flex max-w-xl w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-16 lg:mt-0">
-          <div className="w-full lg:max-w-md group relative">
+        <div className="flex max-w-xl lg:max-w-[670px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28">
+          <div className="hidden lg:block w-full lg:max-w-[670px] group relative">
             <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-              <Search className="text-[#0A1628]/40 group-focus-within:text-[#C8961A] transition-all" size={24} />
+              <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={24} />
             </div>
             <input 
               type="text"
@@ -257,7 +279,7 @@ export function Hero({
               onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
               placeholder="Search products"
-              className="w-full bg-white border border-slate-200 lg:border-white/20 rounded-3xl pl-16 pr-6 py-5 lg:py-8 text-[#0A1628] text-xl lg:text-2xl outline-none focus:ring-4 focus:ring-[#C8961A]/30 transition-all placeholder:text-slate-400 shadow-2xl"
+              className="w-full bg-white border border-slate-200 lg:border-white/20 rounded-3xl pl-16 pr-6 py-5 lg:py-8 text-[#0E121C] text-xl lg:text-2xl outline-none focus:ring-4 focus:ring-[#C8102E]/30 transition-all placeholder:text-slate-400 shadow-2xl"
             />
             <AnimatePresence>
               {showSearchSuggestions && searchResults.length > 0 && (
@@ -282,7 +304,7 @@ export function Hero({
                         <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-black text-[#0A1628] uppercase tracking-wider mb-1">{product.name}</p>
+                        <p className="text-sm font-black text-[#0E121C] uppercase tracking-wider mb-1">{product.name}</p>
                         <div className="flex items-center gap-3">
                           <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
                           <span className="text-xs font-bold text-slate-400">{product.price.toLocaleString()}/-</span>
@@ -298,62 +320,95 @@ export function Hero({
 
           {/* Spotlight Picks Block */}
           {shuffledProducts.length > 0 && (
-            <div className="w-full lg:max-w-md mt-6 bg-[#0A1628]/45 border border-white/10 rounded-3xl p-4 shadow-2xl relative text-left">
-              <div className="flex items-center justify-between mb-3 px-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse"></span>
-                  <span className="text-[10px] font-black text-[#C8961A] tracking-[2px] uppercase">Spotlight Picks</span>
+            <div className="w-full lg:max-w-[670px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
+              {/* Dynamic decorative visual glow corner inside */}
+              <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#C8961A]/10 rounded-full blur-2xl pointer-events-none transition-opacity duration-700 group-hover/spotlight:opacity-100"></div>
+              
+              <div className="flex items-center justify-between mb-4 px-1 relative z-10">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse"></span>
+                    <span className="text-[11px] font-black text-[#C8961A] tracking-[2px] uppercase">Spotlight Picks</span>
+                  </div>
+                  <span className="text-[7px] font-black text-white/30 uppercase tracking-[1.5px] mt-0.5">High Performance Selections</span>
                 </div>
                 <button 
                   onClick={reshuffle}
-                  className="flex items-center gap-1.5 text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-full cursor-pointer transition-all active:scale-95 group/shuffle"
+                  className="flex items-center gap-1.5 text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full cursor-pointer transition-all active:scale-95 group/shuffle font-sans border border-white/5 hover:border-white/10"
                 >
                   <RefreshCw size={10} className="group-hover/shuffle:rotate-180 transition-transform duration-500 text-[#C8961A]" />
                   Reshuffle
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                {shuffledProducts.map((p) => (
-                  <button
-                    key={`spotlight-${p.id}`}
-                    onClick={() => setSelectedQuickViewProduct(p)}
-                    className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/30 rounded-2xl p-1.5 flex flex-col items-start text-left transition-all active:scale-95 group/card"
-                  >
-                    <div className="w-full aspect-square bg-white rounded-xl overflow-hidden mb-2 relative border border-white/10 shrink-0">
-                      {p.imageUrl ? (
-                        <img 
-                          src={p.imageUrl} 
-                          alt={p.name} 
-                          className="w-full h-full object-cover object-top group-hover/card:scale-105 transition-transform duration-300"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-slate-800">
-                          <Package size={16} className="text-white/20" />
+              <div className="grid grid-cols-3 gap-3 relative z-10">
+                {shuffledProducts.map((p, idx) => {
+                  // Determine offer/promo badge content gracefully
+                  const discount = (p.oldPrice && p.price && p.oldPrice > p.price)
+                    ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100)
+                    : null;
+                  
+                  // Use procedural deterministic badges for items without set discount percent
+                  const labelHash = p.name ? p.name.length : (p.id ? p.id.length : 0);
+                  const defaultLabel = labelHash % 3 === 0 ? "10% OFF" : labelHash % 3 === 1 ? "15% OFF" : "SALE";
+                  const promoLabel = discount ? `-${discount}%` : defaultLabel;
+
+                  return (
+                    <motion.button
+                      key={`spotlight-${p.id}`}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: idx * 0.1 }}
+                      onClick={() => setSelectedQuickViewProduct(p)}
+                      className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2.5 flex flex-col items-start text-left transition-all hover:-translate-y-1.5 duration-300 active:scale-95 group/card shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_24px_rgba(200,150,26,0.18)] relative overflow-hidden shrink-0"
+                    >
+                      <div className="w-full aspect-[4/5] bg-white rounded-xl overflow-hidden mb-3 relative border border-white/10 shrink-0">
+                        {p.imageUrl ? (
+                          <img 
+                            src={p.imageUrl} 
+                            alt={p.name} 
+                            className="w-full h-full object-cover object-top group-hover/card:scale-110 transition-transform duration-500 ease-out"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                            <Package size={16} className="text-white/20" />
+                          </div>
+                        )}
+                        
+                        {/* Bulking Label on Left */}
+                        {p.priceType === 'wholesale' && (
+                          <div className="absolute top-1.5 left-1.5 bg-[#0E121C]/95 text-[#C8961A] text-[6px] lg:text-[7px] font-black uppercase px-1.5 py-0.5 rounded border border-white/10 tracking-widest z-10">
+                            Bulk
+                          </div>
+                        )}
+
+                        {/* High-Contrast Red Offer Tag on Right */}
+                        <div className="absolute top-1.5 right-1.5 bg-[#C8102E] text-white text-[6px] lg:text-[7px] font-black uppercase px-1.5 py-0.5 rounded shadow-[0_4px_12px_rgba(200,16,46,0.35)] border border-white/10 tracking-wider z-10 animate-pulse">
+                          {promoLabel}
                         </div>
-                      )}
-                      {p.priceType === 'wholesale' && (
-                        <div className="absolute top-1 left-1 bg-[#0A1628]/90 text-[#C8961A] text-[6px] font-black uppercase px-1 rounded-sm border border-white/10 tracking-widest">
-                          Bulk
+                      </div>
+                      <div className="min-w-0 w-full px-1">
+                        <p className="text-[10px] font-black text-white truncate leading-tight group-hover/card:text-[#C8961A] transition-colors">{p.name}</p>
+                        <div className="flex items-center justify-between mt-1.5">
+                          <p className="text-[9.5px] font-black text-[#C8961A] tracking-wide font-sans">
+                            {p.price ? `Ksh ${p.price.toLocaleString()}/-` : 'Bulk Price'}
+                          </p>
+                          <span className="text-[6.5px] font-bold uppercase text-white/50 tracking-[1px] bg-white/5 px-1 py-0.5 rounded leading-none shrink-0 border border-white/5 group-hover/card:border-[#C8961A]/20 group-hover/card:text-[#C8961A] transition-all">
+                            ⭐ 4.9
+                          </span>
                         </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 w-full px-0.5">
-                      <p className="text-[10px] font-bold text-white truncate leading-tight group-hover/card:text-[#C8961A] transition-colors">{p.name}</p>
-                      <p className="text-[8px] text-[#C8961A] font-black tracking-wide mt-1">
-                        {p.price ? `${p.price.toLocaleString()}/-` : 'Bulk Price'}
-                      </p>
-                    </div>
-                  </button>
-                ))}
+                      </div>
+                    </motion.button>
+                  );
+                })}
               </div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="absolute bottom-12 right-12 z-40 flex items-center gap-5">
+      <div className="absolute bottom-12 right-12 z-50 flex items-center gap-5">
         {heroImages.map((_: any, idx: number) => (
           <button
             key={idx}
@@ -364,7 +419,7 @@ export function Hero({
             <span className={`text-[10px] font-black transition-all ${currentSlide === idx ? 'text-[#C8961A] translate-y-0 opacity-100' : 'text-white/20 translate-y-2 opacity-0'}`}>
               0{idx + 1}
             </span>
-            <div className="relative w-12 h-[2px] bg-white/10 overflow-hidden rounded-full">
+            <div className="relative w-12 h-[2.5px] bg-white/10 overflow-hidden rounded-full">
               <motion.div 
                 initial={false}
                 animate={{ 
@@ -372,7 +427,7 @@ export function Hero({
                   opacity: currentSlide === idx ? 1 : 0
                 }}
                 transition={{ duration: 0.8 }}
-                className="absolute inset-0 bg-[#C8961A] origin-left"
+                className="absolute inset-0 bg-gradient-to-r from-[#C8102E] to-[#C8961A] origin-left"
               />
             </div>
           </button>
@@ -386,8 +441,25 @@ export function Hero({
         onClick={() => document.getElementById('specialties')?.scrollIntoView({ behavior: 'smooth' })}
       >
         <span className="text-[8px] font-black uppercase tracking-[6px] text-white group-hover:text-[#C8961A] transition-colors">Scroll To Explore</span>
-        <div className="w-[1px] h-20 bg-gradient-to-b from-white/0 via-white/50 to-white/0 lg:group-hover:via-[#C8961A] transition-colors"></div>
+        <div className="w-[1px] h-20 bg-gradient-to-b from-white/0 via-white/50 to-white/0 lg:group-hover:via-[#C8102E] transition-colors"></div>
       </motion.div>
+
+      {/* Elegant Single Wave Partition Divider */}
+      <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-25 pointer-events-none">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[60px] md:h-[80px] lg:h-[120px]">
+          <defs>
+            <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#C8102E" />
+              <stop offset="50%" stopColor="#E94C36" />
+              <stop offset="100%" stopColor="#C8961A" />
+            </linearGradient>
+          </defs>
+          {/* Main wave matching next section's bg-white */}
+          <path d="M0,40 C300,100 800,0 1200,50 L1200,122 L0,122 Z" className="fill-white" />
+          {/* Premium outline highlight trace following the wave */}
+          <path d="M0,40 C300,100 800,0 1200,50" fill="none" stroke="url(#wave-grad)" strokeWidth="3" className="opacity-80" />
+        </svg>
+      </div>
     </section>
   );
 }

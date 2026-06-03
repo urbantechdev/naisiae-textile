@@ -137,6 +137,11 @@ export default function AdminDashboard() {
   const [promotions, setPromotions] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
+  const [cataloguePages, setCataloguePages] = useState<any[]>([]);
+  const [megaMenuSubTab, setMegaMenuSubTab] = useState<'header' | 'catalogue'>('header');
+  const [activeEditingCatalogueId, setActiveEditingCatalogueId] = useState<string | null>(null);
+  const [catalogueForm, setCatalogueForm] = useState<any>(null);
+  const [catalogueHighlightInput, setCatalogueHighlightInput] = useState('');
   const [wishlists, setWishlists] = useState<any[]>([]);
   const [discountRules, setDiscountRules] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -161,10 +166,7 @@ export default function AdminDashboard() {
   const [isImporting, setIsImporting] = useState(false);
   const [selectedQuoteIds, setSelectedQuoteIds] = useState<string[]>([]);
   
-  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com' || 
-                       auth.currentUser?.email === 'support@naisiaetextiles.com' ||
-                       users.find(u => u.uid === auth.currentUser?.uid)?.role === 'super' ||
-                       users.find(u => u.uid === auth.currentUser?.uid)?.role === 'admin';
+  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<BatchAnalysisResult | null>(null);
   const [stagedProducts, setStagedProducts] = useState<any[] | null>(null);
@@ -370,12 +372,14 @@ export default function AdminDashboard() {
       handleFirestoreError(error, OperationType.GET, 'reviews');
     });
 
-    // Real-time Mega Menus
-    const unsubscribeMegaMenus = onSnapshot(collection(db, 'mega_menus'), (snapshot) => {
-      const menus = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setMegaMenus(menus);
+
+
+    // Real-time Sourcing Catalogue Pages
+    const unsubscribeCataloguePages = onSnapshot(collection(db, 'catalogue_pages'), (snapshot) => {
+      const pages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setCataloguePages(pages);
     }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'mega_menus');
+      handleFirestoreError(error, OperationType.GET, 'catalogue_pages');
     });
 
     // Fetch Analytics for Top Products (Last 30 Days)
@@ -449,6 +453,7 @@ export default function AdminDashboard() {
       unsubscribeChats();
       unsubscribeDiscountRules();
       unsubscribeReviews();
+      unsubscribeCataloguePages();
     };
   }, []);
 
@@ -705,6 +710,7 @@ export default function AdminDashboard() {
 
       const name = s(getRaw(['name', 'title', 'product name', 'item', 'label', 'description'])) || 'Unnamed Product';
       const category = s(getRaw(['category', 'type', 'group', 'class', 'department'])) || 'School Uniforms';
+      const subCategory = s(getRaw(['subcategory', 'sub category', 'sub-category', 'subClass'])) || '';
       const price = n(getRaw(['price', 'amount', 'cost', 'unit price', 'current price', 'selling price', 'retail'])) || 1200;
       const wholesalePrice = n(getRaw(['wholesale', 'bulk price', 'wholesale price', 'trade price']));
       const oldPrice = n(getRaw(['oldprice', 'discount price', 'original price', 'old price', 'was price']));
@@ -713,6 +719,7 @@ export default function AdminDashboard() {
       const badge = s(getRaw(['badge', 'label', 'tagline']));
       const statusVal = getRaw(['active', 'status', 'published']);
       const tagsVal = getRaw(['tags', 'keywords']);
+      const variantsVal = s(getRaw(['variants', 'options', 'sizes', 'styles']));
 
       const tags = tagsVal ? 
         (typeof tagsVal === 'string' ? tagsVal.split(',').map((t: string) => t.trim()) : [s(tagsVal)]) : 
@@ -723,11 +730,111 @@ export default function AdminDashboard() {
         tags.push('Wholesale');
       }
 
+      let parsedVariants: any[] = [];
+      let finalPrice = price;
+
+      if (variantsVal) {
+        const combosStr = variantsVal.split(',').map(v => v.trim()).filter(Boolean);
+        const combos: Array<{ attributes: Record<string, string>; price: number }> = [];
+        const uniqueTypes = new Set<string>();
+        const typeValues: Record<string, Set<string>> = {};
+
+        for (const rawCombo of combosStr) {
+          const parts = rawCombo.split('=');
+          if (parts.length < 2) continue;
+          const attrPart = parts[0].trim();
+          const comboPrice = parseFloat(parts[1].trim()) || price;
+          const attrs: Record<string, string> = {};
+
+          for (const pair of attrPart.split('|')) {
+            let [type, val] = pair.includes(':') ? pair.split(':') : ['Style', pair];
+            type = type.trim();
+            val = val.trim();
+
+            if (type.toLowerCase() === 'size') type = 'Size';
+            if (type.toLowerCase() === 'style') type = 'Style';
+            if (type.toLowerCase() === 'type') type = 'Style';
+
+            attrs[type] = val;
+            uniqueTypes.add(type);
+            if (!typeValues[type]) typeValues[type] = new Set();
+            typeValues[type].add(val);
+          }
+          combos.push({ attributes: attrs, price: comboPrice });
+        }
+
+        if (combos.length > 0) {
+          const typesArr = Array.from(uniqueTypes);
+          const minComboPrice = Math.min(...combos.map(c => c.price));
+          finalPrice = minComboPrice;
+
+          if (typesArr.length === 1) {
+            const type = typesArr[0];
+            const vals = Array.from(typeValues[type]);
+            vals.forEach((val, idx) => {
+              const match = combos.find(c => c.attributes[type] === val);
+              const absPrice = match ? match.price : minComboPrice;
+              parsedVariants.push({
+                id: `${type.toLowerCase()}_${val.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${idx}`,
+                type,
+                value: val,
+                price: Math.max(0, absPrice - minComboPrice),
+                stock: 100
+              });
+            });
+          } else if (typesArr.length >= 2) {
+            const typeA = typesArr[0];
+            const typeB = typesArr[1];
+            const valsA = Array.from(typeValues[typeA]);
+            const valsB = Array.from(typeValues[typeB]);
+
+            const minCombo = combos.reduce((min, c) => c.price < min.price ? c : min, combos[0]);
+            const baselineA = minCombo.attributes[typeA];
+            const baselineB = minCombo.attributes[typeB];
+
+            valsA.forEach((valA, idx) => {
+              const current = combos.find(c => c.attributes[typeA] === valA && c.attributes[typeB] === baselineB);
+              const priceDiff = current ? (current.price - minCombo.price) : 0;
+              parsedVariants.push({
+                id: `${typeA.toLowerCase()}_${valA.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${idx}`,
+                type: typeA,
+                value: valA,
+                price: Math.max(0, priceDiff),
+                stock: 100
+              });
+            });
+
+            valsB.forEach((valB, idx) => {
+              if (valB === baselineB) {
+                parsedVariants.push({
+                  id: `${typeB.toLowerCase()}_${valB.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${idx}`,
+                  type: typeB,
+                  value: valB,
+                  price: 0,
+                  stock: 100
+                });
+                return;
+              }
+              const current = combos.find(c => c.attributes[typeA] === baselineA && c.attributes[typeB] === valB);
+              const priceDiff = current ? (current.price - minCombo.price) : 0;
+              parsedVariants.push({
+                id: `${typeB.toLowerCase()}_${valB.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${idx}`,
+                type: typeB,
+                value: valB,
+                price: Math.max(0, priceDiff),
+                stock: 100
+              });
+            });
+          }
+        }
+      }
+
       return {
         name,
         category,
-        price,
-        wholesalePrice: wholesalePrice || price, // Fallback to price if not set
+        subCategory,
+        price: finalPrice,
+        wholesalePrice: wholesalePrice || finalPrice, // Fallback to price if not set
         oldPrice,
         description: desc,
         imageUrl: img,
@@ -736,6 +843,7 @@ export default function AdminDashboard() {
                 statusVal === 1 ||
                 statusVal === undefined,
         badge,
+        variants: parsedVariants,
         tags: [...new Set(tags)],
       };
     });
@@ -917,15 +1025,35 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleSaveMegaMenu = async (menuData: any) => {
+
+
+  const handleSaveMegaMenu = async (menuData: any) => {};
+
+  const handleSaveCataloguePage = async (pageData: any) => {
     try {
-      await setDoc(doc(db, 'mega_menus', menuData.id), {
-        ...menuData,
+      const id = pageData.id || `page_${Date.now()}`;
+      await setDoc(doc(db, 'catalogue_pages', id), {
+        title: pageData.title || '',
+        category: pageData.category || '',
+        description: pageData.description || '',
+        imageUrl: pageData.imageUrl || '',
+        highlights: pageData.highlights || [],
+        sortOrder: Number(pageData.sortOrder) || 1,
         updatedAt: serverTimestamp()
       }, { merge: true });
-      setToast({ message: 'Mega menu updated successfully!', type: 'success' });
+      setToast({ message: 'Catalogue page updated successfully!', type: 'success' });
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'mega_menus');
+      handleFirestoreError(error, OperationType.WRITE, 'catalogue_pages');
+    }
+  };
+
+  const handleDeleteCataloguePage = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this catalogue page?")) return;
+    try {
+      await deleteDoc(doc(db, 'catalogue_pages', id));
+      setToast({ message: 'Catalogue page deleted successfully!', type: 'success' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, 'catalogue_pages');
     }
   };
 
@@ -1186,9 +1314,7 @@ export default function AdminDashboard() {
           <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
           <MobileNavItem active={activeView === 'live-support'} onClick={() => { setActiveView('live-support'); setIsMobileMenuOpen(false); }} icon={<Headset size={18} />} label="Live Support" />
           <MobileNavItem active={activeView === 'chat-settings'} onClick={() => { setActiveView('chat-settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Messaging" />
-          <MobileNavItem active={activeView === 'mega-menu'} onClick={() => { setActiveView('mega-menu'); setIsMobileMenuOpen(false); }} icon={<Zap size={18} />} label="Mega Menu" />
           <MobileNavItem active={activeView === 'content'} onClick={() => { setActiveView('content'); setIsMobileMenuOpen(false); }} icon={<Edit2 size={18} />} label="Pages Content" />
-          <MobileNavItem active={activeView === 'appearance'} onClick={() => { setActiveView('appearance'); setIsMobileMenuOpen(false); }} icon={<Palette size={18} />} label="Layout" />
           <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
           <MobileNavItem active={activeView === 'users'} onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} icon={<Users size={18} />} label="Team" />
           <MobileNavItem active={activeView === 'analytics'} onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} icon={<BarChart3 size={18} />} label="Analytics" />
@@ -1922,13 +2048,13 @@ export default function AdminDashboard() {
                 <div className="flex gap-4 mb-2">
                   <button 
                     onClick={() => setActiveTab('all')}
-                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'all' ? 'bg-[#1C3560] text-white shadow-lg' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
+                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'all' ? 'bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white shadow-lg shadow-[#C8102E]/15' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
                   >
                     Client Quotes
                   </button>
                   <button 
                     onClick={() => setActiveTab('discounts')}
-                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'discounts' ? 'bg-[#1C3560] text-white shadow-lg' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
+                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'discounts' ? 'bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white shadow-lg shadow-[#C8102E]/15' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
                   >
                     Bulk Discount Rules
                   </button>
@@ -2389,7 +2515,7 @@ export default function AdminDashboard() {
               <ChatSettings setToast={setToast} handleFirestoreError={handleFirestoreError} />
             )}
 
-            {activeView === 'mega-menu' && (
+            {false && (
               <motion.div 
                 key="mega-menu"
                 initial={{ opacity: 0, y: 10 }}
@@ -2398,218 +2524,537 @@ export default function AdminDashboard() {
                 className="space-y-8"
               >
                 <div className="bg-white rounded-[32px] shadow-sm border border-[#E2E8F0] overflow-hidden">
-                  <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between bg-gradient-to-r from-white to-[#F8FAFC]">
+                  <div className="p-8 border-b border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-white to-[#F8FAFC]">
                     <div>
-                      <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Mega-Menu Architecture</h3>
-                      <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Expansive Real-Time Navigation Control</p>
+                      <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Navigation & Sourcing Controls</h3>
+                      <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Expansive Real-Time Site Structure Control</p>
+                    </div>
+                    {/* Sub-navigation tabs */}
+                    <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start sm:self-auto shadow-inner">
+                      <button 
+                        onClick={() => setMegaMenuSubTab('header')}
+                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${megaMenuSubTab === 'header' ? 'bg-[#0A1628] text-white shadow-md' : 'text-slate-500 hover:text-[#0A1628]'}`}
+                      >
+                        Header Menus
+                      </button>
+                      <button 
+                        onClick={() => setMegaMenuSubTab('catalogue')}
+                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${megaMenuSubTab === 'catalogue' ? 'bg-[#0A1628] text-white shadow-md' : 'text-slate-500 hover:text-[#0A1628]'}`}
+                      >
+                        Sourcing Catalogue
+                      </button>
                     </div>
                   </div>
-                  
-                  <div className="p-8 space-y-12">
-                    {megaMenus.length === 0 ? (
-                      <div className="py-20 text-center bg-slate-50 rounded-[40px] border-2 border-dashed border-slate-200">
-                        <div className="max-w-md mx-auto space-y-6">
-                          <Zap size={48} className="mx-auto text-[#C8961A]" />
-                          <h4 className="text-xl font-bold">No Menu Items Configured</h4>
-                          <p className="text-sm text-slate-500">Initialize your navigation tree with a single click to start building your expansive menu.</p>
-                          <button 
-                            onClick={async () => {
-                              const defaults = [
-                                { 
-                                  id: 'products',
-                                  name: 'Products', 
-                                  featured: { title: 'New Arrival: Premium Gabardine', image: SEED_URLS[0], link: '/products' },
-                                  categories: [
-                                    { name: 'Sectors', items: ['Primary Schools', 'Secondary Schools', 'Institutional', 'Hospitality'], link: '/products' },
-                                    { name: 'Apparel', items: ['Blazers', 'Trousers', 'Skirts', 'Shirts', 'Sweaters'], link: '/products' }
-                                  ]
-                                },
-                                { 
-                                  id: 'services',
-                                  name: 'Services', 
-                                  featured: { title: 'Institutional Branding', image: SEED_URLS[1], link: '/services' },
-                                  categories: [
-                                    { name: 'Manufacturing', items: ['Bulk Production', 'Custom Designing', 'Wholesale Supply'], link: '/services' }
-                                  ]
-                                },
-                                { 
-                                  id: 'categories',
-                                  name: 'Categories', 
-                                  featured: { title: 'Explore Industry Standards', image: SEED_URLS[2], link: '/categories' },
-                                  categories: [
-                                    { name: 'Shop By Type', items: ['Woolen Wear', 'Cotton Blends', 'Synthetic Tissues'], link: '/categories' }
-                                  ]
+                        <div className="p-8 space-y-12">
+                    {megaMenuSubTab === 'catalogue' ? (
+                      <div className="space-y-8">
+                        {/* Control actions for Catalog */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-6 rounded-3xl border border-slate-200/50">
+                          <div>
+                            <h4 className="font-bold text-gray-800 text-sm">Sourcing Guide Slides Database</h4>
+                            <p className="text-xs text-slate-500 mt-0.5">Manage slides shown inside the interactive popup modal.</p>
+                          </div>
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => {
+                                setCatalogueForm({
+                                  title: 'New Sourcing Collection',
+                                  category: 'Sourcing Sector',
+                                  description: 'Enter a detailed description of this sourcing selection or custom catalog topic here.',
+                                  imageUrl: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80&w=600',
+                                  highlights: ['Feature Point A', 'Feature Point B'],
+                                  sortOrder: cataloguePages.length + 1
+                                });
+                                setActiveEditingCatalogueId('new');
+                              }}
+                              className="flex items-center gap-2 px-5 py-3 bg-[#0A1628] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-md active:scale-95 cursor-pointer"
+                            >
+                              + Add New Slide
+                            </button>
+                            <button
+                              onClick={async () => {
+                                if (confirm("This will overwrite existing catalogue pages with default preloaded ones. Continue?")) {
+                                  try {
+                                    // Seed default slides helper
+                                    const defaults = [
+                                      {
+                                        id: 'page_1',
+                                        title: "Premium School Uniform Essentials",
+                                        category: "Primary & Secondary School Wear",
+                                        description: "Our signature collection for schools. Tailored from super-durable, breathable wool-blends and combed cotton that withstands heavy playground wear and daily machine washes while retaining vibrant, unfaded institution colors.",
+                                        imageUrl: "https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80&w=600",
+                                        highlights: ["Anti-pilling premium knitwear", "Stain-resistant fabric treatment", "Reinforced double-stitch seams", "Tailored crest & custom colorways"],
+                                        sortOrder: 1
+                                      },
+                                      {
+                                        id: 'page_2',
+                                        title: "Executive College & Varsity apparel",
+                                        category: "Colleges & Higher Institutions",
+                                        description: "Trendy, sophisticated, high-identity varsity jackets, custom laboratory coats, institutional blazers, and polo shirts engineered to elevate college pride and withstand professional campus activities.",
+                                        imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=600&auto=format&fit=crop",
+                                        highlights: ["Heavy-duty fleece varsities", "High-definition custom school crests", "Breathable clinical/lab fabrics", "Premium cotton-pique polos"],
+                                        sortOrder: 2
+                                      },
+                                      {
+                                        id: 'page_3',
+                                        title: "Corporate Identity & Executive wear",
+                                        category: "Corporate Sourcing",
+                                        description: "Sleek, sharply structured suiting, executive shirts, dresses, and customized outerwear for corporate institutions, hotels, and security teams with customized tailoring for clean fittings.",
+                                        imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop",
+                                        highlights: ["Crease-resistant formal shirting", "Premium wool-blend blazers", "Cohesive brand-matching accents", "Custom-molded corporate accessories"],
+                                        sortOrder: 3
+                                      },
+                                      {
+                                        id: 'page_4',
+                                        title: "Elite Athletics & Sports Kits",
+                                        category: "Athleisure & Sports Teams",
+                                        description: "Moisture-wicking, highly flexible, custom sub-laminated jerseys and athletic tracksuits engineered to support maximum range of motion and breathability for school leagues and professional clubs.",
+                                        imageUrl: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop",
+                                        highlights: ["Dry-fit active breathability", "Four-way stretch flexible seams", "High-fidelity digital sublimation", "Windproof and water-resistant tracksuits"],
+                                        sortOrder: 4
+                                      }
+                                    ];
+                                    for (const slide of defaults) {
+                                      await setDoc(doc(db, 'catalogue_pages', slide.id), {
+                                        title: slide.title,
+                                        category: slide.category,
+                                        description: slide.description,
+                                        imageUrl: slide.imageUrl,
+                                        highlights: slide.highlights,
+                                        sortOrder: slide.sortOrder,
+                                        updatedAt: serverTimestamp()
+                                      });
+                                    }
+                                    setToast({ message: 'Dynamic Sourcing Catalogue pre-seeded!', type: 'success' });
+                                  } catch (err) {
+                                    handleFirestoreError(err, OperationType.WRITE, 'catalogue_pages');
+                                  }
                                 }
-                              ];
-                              for (const menu of defaults) {
-                                await handleSaveMegaMenu(menu);
-                              }
-                            }}
-                            className="bg-[#0A1628] text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
-                          >
-                            Initialize Expansive Menu
-                          </button>
+                              }}
+                              className="px-5 py-3 border border-dashed border-[#C8961A] hover:bg-[#C8961A]/5 text-[#C8961A] rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer"
+                            >
+                              Reset to Default slides
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* If editing / creating a new card */}
+                        {catalogueForm && (
+                          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-[35px] border border-slate-200 p-8 shadow-inner space-y-6">
+                            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+                              <h5 className="font-extrabold text-sm text-[#0A1628] uppercase tracking-wider">
+                                {activeEditingCatalogueId === 'new' ? '✨ Create Sourcing Slide' : '📝 Edit Sourcing Slide'}
+                              </h5>
+                              <button 
+                                onClick={() => {
+                                  setCatalogueForm(null);
+                                  setActiveEditingCatalogueId(null);
+                                }}
+                                className="text-slate-400 hover:text-slate-600 font-bold text-xs uppercase cursor-pointer"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-4">
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Category Sector</label>
+                                  <input 
+                                    type="text"
+                                    value={catalogueForm.category}
+                                    onChange={e => setCatalogueForm({ ...catalogueForm, category: e.target.value })}
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    placeholder="e.g., Primary & Secondary School Wear"
+                                  />
+                                </div>
+
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Slide Title</label>
+                                  <input 
+                                    type="text"
+                                    value={catalogueForm.title}
+                                    onChange={e => setCatalogueForm({ ...catalogueForm, title: e.target.value })}
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    placeholder="e.g., Premium School Uniform Essentials"
+                                  />
+                                </div>
+
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Detailed Sourcing Description</label>
+                                  <textarea 
+                                    value={catalogueForm.description}
+                                    onChange={e => setCatalogueForm({ ...catalogueForm, description: e.target.value })}
+                                    rows={4}
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none resize-none animate-none"
+                                    placeholder="Describe material durability, washes, thread count..."
+                                  />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Sort Order</label>
+                                    <input 
+                                      type="number"
+                                      value={catalogueForm.sortOrder}
+                                      onChange={e => setCatalogueForm({ ...catalogueForm, sortOrder: Number(e.target.value) })}
+                                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Image Asset URL</label>
+                                  <input 
+                                    type="text"
+                                    value={catalogueForm.imageUrl}
+                                    onChange={e => setCatalogueForm({ ...catalogueForm, imageUrl: e.target.value })}
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    placeholder="Image URL"
+                                  />
+                                  <div className="aspect-[4/3] rounded-xl overflow-hidden bg-black/5 border border-slate-200 flex items-center justify-center mt-2 relative">
+                                    {catalogueForm.imageUrl ? (
+                                      <img src={catalogueForm.imageUrl} className="w-full h-full object-cover animate-none" alt="Sourcing Preview" referrerPolicy="no-referrer" />
+                                    ) : (
+                                      <span className="text-slate-400 text-xs font-bold animate-none">Image Preview</span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Technical Highlights (Bulleted Specs)</label>
+                                  <div className="flex gap-2">
+                                    <input 
+                                      type="text"
+                                      value={catalogueHighlightInput}
+                                      onChange={e => setCatalogueHighlightInput(e.target.value)}
+                                      className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold outline-none animate-none"
+                                      placeholder="e.g., Moisture-wicking fibers"
+                                    />
+                                    <button 
+                                      onClick={() => {
+                                        if (catalogueHighlightInput.trim()) {
+                                          setCatalogueForm({
+                                            ...catalogueForm,
+                                            highlights: [...(catalogueForm.highlights || []), catalogueHighlightInput.trim()]
+                                          });
+                                          setCatalogueHighlightInput('');
+                                        }
+                                      }}
+                                      className="px-4 py-2 bg-[#0A1628] text-white rounded-xl text-xs font-bold cursor-pointer"
+                                    >
+                                      Add
+                                    </button>
+                                  </div>
+
+                                  <div className="flex flex-wrap gap-2 mt-2">
+                                    {catalogueForm.highlights?.map((spec: string, idx: number) => (
+                                      <span key={idx} className="bg-slate-200 text-[#0a1628] px-3 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-1.5 shadow-sm border border-slate-300 relative">
+                                        <span>{spec}</span>
+                                        <button 
+                                          onClick={() => {
+                                            const updatedSpecs = catalogueForm.highlights.filter((_: any, i: number) => i !== idx);
+                                            setCatalogueForm({ ...catalogueForm, highlights: updatedSpecs });
+                                          }}
+                                          className="text-red-500 hover:text-red-700 font-extrabold font-mono cursor-pointer"
+                                        >
+                                          ×
+                                        </button>
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-3 pt-4 border-t border-slate-200">
+                              <button
+                                onClick={async () => {
+                                  await handleSaveCataloguePage(catalogueForm);
+                                  setCatalogueForm(null);
+                                  setActiveEditingCatalogueId(null);
+                                }}
+                                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer"
+                              >
+                                Save Slide Controls
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setCatalogueForm(null);
+                                  setActiveEditingCatalogueId(null);
+                                }}
+                                className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold text-[10px] uppercase tracking-wider rounded-xl cursor-pointer"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* List of active slides */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {cataloguePages.map((page: any) => (
+                            <div key={page.id} className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between border-t-4 border-t-[#C8102E]">
+                              <div>
+                                <div className="flex gap-4 items-start">
+                                  <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-slate-100 relative">
+                                    <img src={page.imageUrl} className="w-full h-full object-cover" alt={page.title} referrerPolicy="no-referrer" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <span className="text-[8px] font-black uppercase text-[#C8961A] tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded border border-[#C8961A]/10">
+                                      {page.category}
+                                    </span>
+                                    <h4 className="font-extrabold text-[#0A1628] text-sm line-clamp-2">{page.title}</h4>
+                                    <p className="text-[10px] text-slate-400 font-extrabold">Slide Index: {page.sortOrder}</p>
+                                  </div>
+                                </div>
+                                <p className="text-slate-500 text-xs mt-3 leading-relaxed line-clamp-3">
+                                  {page.description}
+                                </p>
+
+                                <div className="mt-4 space-y-1.5">
+                                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Built-In Fabric Specs</p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {page.highlights?.map((spec: string, i: number) => (
+                                      <span key={i} className="bg-slate-50 text-[#0a1628]/80 text-[9px] font-bold px-2 py-1 rounded border border-slate-100">
+                                        • {spec}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2 mt-6 pt-4 border-t border-slate-50">
+                                <button
+                                  onClick={() => {
+                                    setCatalogueForm({ ...page });
+                                    setActiveEditingCatalogueId(page.id);
+                                  }}
+                                  className="flex-1 py-2.5 bg-[#C8961A]/10 text-[#C8961A] hover:bg-[#C8961A]/20 transition-all font-black uppercase text-[9px] tracking-wider rounded-xl text-center cursor-pointer"
+                                >
+                                  Edit Content
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCataloguePage(page.id)}
+                                  className="py-2.5 px-4 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all rounded-xl cursor-pointer"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 gap-12">
-                        {megaMenus.map((menu) => (
-                          <div key={menu.id} className="bg-white border border-slate-100 rounded-[40px] p-10 shadow-sm hover:shadow-xl transition-all border-l-4 border-l-[#C8961A]">
-                            <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
-                              <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-[#0A1628] rounded-2xl flex items-center justify-center text-[#C8961A]">
-                                  <ChevronRight size={24} />
-                                </div>
-                                <h4 className="font-display text-3xl tracking-widest text-[#0A1628] uppercase">{menu.name}</h4>
-                              </div>
+                        {megaMenus.length === 0 ? (
+                          <div className="py-20 text-center bg-slate-50 rounded-[40px] border-2 border-dashed border-slate-200">
+                            <div className="max-w-md mx-auto space-y-6">
+                              <Zap size={48} className="mx-auto text-[#C8961A]" />
+                              <h4 className="text-xl font-bold">No Menu Items Configured</h4>
+                              <p className="text-sm text-slate-500">Initialize your navigation tree with a single click to start building your expansive menu.</p>
                               <button 
-                                onClick={() => handleSaveMegaMenu(menu)}
-                                className="flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-xl active:scale-95"
+                                onClick={async () => {
+                                  const defaults = [
+                                    { 
+                                      id: 'products',
+                                      name: 'Products', 
+                                      featured: { title: 'New Arrival: Premium Gabardine', image: SEED_URLS[0], link: '/products' },
+                                      categories: [
+                                        { name: 'Sectors', items: ['Primary Schools', 'Secondary Schools', 'Institutional', 'Hospitality'], link: '/products' },
+                                        { name: 'Apparel', items: ['Blazers', 'Trousers', 'Skirts', 'Shirts', 'Sweaters'], link: '/products' }
+                                      ]
+                                    },
+                                    { 
+                                      id: 'services',
+                                      name: 'Services', 
+                                      featured: { title: 'Institutional Branding', image: SEED_URLS[1], link: '/services' },
+                                      categories: [
+                                        { name: 'Manufacturing', items: ['Bulk Production', 'Custom Designing', 'Wholesale Supply'], link: '/services' }
+                                      ]
+                                    },
+                                    { 
+                                      id: 'categories',
+                                      name: 'Categories', 
+                                      featured: { title: 'Explore Industry Standards', image: SEED_URLS[2], link: '/categories' },
+                                      categories: [
+                                        { name: 'Shop By Type', items: ['Woolen Wear', 'Cotton Blends', 'Synthetic Tissues'], link: '/categories' }
+                                      ]
+                                    }
+                                  ];
+                                  for (const menu of defaults) {
+                                    await handleSaveMegaMenu(menu);
+                                  }
+                                }}
+                                className="bg-[#0A1628] text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
                               >
-                                <Save size={18} /> Update {menu.name}
+                                Initialize Expansive Menu
                               </button>
                             </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                              {/* Left: Featured Editor */}
-                              <div className="space-y-8 bg-slate-50 p-8 rounded-[32px]">
-                                <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] mb-6 flex items-center gap-2">
-                                  <Sparkles size={14} className="text-[#C8961A]" />
-                                  Visual Spotlight
-                                </h5>
-                                <div className="space-y-6">
-                                  <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Banner Title</label>
-                                    <input 
-                                      type="text" 
-                                      value={menu.featured?.title || ''} 
-                                      onChange={(e) => {
-                                        const updated = { ...menu, featured: { ...menu.featured, title: e.target.value } };
-                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                      }}
-                                      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Action Redirect</label>
-                                    <input 
-                                      type="text" 
-                                      value={menu.featured?.link || ''} 
-                                      onChange={(e) => {
-                                        const updated = { ...menu, featured: { ...menu.featured, link: e.target.value } };
-                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                      }}
-                                      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Image Asset URL</label>
-                                    <div className="aspect-[4/3] rounded-2xl mb-3 overflow-hidden bg-white border border-slate-200 flex items-center justify-center relative group">
-                                      {menu.featured?.image ? (
-                                        <img src={menu.featured.image} className="w-full h-full object-cover" alt="Featured" />
-                                      ) : (
-                                        <ImageIcon size={32} className="text-slate-200" />
-                                      )}
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 gap-12">
+                            {megaMenus.map((menu) => (
+                              <div key={menu.id} className="bg-white border border-slate-100 rounded-[40px] p-10 shadow-sm hover:shadow-xl transition-all border-l-4 border-l-[#C8961A]">
+                                <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
+                                  <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-[#0A1628] rounded-2xl flex items-center justify-center text-[#C8961A]">
+                                      <ChevronRight size={24} />
                                     </div>
-                                    <input 
-                                      type="text" 
-                                      value={menu.featured?.image || ''} 
-                                      onChange={(e) => {
-                                        const updated = { ...menu, featured: { ...menu.featured, image: e.target.value } };
-                                        setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                      }}
-                                      className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
-                                    />
+                                    <h4 className="font-display text-3xl tracking-widest text-[#0A1628] uppercase">{menu.name}</h4>
                                   </div>
-                                </div>
-                              </div>
-
-                              {/* Right: Expansive Column Editor */}
-                              <div className="lg:col-span-2 space-y-8">
-                                <div className="flex items-center justify-between">
-                                  <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] flex items-center gap-2">
-                                    <Menu size={14} className="text-[#C8961A]" />
-                                    Navigation Columns
-                                  </h5>
                                   <button 
-                                    onClick={() => {
-                                      const updated = { 
-                                        ...menu, 
-                                        categories: [...(menu.categories || []), { name: 'New Column', items: ['Initial Link'], link: '#' }] 
-                                      };
-                                      setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                    }}
-                                    className="text-[10px] font-black text-[#C8961A] uppercase hover:underline"
+                                    onClick={() => handleSaveMegaMenu(menu)}
+                                    className="flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-xl active:scale-95"
                                   >
-                                    + Add Architecture Column
+                                    <Save size={18} /> Update {menu.name}
                                   </button>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  {menu.categories?.map((cat: any, catIdx: number) => (
-                                    <div key={catIdx} className="p-6 bg-slate-50 rounded-[32px] border border-slate-100 relative group/col">
-                                      <button 
-                                        onClick={() => {
-                                          const updated = { ...menu, categories: menu.categories.filter((_: any, i: number) => i !== catIdx) };
-                                          setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                        }}
-                                        className="absolute -top-2 -right-2 w-8 h-8 bg-white text-red-500 rounded-full shadow-lg border border-red-50 flex items-center justify-center opacity-0 group-hover/col:opacity-100 transition-all hover:bg-red-500 hover:text-white"
-                                      >
-                                        <X size={14} />
-                                      </button>
-                                      
-                                      <div className="space-y-4">
-                                        <div className="space-y-2">
-                                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Column Heading</label>
-                                          <input 
-                                            type="text" 
-                                            value={cat.name} 
-                                            onChange={(e) => {
-                                              const categories = [...menu.categories];
-                                              categories[catIdx].name = e.target.value;
-                                              const updated = { ...menu, categories };
-                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                            }}
-                                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
-                                          />
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                                  {/* Left: Featured Editor */}
+                                  <div className="space-y-8 bg-slate-50 p-8 rounded-[32px]">
+                                    <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] mb-6 flex items-center gap-2">
+                                      <Sparkles size={14} className="text-[#C8961A]" />
+                                      Visual Spotlight
+                                    </h5>
+                                    <div className="space-y-6">
+                                      <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Banner Title</label>
+                                        <input 
+                                          type="text" 
+                                          value={menu.featured?.title || ''} 
+                                          onChange={(e) => {
+                                            const updated = { ...menu, featured: { ...menu.featured, title: e.target.value } };
+                                            setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                          }}
+                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Action Redirect</label>
+                                        <input 
+                                          type="text" 
+                                          value={menu.featured?.link || ''} 
+                                          onChange={(e) => {
+                                            const updated = { ...menu, featured: { ...menu.featured, link: e.target.value } };
+                                            setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                          }}
+                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-2 tracking-widest">Image Asset URL</label>
+                                        <div className="aspect-[4/3] rounded-2xl mb-3 overflow-hidden bg-white border border-slate-200 flex items-center justify-center relative group">
+                                          {menu.featured?.image ? (
+                                            <img src={menu.featured.image} className="w-full h-full object-cover" alt="Featured" />
+                                          ) : (
+                                            <ImageIcon size={32} className="text-slate-200" />
+                                          )}
                                         </div>
-                                        <div className="space-y-2">
-                                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Direct Link (Optional)</label>
-                                          <input 
-                                            type="text" 
-                                            value={cat.link || ''} 
-                                            onChange={(e) => {
-                                              const categories = [...menu.categories];
-                                              categories[catIdx].link = e.target.value;
-                                              const updated = { ...menu, categories };
-                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                            }}
-                                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
-                                          />
-                                        </div>
-                                        <div className="space-y-2">
-                                          <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Nested Links (Comma Separated)</label>
-                                          <textarea 
-                                            value={cat.items?.join(', ') || ''} 
-                                            onChange={(e) => {
-                                              const items = e.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
-                                              const categories = [...menu.categories];
-                                              categories[catIdx].items = items;
-                                              const updated = { ...menu, categories };
-                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
-                                            }}
-                                            rows={3}
-                                            className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none resize-none"
-                                          />
-                                        </div>
+                                        <input 
+                                          type="text" 
+                                          value={menu.featured?.image || ''} 
+                                          onChange={(e) => {
+                                            const updated = { ...menu, featured: { ...menu.featured, image: e.target.value } };
+                                            setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                          }}
+                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                        />
                                       </div>
                                     </div>
-                                  ))}
+                                  </div>
+
+                                  {/* Right: Expansive Column Editor */}
+                                  <div className="lg:col-span-2 space-y-8">
+                                    <div className="flex items-center justify-between">
+                                      <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] flex items-center gap-2">
+                                        <Menu size={14} className="text-[#C8961A]" />
+                                        Navigation Columns
+                                      </h5>
+                                      <button 
+                                        onClick={() => {
+                                          const updated = { 
+                                            ...menu, 
+                                            categories: [...(menu.categories || []), { name: 'New Column', items: ['Initial Link'], link: '#' }] 
+                                          };
+                                          setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                        }}
+                                        className="text-[10px] font-black text-[#C8961A] uppercase hover:underline animate-none"
+                                      >
+                                        + Add Architecture Column
+                                      </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                      {menu.categories?.map((cat: any, catIdx: number) => (
+                                        <div key={catIdx} className="p-6 bg-slate-50 rounded-[32px] border border-slate-100 relative group/col">
+                                          <button 
+                                            onClick={() => {
+                                              const updated = { ...menu, categories: menu.categories.filter((_: any, i: number) => i !== catIdx) };
+                                              setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                            }}
+                                            className="absolute -top-2 -right-2 w-8 h-8 bg-white text-red-500 rounded-full shadow-lg border border-red-50 flex items-center justify-center opacity-0 group-hover/col:opacity-100 transition-all hover:bg-red-500 hover:text-white cursor-pointer"
+                                          >
+                                            <X size={14} />
+                                          </button>
+                                          
+                                          <div className="space-y-4">
+                                            <div className="space-y-2">
+                                              <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Column Heading</label>
+                                              <input 
+                                                type="text" 
+                                                value={cat.name} 
+                                                onChange={(e) => {
+                                                  const categories = [...menu.categories];
+                                                  categories[catIdx].name = e.target.value;
+                                                  const updated = { ...menu, categories };
+                                                  setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                                }}
+                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                              />
+                                            </div>
+                                            <div className="space-y-2">
+                                              <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Direct Link (Optional)</label>
+                                              <input 
+                                                type="text" 
+                                                value={cat.link || ''} 
+                                                onChange={(e) => {
+                                                  const categories = [...menu.categories];
+                                                  categories[catIdx].link = e.target.value;
+                                                  const updated = { ...menu, categories };
+                                                  setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                                }}
+                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                              />
+                                            </div>
+                                            <div className="space-y-2">
+                                              <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Nested Links (Comma Separated)</label>
+                                              <textarea 
+                                                value={cat.items?.join(', ') || ''} 
+                                                onChange={(e) => {
+                                                  const items = e.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                                                  const categories = [...menu.categories];
+                                                  categories[catIdx].items = items;
+                                                  const updated = { ...menu, categories };
+                                                  setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
+                                                }}
+                                                rows={3}
+                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none resize-none"
+                                              />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
+                        )}
                       </div>
                     )}
                   </div>
@@ -2636,7 +3081,7 @@ export default function AdminDashboard() {
               </motion.div>
             )}
 
-            {activeView === 'appearance' && (
+            {false && (
               <motion.div 
                 key="appearance"
                 initial={{ opacity: 0, y: 10 }}
@@ -3525,9 +3970,7 @@ function AdminSidebar({
     { id: 'promotions', label: 'Marketing', icon: Megaphone },
     { id: 'live-support', label: 'Support', icon: Headset },
     { id: 'chat-settings', label: 'Messaging', icon: Phone },
-    { id: 'mega-menu', label: 'Navigation', icon: Zap },
     { id: 'content', label: 'Pages', icon: Edit2 },
-    { id: 'appearance', label: 'Design', icon: Palette },
     { id: 'reviews', label: 'Reviews', icon: Star, badge: badges.pendingReviewsCount },
     { id: 'users', label: 'Team', icon: Users },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -3575,7 +4018,7 @@ function AdminSidebar({
             onClick={() => setActiveView(item.id)}
             className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all relative group ${
               activeView === item.id 
-                ? 'bg-[#1C3560] text-white shadow-xl shadow-black/10' 
+                ? 'bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white shadow-xl shadow-[#C8102E]/20' 
                 : 'text-white/50 hover:text-white hover:bg-white/5'
             } ${isCollapsed ? 'justify-center' : ''}`}
             title={isCollapsed ? item.label : ''}
@@ -3601,7 +4044,7 @@ function AdminSidebar({
             {activeView === item.id && (
               <motion.div 
                 layoutId="sidebarActive"
-                className="absolute left-0 w-1 h-6 bg-[#C8102E] rounded-r-full shadow-[0_0_10px_rgba(200,16,46,0.6)]"
+                className="absolute left-0 w-1 h-6 bg-[#C8961A] rounded-r-full shadow-[0_0_10px_rgba(200,150,26,0.6)]"
               />
             )}
           </button>
@@ -3634,7 +4077,6 @@ function AdminBottomNav({ activeView, setActiveView, badges }: any) {
     { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
     { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
     { id: 'chat-settings', label: 'Messaging', icon: Phone },
-    { id: 'mega-menu', label: 'Menu', icon: Zap },
     { id: 'settings', label: 'Meta', icon: Settings },
   ];
 
@@ -4466,7 +4908,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             <button 
               type="button"
               onClick={addVariant}
-              className="w-full py-4 bg-gradient-to-r from-[#1C3560] to-[#0A1628] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:scale-[0.99] transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-3"
+              className="w-full py-4 bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:scale-[0.99] transition-all shadow-xl shadow-[#C2112E]/20 flex items-center justify-center gap-3"
             >
               <CheckCircle2 size={16} /> Save This Variant
             </button>
@@ -4484,7 +4926,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 key={v.id} 
-                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl group shadow-sm hover:shadow-md hover:border-[#1C3560] transition-all"
+                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl group shadow-sm hover:shadow-md hover:border-[#C8102E] transition-all"
               >
                 <div className="flex items-center gap-4">
                   <div className="relative">
@@ -4495,7 +4937,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                         <ImageIcon size={20} />
                       </div>
                     )}
-                    <span className="absolute -top-2 -right-2 bg-[#1C3560] text-white text-[7px] font-black px-1.5 py-0.5 rounded-lg border border-white">
+                    <span className="absolute -top-2 -right-2 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded-lg border border-white">
                       {v.type}
                     </span>
                   </div>
@@ -4750,13 +5192,13 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
         
         <div className="flex flex-wrap gap-2 mb-3 min-h-[32px]">
           {formData.tags.map((tag: string) => (
-            <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#1C3560] to-[#0A1628] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
+            <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
               <Package size={10} className="text-[#C8961A]" />
               {tag}
               <button 
                 type="button" 
                 onClick={() => removeTag(tag)}
-                className="hover:text-red-400 transition-colors ml-1"
+                className="hover:text-red-300 transition-colors ml-1"
               >
                 <X size={10} />
               </button>
@@ -4784,7 +5226,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <button 
             type="button"
             onClick={addTag}
-            className="px-6 py-2 bg-[#1C3560] hover:bg-[#0A1628] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
+            className="px-6 py-2 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
           >
             Add
           </button>
@@ -4805,7 +5247,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                 className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
                   formData.tags.includes(sTag) 
                     ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
-                    : 'bg-white border-slate-200 text-slate-500 hover:border-[#1C3560] hover:text-[#1C3560] shadow-sm active:scale-95'
+                    : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
                 }`}
               >
                 {sTag}

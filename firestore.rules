@@ -10,15 +10,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && (
-        request.auth.token.email == 'naisiaetext@gmail.com' ||
-        request.auth.token.email == 'support@naisiaetextiles.com' ||
-        (emailVerified() && (
-          exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-          exists(/databases/$(database)/documents/invites/$(request.auth.token.email))
-        ))
-      );
+      return isSignedIn() && request.auth.token.email == 'naisiaetext@gmail.com';
     }
 
     function isValidInvite(data) {
@@ -120,6 +112,11 @@ service cloud.firestore {
       allow read, delete: if isAdmin();
     }
     match /mega_menus/{id} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+
+    match /catalogue_pages/{id} {
       allow get, list: if true;
       allow write: if isAdmin();
     }

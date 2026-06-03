@@ -42,6 +42,8 @@ interface CartContextType {
   setIsWishlistOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isQuoteModalOpen: boolean;
   setIsQuoteModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isCatalogueModalOpen: boolean;
+  setIsCatalogueModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   // Wishlist Logic
   wishlist: any[];
   toggleWishlist: (product: any) => void;
@@ -49,6 +51,9 @@ interface CartContextType {
   wishlistCount: number;
   siteSettings: any;
   promotions: any[];
+  // Centralized Toast Notifications
+  toast: { message: string; type: 'success' | 'warning' | 'error' | 'info' } | null;
+  setToast: React.Dispatch<React.SetStateAction<{ message: string; type: 'success' | 'warning' | 'error' | 'info' } | null>>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -86,7 +91,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const lastWishlistRef = useRef<string>('');
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'warning' | 'error' | 'info' } | null>(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [isCatalogueModalOpen, setIsCatalogueModalOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState<any>(() => {
     if (typeof window !== 'undefined' && (window as any).__PRELOADED_SETTINGS__) {
       return (window as any).__PRELOADED_SETTINGS__;
@@ -196,12 +210,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleWishlist = useCallback((product: any) => {
+    let existed = false;
     setWishlist((prev) => {
-      const exists = prev.find((p) => p.id === product.id);
-      if (exists) {
+      existed = prev.some((p) => p.id === product.id);
+      if (existed) {
         return prev.filter((p) => p.id !== product.id);
       }
       return [...prev, product];
+    });
+    setToast({
+      message: existed 
+        ? `Removed "${product.name || 'item'}" from your saved designs.` 
+        : `Successfully saved "${product.name || 'item'}" to your designs!`,
+      type: existed ? 'warning' : 'success'
     });
   }, []);
 
@@ -313,12 +334,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsWishlistOpen,
     isQuoteModalOpen,
     setIsQuoteModalOpen,
+    isCatalogueModalOpen,
+    setIsCatalogueModalOpen,
     wishlist,
     toggleWishlist,
     isInWishlist,
     wishlistCount,
     siteSettings,
-    promotions
+    promotions,
+    toast,
+    setToast
   }), [
     cart, 
     addToCart, 
@@ -341,12 +366,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsWishlistOpen,
     isQuoteModalOpen,
     setIsQuoteModalOpen,
+    isCatalogueModalOpen,
+    setIsCatalogueModalOpen,
     wishlist,
     toggleWishlist,
     isInWishlist,
     wishlistCount,
     siteSettings,
-    promotions
+    promotions,
+    toast,
+    setToast
   ]);
 
   return (

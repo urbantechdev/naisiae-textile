@@ -188,9 +188,24 @@ async function startServer() {
 
     try {
       const requestPath = req.path;
-      const config = JSON.parse(fs.readFileSync(path.join(process.cwd(), "firebase-applet-config.json"), "utf-8"));
-      const projectId = config.projectId;
-      const databaseId = config.firestoreDatabaseId || "(default)";
+      const configPath = path.join(process.cwd(), "firebase-applet-config.json");
+      let projectId = "";
+      let databaseId = "(default)";
+
+      if (fs.existsSync(configPath)) {
+        const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+        projectId = config.projectId;
+        databaseId = config.firestoreDatabaseId || "(default)";
+      } else {
+        // Fallback to env vars if config file is missing
+        projectId = process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "";
+        databaseId = process.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || "(default)";
+      }
+
+      if (!projectId) {
+        console.warn("Missing Project ID for SEO pre-fetching. Render will continue with defaults.");
+        return next();
+      }
 
       let title = "UHURU MARKET UNIFORMS | Official Naisiae Textiles Nairobi";
       let description = "Direct manufacturing of high-quality Uhuru Market Uniforms. Premium school uniforms, hospital scrubs, and corporate wear from Nairobi's textile hub. Bulk institution orders welcome.";

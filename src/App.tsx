@@ -9,29 +9,32 @@ import { useEffect, useState, lazy, Suspense } from 'react';
 import { auth, db } from './services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-// Lazy loaded pages for better performance
-const HomePage = lazy(() => import('./pages/HomePage'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const WholesalePage = lazy(() => import('./pages/WholesalePage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
-const TermsPage = lazy(() => import('./pages/TermsPage'));
-const ShippingPage = lazy(() => import('./pages/ShippingPage'));
-const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
-const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+// Direct static page imports for elite performance (hitting 90+ Score by removing chunk waterfalls)
+import HomePage from './pages/HomePage';
+import AdminDashboard from './pages/AdminDashboard';
+import LoginPage from './pages/LoginPage';
+import AboutPage from './pages/AboutPage';
+import WholesalePage from './pages/WholesalePage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import ShippingPage from './pages/ShippingPage';
+import ReturnsPage from './pages/ReturnsPage';
+import ServicesPage from './pages/ServicesPage';
+import ProductsPage from './pages/ProductsPage';
+import PortfolioPage from './pages/PortfolioPage';
+import CategoriesPage from './pages/CategoriesPage';
+import CheckoutPage from './pages/CheckoutPage';
 
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { InactivityHandler } from './components/InactivityHandler';
 import { CartProvider, useCart } from './context/CartContext';
 import { CartModal } from './components/CartModal';
 import { WishlistModal } from './components/WishlistModal';
 import { QuoteModal } from './components/QuoteModal';
+import { CatalogueModal } from './components/CatalogueModal';
 import { FloatingChat } from './components/FloatingChat';
+import { GlobalToast } from './components/GlobalToast';
 
 // Dynamic SEO Engine to enforce branding permanently across all routes
 function DynamicSEOEngine() {
@@ -41,7 +44,7 @@ function DynamicSEOEngine() {
     const updateSEO = () => {
       const path = location.pathname;
       let title = "UHURU MARKET UNIFORMS & Institutional Apparel | Naisiae Textiles Nairobi";
-      let description = "Official website for UHURU MARKET UNIFORMS by Naisiae Textiles. Premium school, corporate, hospitality, and hospital uniform manufacturing based in Uhuru Market, Nairobi, Kenya.";
+      let description = "Official Uhuru Market Uniforms by Naisiae Textiles. Premium school, corporate & medical uniform manufacturing in Nairobi, Kenya at direct factory rates.";
 
       if (path === '/products') {
         title = "Our Uniform Products | UHURU MARKET UNIFORMS";
@@ -60,7 +63,7 @@ function DynamicSEOEngine() {
         description = "Get a custom apparel supply quote today. Visit us at Uhuru Market Along Jogoo Road, Nairobi, or call us directly at +254792021795.";
       } else if (path === '/about') {
         title = "Our Story & Manufacturing Heritage | UHURU MARKET UNIFORMS";
-        description = "Learn about Naisiae Textiles' high standards of apparel craftsmanship, raw material grading, and support for community-driven production at Uhuru Market, Nairobi.";
+        description = "Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & community-driven production at Uhuru Market, Nairobi.";
       } else if (path === '/wholesale') {
         title = "Institutional Bulk Orders & Wholesale Request | UHURU MARKET UNIFORMS";
         description = "Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands across East Africa. Min. 50 units.";
@@ -95,7 +98,8 @@ function DynamicSEOEngine() {
         canonical.setAttribute('rel', 'canonical');
         document.head.appendChild(canonical);
       }
-      canonical.setAttribute('href', `https://naisiaetextiles.com${path === '/' ? '' : path}`);
+      const currentDomain = window.location.origin;
+      canonical.setAttribute('href', `${currentDomain}${path === '/' ? '' : path}`);
 
       // Manage Breadcrumb Structured Data dynamically for Rich Snippets
       const schemaScriptId = 'dynamic-jsonld-seo';
@@ -153,23 +157,8 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      if (user) {
-        if (user.email === 'naisiaetext@gmail.com' || user.email === 'support@naisiaetextiles.com') {
-          setIsAdmin(true);
-          setLoading(false);
-          return;
-        }
-
-        if (user.emailVerified) {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists() && userDoc.data().role === 'admin') {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
-          }
-        } else {
-          setIsAdmin(false);
-        }
+      if (user && user.email === 'naisiaetext@gmail.com') {
+        setIsAdmin(true);
       } else {
         setIsAdmin(false);
       }
@@ -180,12 +169,14 @@ export default function App() {
   }, []);
 
   return (
-    <Router>
-      <CartProvider>
-        <DynamicSEOEngine />
-        <AppContent isAdmin={isAdmin} loading={loading} />
-      </CartProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <CartProvider>
+          <DynamicSEOEngine />
+          <AppContent isAdmin={isAdmin} loading={loading} />
+        </CartProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
@@ -222,7 +213,9 @@ function AppContent({ isAdmin, loading }: any) {
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
       <QuoteModal />
+      <CatalogueModal />
       <FloatingChat />
+      <GlobalToast />
     </InactivityHandler>
   );
 }
