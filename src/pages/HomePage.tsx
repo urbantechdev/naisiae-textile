@@ -567,16 +567,6 @@ export default function HomePage() {
         />
       </div>
 
-      <ProductScrollNavigator 
-        sections={[
-          { id: 'intro', label: 'Welcome Portal' },
-          { id: 'specialties', label: 'Aesthetic Sectors' },
-          { id: 'wholesale', label: 'Wholesale Tenders' },
-          { id: 'catalog', label: 'Apparel Catalog' },
-          { id: 'institutional', label: 'Industrial Sourcing' }
-        ]}
-      />
-
       <Footer />
 
       {/* Comparison Drawer */}

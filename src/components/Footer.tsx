@@ -34,7 +34,7 @@ export function Footer() {
             Serving schools across Kenya from our specialized workshop at Uhuru Market stalls.
           </div>
         </div>
-        <div className="text-center md:text-left">
+        <div className="text-center md:text-left hidden md:block">
           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Company</h4>
           <ul className="space-y-4 text-sm font-bold">
             <li><Link to="/about" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">About Us</Link></li>
@@ -43,7 +43,7 @@ export function Footer() {
             <li><Link to="/services" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Services</Link></li>
           </ul>
         </div>
-        <div className="text-center md:text-left">
+        <div className="text-center md:text-left hidden md:block">
            <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Support</h4>
            <ul className="space-y-4 text-sm font-bold">
             <li><Link to="/terms" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Terms & Conditions</Link></li>
@@ -110,7 +110,7 @@ export function Footer() {
             />
           </a>
         </div>
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-4 order-1 md:order-2">
+        <div className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-4 order-1 md:order-2">
           <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
           <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
           <Link to="/shipping" className="hover:text-white transition-colors">Shipping</Link>

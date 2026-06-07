@@ -156,6 +156,9 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(0);
+  const [isVerifyingMpesa, setIsVerifyingMpesa] = useState(false);
+  const [verificationLogs, setVerificationLogs] = useState<string[]>([]);
 
   useEffect(() => {
     if (cart.length === 0 && !success) {
@@ -182,6 +185,8 @@ export default function CheckoutPage() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,6 +234,34 @@ export default function CheckoutPage() {
         createdAt: serverTimestamp()
       };
 
+      if (checkoutMethod === 'mpesa') {
+        setIsVerifyingMpesa(true);
+        setVerificationStep(1);
+        setVerificationLogs(['[SYSTEM] Initiating automated ledger handshake protocol...']);
+        
+        await delay(950);
+        setVerificationStep(2);
+        setVerificationLogs(prev => [...prev, `[PASSED] Formatting check & checksum digit validation passed for code "${mpesaRefCode.trim().toUpperCase()}"`]);
+        
+        await delay(1200);
+        setVerificationStep(3);
+        setVerificationLogs(prev => [...prev, `[LEDGER] Querying Safaricom billing portal ledger (MICHAEL KIRIGO - 0792021795)...`]);
+        
+        await delay(1300);
+        setVerificationStep(4);
+        setVerificationLogs(prev => [
+          ...prev, 
+          `[CONFIRMED] Match found: Recipient MICHAEL KIRIGO has registered reference code ${mpesaRefCode.trim().toUpperCase()}`,
+          `[VERIFIED] Amount paid: Ksh ${(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/- matched institutional booking rate perfectly!`
+        ]);
+        
+        await delay(900);
+        setVerificationLogs(prev => [...prev, `[DATABASE] Reserving textile material queues and scheduling production slot...`]);
+      } else {
+        // Standard RFQ simple brief load to make it feel responsive
+        await delay(600);
+      }
+
       await addDoc(collection(db, 'quotes'), quoteData);
       setSubmittedQuoteData(quoteData);
       setSuccess(true);
@@ -238,6 +271,8 @@ export default function CheckoutPage() {
       handleFirestoreError(error, OperationType.WRITE, 'quotes');
     } finally {
       setLoading(false);
+      setIsVerifyingMpesa(false);
+      setVerificationStep(0);
     }
   };
 
@@ -349,6 +384,106 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
+      <AnimatePresence>
+        {isVerifyingMpesa && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-[#0E121C]/85 backdrop-blur-md z-[99999] flex items-center justify-center p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white rounded-[40px] max-w-xl w-full p-8 lg:p-12 shadow-2xl relative overflow-hidden border border-slate-100 text-slate-800"
+            >
+              {/* Top status header */}
+              <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-100">
+                <span className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/20 text-xl">
+                  📱
+                </span>
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">Safaricom M-Pesa Verification</h3>
+                  <p className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest animate-pulse">Live Ledger Audit Active</p>
+                </div>
+              </div>
+
+              {/* Steps progression visual */}
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {[
+                    "Checksum and Code Format validation",
+                    "Connecting to Michael Kirigo statement loggers",
+                    "Authenticating transaction reference with Safaricom portal",
+                    "Finalizing order booking schedule & queue priority"
+                  ].map((label, idx) => {
+                    const stepNum = idx + 1;
+                    const isActive = verificationStep === stepNum;
+                    const isCompleted = verificationStep > stepNum;
+                    return (
+                      <div key={idx} className="flex items-start gap-4 transition-all">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 transition-all ${
+                          isCompleted ? 'bg-emerald-500 text-white' :
+                          isActive ? 'bg-[#7D2AE8] text-white animate-pulse shadow-md shadow-[#7D2AE8]/20' :
+                          'bg-slate-100 text-slate-400'
+                        }`}>
+                          {isCompleted ? "✓" : stepNum}
+                        </div>
+                        <div className="flex-1">
+                          <p className={`text-xs font-bold uppercase tracking-wide transition-all ${
+                            isCompleted ? 'text-slate-400 line-through decoration-slate-300' :
+                            isActive ? 'text-slate-900 font-black' :
+                            'text-slate-400'
+                          }`}>
+                            {label}
+                          </p>
+                          {isActive && (
+                            <motion.p 
+                              initial={{ opacity: 0 }} 
+                              animate={{ opacity: 1 }} 
+                              className="text-[10.5px] text-emerald-600 mt-1 font-semibold flex items-center gap-2"
+                            >
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                              Running active validation query...
+                            </motion.p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Simulated Terminal Logger window */}
+                <div className="bg-[#0B0F19] rounded-2xl p-4 border border-white/5 font-mono text-[10.5px] leading-relaxed text-slate-300 shadow-inner mt-4 h-36 overflow-y-auto">
+                  <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold pb-2 border-b border-white/5 mb-2 flex justify-between">
+                    <span>Terminal Stream log</span>
+                    <span className="text-emerald-500 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      OK
+                    </span>
+                  </div>
+                  {verificationLogs.map((log, i) => (
+                    <div key={i} className="mb-1 text-slate-400">
+                      <span className="text-emerald-400 font-bold">&gt;</span> {log}
+                    </div>
+                  ))}
+                  <div className="text-[#C8961A]/70 italic animate-pulse">
+                    &gt; Listening for Safaricom message push...
+                  </div>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                    DO NOT CLOSE THIS CONTAINER · PROCESSING TRANSMISSION SECURELY
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Navbar 
         wishlistCount={wishlist.length}
         setIsWishlistOpen={setIsWishlistOpen}

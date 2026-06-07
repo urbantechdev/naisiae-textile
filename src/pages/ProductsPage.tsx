@@ -236,14 +236,6 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <ProductScrollNavigator 
-        sections={[
-          { id: 'wholesale', label: 'Wholesale Solutions' },
-          { id: 'designs', label: 'Vetted Catalog' },
-          { id: 'customization', label: 'Bespoke projects' }
-        ]}
-      />
-
       <Footer />
     </div>
   );

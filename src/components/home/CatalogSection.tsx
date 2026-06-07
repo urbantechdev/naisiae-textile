@@ -44,7 +44,7 @@ export function CatalogSection({
   return (
     <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8 scroll-mt-24">
       <div id="shop" className="absolute -mt-24"></div>
-      <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-10 gap-6">
+      <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-8 gap-6">
         <div>
           <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
             <div className="w-7 h-0.5 bg-[#C8961A]"></div> Featured Products
@@ -119,57 +119,57 @@ export function CatalogSection({
               </div>
             </div>
           )}
-          
-          <div className="flex flex-col lg:flex-row gap-4 mt-8 items-start lg:items-center">
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
-              <button 
-                onClick={() => setActiveTag(null)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                  !activeTag ? 'bg-[#C8961A] text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                }`}
-              >
-                All items
-              </button>
-              {allTags.map((tag, idx) => (
-                <button 
-                  key={`${tag}-${idx}`}
-                  onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                  className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                    activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#C8961A]'
-                  }`}
-                >
-                  <span className={activeTag === tag ? 'text-white' : 'text-[#C8961A]'}>#</span>
-                  {tag}
-                </button>
-              ))}
-            </div>
-
-            <div className="relative w-full lg:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-              <input 
-                type="text"
-                placeholder="Quick filter products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold uppercase tracking-wider outline-none focus:bg-white focus:border-[#C8961A] transition-all"
-              />
-              {searchQuery && (
-                <button 
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#C8102E]"
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-          </div>
         </div>
         <button 
           onClick={() => window.location.href = '/products'}
-          className="text-[#0E121C] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto"
+          className="text-[#0E121C] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto shrink-0 mb-2"
         >
           View All Products →
         </button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-4 mb-10 items-start lg:items-center justify-between w-full border-t border-slate-100 pt-6">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
+          <button 
+            onClick={() => setActiveTag(null)}
+            className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+              !activeTag ? 'bg-[#C8961A] text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+            }`}
+          >
+            All items
+          </button>
+          {allTags.map((tag, idx) => (
+            <button 
+              key={`${tag}-${idx}`}
+              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+              className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#C8961A]'
+              }`}
+            >
+              <span className={activeTag === tag ? 'text-white' : 'text-[#C8961A]'}>#</span>
+              {tag}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full lg:max-w-md lg:ml-auto">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+          <input 
+            type="text"
+            placeholder="Quick filter products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-[#C8961A] rounded-xl text-xs font-semibold uppercase tracking-wider outline-none focus:bg-white transition-all shadow-inner focus:ring-4 focus:ring-[#C8961A]/5"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#C8102E] p-1 rounded-full hover:bg-slate-100 transition-all"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
