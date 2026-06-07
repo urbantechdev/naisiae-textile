@@ -30,7 +30,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Hero } from '../components/home/Hero';
@@ -63,6 +63,7 @@ export default function HomePage() {
     setToast
   } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
@@ -1441,52 +1442,80 @@ export default function HomePage() {
                         </a>
                       </div>
                     ) : (
-                      <button 
-                        onClick={() => {
-                          const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
-                          const finalPrice = basePrice + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                            const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                            return sum + (variant?.price || 0);
-                          }, 0);
+                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-3 w-full lg:flex-1">
+                        {/* High-contrast Add to Cart Button */}
+                        <button 
+                          onClick={() => {
+                            const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
+                            const finalPrice = basePrice + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                              const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                              return sum + (variant?.price || 0);
+                            }, 0);
 
-                          const cartItem = {
-                            ...selectedQuickViewProduct,
-                            price: finalPrice,
-                            selectedVariants: { ...selectedVariants },
-                            quantity: inquiryUnits,
-                            customization: inquiryCustomization,
-                            priceType: selectedQuickViewProduct.priceType || 'fixed',
-                            brandingType: brandingType !== 'None' ? brandingType : undefined,
-                            brandingPosition: brandingType !== 'None' ? brandingPosition : undefined,
-                            customLogoUrl: brandingType !== 'None' && customLogoUrl ? customLogoUrl : undefined,
-                            customLogoName: brandingType !== 'None' && customLogoName ? customLogoName : undefined
-                          };
-                          
-                          addToCart(cartItem, inquiryUnits);
-                          setSelectedQuickViewProduct(null);
-                          setIsCartOpen(true);
-                        }}
-                        className="order-1 lg:order-2 relative overflow-hidden w-full flex-1 bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[3px] transition-all flex items-center shadow-xl hover:shadow-[#8B3DFF]/20 active:scale-[0.98] group cursor-pointer"
-                      >
-                        <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                        <div className="relative flex items-center w-full h-full">
-                          {selectedQuickViewProduct.priceType !== 'wholesale' && (
-                            <div className="flex flex-col items-start px-4 lg:px-6 border-r border-white/10 h-full justify-center bg-white/10 shrink-0">
-                              <span className="text-[7.5px] lg:text-[9px] font-bold text-white uppercase tracking-widest mb-0.5 opacity-80">Est. Total</span>
-                              <span className="text-xs lg:text-base font-black tracking-tight whitespace-nowrap">
-                                {( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                                  const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                                  return sum + (variant?.price || 0);
-                                }, 0)) * inquiryUnits ).toLocaleString()}/-
-                              </span>
-                            </div>
-                          )}
-                          <div className="flex-1 flex items-center justify-center gap-2.5 px-4">
-                            <ShoppingBag size={18} className="shrink-0 text-white" />
-                            <span className="whitespace-nowrap truncate">{selectedQuickViewProduct.priceType === 'wholesale' ? "Initiate Bulk Inquiry" : "Add to Collection"}</span>
+                            const cartItem = {
+                              ...selectedQuickViewProduct,
+                              price: finalPrice,
+                              selectedVariants: { ...selectedVariants },
+                              quantity: inquiryUnits,
+                              customization: inquiryCustomization,
+                              priceType: selectedQuickViewProduct.priceType || 'fixed',
+                              brandingType: brandingType !== 'None' ? brandingType : undefined,
+                              brandingPosition: brandingType !== 'None' ? brandingPosition : undefined,
+                              customLogoUrl: brandingType !== 'None' && customLogoUrl ? customLogoUrl : undefined,
+                              customLogoName: brandingType !== 'None' && customLogoName ? customLogoName : undefined
+                            };
+                            
+                            addToCart(cartItem, inquiryUnits);
+                            setSelectedQuickViewProduct(null);
+                            setIsCartOpen(true);
+                          }}
+                          className="relative overflow-hidden w-full sm:w-1/2 bg-[#0E121C] hover:bg-slate-800 text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] cursor-pointer group"
+                        >
+                          <ShoppingBag size={17} className="group-hover:scale-110 transition-transform text-[#00C4CC]" />
+                          <span>Add to Cart 🛒</span>
+                        </button>
+
+                        {/* Premium Buy Now & Instant Checkout Button */}
+                        <button 
+                          onClick={() => {
+                            const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
+                            const finalPrice = basePrice + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                              const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                              return sum + (variant?.price || 0);
+                            }, 0);
+
+                            const cartItem = {
+                              ...selectedQuickViewProduct,
+                              price: finalPrice,
+                              selectedVariants: { ...selectedVariants },
+                              quantity: inquiryUnits,
+                              customization: inquiryCustomization,
+                              priceType: selectedQuickViewProduct.priceType || 'fixed',
+                              brandingType: brandingType !== 'None' ? brandingType : undefined,
+                              brandingPosition: brandingType !== 'None' ? brandingPosition : undefined,
+                              customLogoUrl: brandingType !== 'None' && customLogoUrl ? customLogoUrl : undefined,
+                              customLogoName: brandingType !== 'None' && customLogoName ? customLogoName : undefined
+                            };
+                            
+                            addToCart(cartItem, inquiryUnits);
+                            setSelectedQuickViewProduct(null);
+                            navigate('/checkout');
+                          }}
+                          className="relative overflow-hidden w-full sm:w-1/2 bg-gradient-to-r from-[#C2102E] via-[#7D2AE8] to-[#FF4F5A] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center shadow-xl hover:shadow-[#7D2AE8]/20 active:scale-[0.98] group cursor-pointer"
+                        >
+                          {/* Shimmer Sheen effect */}
+                          <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-[1200ms] ease-in-out"></div>
+                          <div className="relative flex items-center justify-center gap-2 px-1">
+                            <span>Buy Now ⚡</span>
+                            <span className="bg-white/15 text-white text-[9px] px-2 py-0.5 rounded-lg border border-white/10 font-mono tracking-tight shrink-0">
+                              Ksh {(( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                                const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
+                                return sum + (variant?.price || 0);
+                              }, 0)) * inquiryUnits )).toLocaleString()}/-
+                            </span>
                           </div>
-                        </div>
-                      </button>
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>

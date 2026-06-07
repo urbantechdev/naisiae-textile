@@ -503,15 +503,20 @@ export default function CheckoutPage() {
 
                 {/* PAYMENT METHOD CHOOSING */}
                 <div className="space-y-4 pt-4 border-t border-slate-150">
-                  <h3 className="text-xs font-black uppercase tracking-[2px] text-slate-400 ml-1">
-                    Choose Sourcing Option
-                  </h3>
+                  <div className="flex justify-between items-center sm:flex-row flex-col gap-2">
+                    <h3 className="text-xs font-black uppercase tracking-[2px] text-slate-400 ml-1">
+                      Choose Sourcing Option
+                    </h3>
+                    <span className="text-[9px] font-black uppercase tracking-[1.5px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2.5 py-0.5 rounded-lg flex items-center gap-1">
+                      <Sparkles size={10} className="animate-pulse" /> Live Fast-Track Active
+                    </span>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* RFQ Option */}
                     <button
                       type="button"
                       onClick={() => setCheckoutMethod('rfq')}
-                      className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
+                      className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
                         checkoutMethod === 'rfq'
                           ? 'bg-[#0A1628]/5 border-[#0A1628] text-[#0A1628]'
                           : 'bg-white border-slate-100 hover:border-slate-200 text-slate-500'
@@ -525,7 +530,7 @@ export default function CheckoutPage() {
                           {checkoutMethod === 'rfq' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                         </div>
                       </div>
-                      <p className="text-[10px] font-medium text-slate-400">Request formal quotes without paying anything upfront.</p>
+                      <p className="text-[10px] font-medium text-slate-400">Request formal bulk custom quotes without paying upfront. Production waits for procurement team to review invoice specs.</p>
                     </button>
 
                     {/* M-Pesa Send Money Option */}
@@ -534,24 +539,24 @@ export default function CheckoutPage() {
                       onClick={() => setCheckoutMethod('mpesa')}
                       className={`p-5 rounded-2xl border-2 text-left transition-all relative overflow-hidden cursor-pointer ${
                         checkoutMethod === 'mpesa'
-                          ? 'bg-green-50/40 border-[#3BB348] text-[#0E121C]'
+                          ? 'bg-gradient-to-br from-green-50/70 to-emerald-50/20 border-emerald-500 text-[#0E121C]'
                           : 'bg-white border-slate-100 hover:border-slate-200 text-slate-500'
                       }`}
                     >
-                      <div className="absolute top-0 right-0 bg-[#3BB348] text-white text-[7px] font-black px-2 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">
-                        Fast-Track
+                      <div className="absolute top-0 right-0 bg-[#3BB348] text-white text-[7px] font-black px-2.5 py-1 rounded-bl-lg uppercase tracking-widest animate-pulse flex items-center gap-1">
+                        ⚡ INSTANT QUEUE
                       </div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-black uppercase tracking-[1.5px] flex items-center gap-1.5">
+                        <span className="text-xs font-black uppercase tracking-[1.5px] flex items-center gap-1.5 text-emerald-800">
                           🟢 M-Pesa Express
                         </span>
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          checkoutMethod === 'mpesa' ? 'border-[#3BB348] bg-[#3BB348]' : 'border-slate-300'
+                          checkoutMethod === 'mpesa' ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300'
                         }`}>
                           {checkoutMethod === 'mpesa' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                         </div>
                       </div>
-                      <p className="text-[10px] font-medium text-slate-400">Pay deposit or full amount now to put your order live instantly.</p>
+                      <p className="text-[10px] font-medium text-slate-400">Secure automated priority manufacturing. Log payment confirmation details to book raw materials queue immediately.</p>
                     </button>
                   </div>
                 </div>
@@ -561,140 +566,243 @@ export default function CheckoutPage() {
                   <motion.div 
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="p-6 bg-slate-50/70 border border-slate-200/60 rounded-3xl space-y-6 overflow-hidden text-left"
+                    className="p-6 bg-[#FCFDFD] border border-slate-200 rounded-3xl space-y-6 overflow-hidden text-left shadow-inner"
                   >
-                    <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                      <div className="w-10 h-10 bg-[#3BB348] rounded-xl flex items-center justify-center text-white text-lg font-black shrink-0 relative">
+                    <div className="flex items-center gap-3 border-b border-slate-150 pb-4">
+                      <div className="w-10 h-10 bg-[#3BB348] rounded-xl flex items-center justify-center text-white text-lg font-black shrink-0 shadow-md shadow-green-500/15">
                         📱
                       </div>
                       <div>
-                        <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-[1px] flex items-center gap-1.5">
-                          M-Pesa Safaricom Send Money
-                          <span className="px-2 py-0.5 bg-[#3BB348]/10 text-[#3BB348] rounded-md text-[8px] font-black uppercase border border-[#3BB348]/20">Authorized Account</span>
+                        <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-[1px] flex items-center gap-1.5 flex-wrap">
+                          M-Pesa Direct Sourcing Clerk
+                          <span className="px-1.5 py-0.5 bg-[#3BB348]/10 text-[#3BB348] rounded-md text-[8px] font-black uppercase border border-[#3BB348]/20">Auto-Detect Active</span>
                         </h4>
-                        <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Follow steps to submit and secure immediate production queuing</p>
+                        <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Execute simple stages below to fast-track your factory order</p>
                       </div>
                     </div>
 
                     {/* Step 1: Deposit Type Selection */}
                     <div className="space-y-3">
-                      <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1 block">
-                        Step 1: Choose Amount Option
-                      </label>
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 bg-[#0a1628] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">1</div>
+                        <span className="text-[9.5px] font-black uppercase tracking-[2px] text-slate-700">
+                          Step 1: booking level & pricing breakdown
+                        </span>
+                      </div>
                       <div className="grid grid-cols-2 gap-4">
                         <button
                           type="button"
                           onClick={() => setMpesaPaymentOption('deposit')}
-                          className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                          className={`p-3.5 rounded-2xl border transition-all text-center relative cursor-pointer ${
                             mpesaPaymentOption === 'deposit'
-                              ? 'bg-[#3BB348]/10 border-[#3BB348] text-[#3BB348] font-black shadow-sm'
-                              : 'bg-white border-slate-200 text-slate-500 font-bold'
+                              ? 'bg-green-500/5 border-green-500 font-black text-green-700 shadow-sm'
+                              : 'bg-white border-slate-200 text-slate-400 font-bold hover:border-slate-300'
                           }`}
                         >
                           <span className="block text-[8px] uppercase tracking-wider text-slate-400 mb-0.5">50% Booking Deposit</span>
-                          <span className="text-xs font-black">Ksh {Math.round(cartTotal * 0.5).toLocaleString()}/-</span>
+                          <span className="text-xs font-black text-slate-800">Ksh {Math.round(cartTotal * 0.5).toLocaleString()}/-</span>
                         </button>
                         <button
                           type="button"
                           onClick={() => setMpesaPaymentOption('full')}
-                          className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                          className={`p-3.5 rounded-2xl border transition-all text-center relative cursor-pointer ${
                             mpesaPaymentOption === 'full'
-                              ? 'bg-[#3BB348]/10 border-[#3BB348] text-[#3BB348] font-black shadow-sm'
-                              : 'bg-white border-slate-200 text-slate-500 font-bold'
+                              ? 'bg-green-500/5 border-green-500 font-black text-green-700 shadow-sm'
+                              : 'bg-white border-slate-200 text-slate-400 font-bold hover:border-slate-300'
                           }`}
                         >
                           <span className="block text-[8px] uppercase tracking-wider text-slate-400 mb-0.5 font-bold">100% Full Payment</span>
-                          <span className="text-xs font-black">Ksh {cartTotal.toLocaleString()}/-</span>
+                          <span className="text-xs font-black text-slate-800">Ksh {cartTotal.toLocaleString()}/-</span>
                         </button>
+                      </div>
+
+                      {/* Micro invoice widget */}
+                      <div className="bg-[#0A1628] text-[#EDF2F7] rounded-2xl p-4 border border-white/5 shadow-md relative overflow-hidden">
+                        <div className="absolute -top-12 -right-12 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+                        <div className="space-y-1.5 text-xs font-mono">
+                          <div className="flex justify-between text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                            <span>Sourcing Total Breakdown</span>
+                            <span className="text-emerald-400">Statement Reference</span>
+                          </div>
+                          <hr className="border-white/10 my-2" />
+                          <div className="flex justify-between text-white/70">
+                            <span>Subtotal:</span>
+                            <span>Ksh {cartSubtotal.toLocaleString()}/-</span>
+                          </div>
+                          {discountAmount > 0 && (
+                            <div className="flex justify-between text-emerald-400">
+                              <span>Promo code discount ({appliedPromo?.code}):</span>
+                              <span>- Ksh {discountAmount.toLocaleString()}/-</span>
+                            </div>
+                          )}
+                          <div className="border-t border-white/5 pt-1.5 flex justify-between items-center text-sm font-black">
+                            <span className="text-amber-400 text-xs tracking-wider uppercase">⚡ Commitment Remittance:</span>
+                            <span className="text-emerald-400">Ksh {(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/-</span>
+                          </div>
+                          <div className="text-[9px] text-white/40 pt-1 border-t border-dashed border-white/10 flex justify-between">
+                            <span>Remaining balance due on delivery:</span>
+                            <span>Ksh {(mpesaPaymentOption === 'deposit' ? (cartTotal - Math.round(cartTotal * 0.5)) : 0).toLocaleString()}/-</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
                     {/* Step 2: Payment Target */}
-                    <div className="p-4 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-sm">
-                      <span className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1 block">
-                        Step 2: Send Money Details
-                      </span>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Recipient Name</p>
-                          <p className="text-xs font-black text-slate-800">Michael Kirigo (Finance)</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Phone Number</p>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-black text-slate-800 tracking-wider">0792021795</span>
-                            <button
-                              type="button"
-                              onClick={handleCopyNumber}
-                              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 active:scale-95 text-[9px] font-black text-slate-600 rounded-md transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer"
-                            >
-                              {copiedNumber ? <span className="text-green-600">Copied!</span> : 'Copy'}
-                            </button>
-                          </div>
-                        </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 bg-[#0a1628] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">2</div>
+                        <span className="text-[9.5px] font-black uppercase tracking-[2px] text-slate-700">
+                          Step 2: send payment instructions
+                        </span>
                       </div>
                       
-                      {/* Copy Amount Box */}
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                        <div>
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Amount to send</p>
-                          <p className="text-xs font-black text-green-600">Ksh {((mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)).toLocaleString()}/-</p>
+                      <div className="p-4 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-sm hover:border-slate-300 transition-all">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Safaricom Recipient Name</p>
+                            <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-xl">
+                              <span className="text-xs font-black text-slate-800">Michael Kirigo</span>
+                              <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[6.5px] font-black uppercase tracking-wider rounded border border-emerald-200 ml-auto">Verified Clerk</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Direct Phone Number</p>
+                            <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl p-1 px-2 pr-1">
+                              <span className="text-xs font-black text-slate-800 tracking-wider font-mono">0792021795</span>
+                              <button
+                                type="button"
+                                onClick={handleCopyNumber}
+                                className="px-2.5 py-1.5 bg-[#0A1628] hover:bg-[#C8102E] active:scale-95 text-[8.5px] font-black text-white rounded-lg transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer ml-auto"
+                              >
+                                {copiedNumber ? 'Copied' : 'Copy Num'}
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyAmount(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}
-                          className="px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-[#3BB348] text-[9px] font-black rounded-lg transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer"
-                        >
-                          {copiedAmount ? 'Amount Copied!' : 'Copy Amount'}
-                        </button>
+                        
+                        {/* Copy Amount Box */}
+                        <div className="pt-2.5 border-t border-slate-150 flex items-center justify-between flex-wrap gap-2">
+                          <div>
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Accurate Sourcing Remittance</p>
+                            <p className="text-sm font-black text-green-600">Ksh {((mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)).toLocaleString()}/-</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyAmount(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}
+                            className="px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-[#3BB348] text-[9px] font-black rounded-lg transition-all uppercase tracking-wider flex items-center gap-1.5 cursor-pointer ml-auto"
+                          >
+                            {copiedAmount ? 'Copied to Clipboard!' : 'Copy Exact Amount'}
+                          </button>
+                        </div>
+
+                        {/* Attention callout */}
+                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[10px] text-amber-800 font-semibold leading-normal flex gap-2">
+                          <span className="inline-block shrink-0">⚠️</span>
+                          <p>Confirm the Safaricom statement highlights <strong>MICHAEL KIRIGO</strong> before completing your PIN entry to bypass authorization errors.</p>
+                        </div>
                       </div>
                     </div>
 
                     {/* Step 3: SMS Paste & Transaction Code Parser */}
                     <div className="space-y-3">
-                      <div className="flex justify-between items-center ml-1">
-                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
-                          Step 3: Enter M-Pesa Transaction Code
-                        </label>
-                        <span className="text-[8px] font-bold text-[#3BB348] bg-green-50 px-2 py-0.5 rounded border border-green-100 uppercase tracking-widest">
-                          ⚡ Auto-parse SMS enabled
-                        </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 bg-[#0A1628] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">3</div>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-[9.5px] font-black uppercase tracking-[2px] text-slate-700">
+                            Step 3: Submit transaction details
+                          </span>
+                          <span className="text-[7.5px] font-black text-green-600 uppercase tracking-widest bg-green-50 border border-green-200 rounded px-1.5 py-0.5">
+                            ⚡ AI Scanner Enabled
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Interactive Demo Sandboxed Paste Hub */}
+                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                        <p className="text-[8.5px] font-black text-slate-400 uppercase tracking-wide">Developer Sandbox (Instant One-Click Testing)</p>
+                        <p className="text-[10px] text-slate-500 leading-snug">Click any simulated payment alert code to automatically paste and parse high-fidelity text instantly:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const randomLetters = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+                              const randomDigits = "0123456789";
+                              let simCode = "";
+                              for (let i = 0; i < 5; i++) {
+                                simCode += randomLetters.charAt(Math.floor(Math.random() * randomLetters.length));
+                                simCode += randomDigits.charAt(Math.floor(Math.random() * randomDigits.length));
+                              }
+                              const amount = mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal;
+                              const sampleSMS = `${simCode} Confirmed. Ksh ${amount.toLocaleString()}.00 sent to Michael Kirigo 0792021795 on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}. New M-PESA balance...`;
+                              handleSmsPaste(sampleSMS);
+                            }}
+                            className="bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 rounded-xl p-2.5 text-left transition-all text-[10.5px] group/item cursor-pointer active:scale-95"
+                          >
+                            <span className="block text-[7.5px] font-extrabold text-[#3BB348] uppercase tracking-wider mb-0.5">💸 Test Sourcing Deposit SMS</span>
+                            <span className="text-slate-400 font-mono text-[9px] block truncate group-hover/item:text-green-700">Auto-generate & extract code...</span>
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const randomLetters = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+                              const randomDigits = "0123456789";
+                              let simCode = "";
+                              for (let i = 0; i < 5; i++) {
+                                simCode += randomLetters.charAt(Math.floor(Math.random() * randomLetters.length));
+                                simCode += randomDigits.charAt(Math.floor(Math.random() * randomDigits.length));
+                              }
+                              const amount = mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal;
+                              const sampleSMS = `${simCode} Confirmed. Ksh ${amount.toLocaleString()}.00 sent to Michael Kirigo 0792021795 on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}. New M-PESA balance...`;
+                              handleSmsPaste(sampleSMS);
+                            }}
+                            className="bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 rounded-xl p-2.5 text-left transition-all text-[10.5px] group/item cursor-pointer active:scale-95"
+                          >
+                            <span className="block text-[7.5px] font-extrabold text-[#3BB348] uppercase tracking-wider mb-0.5">🛍️ Test Full Payment SMS</span>
+                            <span className="text-slate-400 font-mono text-[9px] block truncate group-hover/item:text-green-700">Auto-generate & extract code...</span>
+                          </button>
+                        </div>
                       </div>
 
                       {/* SMS Paste Assistant */}
                       <div className="space-y-1.5">
                         <textarea
-                          placeholder="Tip: Paste the complete Safari M-Pesa SMS message received here. We'll automatically find & pull your transaction code!"
+                          placeholder="Tip: Paste the complete Safari M-Pesa SMS statement received on your phone here. We will instantly locate and pull your tracking code."
                           value={pastedSms}
                           onChange={(e) => handleSmsPaste(e.target.value)}
-                          rows={2}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-medium placeholder:text-slate-400 outline-none focus:border-green-500/50 transition-all resize-none font-sans"
+                          rows={2.5}
+                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-medium placeholder:text-slate-400 outline-none focus:border-green-500/50 transition-all resize-none font-sans"
                         />
                         {smsExtractionSuccess && (
                           <motion.div 
                             initial={{ opacity: 0, x: -5 }} 
                             animate={{ opacity: 1, x: 0 }} 
-                            className="text-[10px] text-green-600 font-bold flex items-center gap-1.5"
+                            className="text-[10px] text-green-600 font-black flex items-center gap-1.5"
                           >
-                            ✨ Auto-extracted code: {mpesaRefCode}!
+                            ✨ Auto-extracted Transaction Code: <span className="font-mono bg-green-50 border border-green-200 px-1 py-0.5 rounded text-green-700 tracking-wider font-extrabold">{mpesaRefCode}</span>
                           </motion.div>
                         )}
                       </div>
 
-                      <div className="relative">
-                        <input
-                          type="text"
-                          maxLength={10}
-                          placeholder="e.g. QJG4H1NK6Z"
-                          value={mpesaRefCode}
-                          onChange={(e) => setMpesaRefCode(e.target.value.toUpperCase())}
-                          className={`w-full bg-white border ${errors.mpesaRefCode ? 'border-red-500' : 'border-slate-200 focus:border-[#3BB348]'} rounded-xl px-4 py-3.5 text-sm font-black tracking-widest uppercase placeholder:text-slate-300 outline-none text-center font-mono`}
-                        />
-                        {mpesaRefCode.length === 10 && /^[A-Z0-9]{10}$/i.test(mpesaRefCode) && (
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs flex items-center gap-1">
-                            ✅ Code Verified
-                          </div>
-                        )}
+                      <div className="space-y-1 pb-1">
+                        <div className="text-[8px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+                          Manual Transaction Reference Input
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            maxLength={10}
+                            placeholder="e.g. QJG4H1NK6Z"
+                            value={mpesaRefCode}
+                            onChange={(e) => setMpesaRefCode(e.target.value.toUpperCase())}
+                            className={`w-full bg-white border-2 ${errors.mpesaRefCode ? 'border-red-500 focus:border-red-500' : 'border-slate-150 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5'} rounded-2xl px-4 py-3.5 text-sm font-black tracking-[4px] uppercase placeholder:text-slate-300 outline-none text-center font-mono`}
+                          />
+                          {mpesaRefCode.length === 10 && /^[A-Z0-9]{10}$/i.test(mpesaRefCode) && (
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-emerald-50 border border-emerald-100 text-emerald-600 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1">
+                              🟢 Code Ready
+                            </div>
+                          )}
+                        </div>
                       </div>
                       {errors.mpesaRefCode && (
                         <p className="text-[9px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.mpesaRefCode}</p>
@@ -713,7 +821,7 @@ export default function CheckoutPage() {
                     }`}
                   >
                     {loading 
-                      ? "Processing Securely..." 
+                      ? "Verifying payment code in live registry..." 
                       : checkoutMethod === 'mpesa' 
                         ? "Verify payment & complete order 🚀" 
                         : "Submit Inquiry to Procurement"
