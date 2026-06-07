@@ -617,7 +617,7 @@ export default function CheckoutPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1">
                           <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Recipient Name</p>
-                          <p className="text-xs font-black text-slate-800">Naomi Shadrack (Finance)</p>
+                          <p className="text-xs font-black text-slate-800">Michael Kirigo (Finance)</p>
                         </div>
                         <div className="space-y-1">
                           <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Phone Number</p>

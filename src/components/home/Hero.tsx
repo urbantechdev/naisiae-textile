@@ -403,6 +403,8 @@ export function Hero({
                       onClick={() => setSelectedQuickViewProduct(p)}
                       className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2.5 flex flex-col items-start text-left transition-all hover:-translate-y-1.5 duration-300 active:scale-95 group/card shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_24px_rgba(200,150,26,0.18)] relative overflow-hidden shrink-0"
                     >
+                      {/* Premium interactive right edge neon glow stripe */}
+                      <div className="absolute top-0 right-0 bottom-0 w-[3px] bg-gradient-to-b from-[#C8102E] via-[#E94C36] to-[#C8961A] opacity-40 group-hover/card:opacity-100 group-hover/card:w-[4.5px] transition-all duration-300 z-20 rounded-r-2xl shadow-[0_0_8px_rgba(200,150,26,0.2)]" />
                       <div className="w-full aspect-[4/5] bg-white rounded-xl overflow-hidden mb-3 relative border border-white/10 shrink-0">
                         {p.imageUrl ? (
                           <img 
