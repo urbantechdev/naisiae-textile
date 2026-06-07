@@ -3756,6 +3756,29 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
+                {selectedQuote.paymentMethod === 'mpesa' && (
+                  <div className="bg-[#EBF7EE] border border-green-200 p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white text-lg shrink-0">
+                        📱
+                      </div>
+                      <div>
+                        <span className="text-[8px] font-black text-green-600 uppercase tracking-widest block mb-0.5">🟢 M-Pesa Send Money Express</span>
+                        <h4 className="text-xs font-black text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                          Code: <span className="font-mono bg-white border border-green-200 rounded px-1.5 py-0.5 tracking-wider text-green-700">{selectedQuote.mpesaTransactionCode}</span>
+                        </h4>
+                        <p className="text-[10px] text-slate-500 font-semibold mt-1">
+                          Option Chosen: {selectedQuote.mpesaPaymentOption === 'deposit' ? '50% Booking Deposit' : '100% Full Payment'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="sm:text-right shrink-0">
+                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Logged Paid Amount</span>
+                      <span className="text-sm font-black text-green-700">Ksh {selectedQuote.mpesaAmountPaid?.toLocaleString()}/-</span>
+                    </div>
+                  </div>
+                )}
+
                 {selectedQuote.items && selectedQuote.items.length > 0 && (
                   <div>
                     <h4 className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-3">Items Requested</h4>

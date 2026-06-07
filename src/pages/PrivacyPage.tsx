@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Shield, Lock, Eye, FileText } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { doc, onSnapshot, query, collection, where } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
@@ -40,8 +41,8 @@ export default function PrivacyPage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
-
       <div className="pt-20">
+        <Breadcrumb />
         <section className="py-24 px-6 bg-slate-50 border-b border-slate-100">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Phone, Mail, MapPin, Send, Instagram, Facebook, Twitter } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { doc, onSnapshot, query, collection, where, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../services/firebase';
 
@@ -70,8 +71,8 @@ export default function ContactPage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
-
       <div className="pt-20">
+        <Breadcrumb />
         <section className="pt-32 pb-20 px-6 bg-[#0A1628] text-white overflow-hidden relative">
           <div className="max-w-7xl mx-auto relative z-10">
             <motion.div 

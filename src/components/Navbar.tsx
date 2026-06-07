@@ -466,10 +466,10 @@ export function Navbar({
                     to={item.link} 
                     className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-550 relative group py-2 px-1 ${
                       isScrolled ? 'text-white/70' : 'text-white'
-                    } hover:text-[#00C4CC]`}
+                    } hover:text-[#C8961A]`}
                   >
                     <span className="relative z-10">{item.name}</span>
-                    <span className={`absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-[#00C4CC] to-[#8B3DFF] transition-all duration-700 ${
+                    <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#C8961A] transition-all duration-700 ${
                       isActive ? 'w-full' : 'w-0'
                     } group-hover:w-full`}></span>
                   </Link>
@@ -508,7 +508,7 @@ export function Navbar({
 
             <button 
               onClick={() => setIsQuoteModalOpen(true)}
-              className="hidden lg:flex items-center gap-3 bg-gradient-to-r from-[#00C4CC] to-[#8B3DFF] text-white hover:brightness-110 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-500 active:scale-95 shadow-[0_15px_45px_-5px_rgba(139,61,255,0.4)]"
+              className="hidden lg:flex items-center gap-3 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white hover:shadow-[0_4px_25px_rgba(200,16,46,0.4)] hover:-translate-y-0.5 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-500 active:scale-95 shadow-[0_12px_40px_rgba(200,16,46,0.2)]"
             >
               <Package size={18} /> Enquire
             </button>
@@ -540,14 +540,14 @@ export function Navbar({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute left-0 top-0 bottom-0 w-full max-w-[320px] bg-[#0E121C] flex flex-col border-r border-[#00C4CC]/10 shadow-[20px_0_100px_rgba(0,0,0,0.5)]"
+              className="absolute left-0 top-0 bottom-0 w-full max-w-[320px] bg-[#0E121C] flex flex-col border-r border-[#C8961A]/10 shadow-[20px_0_100px_rgba(0,0,0,0.5)]"
               onClick={e => e.stopPropagation()}
             >
               {/* Header */}
               <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div className="flex flex-col">
                   <div className="font-display text-xl tracking-[4px] text-white">NAISIAE</div>
-                  <div className="text-[7px] tracking-[3px] text-[#00C4CC] font-black uppercase">Textiles Limited</div>
+                  <div className="text-[7px] tracking-[3px] text-[#C8961A] font-black uppercase">Textiles Limited</div>
                 </div>
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
@@ -561,14 +561,14 @@ export function Navbar({
               {/* Enhanced Mobile Search */}
               <div className="p-6 border-b border-white/5 bg-[#0E121C]/40">
                 <div className="relative group">
-                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#00C4CC]' : 'text-white/30 group-focus-within:text-[#00C4CC]'}`} size={16} />
+                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#C8961A]' : 'text-white/30 group-focus-within:text-[#C8961A]'}`} size={16} />
                   <input 
                     type="text" 
                     placeholder="Search products..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearching(true)}
-                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/20 outline-none focus:ring-2 focus:ring-[#00C4CC]/30 focus:border-[#00C4CC]/50 transition-all font-medium"
+                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/20 outline-none focus:ring-2 focus:ring-[#C8961A]/30 focus:border-[#C8961A]/50 transition-all font-medium"
                   />
                   {searchQuery && (
                     <button 
@@ -646,22 +646,22 @@ export function Navbar({
                     }}
                     className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
                       item.highlight 
-                        ? 'bg-gradient-to-r from-[#00C4CC] to-[#7D2AE8] text-white hover:brightness-110 shadow-lg' 
+                        ? 'bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white hover:brightness-110 shadow-lg' 
                         : 'text-white/70 hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     {item.link ? (
                       <Link to={item.link} className="flex items-center gap-4 w-full">
-                        <span className={`${item.highlight ? 'text-white' : 'text-[#00C4CC]/50 group-hover:text-[#00C4CC]'} transition-colors`}>{item.icon}</span>
+                        <span className={`${item.highlight ? 'text-white' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
                         <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
                       </Link>
                     ) : (
                       <div className="flex items-center gap-4 w-full text-left">
-                        <span className={`${item.highlight ? 'text-white' : 'text-[#00C4CC]/50 group-hover:text-[#00C4CC]'} transition-colors`}>{item.icon}</span>
+                        <span className={`${item.highlight ? 'text-white' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
                         <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
                       </div>
                     )}
-                    <ChevronRight size={14} className={item.highlight ? 'opacity-50 text-white' : 'text-white/10 group-hover:text-[#00C4CC]'} />
+                    <ChevronRight size={14} className={item.highlight ? 'opacity-50 text-white' : 'text-white/10 group-hover:text-[#C8961A]'} />
                   </button>
                 ))}
               </div>
@@ -669,9 +669,9 @@ export function Navbar({
               {/* Footer Branding */}
               <div className="p-6 mt-auto border-t border-white/5">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
-                  <div className="text-[8px] font-black text-[#00C4CC] uppercase tracking-[3px] mb-2">Request Assistance</div>
+                  <div className="text-[8px] font-black text-[#C8961A] uppercase tracking-[3px] mb-2">Request Assistance</div>
                   <div className="text-white font-bold text-xs flex items-center justify-center gap-2">
-                    <Phone size={14} className="text-[#00C4CC]" />
+                    <Phone size={14} className="text-[#C8961A]" />
                     +254 792 021 795
                   </div>
                 </div>
@@ -688,11 +688,11 @@ export function Navbar({
           <div className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-[100]">
             <button
               onClick={() => setIsTrendingDrawerOpen(true)}
-              className="bg-gradient-to-l from-[#0E121C]/95 to-[#0E121C] border-y border-l border-white/10 text-[#00C4CC] hover:text-white px-3 py-6 rounded-l-3xl shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex flex-col items-center gap-3 active:scale-95 transition-all group cursor-pointer hover:border-[#00C4CC]/30 hover:pl-4.5 font-sans"
+              className="bg-gradient-to-l from-[#0E121C]/95 to-[#0E121C] border-y border-l border-white/10 text-[#C8961A] hover:text-white px-3 py-6 rounded-l-3xl shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex flex-col items-center gap-3 active:scale-95 transition-all group cursor-pointer hover:border-[#C8961A]/30 hover:pl-4.5 font-sans"
             >
               <span className="w-2 h-2 rounded-full bg-[#FF4F5A] animate-pulse"></span>
-              <span className="text-[9px] font-black tracking-[4px] uppercase [writing-mode:vertical-lr] select-none text-slate-300 group-hover:text-[#00C4CC] transition-colors">Trending</span>
-              <ChevronRight size={14} className="rotate-180 text-[#00C4CC] group-hover:-translate-x-1 transition-transform" />
+              <span className="text-[9px] font-black tracking-[4px] uppercase [writing-mode:vertical-lr] select-none text-slate-300 group-hover:text-[#C8961A] transition-colors">Trending</span>
+              <ChevronRight size={14} className="rotate-180 text-[#C8961A] group-hover:-translate-x-1 transition-transform" />
             </button>
           </div>
 
@@ -718,14 +718,14 @@ export function Navbar({
                   className="fixed right-0 top-0 bottom-0 w-[420px] bg-[#0E121C] border-l border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] z-[120] flex flex-col p-8 overflow-hidden font-sans"
                 >
                   {/* Decorative neon top border */}
-                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A]" />
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#C8961A]" />
 
                   {/* Header */}
                   <div className="flex items-center justify-between mb-8 mt-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 rounded-full bg-[#FF4F5A] animate-ping"></span>
-                        <span className="text-[10px] font-black text-[#00C4CC] tracking-[3px] uppercase">Live Sourcing</span>
+                        <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-ping"></span>
+                        <span className="text-[10px] font-black text-[#C8961A] tracking-[3px] uppercase">Live Sourcing</span>
                       </div>
                       <h3 className="font-display text-2xl font-black text-white tracking-tight">Trending Collections</h3>
                     </div>
@@ -738,7 +738,7 @@ export function Navbar({
                   </div>
 
                   {/* Info alert banner */}
-                  <div className="p-4 bg-gradient-to-r from-[#00C4CC]/10 to-[#7D2AE8]/10 rounded-2xl border border-[#00C4CC]/20 mb-6 flex gap-3 items-center">
+                  <div className="p-4 bg-[#C8961A]/10 rounded-2xl border border-[#C8961A]/20 mb-6 flex gap-3 items-center">
                     <span className="text-xl">🔥</span>
                     <div>
                       <p className="text-[10px] font-black text-white/90 uppercase tracking-[1.5px]">High-Volume Sourcing</p>
@@ -753,7 +753,7 @@ export function Navbar({
                       return (
                         <div 
                           key={`trending-drawer-${p.id}`}
-                          className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-[#00C4CC]/30 transition-all duration-300 flex items-center gap-4 relative overflow-hidden"
+                          className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-4 relative overflow-hidden"
                         >
                           {/* Popularity indicator overlay */}
                           <div className="absolute top-3 right-4 flex items-center gap-1.5 bg-[#FF4F5A]/10 text-[#FF4F5A] px-2 py-0.5 rounded-full border border-[#FF4F5A]/20">
@@ -782,8 +782,8 @@ export function Navbar({
 
                           {/* Metadata */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-black text-white truncate group-hover:text-[#00C4CC] transition-colors uppercase tracking-wide leading-snug">{p.name}</p>
-                            <p className="text-[10px] text-[#00C4CC] font-black tracking-widest mt-1">
+                            <p className="text-xs font-black text-white truncate group-hover:text-[#C8961A] transition-colors uppercase tracking-wide leading-snug">{p.name}</p>
+                            <p className="text-[10px] text-[#C8961A] font-black tracking-widest mt-1">
                               {p.price ? `Ksh ${p.price.toLocaleString()}/-` : 'Bulk Price'}
                             </p>
                             
@@ -811,7 +811,7 @@ export function Navbar({
                         setIsTrendingDrawerOpen(false);
                         if (setIsQuoteModalOpen) setIsQuoteModalOpen(true);
                       }}
-                      className="w-full py-4 text-center text-white bg-gradient-to-r from-[#00C4CC] to-[#8B3DFF] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(139,61,255,0.3)] transition-all cursor-pointer"
+                      className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#C8961A] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
                     >
                       Request Sourcing Quote
                     </button>
@@ -826,19 +826,19 @@ export function Navbar({
             <AnimatePresence>
               {!isTrayMinimized ? (
                 <motion.div 
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 15 }}
-                  className="bg-[#0E121C]/95 backdrop-blur-md rounded-2xl border border-white/10 p-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden"
+                   initial={{ opacity: 0, y: 15 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   exit={{ opacity: 0, y: 15 }}
+                   className="bg-[#0E121C]/95 backdrop-blur-md rounded-2xl border border-white/10 p-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden"
                 >
                   {/* Decorative neon subtle top border line */}
-                  <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-[#00C4CC]/50 to-transparent"></div>
+                  <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-[#C8961A]/50 to-transparent"></div>
 
                   {/* Header */}
                   <div className="flex items-center justify-between mb-2 pl-1 relative z-10">
                     <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00C4CC] animate-pulse"></span>
-                      <span className="text-[9px] font-black text-[#00C4CC] tracking-[1.5px] uppercase">Trending ({seasonalPicks.length})</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#C8961A] animate-pulse"></span>
+                      <span className="text-[9px] font-black text-[#C8961A] tracking-[1.5px] uppercase">Trending ({seasonalPicks.length})</span>
                     </div>
                     <button 
                       onClick={() => handleMinimize(true)}
@@ -860,7 +860,7 @@ export function Navbar({
                             navigate('/products');
                           }
                         }}
-                        className="flex-shrink-0 snap-start w-[140px] bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#00C4CC]/30 rounded-xl p-1.5 flex items-center gap-2 transition-all text-left active:scale-95 relative group overflow-hidden"
+                        className="flex-shrink-0 snap-start w-[140px] bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/30 rounded-xl p-1.5 flex items-center gap-2 transition-all text-left active:scale-95 relative group overflow-hidden"
                       >
                         {/* Rank Badge overlay on Mobile */}
                         <div className="absolute -top-1.5 -left-1.5 bg-[#FF4F5A] text-white text-[5.5px] font-black px-1.5 py-0.5 rounded-md scale-90 z-20 shadow-sm">
@@ -883,8 +883,8 @@ export function Navbar({
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[9px] font-bold text-white truncate max-w-[85px] leading-tight group-hover:text-[#00C4CC] transition-colors">{p.name}</p>
-                          <p className="text-[7.5px] text-[#00C4CC] font-black tracking-wide mt-0.5">
+                          <p className="text-[9px] font-bold text-white truncate max-w-[85px] leading-tight group-hover:text-[#C8961A] transition-colors">{p.name}</p>
+                          <p className="text-[7.5px] text-[#C8961A] font-black tracking-wide mt-0.5">
                             {p.price ? `${p.price.toLocaleString()}/-` : 'Bulk Quote'}
                           </p>
                         </div>
@@ -900,9 +900,9 @@ export function Navbar({
                 >
                   <button 
                     onClick={() => handleMinimize(false)}
-                    className="bg-[#0E121C]/95 backdrop-blur-md border border-[#00C4CC]/30 text-[#00C4CC] hover:bg-[#00C4CC] hover:text-[#0E121C] font-bold text-[8px] uppercase tracking-widest px-2.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+                    className="bg-[#0E121C]/95 backdrop-blur-md border border-[#C8961A]/30 text-[#C8961A] hover:bg-[#C8961A] hover:text-[#0E121C] font-bold text-[8px] uppercase tracking-widest px-2.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00C4CC] inline-block animate-pulse"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C8961A] inline-block animate-pulse"></span>
                     Trending ({seasonalPicks.length})
                   </button>
                 </motion.div>

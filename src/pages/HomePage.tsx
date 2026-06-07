@@ -38,6 +38,7 @@ import { Specialties } from '../components/home/Specialties';
 import { WholesaleDeals } from '../components/home/WholesaleDeals';
 import { CatalogSection } from '../components/home/CatalogSection';
 import { InstitutionalWholesale } from '../components/home/InstitutionalWholesale';
+import { ProductScrollNavigator } from '../components/ProductScrollNavigator';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
@@ -104,6 +105,29 @@ export default function HomePage() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [activeModalPromo, setActiveModalPromo] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const [shuffledProducts, setShuffledProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      setShuffledProducts([...products]);
+    }
+  }, [products]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShuffledProducts(prevProducts => {
+        if (prevProducts.length <= 1) return prevProducts;
+        const arr = [...prevProducts];
+        // Fisher-Yates shuffle algorithm
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      });
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
   const [categories, setCategories] = useState<any[]>([]);
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -334,7 +358,8 @@ export default function HomePage() {
   }, []);
 
   const displayProducts = useMemo(() => {
-    return products.filter(p => {
+    const dataSource = shuffledProducts.length > 0 ? shuffledProducts : products;
+    return dataSource.filter(p => {
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = !searchQuery || 
         p.name.toLowerCase().includes(searchLower) || 
@@ -347,7 +372,7 @@ export default function HomePage() {
       
       return matchesSearch && matchesTag && matchesTab && matchesSubCategory;
     });
-  }, [products, searchQuery, activeTag, activeTab, activeSubCategory]);
+  }, [products, shuffledProducts, searchQuery, activeTag, activeTab, activeSubCategory]);
 
   useEffect(() => {
     setShowSearchSuggestions(searchQuery.trim().length > 1);
@@ -481,54 +506,74 @@ export default function HomePage() {
       />
 
       {/* High-End Cinematic Hero Slider Section */}
-      <Hero 
-        siteSettings={siteSettings}
-        currentSlide={currentSlide}
-        setCurrentSlide={setCurrentSlide}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        showSearchSuggestions={showSearchSuggestions}
-        setShowSearchSuggestions={setShowSearchSuggestions}
-        searchResults={searchResults}
-        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
-        setIsQuoteModalOpen={setIsQuoteModalOpen}
-        products={products}
-      />
+      <div id="intro">
+        <Hero 
+          siteSettings={siteSettings}
+          currentSlide={currentSlide}
+          setCurrentSlide={setCurrentSlide}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          showSearchSuggestions={showSearchSuggestions}
+          setShowSearchSuggestions={setShowSearchSuggestions}
+          searchResults={searchResults}
+          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+          setIsQuoteModalOpen={setIsQuoteModalOpen}
+          products={products}
+        />
+      </div>
 
-      <Specialties 
-        categories={categories}
-        setActiveTab={setActiveTab}
-      />
+      <div id="specialties">
+        <Specialties 
+          categories={categories}
+          setActiveTab={setActiveTab}
+        />
+      </div>
 
-      <WholesaleDeals 
-        products={products}
-        showAllWholesale={showAllWholesale}
-        setShowAllWholesale={setShowAllWholesale}
-        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
-      />
+      <div id="wholesale">
+        <WholesaleDeals 
+          products={shuffledProducts.length > 0 ? shuffledProducts : products}
+          showAllWholesale={showAllWholesale}
+          setShowAllWholesale={setShowAllWholesale}
+          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+        />
+      </div>
 
-      <CatalogSection 
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        activeTag={activeTag}
-        setActiveTag={setActiveTag}
-        activeSubCategory={activeSubCategory}
-        setActiveSubCategory={setActiveSubCategory}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        allTags={allTags}
-        uniformSubCategories={uniformSubCategories}
-        displayProducts={displayProducts}
-        showAllFeatured={showAllFeatured}
-        setShowAllFeatured={setShowAllFeatured}
-        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
-        toggleWishlist={toggleWishlist}
-        addToCart={addToCart}
-        wishlist={wishlist}
-      />
+      <div id="catalog">
+        <CatalogSection 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          activeTag={activeTag}
+          setActiveTag={setActiveTag}
+          activeSubCategory={activeSubCategory}
+          setActiveSubCategory={setActiveSubCategory}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          allTags={allTags}
+          uniformSubCategories={uniformSubCategories}
+          displayProducts={displayProducts}
+          showAllFeatured={showAllFeatured}
+          setShowAllFeatured={setShowAllFeatured}
+          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+          toggleWishlist={toggleWishlist}
+          addToCart={addToCart}
+          wishlist={wishlist}
+        />
+      </div>
 
-      <InstitutionalWholesale 
-        setIsQuoteModalOpen={setIsQuoteModalOpen}
+      <div id="institutional">
+        <InstitutionalWholesale 
+          setIsQuoteModalOpen={setIsQuoteModalOpen}
+        />
+      </div>
+
+      <ProductScrollNavigator 
+        sections={[
+          { id: 'intro', label: 'Welcome Portal' },
+          { id: 'specialties', label: 'Aesthetic Sectors' },
+          { id: 'wholesale', label: 'Wholesale Tenders' },
+          { id: 'catalog', label: 'Apparel Catalog' },
+          { id: 'institutional', label: 'Industrial Sourcing' }
+        ]}
       />
 
       <Footer />
@@ -827,7 +872,7 @@ export default function HomePage() {
                           <motion.div 
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className={`absolute z-30 flex items-center justify-center p-1 bg-white/95 backdrop-blur-[2px] rounded-xl border-2 border-dashed border-[#00C4CC]/50 shadow-xl transition-all duration-500 hover:scale-110 pointer-events-auto ${
+                            className={`absolute z-30 flex items-center justify-center p-1 bg-white/95 backdrop-blur-[2px] rounded-xl border-2 border-dashed border-[#C8961A]/50 shadow-xl transition-all duration-500 hover:scale-110 pointer-events-auto ${
                               brandingPosition === 'Left Chest' ? 'top-[35%] left-[33%] w-10 h-10' :
                               brandingPosition === 'Right Chest' ? 'top-[35%] right-[33%] w-10 h-10' :
                               brandingPosition === 'Center Chest' ? 'top-[42%] left-[48%] -translate-x-1/2 w-14 h-14' :
@@ -842,7 +887,7 @@ export default function HomePage() {
                                 brandingType === 'Embroidery' ? 'contrast-[1.05] brightness-[1.02] [filter:drop-shadow(0_1.5px_1.5px_rgba(0,0,0,0.15))] font-serif outline-transparent' : 'mix-blend-multiply'
                               }`} 
                             />
-                            <div className="absolute -top-2.5 -right-2 bg-[#00C4CC] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                            <div className="absolute -top-2.5 -right-2 bg-[#C8961A] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                               {brandingType === 'Embroidery' ? 'Stitch' : 'Print'}
                             </div>
                           </motion.div>
@@ -1037,7 +1082,7 @@ export default function HomePage() {
                     <div className="bg-slate-50 border border-slate-100 rounded-3xl p-5 space-y-4">
                       <div className="flex items-center justify-between">
                         <label className="text-[9px] font-black uppercase tracking-[2px] text-[#0E121C]">Custom Apparel Branding</label>
-                        <span className="text-[8.5px] font-black bg-[#00C4CC]/10 text-[#008F94] border border-[#00C4CC]/20 px-2.5 py-1 rounded-full uppercase tracking-widest select-none">Setup Free</span>
+                        <span className="text-[8.5px] font-black bg-[#C8961A]/10 text-[#C8961A] border border-[#C8961A]/20 px-2.5 py-1 rounded-full uppercase tracking-widest select-none">Setup Free</span>
                       </div>
                       
                       {/* Select Branding Type */}
@@ -1054,7 +1099,7 @@ export default function HomePage() {
                             onClick={() => setBrandingType(type.id)}
                             className={`flex flex-col items-center justify-center p-2 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
                               brandingType === type.id 
-                                ? 'bg-gradient-to-r from-[#00C4CC] to-[#7D2AE8] border-transparent text-white shadow-md active:scale-95' 
+                                ? 'bg-[#0E121C] border-transparent text-white shadow-md active:scale-95 shadow-[#C8961A]/20' 
                                 : 'bg-white border-slate-100 text-slate-500 hover:border-slate-200'
                             }`}
                           >
@@ -1077,7 +1122,7 @@ export default function HomePage() {
                               <select 
                                 value={brandingPosition}
                                 onChange={(e) => setBrandingPosition(e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#8B3DFF]/30 transition-all"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#C8961A]/30 transition-all"
                               >
                                 <option>Left Chest</option>
                                 <option>Right Chest</option>
@@ -1099,7 +1144,7 @@ export default function HomePage() {
                             <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Logo Attachment File</label>
                             
                             {!customLogoUrl ? (
-                              <label className="border-2 border-dashed border-slate-200 hover:border-[#00C4CC]/40 bg-white rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50/50 group">
+                              <label className="border-2 border-dashed border-slate-200 hover:border-[#C8961A]/40 bg-white rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50/50 group">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -1118,7 +1163,7 @@ export default function HomePage() {
                                     }
                                   }}
                                 />
-                                <ImageIcon size={22} className="text-slate-300 group-hover:text-[#00C4CC] transition-colors mb-1.5" />
+                                <ImageIcon size={22} className="text-slate-300 group-hover:text-[#C8961A] transition-colors mb-1.5" />
                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Logo File</span>
                                 <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">PNG, JPG, SVG up to 5MB</span>
                               </label>

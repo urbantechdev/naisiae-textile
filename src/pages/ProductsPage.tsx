@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
+import { ProductScrollNavigator } from '../components/ProductScrollNavigator';
 import { motion } from 'motion/react';
 import { ChevronRight, Package, Grid, Layout, Scissors, HelpCircle, Phone } from 'lucide-react';
 import { collection, onSnapshot, query, where, orderBy, limit } from 'firebase/firestore';
@@ -67,6 +69,7 @@ export default function ProductsPage() {
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
       />
+      <Breadcrumb />
 
       {/* Section Header */}
       <div className="py-24 px-6 bg-[#0A1628] text-white text-center">
@@ -232,6 +235,14 @@ export default function ProductsPage() {
             </div>
         </div>
       </section>
+
+      <ProductScrollNavigator 
+        sections={[
+          { id: 'wholesale', label: 'Wholesale Solutions' },
+          { id: 'designs', label: 'Vetted Catalog' },
+          { id: 'customization', label: 'Bespoke projects' }
+        ]}
+      />
 
       <Footer />
     </div>

@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { Footer } from '../components/Footer';
 import { Navbar } from '../components/Navbar';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { db, auth, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
@@ -103,6 +104,7 @@ export default function WholesalePage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
+      <Breadcrumb />
 
       {/* Hero Section */}
       <section className="relative py-24 bg-[#0A1628] overflow-hidden">

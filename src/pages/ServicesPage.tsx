@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { motion } from 'motion/react';
 import { ChevronRight, Scissors, Ruler, Palette, ShoppingBag, Heart, Menu } from 'lucide-react';
 import { db } from '../services/firebase';
@@ -69,6 +70,7 @@ export default function ServicesPage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
+      <Breadcrumb />
 
       {/* Hero Section */}
       <section className="bg-[#0A1628] py-24 px-6 relative overflow-hidden">

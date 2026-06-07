@@ -160,19 +160,57 @@ export function Hero({
       </div>
 
       {/* Dynamic Vertical Wave Partition dividing dark left and image right on desktop */}
-      <div className="absolute inset-y-0 left-0 w-[55vw] xl:w-[50vw] pointer-events-none hidden lg:block z-10 select-none">
-        <svg viewBox="0 0 550 1000" preserveAspectRatio="none" className="w-full h-full">
+      <div className="absolute inset-y-0 left-0 w-[68vw] xl:w-[62vw] pointer-events-none hidden lg:block z-10 select-none">
+        <svg viewBox="0 0 750 1000" preserveAspectRatio="none" className="w-full h-full">
           <defs>
             <linearGradient id="vertical-wave-grad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#C8102E" />
               <stop offset="50%" stopColor="#E94C36" />
               <stop offset="100%" stopColor="#C8961A" />
             </linearGradient>
+            <linearGradient id="vertical-wave-glow" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#C8102E" stopOpacity="0.75" />
+              <stop offset="50%" stopColor="#E94C36" stopOpacity="0.75" />
+              <stop offset="100%" stopColor="#C8961A" stopOpacity="0.75" />
+            </linearGradient>
+            <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
           {/* Solid fill matching the left side's pure page bg */}
-          <path d="M 0,0 L 500,0 C 350,300 250,650 450,1000 L 0,1000 Z" className="fill-[#0E121C]" />
-          {/* Premium wave outline trace */}
-          <path d="M 500,0 C 350,300 250,650 450,1000" fill="none" stroke="url(#vertical-wave-grad)" strokeWidth="4" className="opacity-95" />
+          <path d="M 0,0 L 700,0 C 550,300 450,650 650,1000 L 0,1000 Z" className="fill-[#0E121C]" />
+          
+          {/* 1. Underlying blur neon glow decorative path */}
+          <path 
+            d="M 700,0 C 550,300 450,650 650,1000" 
+            fill="none" 
+            stroke="url(#vertical-wave-glow)" 
+            strokeWidth="14" 
+            className="opacity-30" 
+            filter="url(#neon-glow)"
+          />
+          
+          {/* 2. Secondary delicate accent offset line for modern layered 3D depth */}
+          <path 
+            d="M 703,0 C 553,300 453,650 653,1000" 
+            fill="none" 
+            stroke="#C8961A" 
+            strokeWidth="1.5" 
+            className="opacity-25" 
+          />
+
+          {/* 3. Main precise glowing wave outline trace */}
+          <path 
+            d="M 700,0 C 550,300 450,650 650,1000" 
+            fill="none" 
+            stroke="url(#vertical-wave-grad)" 
+            strokeWidth="3.5" 
+            className="opacity-95" 
+          />
         </svg>
       </div>
 
@@ -323,6 +361,9 @@ export function Hero({
             <div className="w-full lg:max-w-[670px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
               {/* Dynamic decorative visual glow corner inside */}
               <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#C8961A]/10 rounded-full blur-2xl pointer-events-none transition-opacity duration-700 group-hover/spotlight:opacity-100"></div>
+              
+              {/* High-end Neon Glow accent bar at the right edge */}
+              <div className="absolute top-0 right-0 bottom-0 w-[4px] bg-gradient-to-b from-[#C8102E] via-[#E94C36] to-[#C8961A] opacity-60 group-hover/spotlight:opacity-100 transition-opacity duration-500 rounded-r-[2.5rem] shadow-[0_0_15px_rgba(200,150,26,0.3)] z-20"></div>
               
               <div className="flex items-center justify-between mb-4 px-1 relative z-10">
                 <div className="flex flex-col">

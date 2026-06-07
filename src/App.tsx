@@ -25,6 +25,9 @@ import ProductsPage from './pages/ProductsPage';
 import PortfolioPage from './pages/PortfolioPage';
 import CategoriesPage from './pages/CategoriesPage';
 import CheckoutPage from './pages/CheckoutPage';
+import BlogPage from './pages/BlogPage';
+import FAQPage from './pages/FAQPage';
+import CareersPage from './pages/CareersPage';
 
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { InactivityHandler } from './components/InactivityHandler';
@@ -82,6 +85,15 @@ function DynamicSEOEngine() {
       } else if (path === '/returns') {
         title = "Returns Policy & Quality Guarantee | UHURU MARKET UNIFORMS";
         description = "Read our terms for size corrections, fitting alterations, and manufacturing defect policies under our comprehensive quality assurance program.";
+      } else if (path === '/blog' || path.startsWith('/blog')) {
+        title = "Industry Guides & Sourcing Logbook | UHURU MARKET UNIFORMS";
+        description = "Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and direct-factory school uniform procurement in Kenya.";
+      } else if (path === '/faq' || path.startsWith('/faq')) {
+        title = "Frequently Asked Questions & Support | UHURU MARKET UNIFORMS";
+        description = "Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and tender queries for Uhuru Market Uniforms.";
+      } else if (path === '/careers' || path.startsWith('/careers')) {
+        title = "Careers & Tailoring Opportunities | UHURU MARKET UNIFORMS";
+        description = "Join our production team in Nairobi. Inspect open sewing, embroidery machine operations, and quality inspection roles at Naisiae Textiles.";
       }
 
       // Force apply changes securely to the DOM
@@ -91,25 +103,50 @@ function DynamicSEOEngine() {
         metaDescription.setAttribute("content", description);
       }
 
-      // Update Canonical Tag
+      // Ensure all canonical URLs use the trailing slash version consistently across every page
       let canonical = document.querySelector('link[rel="canonical"]');
       if (!canonical) {
         canonical = document.createElement('link');
         canonical.setAttribute('rel', 'canonical');
         document.head.appendChild(canonical);
       }
-      const currentDomain = window.location.origin;
-      canonical.setAttribute('href', `${currentDomain}${path === '/' ? '' : path}`);
+      
+      let canonicalPath = path;
+      if (!canonicalPath.endsWith('/')) {
+        canonicalPath += '/';
+      }
+      const canonicalUrl = `https://naisiaetextiles.com${canonicalPath}`;
+      canonical.setAttribute('href', canonicalUrl);
 
-      // Manage Breadcrumb Structured Data dynamically for Rich Snippets
+      // Manage Rich Schema.org Structured Data dynamically for Rich Snippets
       const schemaScriptId = 'dynamic-jsonld-seo';
       let schemaScript = document.getElementById(schemaScriptId);
       if (schemaScript) {
         schemaScript.remove();
       }
 
+      const schemasList: any[] = [];
+
+      // 1. WebPage Schema for all pages
+      const webPageSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${canonicalUrl}#webpage`,
+        "url": canonicalUrl,
+        "name": title,
+        "description": description,
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": "https://naisiaetextiles.com/#website",
+          "name": "Uhuru Market Uniforms (Naisiae Textiles)",
+          "url": "https://naisiaetextiles.com/"
+        }
+      };
+      schemasList.push(webPageSchema);
+
+      // 2. BreadcrumbList Schema for all pages
       const breadcrumbs = [
-        { name: "Home", item: "https://naisiaetextiles.com" }
+        { name: "Home", item: "https://naisiaetextiles.com/" }
       ];
 
       if (path !== '/') {
@@ -117,15 +154,17 @@ function DynamicSEOEngine() {
         let currPath = '';
         segments.forEach((seg) => {
           currPath += `/${seg}`;
-          const formattedName = seg.charAt(0).toUpperCase() + seg.slice(1);
+          let formattedName = seg.charAt(0).toUpperCase() + seg.slice(1);
+          if (seg === 'faq') formattedName = "FAQ";
+          if (seg === 'wholesale') formattedName = "Bulk Wholesale";
           breadcrumbs.push({
-            name: title.split('|')[0].trim() || formattedName,
-            item: `https://naisiaetextiles.com${currPath}`
+            name: formattedName,
+            item: `https://naisiaetextiles.com${currPath}/`
           });
         });
       }
 
-      const breadcrumbListSchema = {
+      const breadcrumbSchema = {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": breadcrumbs.map((b, index) => ({
@@ -135,11 +174,142 @@ function DynamicSEOEngine() {
           "item": b.item
         }))
       };
+      schemasList.push(breadcrumbSchema);
+
+      // 3. Service Schema for /services
+      if (path === '/services' || path === '/services/') {
+        const serviceSchema = {
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Uniform Manufacturing & Industrial Branding",
+          "serviceType": "Apparel Sourcing",
+          "provider": {
+            "@type": "LocalBusiness",
+            "name": "Uhuru Market Uniforms (Naisiae Textiles)",
+            "image": "https://naisiaetextiles.com/favicon.png",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Uhuru Market, Jogoo Road",
+              "addressLocality": "Nairobi",
+              "addressCountry": "KE"
+            },
+            "telephone": "+254792021795"
+          },
+          "areaServed": "Kenya",
+          "description": "Premium industrial embroidery, high-speed custom stitching, and pattern grading for schools, healthcare centers, and security agencies."
+        };
+        schemasList.push(serviceSchema);
+      }
+
+      // 4. BlogPosting Schema for /blog posts
+      if (path === '/blog' || path.startsWith('/blog')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const postParam = urlParams.get('post');
+        const blogTitle = postParam ? `${postParam.replace(/-/g, ' ').toUpperCase()} | Uniform Blog` : title;
+        
+        const blogSchema = {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": canonicalUrl
+          },
+          "headline": blogTitle,
+          "description": description,
+          "image": "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=600&auto=format&fit=crop",
+          "author": {
+            "@type": "Organization",
+            "name": "Naisiae Textiles Development Team"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Uhuru Market Uniforms (Naisiae Textiles)",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://naisiaetextiles.com/logo.png"
+            }
+          },
+          "datePublished": "2026-06-07T00:00:00Z"
+        };
+        schemasList.push(blogSchema);
+      }
+
+      // 5. FAQPage Schema for /faq
+      if (path === '/faq' || path === '/faq/') {
+        const faqSchema = {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is your Minimum Order Quantity (MOQ) for bulk orders?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Our standard minimum order quantity for custom institutional uniforms, hospital scrubs, and corporate wear is 50 units. This allows us to offer direct-factory rates."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where is Naisiae Textiles located within Uhuru Market?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We are proudly located at the heart of Uhuru Market along Jogoo Road, Nairobi, Kenya. Visitors are welcome for fittings."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do you offer custom school embroidery?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, we specialize in high-density computerized embroidery and active sportswear screen printing."
+              }
+            }
+          ]
+        };
+        schemasList.push(faqSchema);
+      }
+
+      // 6. JobPosting Schema for /careers
+      if (path === '/careers' || path === '/careers/') {
+        const jobSchema = {
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Industrial Tailoring Specialist (Lead Cutter)",
+          "description": "Draft master patterns, optimize heavy fabric cutting blocks, and supervise assembly lines at Uhuru Market production floor.",
+          "datePosted": "2026-06-07",
+          "hiringOrganization": {
+            "@type": "Organization",
+            "name": "Naisiae Textiles",
+            "sameAs": "https://naisiaetextiles.com/"
+          },
+          "jobLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Uhuru Market, Jogoo Road",
+              "addressLocality": "Nairobi",
+              "addressCountry": "KE"
+            }
+          },
+          "baseSalary": {
+            "@type": "MonetaryAmount",
+            "currency": "KES",
+            "value": {
+              "@type": "QuantitativeValue",
+              "minValue": 35000,
+              "maxValue": 45000,
+              "unitText": "MONTH"
+            }
+          },
+          "employmentType": "FULL_TIME"
+        };
+        schemasList.push(jobSchema);
+      }
 
       const newScript = document.createElement('script');
       newScript.id = schemaScriptId;
       newScript.type = 'application/ld+json';
-      newScript.innerHTML = JSON.stringify(breadcrumbListSchema);
+      newScript.innerHTML = JSON.stringify(schemasList.length === 1 ? schemasList[0] : schemasList);
       document.head.appendChild(newScript);
     };
 
@@ -201,6 +371,10 @@ function AppContent({ isAdmin, loading }: any) {
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/careers" element={<CareersPage />} />
           
           <Route path="/login" element={<LoginPage />} />
           <Route 

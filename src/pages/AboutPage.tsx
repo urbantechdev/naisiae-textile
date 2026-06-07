@@ -4,6 +4,7 @@ import { Target, Compass, Users, Award, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { doc, onSnapshot, query, collection, where } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
@@ -41,8 +42,8 @@ export default function AboutPage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
-
       <div className="pt-20"> {/* Offset for sticky nav */}
+        <Breadcrumb />
         {/* Hero Section */}
       <section className="pt-40 pb-20 px-6">
         <div className="max-w-7xl mx-auto">

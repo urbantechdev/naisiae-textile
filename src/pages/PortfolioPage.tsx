@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, ShoppingBag, Heart, Menu, ChevronRight, X } from 'lucide-react';
 import { db } from '../services/firebase';
@@ -79,6 +80,7 @@ export default function PortfolioPage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
+      <Breadcrumb />
 
       <section className="py-32 px-6">
         <div className="max-w-[1440px] mx-auto text-center mb-24">

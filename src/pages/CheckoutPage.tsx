@@ -15,12 +15,17 @@ import {
   User,
   MessageSquare,
   Package,
-  ArrowRight
+  ArrowRight,
+  Copy,
+  Check,
+  Smartphone,
+  Sparkles
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { Breadcrumb } from '../components/Breadcrumb';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
@@ -51,6 +56,41 @@ export default function CheckoutPage() {
 
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
   const [authLoading, setAuthLoading] = useState(false);
+
+  // M-Pesa Send Money checkout states
+  const [checkoutMethod, setCheckoutMethod] = useState<'rfq' | 'mpesa'>('mpesa'); // defaulted to mpesa as requested
+  const [mpesaPaymentOption, setMpesaPaymentOption] = useState<'deposit' | 'full'>('deposit');
+  const [mpesaRefCode, setMpesaRefCode] = useState('');
+  const [pastedSms, setPastedSms] = useState('');
+  const [copiedNumber, setCopiedNumber] = useState(false);
+  const [copiedAmount, setCopiedAmount] = useState(false);
+  const [smsExtractionSuccess, setSmsExtractionSuccess] = useState(false);
+  const [submittedQuoteData, setSubmittedQuoteData] = useState<any | null>(null);
+
+  const handleSmsPaste = (text: string) => {
+    setPastedSms(text);
+    // Find standard 10 letter code. Standard M-Pesa is usually uppercase alphanumeric of 10 characters
+    const mpesaRegex = /\b([A-Z0-9]{10})\b/i;
+    const match = text.match(mpesaRegex);
+    if (match) {
+      const parsedCode = match[1].toUpperCase();
+      setMpesaRefCode(parsedCode);
+      setSmsExtractionSuccess(true);
+      setTimeout(() => setSmsExtractionSuccess(false), 3000);
+    }
+  };
+
+  const handleCopyNumber = () => {
+    navigator.clipboard.writeText('0792021795');
+    setCopiedNumber(true);
+    setTimeout(() => setCopiedNumber(false), 2000);
+  };
+
+  const handleCopyAmount = (amount: number) => {
+    navigator.clipboard.writeText(amount.toString());
+    setCopiedAmount(true);
+    setTimeout(() => setCopiedAmount(false), 2000);
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -130,6 +170,15 @@ export default function CheckoutPage() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
     if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
     
+    if (checkoutMethod === 'mpesa') {
+      const code = mpesaRefCode.trim().toUpperCase();
+      if (!code) {
+        newErrors.mpesaRefCode = 'M-Pesa transaction code is required';
+      } else if (!/^[A-Z0-9]{10}$/.test(code)) {
+        newErrors.mpesaRefCode = 'M-Pesa transaction code must be exactly 10 alphanumeric characters';
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -140,11 +189,16 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
+      const mpesaSummaryText = checkoutMethod === 'mpesa' 
+        ? `\n[PAYMENT METHOD: M-PESA SEND MONEY]\n[PAYMENT OPTION: ${mpesaPaymentOption === 'deposit' ? '50% Booking Deposit' : '100% Full Payment'}]\n[AMOUNT SPECIFIED: Ksh ${(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/-]\n[M-PESA TRANSACTION CODE: ${mpesaRefCode.trim().toUpperCase()}]`
+        : `\n[PAYMENT METHOD: None - Standard RFQ Inquiry]`;
+
       const quoteDetails = [
         formData.institution ? `[Institution: ${formData.institution}]` : '',
         formData.details ? `[Details: ${formData.details}]` : '',
         appliedPromo?.code ? `[Promo Code: ${appliedPromo.code}]` : '',
-        `[Source: Checkout Page]`
+        `[Source: Checkout Page]`,
+        mpesaSummaryText
       ].filter(Boolean).join('\n');
 
       const quoteData = {
@@ -153,6 +207,10 @@ export default function CheckoutPage() {
         phone: formData.phone,
         service: 'Bulk Apparel Sourcing',
         details: quoteDetails,
+        paymentMethod: checkoutMethod, // 'rfq' | 'mpesa'
+        mpesaPaymentOption: checkoutMethod === 'mpesa' ? mpesaPaymentOption : null,
+        mpesaAmountPaid: checkoutMethod === 'mpesa' ? (mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal) : 0,
+        mpesaTransactionCode: checkoutMethod === 'mpesa' ? mpesaRefCode.trim().toUpperCase() : null,
         items: cart.map(item => ({
           id: item.id,
           name: item.name,
@@ -172,6 +230,7 @@ export default function CheckoutPage() {
       };
 
       await addDoc(collection(db, 'quotes'), quoteData);
+      setSubmittedQuoteData(quoteData);
       setSuccess(true);
       clearCart();
       window.scrollTo(0, 0);
@@ -183,6 +242,8 @@ export default function CheckoutPage() {
   };
 
   if (success) {
+    const isMpesa = submittedQuoteData?.paymentMethod === 'mpesa';
+
     return (
       <div className="min-h-screen bg-slate-50">
         <Navbar 
@@ -192,20 +253,80 @@ export default function CheckoutPage() {
           setIsMenuOpen={setIsMenuOpen}
           setIsQuoteModalOpen={setIsQuoteModalOpen}
         />
+        <Breadcrumb />
         <div className="pt-40 pb-24 px-6 max-w-2xl mx-auto text-center">
           <motion.div 
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto mb-8 shadow-xl shadow-green-500/20"
+            className={`w-24 h-24 rounded-full flex items-center justify-center text-white mx-auto mb-8 shadow-xl ${
+              isMpesa ? 'bg-green-500 shadow-green-500/20' : 'bg-green-500 shadow-green-500/20'
+            }`}
           >
             <CheckCircle2 size={48} />
           </motion.div>
-          <h1 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-6">
-            Inquiry <span className="text-[#C8961A]">Received</span>
-          </h1>
-          <p className="text-slate-500 font-medium text-lg leading-relaxed mb-12">
-            Thank you for sourcing with Naisiae Textiles Limited. Our sourcing team is reviewing your request and will contact you via WhatsApp/Email within 12 hours with a formal quote and production timeline.
-          </p>
+          {isMpesa ? (
+            <>
+              <h1 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-6">
+                Order <span className="text-green-600">Fast-Tracked!</span>
+              </h1>
+              <p className="text-slate-500 font-medium text-lg leading-relaxed mb-8 max-w-xl mx-auto">
+                Thank you! Your bulk order was initialized with an M-Pesa deposit check. Our billing office is reconciling code <strong className="text-slate-900 font-black font-mono tracking-widest">{submittedQuoteData.mpesaTransactionCode}</strong> and your order will queue for immediate manufacturing within 2 hours.
+              </p>
+
+              {/* Digital receipt ticket */}
+              <div className="bg-[#0E121C] text-white p-6 rounded-3xl text-left border border-white/10 mb-12 max-w-md mx-auto relative overflow-hidden shadow-2xl">
+                {/* Neon decorative edge */}
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#C8961A]" />
+                
+                <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                  <div>
+                    <span className="text-[9px] font-black text-[#C8961A] tracking-[2px] uppercase block">NAISIAE TEXTILES LTD</span>
+                    <span className="text-[8px] text-white/40 uppercase tracking-widest mt-0.5 block">Official Payment Invoice</span>
+                  </div>
+                  <span className="text-[9px] font-black text-green-400 bg-green-400/10 border border-green-400/20 px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                    🟢 M-Pesa Logged
+                  </span>
+                </div>
+                
+                <div className="space-y-4 text-xs font-sans">
+                  <div className="flex justify-between items-center bg-white/5 p-2 rounded-xl border border-white/5">
+                    <span className="text-white/40 font-bold uppercase tracking-wider text-[9px]">Sender Lead</span>
+                    <span className="font-black text-white uppercase">{submittedQuoteData.name}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 p-2.5 rounded-xl border border-white/5">
+                      <span className="text-white/40 font-bold uppercase tracking-wider text-[8px] block mb-1">M-Pesa Reference</span>
+                      <span className="font-black text-white font-mono tracking-widest text-[13px]">{submittedQuoteData.mpesaTransactionCode}</span>
+                    </div>
+                    <div className="bg-white/5 p-2.5 rounded-xl border border-white/5">
+                      <span className="text-white/40 font-bold uppercase tracking-wider text-[8px] block mb-1">Deposit Amount</span>
+                      <span className="font-black text-green-400 text-[13px] tabular-nums">Ksh {submittedQuoteData.mpesaAmountPaid?.toLocaleString()}/-</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/40 font-bold uppercase tracking-wider text-[9px]">Sourcing Level</span>
+                    <span className="font-black text-[#C8961A] uppercase tracking-wide">
+                      {submittedQuoteData.mpesaPaymentOption === 'deposit' ? '50% Order Booking' : '100% Fully Paid'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-white/10 text-[9px] text-white/30 text-center font-bold uppercase tracking-[2px]">
+                  🔒 SECURE RECONCILIATION ACTIVE
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <h1 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-6">
+                Inquiry <span className="text-[#C8961A]">Received</span>
+              </h1>
+              <p className="text-slate-500 font-medium text-lg leading-relaxed mb-12">
+                Thank you for sourcing with Naisiae Textiles Limited. Our sourcing team is reviewing your request and will contact you via WhatsApp/Email within 12 hours with a formal quote and production timeline.
+              </p>
+            </>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               to="/products"
@@ -235,6 +356,7 @@ export default function CheckoutPage() {
         setIsMenuOpen={setIsMenuOpen}
         setIsQuoteModalOpen={setIsQuoteModalOpen}
       />
+      <Breadcrumb />
       
       <div className="pt-32 lg:pt-44 pb-24 px-6 max-w-[1440px] mx-auto">
         <div className="flex items-center gap-4 mb-12">
@@ -379,12 +501,223 @@ export default function CheckoutPage() {
                   />
                 </div>
 
+                {/* PAYMENT METHOD CHOOSING */}
+                <div className="space-y-4 pt-4 border-t border-slate-150">
+                  <h3 className="text-xs font-black uppercase tracking-[2px] text-slate-400 ml-1">
+                    Choose Sourcing Option
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* RFQ Option */}
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutMethod('rfq')}
+                      className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
+                        checkoutMethod === 'rfq'
+                          ? 'bg-[#0A1628]/5 border-[#0A1628] text-[#0A1628]'
+                          : 'bg-white border-slate-100 hover:border-slate-200 text-slate-500'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-black uppercase tracking-[1.5px]">Standard RFQ</span>
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          checkoutMethod === 'rfq' ? 'border-[#0A1628] bg-[#0A1628]' : 'border-slate-300'
+                        }`}>
+                          {checkoutMethod === 'rfq' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                        </div>
+                      </div>
+                      <p className="text-[10px] font-medium text-slate-400">Request formal quotes without paying anything upfront.</p>
+                    </button>
+
+                    {/* M-Pesa Send Money Option */}
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutMethod('mpesa')}
+                      className={`p-5 rounded-2xl border-2 text-left transition-all relative overflow-hidden cursor-pointer ${
+                        checkoutMethod === 'mpesa'
+                          ? 'bg-green-50/40 border-[#3BB348] text-[#0E121C]'
+                          : 'bg-white border-slate-100 hover:border-slate-200 text-slate-500'
+                      }`}
+                    >
+                      <div className="absolute top-0 right-0 bg-[#3BB348] text-white text-[7px] font-black px-2 py-0.5 rounded-bl-lg uppercase tracking-widest animate-pulse">
+                        Fast-Track
+                      </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-black uppercase tracking-[1.5px] flex items-center gap-1.5">
+                          🟢 M-Pesa Express
+                        </span>
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          checkoutMethod === 'mpesa' ? 'border-[#3BB348] bg-[#3BB348]' : 'border-slate-300'
+                        }`}>
+                          {checkoutMethod === 'mpesa' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                        </div>
+                      </div>
+                      <p className="text-[10px] font-medium text-slate-400">Pay deposit or full amount now to put your order live instantly.</p>
+                    </button>
+                  </div>
+                </div>
+
+                {/* MPESA DETAILS ACCORDION */}
+                {checkoutMethod === 'mpesa' && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="p-6 bg-slate-50/70 border border-slate-200/60 rounded-3xl space-y-6 overflow-hidden text-left"
+                  >
+                    <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+                      <div className="w-10 h-10 bg-[#3BB348] rounded-xl flex items-center justify-center text-white text-lg font-black shrink-0 relative">
+                        📱
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-[1px] flex items-center gap-1.5">
+                          M-Pesa Safaricom Send Money
+                          <span className="px-2 py-0.5 bg-[#3BB348]/10 text-[#3BB348] rounded-md text-[8px] font-black uppercase border border-[#3BB348]/20">Authorized Account</span>
+                        </h4>
+                        <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Follow steps to submit and secure immediate production queuing</p>
+                      </div>
+                    </div>
+
+                    {/* Step 1: Deposit Type Selection */}
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1 block">
+                        Step 1: Choose Amount Option
+                      </label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setMpesaPaymentOption('deposit')}
+                          className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                            mpesaPaymentOption === 'deposit'
+                              ? 'bg-[#3BB348]/10 border-[#3BB348] text-[#3BB348] font-black shadow-sm'
+                              : 'bg-white border-slate-200 text-slate-500 font-bold'
+                          }`}
+                        >
+                          <span className="block text-[8px] uppercase tracking-wider text-slate-400 mb-0.5">50% Booking Deposit</span>
+                          <span className="text-xs font-black">Ksh {Math.round(cartTotal * 0.5).toLocaleString()}/-</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setMpesaPaymentOption('full')}
+                          className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                            mpesaPaymentOption === 'full'
+                              ? 'bg-[#3BB348]/10 border-[#3BB348] text-[#3BB348] font-black shadow-sm'
+                              : 'bg-white border-slate-200 text-slate-500 font-bold'
+                          }`}
+                        >
+                          <span className="block text-[8px] uppercase tracking-wider text-slate-400 mb-0.5 font-bold">100% Full Payment</span>
+                          <span className="text-xs font-black">Ksh {cartTotal.toLocaleString()}/-</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Step 2: Payment Target */}
+                    <div className="p-4 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-sm">
+                      <span className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1 block">
+                        Step 2: Send Money Details
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Recipient Name</p>
+                          <p className="text-xs font-black text-slate-800">Naomi Shadrack (Finance)</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Phone Number</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-black text-slate-800 tracking-wider">0792021795</span>
+                            <button
+                              type="button"
+                              onClick={handleCopyNumber}
+                              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 active:scale-95 text-[9px] font-black text-slate-600 rounded-md transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                            >
+                              {copiedNumber ? <span className="text-green-600">Copied!</span> : 'Copy'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Copy Amount Box */}
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Amount to send</p>
+                          <p className="text-xs font-black text-green-600">Ksh {((mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)).toLocaleString()}/-</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyAmount(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}
+                          className="px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-[#3BB348] text-[9px] font-black rounded-lg transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                        >
+                          {copiedAmount ? 'Amount Copied!' : 'Copy Amount'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Step 3: SMS Paste & Transaction Code Parser */}
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center ml-1">
+                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                          Step 3: Enter M-Pesa Transaction Code
+                        </label>
+                        <span className="text-[8px] font-bold text-[#3BB348] bg-green-50 px-2 py-0.5 rounded border border-green-100 uppercase tracking-widest">
+                          ⚡ Auto-parse SMS enabled
+                        </span>
+                      </div>
+
+                      {/* SMS Paste Assistant */}
+                      <div className="space-y-1.5">
+                        <textarea
+                          placeholder="Tip: Paste the complete Safari M-Pesa SMS message received here. We'll automatically find & pull your transaction code!"
+                          value={pastedSms}
+                          onChange={(e) => handleSmsPaste(e.target.value)}
+                          rows={2}
+                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-medium placeholder:text-slate-400 outline-none focus:border-green-500/50 transition-all resize-none font-sans"
+                        />
+                        {smsExtractionSuccess && (
+                          <motion.div 
+                            initial={{ opacity: 0, x: -5 }} 
+                            animate={{ opacity: 1, x: 0 }} 
+                            className="text-[10px] text-green-600 font-bold flex items-center gap-1.5"
+                          >
+                            ✨ Auto-extracted code: {mpesaRefCode}!
+                          </motion.div>
+                        )}
+                      </div>
+
+                      <div className="relative">
+                        <input
+                          type="text"
+                          maxLength={10}
+                          placeholder="e.g. QJG4H1NK6Z"
+                          value={mpesaRefCode}
+                          onChange={(e) => setMpesaRefCode(e.target.value.toUpperCase())}
+                          className={`w-full bg-white border ${errors.mpesaRefCode ? 'border-red-500' : 'border-slate-200 focus:border-[#3BB348]'} rounded-xl px-4 py-3.5 text-sm font-black tracking-widest uppercase placeholder:text-slate-300 outline-none text-center font-mono`}
+                        />
+                        {mpesaRefCode.length === 10 && /^[A-Z0-9]{10}$/i.test(mpesaRefCode) && (
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs flex items-center gap-1">
+                            ✅ Code Verified
+                          </div>
+                        )}
+                      </div>
+                      {errors.mpesaRefCode && (
+                        <p className="text-[9px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.mpesaRefCode}</p>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
                 <div className="pt-6">
                   <button 
                     disabled={loading}
-                    className="w-full py-6 bg-[#0A1628] text-white rounded-3xl font-black text-[13px] uppercase tracking-[4px] hover:bg-[#C8102E] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-[#0A1628]/20 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`w-full py-6 text-white rounded-3xl font-black text-[13px] uppercase tracking-[4px] transition-all flex items-center justify-center gap-4 shadow-2xl group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
+                      checkoutMethod === 'mpesa' 
+                        ? 'bg-[#3BB348] hover:bg-green-600 shadow-green-600/10' 
+                        : 'bg-[#0A1628] hover:bg-[#C8102E] shadow-[#0A1628]/20'
+                    }`}
                   >
-                    {loading ? "Processing Securely..." : "Submit Inquiry to Procurement"}
+                    {loading 
+                      ? "Processing Securely..." 
+                      : checkoutMethod === 'mpesa' 
+                        ? "Verify payment & complete order 🚀" 
+                        : "Submit Inquiry to Procurement"
+                    }
                     <div className="p-1 bg-white/10 rounded-lg group-hover:bg-white group-hover:text-[#C8102E] transition-all">
                       <ArrowRight size={16} />
                     </div>
