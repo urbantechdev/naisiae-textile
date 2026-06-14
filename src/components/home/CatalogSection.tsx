@@ -43,32 +43,9 @@ export function CatalogSection({
   wishlist
 }: CatalogSectionProps) {
   const navigate = useNavigate();
-  const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
-  const clickTimeoutRef = React.useRef<{ [key: string]: NodeJS.Timeout | null }>({});
-
-  React.useEffect(() => {
-    return () => {
-      // Cleanup timeouts on unmount to prevent memory leaks
-      Object.values(clickTimeoutRef.current).forEach((t) => {
-        if (t) clearTimeout(t);
-      });
-    };
-  }, []);
 
   const handleProductInteraction = (product: any) => {
-    const productId = product.id;
-    if (clickTimeoutRef.current[productId]) {
-      clearTimeout(clickTimeoutRef.current[productId]!);
-      clickTimeoutRef.current[productId] = null;
-      // Double tap -> preview popup
-      setSelectedQuickViewProduct(product);
-    } else {
-      clickTimeoutRef.current[productId] = setTimeout(() => {
-        clickTimeoutRef.current[productId] = null;
-        // Single tap -> expand description inline
-        setExpandedProductId((prev) => (prev === productId ? null : productId));
-      }, 250);
-    }
+    setSelectedQuickViewProduct(product);
   };
 
   return (
@@ -204,17 +181,12 @@ export function CatalogSection({
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
         {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => {
-          const isExpanded = expandedProductId === product.id;
           return (
             <motion.div 
               key={product.id}
               layout
-              whileHover={{ y: isExpanded ? 0 : -6 }}
-              className={`group bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col ${
-                isExpanded 
-                  ? 'border-[#C8961A] ring-2 ring-[#C8961A]/20 col-span-2 md:col-span-2 lg:col-span-2' 
-                  : 'border-[#E4E8EF]'
-              }`}
+              whileHover={{ y: -6 }}
+              className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => handleProductInteraction(product)}>
                 {product.imageUrl ? (
@@ -243,13 +215,13 @@ export function CatalogSection({
                   </button>
                 </div>
               </div>
-              <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-1" onClick={() => handleProductInteraction(product)}>
+              <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-grow" onClick={() => handleProductInteraction(product)}>
                 <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
                 <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
                 
                 {/* Interactive hint */}
-                <span className="text-[9px] text-[#C8961A] font-bold mb-2 block leading-none antialiased">
-                  {isExpanded ? '⚡ Double-click to preview • Click to collapse' : 'ℹ️ Click once to expand specs'}
+                <span className="text-[9px] text-slate-400 font-bold mb-2 block leading-none antialiased">
+                  ℹ️ Click to preview details
                 </span>
 
                 <div className="mt-auto pt-3">
@@ -307,46 +279,6 @@ export function CatalogSection({
                   )}
                 </div>
               </div>
-
-              {/* Expandable info tray which shifts below elements on layout expansion */}
-              {isExpanded && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="border-t border-slate-100 bg-slate-50/80 p-4 text-xs space-y-3 cursor-default"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div>
-                    <span className="font-extrabold uppercase tracking-wide text-slate-400 text-[9px] block">Description & Crafting Specs</span>
-                    <p className="text-slate-600 mt-1 leading-relaxed">
-                      {product.description || "Premium tailor-crafted apparel made from heavy-duty Nairobi Uhuru Market textile fabrics, with double-stitching construction in vibrant colorways to maximize longevity."}
-                    </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/50">
-                    <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
-                      <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Availability</span>
-                      <span className="font-extrabold text-[#0E121C]">{(product.stock && Number(product.stock) > 0) ? `${product.stock} units` : 'Instock / Tailored'}</span>
-                    </div>
-                    <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
-                      <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Material Quality</span>
-                      <span className="font-extrabold text-[#C8961A]">{product.tags?.includes('corporate') ? 'Super Wool' : 'Standard Drill'}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium pt-2 border-t border-dashed border-slate-200">
-                    <span className="flex items-center gap-1 text-[9px]">⚡ Double-tap to preview modal</span>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
-                      className="text-[#C8102E] font-black uppercase text-[8px] tracking-wider hover:underline cursor-pointer"
-                    >
-                      Collapse ▲
-                    </button>
-                  </div>
-                </motion.div>
-              )}
             </motion.div>
           );
         }) : (

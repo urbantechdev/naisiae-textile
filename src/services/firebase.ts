@@ -1,3 +1,4 @@
+import './suppressLogs';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { initializeFirestore, doc, getDocFromServer, setLogLevel } from 'firebase/firestore';
@@ -31,40 +32,6 @@ const app = initializeApp(firebaseConfig);
 // Silence verbose web channel stream cancellation logs for a clean console experience
 if (typeof window !== 'undefined') {
   setLogLevel('silent');
-
-  // Monkey-patch console.error and console.warn to intercept and suppress benign internal Firestore stream errors
-  const originalError = console.error;
-  const originalWarn = console.warn;
-
-  console.error = function (...args: any[]) {
-    const isBenign = args.some(arg => {
-      const str = String(arg || '').toLowerCase();
-      return (
-        str.includes('disconnecting idle stream') ||
-        str.includes('timed out waiting for new targets') ||
-        str.includes('grpcconnection rpc') ||
-        str.includes('@firebase/firestore') ||
-        str.includes('cancelled: disconnecting')
-      );
-    });
-    if (isBenign) return;
-    originalError.apply(console, args);
-  };
-
-  console.warn = function (...args: any[]) {
-    const isBenign = args.some(arg => {
-      const str = String(arg || '').toLowerCase();
-      return (
-        str.includes('disconnecting idle stream') ||
-        str.includes('timed out waiting for new targets') ||
-        str.includes('grpcconnection rpc') ||
-        str.includes('@firebase/firestore') ||
-        str.includes('cancelled: disconnecting')
-      );
-    });
-    if (isBenign) return;
-    originalWarn.apply(console, args);
-  };
 }
 
 export const db = initializeFirestore(
@@ -84,16 +51,38 @@ export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : nul
  */
 export function isBenignFirestoreError(error: unknown): boolean {
   if (!error) return false;
-  const msg = (error instanceof Error ? error.message : String(error)).toLowerCase();
+  let msg = '';
+  if (typeof error === 'string') {
+    msg = error;
+  } else if (error instanceof Error) {
+    msg = `${error.name || ''} ${error.message || ''} ${error.stack || ''}`;
+  } else {
+    try {
+      msg = JSON.stringify(error);
+    } catch (e) {
+      msg = '';
+      for (const key of Object.keys(error as any)) {
+        try {
+          msg += ` ${key}:${(error as any)[key]}`;
+        } catch (_) {}
+      }
+    }
+  }
   
+  const str = msg.toLowerCase();
   return (
-    msg.includes('disconnecting idle stream') ||
-    msg.includes('timed out waiting for new targets') ||
-    msg.includes('cancelled') ||
-    msg.includes('code: 1') ||
-    msg.includes('cancel') ||
-    msg.includes('unreachable') ||
-    msg.includes('offline')
+    str.includes('disconnecting idle stream') ||
+    str.includes('timed out waiting for new targets') ||
+    str.includes('grpcconnection rpc') ||
+    str.includes('cancelled') ||
+    str.includes('code: 1') ||
+    str.includes('cancel') ||
+    str.includes('unreachable') ||
+    str.includes('offline') ||
+    str.includes('disconnecting') ||
+    str.includes('idle stream') ||
+    str.includes('grpc_connection') ||
+    str.includes('listen stream')
   );
 }
 
@@ -145,7 +134,6 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   // If this is a benign, self-recovering error (e.g., idle stream cancellation due to inactivity),
   // we do not log it as a critical error to prevent unnecessary log pollution or false system alarms.
   if (isBenignFirestoreError(error)) {
-    console.warn(`Firestore Info [Non-fatal]: Self-recovering connection event (${operationType} on "${path}"). Detail: ${error instanceof Error ? error.message : String(error)}`);
     return;
   }
 

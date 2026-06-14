@@ -46,7 +46,6 @@ export default function WholesalePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [inquiryQty, setInquiryQty] = useState(50);
   const [customizationDetails, setCustomizationDetails] = useState('');
   const [siteSettings, setSiteSettings] = useState<any>(null);
@@ -190,10 +189,6 @@ export default function WholesalePage() {
                   addToCart={addToCart}
                   toggleWishlist={toggleWishlist}
                   isWishlisted={wishlist.some(p => p.id === product.id)}
-                  isExpanded={expandedProductId === product.id}
-                  onInteract={() => {
-                    setExpandedProductId(prev => prev === product.id ? null : product.id);
-                  }}
                   onPreview={() => setSelectedProduct(product)}
                 />
               ))}
@@ -406,28 +401,9 @@ export default function WholesalePage() {
   );
 }
 
-function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, isExpanded, onInteract, onPreview }: any) {
-  const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-
-  React.useEffect(() => {
-    return () => {
-      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
-    };
-  }, []);
-
+function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPreview }: any) {
   const handleClick = () => {
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-      clickTimeoutRef.current = null;
-      // Double tap -> preview dialog
-      onPreview();
-    } else {
-      clickTimeoutRef.current = setTimeout(() => {
-        clickTimeoutRef.current = null;
-        // Single tap -> toggle description
-        onInteract();
-      }, 250);
-    }
+    onPreview();
   };
 
   return (
@@ -435,11 +411,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, isExp
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`group relative flex flex-col justify-between bg-white border rounded-[32px] p-4 transition-all duration-300 ${
-        isExpanded 
-          ? 'border-[#C8961A] shadow-2xl col-span-1 md:col-span-2' 
-          : 'border-transparent shadow-sm hover:shadow-xl'
-      }`}
+      className="group relative flex flex-col justify-between bg-white border border-transparent rounded-[32px] p-4 transition-all duration-300 shadow-sm hover:shadow-xl"
     >
       <div 
         onClick={handleClick}
@@ -488,8 +460,8 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, isExp
         <h3 className="font-display text-2xl text-[#0A1628] leading-tight mb-2 group-hover:text-[#C8102E] transition-colors cursor-pointer">{product.name}</h3>
         
         {/* Interactive hint */}
-        <span className="text-[9px] text-[#C8961A] font-bold mb-3 block leading-none antialiased cursor-pointer">
-          {isExpanded ? '⚡ Double-tap to preview • Click to collapse' : 'ℹ️ Click once to expand specs'}
+        <span className="text-[9px] text-[#C8961A]/75 font-bold mb-3 block leading-none antialiased cursor-pointer">
+          ℹ️ Click to preview details
         </span>
 
         <div className="flex flex-col gap-3 mt-auto">
@@ -520,46 +492,6 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, isExp
           </div>
         </div>
       </div>
-
-      {/* Expandable description block */}
-      {isExpanded && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.25 }}
-          className="mt-4 border-t border-slate-100 bg-slate-50/80 p-4 rounded-2xl text-xs space-y-3 cursor-default"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div>
-            <span className="font-extrabold uppercase tracking-wide text-slate-400 text-[9px] block">Material Specifications</span>
-            <p className="text-slate-600 mt-1 leading-relaxed">
-              {product.description || "Premium tailor-made textiles sourced from reputable local mills in Nairobi. Form-retaining heavy drill fabric with non-fade coloration suited for high duty wear cycles."}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/30">
-            <div className="bg-white p-2 border border-slate-100 rounded-lg shadow-sm">
-              <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Availability</span>
-              <span className="font-extrabold text-[#0E121C]">Custom Order</span>
-            </div>
-            <div className="bg-white p-2 border border-slate-100 rounded-lg shadow-sm">
-              <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Lead Time</span>
-              <span className="font-extrabold text-[#C8961A]">14 - 21 Days</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium pt-2 border-t border-dashed border-slate-200">
-            <span className="flex items-center gap-1 text-[8px]">⚡ Double-tap to preview modal</span>
-            <button 
-              onClick={(e) => { e.stopPropagation(); onInteract(); }}
-              className="text-[#C8102E] font-black uppercase text-[8px] tracking-wider hover:underline cursor-pointer"
-            >
-              Collapse ▲
-            </button>
-          </div>
-        </motion.div>
-      )}
     </motion.div>
   );
 }
