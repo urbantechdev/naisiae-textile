@@ -425,12 +425,18 @@ Return the response in JSON format.`;
       });
     };
 
+    const truncateDesc = (text: string, limit: number = 85): string => {
+      if (!text) return "";
+      if (text.length <= limit) return text;
+      return text.substring(0, limit - 3) + "...";
+    };
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n`;
     xml += `  <channel>\n`;
     xml += `    <title>${escapeXml("Naisiae Textiles | Google Merchant Product Feed")}</title>\n`;
     xml += `    <link>https://naisiaetextiles.com</link>\n`;
-    xml += `    <description>${escapeXml("Premium Uhuru Market Uniforms in Nairobi. High school uniforms, college sweaters, corporate wear & institutional branding at factory wholesale prices.")}</description>\n`;
+    xml += `    <description>${escapeXml("Premium Uhuru Market Uniforms in Nairobi. High school uniforms, college sweaters.")}</description>\n`;
     xml += `    <language>en-us</language>\n`;
     xml += `    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>\n`;
 
@@ -444,7 +450,8 @@ Return the response in JSON format.`;
 
         const id = doc.name.split('/').pop() || '';
         const name = escapeXml(getVal(fields.name) || 'Premium Textiles Apparel');
-        const desc = escapeXml(getVal(fields.description) || `${name} manufactured at Naisiae Textiles in Uhuru Market, Nairobi. Industry-grade fabric constructed for daily wear.`);
+        const rawDesc = getVal(fields.description) || `${name} manufactured at Naisiae Textiles in Uhuru Market, Nairobi. Industry-grade fabric constructed for daily wear.`;
+        const desc = escapeXml(truncateDesc(rawDesc, 85));
         
         // Dynamic product detail page target
         const link = `https://naisiaetextiles.com/products/?product=${encodeURIComponent(id)}`;

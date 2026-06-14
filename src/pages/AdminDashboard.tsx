@@ -43,13 +43,15 @@ import {
   Maximize2,
   Headset,
   Phone,
-  Link as LinkIcon
+  Link as LinkIcon,
+  ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ContentManager } from '../components/admin/ContentManager';
 import ChatSettings from '../components/admin/ChatSettings';
 import ChatWorkspace from '../components/admin/ChatWorkspace';
+import SeoAudit from '../components/admin/SeoAudit';
 import { 
   collection, 
   addDoc, 
@@ -117,7 +119,7 @@ import {
   generateDescriptionOnly, 
   generateProductDataFromText
 } from '../services/geminiService';
-import { ShieldCheck, BrainCircuit } from 'lucide-react';
+import { BrainCircuit } from 'lucide-react';
 
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
@@ -1430,6 +1432,7 @@ export default function AdminDashboard() {
           <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
           <MobileNavItem active={activeView === 'users'} onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} icon={<Users size={18} />} label="Team" />
           <MobileNavItem active={activeView === 'analytics'} onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} icon={<BarChart3 size={18} />} label="Analytics" />
+          <MobileNavItem active={activeView === 'seo-audit'} onClick={() => { setActiveView('seo-audit'); setIsMobileMenuOpen(false); }} icon={<ShieldCheck size={18} />} label="SEO Audit" />
           <MobileNavItem active={activeView === 'settings'} onClick={() => { setActiveView('settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Settings" />
         </nav>
       </div>
@@ -2623,6 +2626,17 @@ export default function AdminDashboard() {
                     })}
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {activeView === 'seo-audit' && (
+              <motion.div
+                key="seo-audit"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+              >
+                <SeoAudit />
               </motion.div>
             )}
 
@@ -4116,6 +4130,7 @@ function AdminSidebar({
     { id: 'reviews', label: 'Reviews', icon: Star, badge: badges.pendingReviewsCount },
     { id: 'users', label: 'Team', icon: Users },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'seo-audit', label: 'SEO Audit', icon: ShieldCheck },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
