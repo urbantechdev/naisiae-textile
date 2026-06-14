@@ -12,7 +12,7 @@ import {
   setDoc,
   limit
 } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { db, isBenignFirestoreError } from '../services/firebase';
 
 export function FloatingChat() {
   const [isOpen, setIsOpen] = useState(false);
@@ -86,7 +86,9 @@ export function FloatingChat() {
         });
       }
     }, (error) => {
-      console.error("Messages sync error details:", error);
+      if (!isBenignFirestoreError(error)) {
+        console.error("Messages sync error details:", error);
+      }
       // If permission fails, we might be hitting a rule issue or index issue
     });
 

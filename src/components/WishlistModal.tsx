@@ -20,10 +20,9 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
 
   const handleMoveToCart = (item: any) => {
     addToCart({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      imageUrl: item.imageUrl,
+      ...item,
+      selectedVariants: item.selectedVariants || {},
+      priceType: item.priceType || 'fixed'
     });
     toggleWishlist(item); // Remove from wishlist
     onClose();

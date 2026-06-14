@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface CatalogSectionProps {
   activeTab: string;
@@ -41,6 +42,7 @@ export function CatalogSection({
   addToCart,
   wishlist
 }: CatalogSectionProps) {
+  const navigate = useNavigate();
   return (
     <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8 scroll-mt-24">
       <div id="shop" className="absolute -mt-24"></div>
@@ -230,15 +232,36 @@ export function CatalogSection({
                   </div>
                 ) : (
                   <>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <span className="text-[15px] sm:text-lg font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
                     </div>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                      className="mt-3 w-full bg-[#0E121C] hover:bg-[#C8102E] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors"
-                    >
-                      Add to Cart
-                    </button>
+                    <div className="flex gap-1.5">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                        className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-colors text-center shadow-sm"
+                        title="Add unit to shopping cart"
+                      >
+                        Add 🛒
+                      </button>
+                      <button 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          const cartItem = {
+                            ...product,
+                            selectedVariants: {},
+                            quantity: 1,
+                            price: product.price,
+                            priceType: product.priceType || 'fixed'
+                          };
+                          addToCart(cartItem); 
+                          navigate('/checkout');
+                        }}
+                        className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center shadow-sm"
+                        title="Secure instant checkout"
+                      >
+                        Buy Now ⚡
+                      </button>
+                    </div>
                   </>
                 )}
               </div>

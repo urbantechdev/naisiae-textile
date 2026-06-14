@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Clock, AlertTriangle, LogOut, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const TIMEOUT_DURATION = 120; // 2 minutes in seconds
-const WARNING_THRESHOLD = 30; // 30 seconds before timeout
+const TIMEOUT_DURATION = 900; // 15 minutes in seconds
+const WARNING_THRESHOLD = 60; // 60 seconds before timeout
 
 export function InactivityHandler({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();

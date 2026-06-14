@@ -44,6 +44,8 @@ interface CartContextType {
   setIsQuoteModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isCatalogueModalOpen: boolean;
   setIsCatalogueModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  quoteProduct: any | null;
+  setQuoteProduct: React.Dispatch<React.SetStateAction<any | null>>;
   // Wishlist Logic
   wishlist: any[];
   toggleWishlist: (product: any) => void;
@@ -100,6 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [toast]);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [quoteProduct, setQuoteProduct] = useState<any | null>(null);
   const [isCatalogueModalOpen, setIsCatalogueModalOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState<any>(() => {
     if (typeof window !== 'undefined' && (window as any).__PRELOADED_SETTINGS__) {
@@ -334,6 +337,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsWishlistOpen,
     isQuoteModalOpen,
     setIsQuoteModalOpen,
+    quoteProduct,
+    setQuoteProduct,
     isCatalogueModalOpen,
     setIsCatalogueModalOpen,
     wishlist,
@@ -366,6 +371,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsWishlistOpen,
     isQuoteModalOpen,
     setIsQuoteModalOpen,
+    quoteProduct,
+    setQuoteProduct,
     isCatalogueModalOpen,
     setIsCatalogueModalOpen,
     wishlist,

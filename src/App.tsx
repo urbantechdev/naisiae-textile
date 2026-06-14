@@ -21,13 +21,15 @@ import TermsPage from './pages/TermsPage';
 import ShippingPage from './pages/ShippingPage';
 import ReturnsPage from './pages/ReturnsPage';
 import ServicesPage from './pages/ServicesPage';
-import ProductsPage from './pages/ProductsPage';
-import PortfolioPage from './pages/PortfolioPage';
 import CategoriesPage from './pages/CategoriesPage';
 import CheckoutPage from './pages/CheckoutPage';
 import BlogPage from './pages/BlogPage';
 import FAQPage from './pages/FAQPage';
 import CareersPage from './pages/CareersPage';
+
+// Code-split heavy pages to optimize initial bundle payload and improve Core Web Vitals
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
 
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { InactivityHandler } from './components/InactivityHandler';
@@ -103,6 +105,45 @@ function DynamicSEOEngine() {
         metaDescription.setAttribute("content", description);
       }
 
+      // Dynamic robots meta policy to prevent indexing checkout, login, or admin pathways
+      let robots = document.querySelector('meta[name="robots"]');
+      if (!robots) {
+        robots = document.createElement('meta');
+        robots.setAttribute('name', 'robots');
+        document.head.appendChild(robots);
+      }
+      const isPrivatePath = path === '/checkout' || path === '/login' || path.startsWith('/admin');
+      if (isPrivatePath) {
+        robots.setAttribute('content', 'noindex, nofollow, noarchive');
+      } else {
+        robots.setAttribute('content', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+      }
+
+      // Sync Social Open Graph and Twitter tags dynamically for crawler previews
+      const setMetaProperty = (selector: string, attrName: string, value: string) => {
+        let metaEl = document.querySelector(selector);
+        if (!metaEl) {
+          metaEl = document.createElement('meta');
+          const pair = selector.includes('property') ? ['property', selector.match(/"([^"]+)"/)?.[1] || ''] : ['name', selector.match(/"([^"]+)"/)?.[1] || ''];
+          metaEl.setAttribute(pair[0], pair[1]);
+          document.head.appendChild(metaEl);
+        }
+        metaEl.setAttribute(attrName, value);
+      };
+
+      let canonicalPath = path;
+      if (!canonicalPath.endsWith('/')) {
+        canonicalPath += '/';
+      }
+      const canonicalUrl = `https://naisiaetextiles.com${canonicalPath}`;
+
+      setMetaProperty('meta[property="og:title"]', 'content', title);
+      setMetaProperty('meta[property="og:description"]', 'content', description);
+      setMetaProperty('meta[property="og:url"]', 'content', canonicalUrl);
+      setMetaProperty('meta[name="twitter:title"]', 'content', title);
+      setMetaProperty('meta[name="twitter:description"]', 'content', description);
+      setMetaProperty('meta[name="twitter:url"]', 'content', canonicalUrl);
+
       // Ensure all canonical URLs use the trailing slash version consistently across every page
       let canonical = document.querySelector('link[rel="canonical"]');
       if (!canonical) {
@@ -110,12 +151,6 @@ function DynamicSEOEngine() {
         canonical.setAttribute('rel', 'canonical');
         document.head.appendChild(canonical);
       }
-      
-      let canonicalPath = path;
-      if (!canonicalPath.endsWith('/')) {
-        canonicalPath += '/';
-      }
-      const canonicalUrl = `https://naisiaetextiles.com${canonicalPath}`;
       canonical.setAttribute('href', canonicalUrl);
 
       // Manage Rich Schema.org Structured Data dynamically for Rich Snippets

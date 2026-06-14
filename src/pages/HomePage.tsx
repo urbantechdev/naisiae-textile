@@ -811,25 +811,26 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedQuickViewProduct(null)}
-              className="absolute inset-0 bg-[#0A1628]/95 backdrop-blur-md"
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl"
             ></motion.div>
             
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.93, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-5xl bg-white rounded-3xl lg:rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row h-auto max-h-[90vh] lg:max-h-[85vh] z-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-[#8B3DFF]/15"
+              exit={{ opacity: 0, scale: 0.93, y: 30 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 350 }}
+              className="relative w-full max-w-6xl bg-white/95 rounded-[24px] lg:rounded-[36px] overflow-hidden flex flex-col lg:flex-row h-auto max-h-[92vh] lg:max-h-[88vh] z-10 shadow-[0_50px_100px_-25px_rgba(0,0,0,0.55)] border border-slate-100 backdrop-blur-md"
             >
-              {/* Canva Signature Top Gradient Stripe */}
-              <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] z-40" />
+              {/* Premium top thin visual balance stripe */}
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C8961A] via-[#C8102E] to-[#7D2AE8] z-[60]" />
 
+              {/* Close Button */}
               <button 
                 onClick={() => setSelectedQuickViewProduct(null)}
-                className="absolute top-5 right-5 lg:top-8 lg:right-8 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-800 hover:text-[#FF4F5A] transition-all shadow-xl hover:scale-110 border border-slate-100"
+                className="absolute top-4 right-4 lg:top-6 lg:right-6 z-[60] w-12 h-12 bg-white/95 border border-slate-200/80 hover:border-slate-300 rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-lg hover:scale-105 active:scale-95"
                 aria-label="Close"
               >
-                <X size={20} />
+                <X size={20} className="stroke-[2.5]" />
               </button>
 
               {/* Product Gallery Section */}
@@ -942,44 +943,46 @@ export default function HomePage() {
               </div>
 
               {/* Product Info Section */}
-              <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full">
-                <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-12">
-                  <div className="mb-6 lg:mb-8">
-                    <div className="text-[9px] lg:text-[12px] text-[#00C4CC] font-black tracking-[4px] uppercase mb-4 flex items-center gap-3">
-                      <span className="w-6 lg:w-8 h-[2px] bg-[#00C4CC]"></span>
+              <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full bg-white">
+                <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-10 scrollbar-thin">
+                  <div className="mb-6">
+                    <div className="text-[10px] text-[#C8961A] font-extrabold tracking-[4px] uppercase mb-2.5 flex items-center gap-2">
+                      <span className="w-5 h-[2px] bg-[#C8961A]"></span>
                       {selectedQuickViewProduct.category}
                     </div>
-                    <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl lg:leading-[1.1] text-[#0E121C] leading-[1.1] mb-2 lg:mb-3">
+                    <h2 className="font-sans text-2xl lg:text-3.5xl font-black text-[#0E121C] tracking-tight leading-tight mb-3">
                       {selectedQuickViewProduct.name}
                     </h2>
-                    <div className="flex flex-wrap items-center gap-3 lg:gap-6 mb-6 lg:mb-8 bg-slate-50/80 backdrop-blur-sm p-4 lg:p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    
+                    {/* Modern pricing ticket block */}
+                    <div className="flex flex-wrap items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-2xl shadow-sm">
                       <div className="flex flex-col">
-                        <span className="text-[9px] lg:text-[10px] font-black uppercase text-slate-400 tracking-[2px] mb-1">
-                          {selectedQuickViewProduct.priceType === 'wholesale' ? "Bulk Sourcing" : "MSRP Price"}
+                        <span className="text-[9px] font-extrabold uppercase text-slate-400 tracking-[1.5px] mb-1">
+                          {selectedQuickViewProduct.priceType === 'wholesale' ? "Institutional Rate" : "Retail MSRP"}
                         </span>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2.5">
                           {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
-                            <span className="text-2xl lg:text-3xl font-black text-[#0E121C] leading-none uppercase tracking-tight bg-gradient-to-r from-[#7D2AE8] to-[#FF4F5A] bg-clip-text text-transparent">Price on Inquiry</span>
+                            <span className="text-xl lg:text-2xl font-black bg-gradient-to-r from-[#C2102E] to-[#C8961A] bg-clip-text text-transparent uppercase tracking-tight">Price on Inquiry</span>
                           ) : (
                             <>
-                              <span className="text-2xl lg:text-4xl font-black bg-gradient-to-r from-[#7D2AE8] to-[#FF4F5A] bg-clip-text text-transparent tracking-tight">{selectedQuickViewProduct.price.toLocaleString()}/-</span>
+                              <span className="text-2xl lg:text-3xl font-black text-[#0e121c] tracking-tight">Ksh {selectedQuickViewProduct.price.toLocaleString()}/-</span>
                               {selectedQuickViewProduct.oldPrice && (
-                                <span className="text-sm lg:text-lg text-slate-400 line-through decoration-[#FF4F5A]/20">{selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
+                                <span className="text-xs lg:text-sm text-slate-400 line-through decoration-slate-300">Ksh {selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
                               )}
                             </>
                           )}
                         </div>
                       </div>
-                      <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-100">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                        <span className="text-[9px] font-black uppercase text-green-700 tracking-wider">In Stock & Ready</span>
+                      <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="text-[9px] font-extrabold uppercase text-emerald-700 tracking-wider">Active Sourcing</span>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Variants Selection */}
+                  {/* Variants Selection Layout */}
                   {selectedQuickViewProduct.variants && selectedQuickViewProduct.variants.length > 0 && (
-                    <div className="space-y-6 mb-8 pt-2">
+                    <div className="space-y-4 mb-6 border-t border-slate-100 pt-4">
                       {Object.entries(
                         selectedQuickViewProduct.variants.reduce((acc: any, v: any) => {
                           if (!acc[v.type]) acc[v.type] = [];
@@ -987,11 +990,11 @@ export default function HomePage() {
                           return acc;
                         }, {})
                       ).map(([type, options]: [string, any]) => (
-                        <div key={type} className="space-y-3">
-                          <div className="flex justify-between items-center">
-                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[2px]">{type}</label>
+                        <div key={type} className="space-y-2">
+                          <div className="flex justify-between items-center mb-0.5">
+                            <label className="text-[10px] font-black uppercase text-slate-405 tracking-wider">{type}</label>
                             {selectedVariants[type] && (
-                              <span className="text-[10px] font-bold text-[#1C3560] bg-[#1C3560]/5 px-2 py-0.5 rounded-lg">{selectedVariants[type]}</span>
+                              <span className="text-[10px] font-extrabold text-[#C8961A] tracking-wider uppercase bg-[#C8961A]/5 px-2 py-0.5 rounded-md">{selectedVariants[type]}</span>
                             )}
                           </div>
                           <div className="flex flex-wrap gap-2">
@@ -1003,10 +1006,10 @@ export default function HomePage() {
                                 <button
                                   key={`${type}-${opt.id || opt.value || idx}`}
                                   onClick={() => setSelectedVariants(prev => ({ ...prev, [type]: opt.value }))}
-                                  className={`relative flex items-center justify-center transition-all ${
+                                  className={`relative flex items-center justify-center transition-all cursor-pointer ${
                                     isColor 
-                                      ? `w-10 h-10 rounded-full border-2 ${isSelected ? 'border-[#FF4F5A] scale-110 shadow-lg' : 'border-slate-100 hover:border-slate-300'}`
-                                      : `px-4 py-2 rounded-xl border-2 text-[10px] font-black uppercase tracking-wider ${isSelected ? 'bg-gradient-to-r from-[#7D2AE8] to-[#FF4F5A] text-white border-transparent shadow-[#8B3DFF]/20 scale-105' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300'}`
+                                      ? `w-9 h-9 rounded-full border-2 ${isSelected ? 'border-[#C8961A] scale-105 shadow-md shadow-[#C8961A]/15' : 'border-slate-200/70 hover:border-slate-450 bg-white'}`
+                                      : `px-3.5 py-2 rounded-xl border text-[10px] font-bold uppercase tracking-wider ${isSelected ? 'bg-slate-900 border-slate-900 text-white font-black shadow-sm' : 'bg-white text-slate-650 border-slate-200 hover:border-slate-300'}`
                                   }`}
                                 >
                                   {isColor ? (
@@ -1019,8 +1022,8 @@ export default function HomePage() {
                                     opt.value
                                   )}
                                   {isSelected && isColor && (
-                                    <div className="absolute -top-1 -right-1 bg-[#FF4F5A] text-white rounded-full p-0.5 shadow-sm">
-                                      <CheckCircle2 size={10} />
+                                    <div className="absolute -top-1 -right-1 bg-[#C8961A] text-white rounded-full p-0.5 shadow-md">
+                                      <CheckCircle2 size={9} className="stroke-[3]" fill="currentColor" />
                                     </div>
                                   )}
                                 </button>
@@ -1032,51 +1035,55 @@ export default function HomePage() {
                     </div>
                   )}
 
-                  {/* Sourcing Quantity & Customization */}
-                  <div className="space-y-6 mb-8 pt-4 border-t border-slate-50">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Order Quantity Units</label>
-                        <div className="flex items-center bg-slate-50 rounded-xl border border-slate-100 p-1">
+                  {/* Order quantity & type dashboard */}
+                  <div className="space-y-4 mb-6 pt-4 border-t border-slate-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Order Quantity</label>
+                        <div className="flex items-center bg-slate-50 rounded-xl border border-slate-200 p-1">
                           <button 
                             type="button"
                             onClick={() => setInquiryUnits(Math.max(1, inquiryUnits - 1))}
-                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#FF4F5A] transition-all"
+                            className="w-8 h-8 flex items-center justify-center text-slate-505 hover:text-[#C8102E] transition-all bg-white border border-slate-100 rounded-lg hover:shadow-sm"
                           >
-                            <Minus size={14} />
+                            <Minus size={11} className="stroke-[3]" />
                           </button>
                           <input 
                             type="number" 
                             min="1"
                             value={inquiryUnits}
                             onChange={(e) => setInquiryUnits(parseInt(e.target.value) || 1)}
-                            className="bg-transparent border-none text-center text-sm font-black w-full outline-none"
+                            className="bg-transparent border-none text-center text-sm font-black w-full outline-none text-slate-900"
                           />
                           <button 
                             type="button"
                             onClick={() => setInquiryUnits(inquiryUnits + 1)}
-                            className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#FF4F5A] transition-all"
+                            className="w-8 h-8 flex items-center justify-center text-slate-505 hover:text-[#C8102E] transition-all bg-white border border-slate-100 rounded-lg hover:shadow-sm"
                           >
-                            <Plus size={14} />
+                            <Plus size={11} className="stroke-[3]" />
                           </button>
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Sourcing Type</label>
-                        <div className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[10px] font-black uppercase text-[#0E121C]">
-                          {selectedQuickViewProduct.priceType === 'wholesale' ? 'Institutional Bulk' : 'Individual Retail'}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Sourcing Level</label>
+                        <div className="w-full bg-slate-100/50 p-2.5 rounded-xl border border-slate-200/50 flex items-center gap-1.5 justify-center h-10">
+                          <span className="text-[10px] font-black uppercase text-slate-805 tracking-wide">
+                            📍 {selectedQuickViewProduct.priceType === 'wholesale' ? 'Institutional Bulk' : 'Individual Retail'}
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Custom Logo Upload & Branding Section */}
-                    <div className="bg-slate-50 border border-slate-100 rounded-3xl p-5 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <label className="text-[9px] font-black uppercase tracking-[2px] text-[#0E121C]">Custom Apparel Branding</label>
-                        <span className="text-[8.5px] font-black bg-[#C8961A]/10 text-[#C8961A] border border-[#C8961A]/20 px-2.5 py-1 rounded-full uppercase tracking-widest select-none">Setup Free</span>
+                    {/* Branding custom options */}
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5">
+                      <div className="flex items-center justify-between shadow-sm bg-white border border-slate-100 p-2 px-3 rounded-xl">
+                        <label className="text-[10px] font-black uppercase tracking-wide text-slate-800 flex items-center gap-1.5">
+                          <Scissors size={13} className="text-[#C8961A]"/> Custom Branding
+                        </label>
+                        <span className="text-[8px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full uppercase tracking-widest select-none">Config Active</span>
                       </div>
                       
-                      {/* Select Branding Type */}
+                      {/* Select type options */}
                       <div className="grid grid-cols-4 gap-2">
                         {[
                           { id: 'None', label: 'None', icon: '🚫' },
@@ -1088,10 +1095,10 @@ export default function HomePage() {
                             key={type.id}
                             type="button"
                             onClick={() => setBrandingType(type.id)}
-                            className={`flex flex-col items-center justify-center p-2 rounded-xl border text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                            className={`flex flex-col items-center justify-center p-2 rounded-xl border text-[9px] font-extrabold uppercase tracking-wide transition-all cursor-pointer ${
                               brandingType === type.id 
-                                ? 'bg-[#0E121C] border-transparent text-white shadow-md active:scale-95 shadow-[#C8961A]/20' 
-                                : 'bg-white border-slate-100 text-slate-500 hover:border-slate-200'
+                                ? 'bg-[#0E121C] border-[#0E121C] text-white shadow-md shadow-slate-900/15 scale-[1.03]' 
+                                : 'bg-white border-slate-200 text-slate-550 hover:border-slate-350'
                             }`}
                           >
                             <span className="text-sm mb-1">{type.icon}</span>
@@ -1104,16 +1111,16 @@ export default function HomePage() {
                         <motion.div 
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
-                          className="space-y-4 overflow-hidden pt-1"
+                          className="space-y-3 overflow-hidden pt-1"
                         >
-                          {/* Sizing & Position Option */}
+                          {/* Sizing & Location select drop down */}
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1">
-                              <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Position</label>
+                              <label className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Position Path</label>
                               <select 
                                 value={brandingPosition}
                                 onChange={(e) => setBrandingPosition(e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#C8961A]/30 transition-all"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#C8961A]/50 transition-all cursor-pointer h-9 shadow-inner-sm"
                               >
                                 <option>Left Chest</option>
                                 <option>Right Chest</option>
@@ -1123,19 +1130,19 @@ export default function HomePage() {
                               </select>
                             </div>
                             <div className="space-y-1">
-                              <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Mockup Area</label>
-                              <div className="w-full bg-white border border-slate-100 text-slate-400 rounded-xl px-3 py-2 text-[10px] font-bold uppercase select-none flex items-center gap-1.5 h-9">
+                              <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Preview Hub</label>
+                              <div className="w-full bg-white border border-slate-150 text-slate-505 rounded-xl px-3 py-2 text-[10px] font-black uppercase select-none flex items-center justify-center h-9">
                                 <span>📍 {brandingPosition}</span>
                               </div>
                             </div>
                           </div>
 
-                          {/* Logo Upload Box */}
+                          {/* Image Box uploading area */}
                           <div className="space-y-1.5">
-                            <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Logo Attachment File</label>
+                            <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Upload Corporate Logo</label>
                             
                             {!customLogoUrl ? (
-                              <label className="border-2 border-dashed border-slate-200 hover:border-[#C8961A]/40 bg-white rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50/50 group">
+                              <label className="border-2 border-dashed border-slate-200 hover:border-[#C8961A] bg-white rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50 group">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -1154,19 +1161,19 @@ export default function HomePage() {
                                     }
                                   }}
                                 />
-                                <ImageIcon size={22} className="text-slate-300 group-hover:text-[#C8961A] transition-colors mb-1.5" />
-                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Logo File</span>
-                                <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">PNG, JPG, SVG up to 5MB</span>
+                                <ImageIcon size={18} className="text-slate-400 group-hover:text-[#C8961A] transition-colors mb-1 group-hover:scale-110 duration-200" />
+                                <span className="text-[9px] font-extrabold text-slate-600 uppercase tracking-widest">Select files or image</span>
+                                <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">Vector, PDF, PNG or JPG</span>
                               </label>
                             ) : (
-                              <div className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 p-0.5 overflow-hidden flex items-center justify-center shrink-0">
-                                    <img src={customLogoUrl} className="max-w-full max-h-full object-contain" alt="Selected company logo" />
+                              <div className="flex items-center justify-between p-2.5 bg-white border border-slate-150 rounded-xl">
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-150 p-0.5 overflow-hidden flex items-center justify-center shrink-0">
+                                    <img src={customLogoUrl} className="max-w-full max-h-full object-contain" alt="Attached vector mockup logo" />
                                   </div>
                                   <div className="min-w-0">
-                                    <p className="text-[10px] font-black text-slate-700 truncate max-w-[140px] uppercase">{customLogoName}</p>
-                                    <p className="text-[8px] font-bold text-green-500 uppercase tracking-widest">Ready to Mockup</p>
+                                    <p className="text-[9px] font-black text-slate-800 truncate max-w-[120px] uppercase">{customLogoName}</p>
+                                    <p className="text-[8px] font-semibold text-emerald-600 uppercase tracking-widest">Mockup Attached</p>
                                   </div>
                                 </div>
                                 <button
@@ -1175,8 +1182,8 @@ export default function HomePage() {
                                     setCustomLogoUrl('');
                                     setCustomLogoName('');
                                   }}
-                                  className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                                  title="Clear Image"
+                                  className="p-1.5 text-slate-400 hover:text-[#C8102E] hover:bg-red-50 rounded-lg transition-all"
+                                  title="Clear File"
                                 >
                                   <Trash2 size={13} />
                                 </button>
@@ -1188,61 +1195,56 @@ export default function HomePage() {
                     </div>
 
                     {selectedQuickViewProduct.priceType === 'wholesale' && (
-                      <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 ml-1">Branding & Customization Details</label>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-slate-450">Customization Specifications Guidance</label>
                         <textarea 
-                          placeholder="Logo embroidery, Screen printing, Custom sizing, Specific fabric weight requirements..."
+                          placeholder="Provide custom labels, pocket count, specific yarn grade levels, fitting adjustments, or color specifications..."
                           value={inquiryCustomization}
                           onChange={(e) => setInquiryCustomization(e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-medium placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#8B3DFF]/30 transition-all h-24 resize-none"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C8961A] transition-all h-20 resize-none shadow-inner-sm"
                         />
                       </div>
                     )}
                   </div>
 
-                  {/* Accordion Group */}
-                  <div className="space-y-3 mb-4">
-                    {/* Description & Tags Accordion */}
-                    <details open className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
-                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0E121C] bg-slate-50 hover:bg-slate-100 transition-colors">
-                        Product Details
+                  {/* Accordion List Segment */}
+                  <div className="space-y-2.5 mb-2">
+                    <details open className="group border border-slate-150 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
+                      <summary className="flex items-center justify-between p-3.5 px-4 cursor-pointer font-black text-xs uppercase tracking-wider text-slate-800 bg-slate-50 hover:bg-slate-100/50 transition-colors">
+                        Product Blueprint Details
                         <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
-                          <ChevronDown size={18} />
+                          <ChevronDown size={14} className="stroke-[2.5]" />
                         </span>
                       </summary>
-                      <div className="p-5 text-slate-500 text-sm leading-relaxed border-t border-slate-50 bg-white">
-                        <div className="mb-8 font-medium italic text-slate-600 border-l-2 border-[#00C4CC] pl-4">{selectedQuickViewProduct.description || "School Uniforms quality custom engineered textile specifically curated for our institutions with durability and style in mind."}</div>
+                      <div className="p-4 text-slate-600 text-xs leading-relaxed border-t border-slate-100 bg-white space-y-3">
+                        <div className="font-semibold italic text-slate-700 border-l-3 border-[#C8961A] pl-3">
+                          {selectedQuickViewProduct.description || "Finely crafted institutional and school-grade apparel optimized for rugged multi-season use."}
+                        </div>
                         
-                        <div className="grid grid-cols-2 gap-6 mb-8">
-                          <div className="space-y-3">
-                            <h4 className="text-[10px] font-black uppercase text-[#FF4F5A] tracking-widest">Fabric Specs</h4>
-                            <div className="space-y-2">
-                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
-                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> Anti-Pilling Tech
-                              </div>
-                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
-                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> Color-Lock Weave
-                              </div>
+                        <div className="grid grid-cols-2 gap-3 pt-1">
+                          <div className="space-y-1">
+                            <h4 className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider">Reinforced Quality</h4>
+                            <div className="space-y-0.5 text-slate-500 font-bold">
+                              <p>• Anti-pilling combed fibers</p>
+                              <p>• Heavy cotton poly blends</p>
+                              <p>• Reinforced seam points</p>
                             </div>
                           </div>
-                          <div className="space-y-3">
-                            <h4 className="text-[10px] font-black uppercase text-[#FF4F5A] tracking-widest">Durability</h4>
-                            <div className="space-y-2">
-                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
-                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> 100+ Wash Cycle
-                              </div>
-                              <div className="text-[11px] font-bold text-[#0E121C] flex items-center gap-2">
-                                 <div className="w-1 h-1 rounded-full bg-slate-200"></div> Institutional Grade
-                              </div>
+                          <div className="space-y-1">
+                            <h4 className="text-[9px] font-black uppercase text-[#C8102E] tracking-wider">Care Standards</h4>
+                            <div className="space-y-0.5 text-slate-500 font-bold">
+                              <p>• Machine wash up to 60°C</p>
+                              <p>• Locked fabric colors</p>
+                              <p>• Tear-resistant thread</p>
                             </div>
                           </div>
                         </div>
                         
-                        {/* Tags */}
+                        {/* Tags list */}
                         {selectedQuickViewProduct.tags && selectedQuickViewProduct.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-50">
+                          <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-slate-100">
                             {selectedQuickViewProduct.tags.map((tag: string, i: number) => (
-                              <span key={`${tag}-${i}`} className="px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
+                              <span key={`${tag}-${i}`} className="px-2 py-0.5 bg-slate-50 text-slate-400 text-[8px] font-black uppercase tracking-widest rounded border border-slate-100">
                                 #{tag}
                               </span>
                             ))}
@@ -1251,118 +1253,127 @@ export default function HomePage() {
                       </div>
                     </details>
                     
-                    {/* Features & Lead Time Accordion */}
-                    <details className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
-                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0E121C] bg-slate-50 hover:bg-slate-100 transition-colors">
-                        Features & Lead Time
+                    {/* Shipping parameters */}
+                    <details className="group border border-slate-150 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
+                      <summary className="flex items-center justify-between p-3.5 px-4 cursor-pointer font-black text-xs uppercase tracking-wider text-slate-800 bg-slate-50 hover:bg-slate-100/50 transition-colors">
+                        Fulfillment & Lead Time
                         <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
-                          <ChevronDown size={18} />
+                          <ChevronDown size={14} className="stroke-[2.5]" />
                         </span>
                       </summary>
-                      <div className="p-5 bg-white border-t border-slate-50">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
-                            <div className="text-[#00C4CC] shrink-0"><ShieldCheck size={20} /></div>
+                      <div className="p-4 bg-white border-t border-slate-100">
+                        <div className="grid grid-cols-2 gap-3.5">
+                          <div className="flex items-center gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <div className="text-[#C8961A] shrink-0"><ShieldCheck size={16} /></div>
                             <div>
-                              <p className="text-[10px] font-black uppercase text-slate-400">Quality</p>
-                              <p className="text-[11px] font-bold text-slate-800">Double Stitched</p>
+                              <p className="text-[9px] font-black uppercase text-slate-400">Quality</p>
+                              <p className="text-[10px] font-black text-slate-800">Double Stitched</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-colors hover:bg-slate-100/50">
-                            <div className="text-[#00C4CC] shrink-0"><Calendar size={20} /></div>
+                          <div className="flex items-center gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <div className="text-[#C2102E] shrink-0"><Calendar size={16} /></div>
                             <div>
-                              <p className="text-[10px] font-black uppercase text-slate-400">Lead Time</p>
-                              <p className="text-[11px] font-bold text-slate-800">7-14 Work Days</p>
+                              <p className="text-[9px] font-black uppercase text-slate-400">Logistics</p>
+                              <p className="text-[10px] font-black text-slate-800">7-14 Days Dispatch</p>
                             </div>
                           </div>
                         </div>
                       </div>
                     </details>
 
-                    {/* Customer Reviews Accordion */}
-                    <details className="group border border-slate-100 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
-                      <summary className="flex items-center justify-between p-5 cursor-pointer font-black text-xs uppercase tracking-widest text-[#0E121C] bg-slate-50 hover:bg-slate-100 transition-colors">
-                        Customer Reviews ({productReviews.length})
+                    {/* Customer reviews stream */}
+                    <details className="group border border-slate-150 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden bg-white shadow-sm transition-all duration-300">
+                      <summary className="flex items-center justify-between p-3.5 px-4 cursor-pointer font-black text-xs uppercase tracking-wider text-slate-800 bg-slate-50 hover:bg-slate-100/50 transition-colors">
+                        Purchaser Reviews ({productReviews.length})
                         <span className="transition-transform duration-300 group-open:rotate-180 text-slate-400">
-                          <ChevronDown size={18} />
+                          <ChevronDown size={14} className="stroke-[2.5]" />
                         </span>
                       </summary>
-                      <div className="p-5 bg-white border-t border-slate-50">
+                      <div className="p-4 bg-white border-t border-slate-100 space-y-4">
                         {productReviews.length > 0 ? (
-                          <div className="space-y-6 mb-8">
+                          <div className="space-y-3">
                             {productReviews.map((review) => (
-                              <div key={review.id} className="pb-6 border-b border-slate-50 last:border-0 last:pb-0">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-[10px] font-black uppercase text-[#0E121C] tracking-wider">{review.userName}</span>
-                                  <div className="flex text-amber-400">
+                              <div key={review.id} className="pb-3 border-b border-slate-100 last:border-0 last:pb-0">
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="w-5 h-5 rounded-full bg-slate-100 text-[#C8961A] flex items-center justify-center font-black text-[8px] uppercase border border-slate-200">
+                                      {review.userName.charAt(0)}
+                                    </div>
+                                    <span className="text-[8px] font-black uppercase text-slate-800 tracking-wider font-sans">{review.userName}</span>
+                                  </div>
+                                  <div className="flex text-amber-400 gap-0.5">
                                     {[...Array(5)].map((_, i) => (
-                                      <Star key={i} size={10} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
+                                      <Star key={i} size={8} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-amber-400' : 'text-slate-200'} />
                                     ))}
                                   </div>
                                 </div>
-                                <p className="text-xs text-slate-500 leading-relaxed italic">"{review.comment}"</p>
-                                <p className="text-[8px] text-slate-300 mt-2 uppercase font-bold">Verified Institution Purchaser</p>
+                                <p className="text-xs text-slate-600 leading-relaxed font-semibold italic">"{review.comment}"</p>
+                                <p className="text-[8px] text-emerald-600 mt-1 uppercase font-black tracking-widest flex items-center gap-1">
+                                  <span>✓</span> Verified Corporate Buyer
+                                </p>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <div className="text-center py-6 border-b border-slate-50 mb-6">
-                            <p className="text-xs text-slate-400 font-medium">Be the first to review this product.</p>
+                          <div className="text-center py-3 text-slate-400 text-xs font-semibold uppercase tracking-wider bg-slate-50 rounded-xl">
+                            Be the first to review this selection.
                           </div>
                         )}
 
-                        {/* Review Form */}
-                        <div className="bg-slate-50 rounded-2xl p-4 lg:p-6">
-                          <h4 className="text-[10px] font-black uppercase tracking-[2px] text-[#0E121C] mb-4">Submit a Review</h4>
+                        {/* Leave review submission card */}
+                        <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                          <h4 className="text-[9px] font-black uppercase tracking-[2px] text-slate-800 mb-2 flex items-center gap-1.5">
+                            <Star size={10} className="text-[#C8961A]" /> Leave active review
+                          </h4>
                           {reviewSubmitted ? (
                             <motion.div 
-                              initial={{ opacity: 0, scale: 0.9 }}
+                              initial={{ opacity: 0, scale: 0.95 }}
                               animate={{ opacity: 1, scale: 1 }}
-                              className="bg-green-50 text-green-700 p-4 rounded-xl border border-green-100 text-center"
+                              className="bg-emerald-50 text-emerald-800 p-3 rounded-lg border border-emerald-150 text-center"
                             >
-                              <div className="flex justify-center mb-2"><CheckCircle2 size={24} /></div>
-                              <p className="text-xs font-bold uppercase tracking-wider">Thank you!</p>
-                              <p className="text-[10px]">Your review has been submitted and is pending moderation.</p>
+                              <div className="flex justify-center mb-1"><CheckCircle2 size={16} className="text-emerald-500" /></div>
+                              <p className="text-[9px] font-black uppercase tracking-wider">Success!</p>
+                              <p className="text-[8px] font-semibold">Your review has been successfully submitted for moderation.</p>
                             </motion.div>
                           ) : (
-                            <form onSubmit={handleSubmitReview} className="space-y-4">
-                              <div className="flex items-center gap-3 mb-2">
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Rating:</span>
-                                <div className="flex gap-1">
+                            <form onSubmit={handleSubmitReview} className="space-y-2.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[9px] font-black text-slate-450 uppercase">Rate Score:</span>
+                                <div className="flex gap-0.5 block">
                                   {[1, 2, 3, 4, 5].map((num) => (
                                     <button
                                       key={num}
                                       type="button"
                                       onClick={() => setReviewForm(prev => ({ ...prev, rating: num }))}
-                                      className="text-amber-400 transition-transform hover:scale-110 active:scale-95"
+                                      className="text-amber-400 transition-transform hover:scale-110 active:scale-90 cursor-pointer"
                                     >
-                                      <Star size={16} fill={num <= reviewForm.rating ? 'currentColor' : 'none'} className={num <= reviewForm.rating ? 'text-amber-400' : 'text-slate-200'} />
+                                      <Star size={13} fill={num <= reviewForm.rating ? 'currentColor' : 'none'} className={num <= reviewForm.rating ? 'text-amber-400' : 'text-slate-200'} />
                                     </button>
                                   ))}
                                 </div>
                               </div>
-                              <div className="gap-4 grid grid-cols-1">
+                              <div className="gap-2 flex flex-col">
                                 <input 
                                   type="text" 
-                                  placeholder="Your Name (Optional)" 
+                                  placeholder="Purchaser Name / Institution" 
                                   value={reviewForm.userName}
                                   onChange={e => setReviewForm(prev => ({ ...prev, userName: e.target.value }))}
-                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#FF4F5A] transition-colors"
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-[#C8961A] font-semibold shadow-inner-sm"
                                 />
                                 <textarea 
-                                  placeholder="Share your experience with this product..." 
+                                  placeholder="Provide textile review comments..." 
                                   required
                                   value={reviewForm.comment}
                                   onChange={e => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-[#FF4F5A] transition-colors h-24 resize-none"
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#C8961A] font-semibold h-16 resize-none shadow-inner-sm"
                                 ></textarea>
                               </div>
                               <button 
                                 type="submit" 
                                 disabled={isSubmittingReview}
-                                className="w-full bg-[#0E121C] hover:bg-[#FF4F5A] text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg hover:shadow-[#FF4F5A]/20"
+                                className="w-full bg-slate-900 border border-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg font-black text-[9px] uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer"
                               >
-                                {isSubmittingReview ? 'Submitting...' : 'Post Review'}
+                                {isSubmittingReview ? 'Dispatching...' : 'Submit Profile Review'}
                               </button>
                             </form>
                           )}
@@ -1372,68 +1383,74 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="shrink-0 bg-white/95 backdrop-blur-xl z-20 p-4 lg:p-8 border-t border-slate-100 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.08)]">
-                  <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 max-w-full">
+                {/* Sticky Action Footer - Fully Visible & Highly Prominent */}
+                <div className="shrink-0 bg-white border-t border-slate-100 p-4 lg:p-5 shadow-[0_-15px_30px_rgba(0,0,0,0.035)] z-50">
+                  <div className="flex flex-col lg:flex-row gap-2.5 max-w-full">
                     
-                    {/* Secondary Actions (Compare, Wishlist, Share) positioned at the bottom on mobile, side-by-side on desktop */}
-                    <div className="order-2 lg:order-1 flex gap-2 lg:gap-3 w-full lg:w-auto">
+                    {/* Share, compare & wishlist row */}
+                    <div className="order-2 lg:order-1 flex gap-2 w-full lg:w-auto shrink-0">
                       <button 
                         onClick={() => toggleCompare(selectedQuickViewProduct)}
-                        className={`flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl flex items-center justify-center gap-2 lg:gap-0 border-2 transition-all duration-300 group cursor-pointer ${
+                        className={`flex-1 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center gap-1.5 lg:gap-0 border border-slate-200 transition-all cursor-pointer ${
                           compareList.find(i => i.id === selectedQuickViewProduct.id) 
-                            ? "bg-[#00C4CC]/10 border-[#00C4CC]/30 text-[#008F94]" 
-                            : "border-slate-100 text-slate-400 hover:border-[#00C4CC] hover:text-[#00C4CC] bg-slate-50/50"
+                            ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
+                            : "border-slate-200/80 text-slate-505 hover:border-[#C8961A] hover:text-[#C8961A] bg-slate-50"
                         }`}
-                        title="Compare"
+                        title="Compare Specs"
+                        type="button"
                       >
-                        <GitCompare size={17} className={compareList.find(i => i.id === selectedQuickViewProduct.id) ? "scale-110" : "group-hover:scale-110 transition-transform"} />
-                        <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">{compareList.find(i => i.id === selectedQuickViewProduct.id) ? "Linked" : "Compare"}</span>
+                        <GitCompare size={14} className={compareList.find(i => i.id === selectedQuickViewProduct.id) ? "scale-105 stroke-[2.5]" : "transition-transform"} />
+                        <span className="lg:hidden text-[9px] font-black uppercase tracking-wider">Compare</span>
                       </button>
+                      
                       <button 
                         onClick={() => toggleWishlist(selectedQuickViewProduct)}
-                        className={`flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl flex items-center justify-center gap-2 lg:gap-0 border-2 transition-all duration-300 group cursor-pointer ${
+                        className={`flex-1 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center gap-1.5 lg:gap-0 border border-slate-200 transition-all cursor-pointer ${
                           wishlist.find(i => i.id === selectedQuickViewProduct.id) 
-                            ? "bg-[#FF4F5A]/10 border-[#FF4F5A]/30 text-[#FF4F5A]" 
-                            : "border-slate-100 text-slate-400 hover:border-[#FF4F5A] hover:text-[#FF4F5A] bg-slate-50/50"
+                            ? "bg-red-50 border-red-200 text-[#C2102E]" 
+                            : "border-slate-200/80 text-slate-505 hover:border-red-400 hover:text-[#C2102E] bg-slate-50"
                         }`}
                         title="Wishlist"
+                        type="button"
                       >
-                        <Heart size={17} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-110" : "group-hover:scale-110 transition-transform"} />
-                        <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">{wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "Saved" : "Wishlist"}</span>
+                        <Heart size={14} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-105" : "transition-transform"} />
+                        <span className="lg:hidden text-[9px] font-black uppercase tracking-wider">Wishlist</span>
                       </button>
+
                       <button 
                         onClick={() => handleShareProduct(selectedQuickViewProduct)}
-                        className="flex-1 lg:w-14 h-12 lg:h-14 rounded-xl lg:rounded-2xl border-2 border-slate-100 flex items-center justify-center gap-2 lg:gap-0 text-slate-400 hover:border-[#00C4CC] hover:text-[#00C4CC] transition-all duration-300 bg-slate-50/50 group cursor-pointer"
-                        title="Share"
+                        className="flex-1 lg:w-11 lg:h-11 border border-slate-200/80 bg-slate-50 rounded-xl flex items-center justify-center gap-1.5 lg:gap-0 text-slate-550 hover:border-slate-400 hover:text-slate-850 transition-all cursor-pointer"
+                        title="Share Page"
+                        type="button"
                       >
-                        <Share2 size={17} className="group-hover:scale-110 transition-transform" />
-                        <span className="lg:hidden text-[9px] font-black uppercase tracking-widest">Share</span>
+                        <Share2 size={14} className="transition-transform" />
+                        <span className="lg:hidden text-[9px] font-black uppercase tracking-wider">Share</span>
                       </button>
                     </div>
 
-                    {/* Primary Actions (WhatsApp Inquiry / Phone Call or Add to Collection) positioned at the top on mobile */}
+                    {/* Primary Button options depending on is wholesale or not */}
                     {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
-                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-2.5 w-full lg:flex-1">
+                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-2 w-full lg:flex-1">
                         <a 
                           href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedQuickViewProduct.name}.`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[10px] sm:text-xs lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center gap-2.5 shadow-xl hover:shadow-[#25D366]/10 active:scale-[0.98]"
+                          className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[#25D366]/10 active:scale-[0.98]"
                         >
-                          <MessageSquare size={18} className="shrink-0" />
-                          <span className="truncate">Enquire on WhatsApp</span>
+                          <MessageSquare size={14} className="shrink-0" />
+                          <span className="truncate">WhatsApp Inquiry</span>
                         </a>
                         <a 
                           href="tel:+254792021795"
-                          className="flex-1 bg-[#FF4F5A] hover:bg-[#E03B46] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[10px] sm:text-xs lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center gap-2.5 shadow-xl hover:shadow-[#FF4F5A]/10 active:scale-[0.98]"
+                          className="flex-1 bg-slate-800 hover:bg-slate-900 border border-slate-800 hover:border-slate-900 text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
                         >
-                          <Phone size={18} className="shrink-0" />
-                          <span>Call Now</span>
+                          <Phone size={14} className="shrink-0" />
+                          <span>Call Sales</span>
                         </a>
                       </div>
                     ) : (
-                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-3 w-full lg:flex-1">
-                        {/* High-contrast Add to Cart Button */}
+                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-2 w-full lg:flex-1">
+                        {/* High-contrast Add to Selection Cart */}
                         <button 
                           onClick={() => {
                             const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
@@ -1459,13 +1476,14 @@ export default function HomePage() {
                             setSelectedQuickViewProduct(null);
                             setIsCartOpen(true);
                           }}
-                          className="relative overflow-hidden w-full sm:w-1/2 bg-[#0E121C] hover:bg-slate-800 text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] cursor-pointer group"
+                          className="flex-1 bg-[#0E121C] hover:bg-slate-800 border border-[#0E121C] text-white h-11 lg:h-11 rounded-xl font-extrabold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] cursor-pointer"
+                          type="button"
                         >
-                          <ShoppingBag size={17} className="group-hover:scale-110 transition-transform text-[#00C4CC]" />
+                          <ShoppingBag size={14} className="text-[#C8961A] stroke-[2.5]" />
                           <span>Add to Cart 🛒</span>
                         </button>
 
-                        {/* Premium Buy Now & Instant Checkout Button */}
+                        {/* Premium Buy Now & Instant Checkout Form */}
                         <button 
                           onClick={() => {
                             const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
@@ -1491,13 +1509,14 @@ export default function HomePage() {
                             setSelectedQuickViewProduct(null);
                             navigate('/checkout');
                           }}
-                          className="relative overflow-hidden w-full sm:w-1/2 bg-gradient-to-r from-[#C2102E] via-[#7D2AE8] to-[#FF4F5A] text-white h-12 lg:h-14 rounded-xl lg:rounded-2xl font-black text-[11px] lg:text-[13px] uppercase tracking-[1.5px] lg:tracking-[2px] transition-all flex items-center justify-center shadow-xl hover:shadow-[#7D2AE8]/20 active:scale-[0.98] group cursor-pointer"
+                          className="relative overflow-hidden flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center shadow-md active:scale-[0.98] group cursor-pointer"
+                          type="button"
                         >
-                          {/* Shimmer Sheen effect */}
-                          <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-[1200ms] ease-in-out"></div>
-                          <div className="relative flex items-center justify-center gap-2 px-1">
+                          {/* Gentle active sweep effect */}
+                          <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-[1250ms] ease-in-out"></div>
+                          <div className="relative flex items-center justify-center gap-2">
                             <span>Buy Now ⚡</span>
-                            <span className="bg-white/15 text-white text-[9px] px-2 py-0.5 rounded-lg border border-white/10 font-mono tracking-tight shrink-0">
+                            <span className="bg-white/15 text-white text-[9px] px-1.5 py-0.5 rounded border border-white/10 font-mono tracking-tight shrink-0">
                               Ksh {(( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
                                 const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
                                 return sum + (variant?.price || 0);

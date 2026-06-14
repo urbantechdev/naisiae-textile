@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/merchant-feed.xml", "destination": "/api/merchant-feed" },
+    { "source": "/google-merchant-feed.xml", "destination": "/api/google-merchant" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

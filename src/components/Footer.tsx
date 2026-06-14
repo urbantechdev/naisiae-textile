@@ -110,12 +110,22 @@ export function Footer() {
             />
           </a>
         </div>
-        <div className="hidden md:flex flex-wrap justify-center gap-x-6 gap-y-4 order-1 md:order-2">
-          <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-          <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
-          <Link to="/shipping" className="hover:text-white transition-colors">Shipping</Link>
-          <Link to="/returns" className="hover:text-white transition-colors">Returns</Link>
-          <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+        <div className="flex flex-col items-center md:items-end gap-3 order-1 md:order-2">
+          {/* Secure payment options visual row for Google Merchant Center crawler */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 md:gap-2 mb-1">
+            <span className="text-[8px] font-black text-white/30 tracking-[1.5px] uppercase mr-1 hidden sm:inline">Accepted Payments:</span>
+            <span className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[8px] font-mono border border-white/5 font-extrabold shadow-sm select-none">M-PESA</span>
+            <span className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[8px] font-mono border border-white/5 font-extrabold shadow-sm select-none">VISA</span>
+            <span className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[8px] font-mono border border-white/5 font-extrabold shadow-sm select-none">MASTERCARD</span>
+            <span className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[8px] font-mono border border-white/5 font-extrabold shadow-sm select-none">EFT/BANK</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2">
+            <Link to="/privacy" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Privacy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Terms</Link>
+            <Link to="/shipping" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Shipping</Link>
+            <Link to="/returns" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Returns</Link>
+            <Link to="/contact" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Contact</Link>
+          </div>
         </div>
       </div>
 

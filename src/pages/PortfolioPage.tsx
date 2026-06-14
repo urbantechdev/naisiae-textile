@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, ShoppingBag, Heart, Menu, ChevronRight, X } from 'lucide-react';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { LazyImage } from '../components/LazyImage';
 
 import { useCart } from '../context/CartContext';
 
@@ -104,7 +105,12 @@ export default function PortfolioPage() {
                     onClick={() => setSelectedProject(project)}
                 >
                     <div className="aspect-[3/4] rounded-[3.5rem] overflow-hidden mb-10 relative">
-                        <img src={project.image} alt={project.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.05]" />
+                        <LazyImage 
+                            src={project.image} 
+                            alt={project.title} 
+                            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.05]" 
+                            placeholderColor="bg-slate-200"
+                        />
                         <div className="absolute inset-0 bg-[#0A1628]/10 group-hover:bg-transparent transition-colors"></div>
                         <div className="absolute top-8 left-8">
                             <span className="px-4 py-1.5 bg-white text-[#0A1628] text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg">
@@ -166,10 +172,11 @@ export default function PortfolioPage() {
               </button>
 
               <div className="w-full md:w-1/2 h-[300px] md:h-auto bg-slate-100 flex items-center justify-center overflow-hidden">
-                <img 
+                <LazyImage 
                   src={selectedProject.image} 
-                  className="w-full h-full object-cover" 
+                  className="object-cover" 
                   alt={selectedProject.title} 
+                  placeholderColor="bg-slate-200"
                 />
               </div>
 

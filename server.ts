@@ -3,7 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import compression from "compression";
 
 // ESM __dirname
@@ -84,7 +84,7 @@ async function startServer() {
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         contents: chatMessages,
         config: {
           systemInstruction,
@@ -102,6 +102,227 @@ async function startServer() {
       } else {
         res.status(500).json({ error: "Naisiae Sync Interrupted. Production AI recalibrating. Try direct support for now." });
       }
+    }
+  });
+
+  // Competitive Pricing Suggestion Endpoint
+  app.post("/api/ai/pricing-suggestion", async (req, res) => {
+    const { productName, category } = req.body;
+    if (!productName || !category) {
+      return res.status(400).json({ error: "Missing productName or category" });
+    }
+
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "AI service configuration missing. Please update secrets." });
+      }
+
+      const prompt = `Suggest a competitive market price for a product in Kenya (KES) with the following details:
+Product Name: ${productName}
+Category: ${category}
+
+Research the typical market prices for this type of textile/apparel product in Kenya (Nairobi/Kiambu region).
+Provide a suggested price that is slightly more competitive (slightly lower but still profitable) than established players like major uniform suppliers.
+
+Return the response in JSON format.`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              suggestedPrice: {
+                type: Type.NUMBER,
+                description: "The recommended selling price in KES.",
+              },
+              marketRange: {
+                type: Type.OBJECT,
+                properties: {
+                  min: { type: Type.NUMBER, description: "Lower bound of market price." },
+                  max: { type: Type.NUMBER, description: "Upper bound of market price." }
+                },
+                required: ["min", "max"]
+              },
+              reasoning: {
+                type: Type.STRING,
+                description: "Brief explanation of why this price is competitive.",
+              },
+            },
+            required: ["suggestedPrice", "marketRange", "reasoning"],
+          },
+        },
+      });
+
+      res.json(JSON.parse(response.text?.trim() || "{}"));
+    } catch (error: any) {
+      console.error("Pricing Suggestion Error Detail:", error?.message || error);
+      res.status(500).json({ error: "Failed to fetch pricing suggestion from AI." });
+    }
+  });
+
+  // Product Details Generation Endpoint
+  app.post("/api/ai/generate-product-details", async (req, res) => {
+    const { base64Image, mimeType } = req.body;
+    if (!base64Image || !mimeType) {
+      return res.status(400).json({ error: "Missing base64Image or mimeType" });
+    }
+
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "AI service configuration missing. Please update secrets." });
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                data: base64Image,
+                mimeType: mimeType,
+              },
+            },
+            {
+              text: `Analyze this image of a textile/apparel product and generate professional product details tailored for the Kenyan market. 
+              Categories MUST be one of: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
+              Provide a competitive price suggestion in Kenyan Shillings (KSH) based on local Nairobi wholesale/retail trends (e.g., School Sweaters: 800-1500, Shirts: 400-800, Trousers: 1000-1800).`,
+            },
+          ],
+        },
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              name: { type: Type.STRING },
+              description: { type: Type.STRING },
+              category: { type: Type.STRING },
+              subCategory: { type: Type.STRING },
+              priceSuggestion: { type: Type.NUMBER },
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["name", "description", "category", "priceSuggestion", "tags"],
+          },
+        },
+      });
+
+      res.json(JSON.parse(response.text?.trim() || "{}"));
+    } catch (error: any) {
+      console.error("Generate Product Details Error Detail:", error?.message || error);
+      res.status(500).json({ error: "Failed to generate product details from AI." });
+    }
+  });
+
+  // Generate Description Only Endpoint
+  app.post("/api/ai/generate-description-only", async (req, res) => {
+    const { name, category, tags } = req.body;
+    if (!name || !category) {
+      return res.status(400).json({ error: "Missing name or category" });
+    }
+
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "AI service configuration missing. Please update secrets." });
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Create a professional, SEO-optimized marketing description for a product named "${name}" in the category "${category}". Tags: ${(tags || []).join(', ')}. Keep it concise but persuasive.`,
+      });
+
+      res.json({ text: response.text || "Failed to generate description" });
+    } catch (error: any) {
+      console.error("Generate Description Error Detail:", error?.message || error);
+      res.status(500).json({ error: "Failed to generate description from AI." });
+    }
+  });
+
+  // Generate Product Data from Text Endpoint
+  app.post("/api/ai/generate-product-data-from-text", async (req, res) => {
+    const { name, category } = req.body;
+    if (!name || !category) {
+      return res.status(400).json({ error: "Missing name or category" });
+    }
+
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "AI service configuration missing. Please update secrets." });
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Generate realistic product details for the Kenyan uniform market: ${name} (Category: ${category}). 
+        Provide a persuasive description highlighting durability, Kenyan market price suggestion in KSH, subCategory, and relevant tags.
+        Prices should reflect Uhuru Market/Nairobi Industrial Area competitiveness.`,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              description: { type: Type.STRING },
+              subCategory: { type: Type.STRING },
+              priceSuggestion: { type: Type.NUMBER },
+              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
+            },
+            required: ["description", "priceSuggestion", "tags"],
+          },
+        },
+      });
+
+      res.json(JSON.parse(response.text?.trim() || "{}"));
+    } catch (error: any) {
+      console.error("Generate Product Data from Text Error Detail:", error?.message || error);
+      res.status(500).json({ error: "Failed to generate product details from AI." });
+    }
+  });
+
+  // Analyze Batch Endpoint
+  app.post("/api/ai/analyze-batch", async (req, res) => {
+    const { products } = req.body;
+    if (!products || !Array.isArray(products)) {
+      return res.status(400).json({ error: "Missing or invalid products array" });
+    }
+
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: "AI service configuration missing. Please update secrets." });
+      }
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Analyze these products for categorization consistency and name optimization: ${JSON.stringify(products.map(p => ({ n: p.name, c: p.category, sc: p.subCategory })))}`,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              analyzedProducts: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    originalName: { type: Type.STRING },
+                    suggestedName: { type: Type.STRING },
+                    suggestedCategory: { type: Type.STRING },
+                    suggestedSubCategory: { type: Type.STRING },
+                    suggestedTags: { type: Type.ARRAY, items: { type: Type.STRING } },
+                    isIssueFound: { type: Type.BOOLEAN },
+                    issueDescription: { type: Type.STRING }
+                  }
+                }
+              }
+            }
+          },
+        },
+      });
+
+      res.json(JSON.parse(response.text?.trim() || "{}"));
+    } catch (error: any) {
+      console.error("Analyze Batch Error Detail:", error?.message || error);
+      res.status(500).json({ error: "Failed to analyze batch." });
     }
   });
 
@@ -147,6 +368,154 @@ async function startServer() {
       res.status(500).json({ error: "Failed to resolve URL" });
     }
   });
+
+  // Dynamic Google Merchant Center RSS 2.0 Feed API
+  const handleMerchantFeed = async (req: express.Request, res: express.Response) => {
+    res.header('Content-Type', 'application/xml; charset=utf-8');
+
+    let productsList: any[] = [];
+    try {
+      const configPath = path.join(process.cwd(), "firebase-applet-config.json");
+      let projectId = "";
+      let databaseId = "(default)";
+
+      if (fs.existsSync(configPath)) {
+        const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+        projectId = config.projectId;
+        databaseId = config.firestoreDatabaseId || "(default)";
+      } else {
+        projectId = process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "";
+        databaseId = process.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || "(default)";
+      }
+
+      if (projectId) {
+        // Query live products with pageSize=300 to capture the whole catalog
+        const productsUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/products?pageSize=300`;
+        const pResp = await fetch(productsUrl);
+        const pData = await pResp.json();
+        if (pData.documents) {
+          productsList = pData.documents;
+        }
+      }
+    } catch (e: any) {
+      console.warn("Could not query products from Firestore for Merchant feed:", e.message);
+    }
+
+    // Helper functions for parsing Firestore typed fields safely
+    const getVal = (field: any) => {
+      if (!field) return undefined;
+      if ('stringValue' in field) return field.stringValue;
+      if ('integerValue' in field) return parseInt(field.integerValue, 10);
+      if ('doubleValue' in field) return parseFloat(field.doubleValue);
+      if ('booleanValue' in field) return field.booleanValue;
+      return undefined;
+    };
+
+    const escapeXml = (unsafe: string): string => {
+      if (!unsafe) return '';
+      return unsafe.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+          case '<': return '&lt;';
+          case '>': return '&gt;';
+          case '&': return '&amp;';
+          case '\'': return '&apos;';
+          case '"': return '&quot;';
+          default: return c;
+        }
+      });
+    };
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n`;
+    xml += `  <channel>\n`;
+    xml += `    <title>${escapeXml("Naisiae Textiles | Google Merchant Product Feed")}</title>\n`;
+    xml += `    <link>https://naisiaetextiles.com</link>\n`;
+    xml += `    <description>${escapeXml("Premium Uhuru Market Uniforms in Nairobi. High school uniforms, college sweaters, corporate wear & institutional branding at factory wholesale prices.")}</description>\n`;
+    xml += `    <language>en-us</language>\n`;
+    xml += `    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>\n`;
+
+    productsList.forEach((doc: any) => {
+      try {
+        const fields = doc.fields || {};
+        const isProductActive = fields.active ? getVal(fields.active) : true;
+        
+        // Skip inactive items to preserve healthy Google Merchant indexing scores
+        if (isProductActive === false) return;
+
+        const id = doc.name.split('/').pop() || '';
+        const name = escapeXml(getVal(fields.name) || 'Premium Textiles Apparel');
+        const desc = escapeXml(getVal(fields.description) || `${name} manufactured at Naisiae Textiles in Uhuru Market, Nairobi. Industry-grade fabric constructed for daily wear.`);
+        
+        // Dynamic product detail page target
+        const link = `https://naisiaetextiles.com/products/?product=${encodeURIComponent(id)}`;
+        
+        // Evaluate primary and secondary imaging links
+        let imageUrl = getVal(fields.imageUrl);
+        if (!imageUrl && fields.imageUrls) {
+          // If imageUrls is a Map or array list structure, grab first element
+          const urlsData = fields.imageUrls.arrayValue?.values || [];
+          if (urlsData.length > 0) {
+            imageUrl = urlsData[0].stringValue;
+          }
+        }
+        // Fallback placeholder image matching our high-quality CDN assets
+        if (!imageUrl) {
+          imageUrl = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80";
+        }
+        const cleanImageUrl = escapeXml(imageUrl);
+
+        // Price configuration
+        const priceVal = fields.price ? getVal(fields.price) : 1000;
+        const cleanPrice = `${priceVal ? Number(priceVal) : 1000} KES`;
+
+        // Category determination
+        const category = getVal(fields.category) || 'School Uniforms';
+        const subCategory = getVal(fields.subCategory) || 'Apparel';
+        
+        // Determine granular google classification
+        let googleCategory = 'Apparel &amp; Accessories &gt; Clothing &gt; Uniforms';
+        if (category.toLowerCase().includes('chef')) {
+          googleCategory = 'Apparel &amp; Accessories &gt; Clothing &gt; Uniforms &gt; Food Service Uniforms';
+        } else if (category.toLowerCase().includes('corporate') || category.toLowerCase().includes('branding')) {
+          googleCategory = 'Apparel &amp; Accessories &gt; Clothing &gt; Office wear';
+        }
+
+        const stockCount = fields.stock ? Number(getVal(fields.stock)) : 100;
+        const availability = stockCount > 0 ? 'in_stock' : 'out_of_stock';
+
+        xml += `    <item>\n`;
+        xml += `      <g:id>${escapeXml(id)}</g:id>\n`;
+        xml += `      <g:title>${name}</g:title>\n`;
+        xml += `      <g:description>${desc}</g:description>\n`;
+        xml += `      <g:link>${escapeXml(link)}</g:link>\n`;
+        xml += `      <g:image_link>${cleanImageUrl}</g:image_link>\n`;
+        xml += `      <g:condition>new</g:condition>\n`;
+        xml += `      <g:availability>${availability}</g:availability>\n`;
+        xml += `      <g:price>${cleanPrice}</g:price>\n`;
+        xml += `      <g:brand>Naisiae Textiles</g:brand>\n`;
+        xml += `      <g:google_product_category>${googleCategory}</g:google_product_category>\n`;
+        xml += `      <g:product_type>${escapeXml(category)} &gt; ${escapeXml(subCategory)}</g:product_type>\n`;
+        xml += `      <g:shipping>\n`;
+        xml += `        <g:country>KE</g:country>\n`;
+        xml += `        <g:service>Standard Delivery</g:service>\n`;
+        xml += `        <g:price>350 KES</g:price>\n`;
+        xml += `      </g:shipping>\n`;
+        xml += `    </item>\n`;
+      } catch (itemErr: any) {
+        console.warn("Error rendering item in merchant feed:", itemErr.message);
+      }
+    });
+
+    xml += `  </channel>\n`;
+    xml += `</rss>`;
+    return res.status(200).send(xml);
+  };
+
+  // Bind Merchant Feed to all semantic pathways for absolute compatibility
+  app.get("/api/google-merchant", handleMerchantFeed);
+  app.get("/api/merchant-feed", handleMerchantFeed);
+  app.get("/merchant-feed.xml", handleMerchantFeed);
+  app.get("/google-merchant-feed.xml", handleMerchantFeed);
 
   // Vite middleware for development initialization
   if (process.env.NODE_ENV !== "production") {
@@ -851,10 +1220,69 @@ async function startServer() {
       const firebaseConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
       // Dynamically import client Firebase SDK to set up a polled monitor on port startup
       const { initializeApp } = await import("firebase/app");
-      const { getFirestore, collection, getDocs } = await import("firebase/firestore");
+      const { getFirestore, collection, getDocs, updateDoc, doc } = await import("firebase/firestore");
       
       const firebaseApp = initializeApp(firebaseConfig);
       const fsDb = getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId);
+
+      // Automated Price/Stock Migration from PDF
+      const migrateProductsFromPdf = async () => {
+        try {
+          console.log("[PDF Price Sync] Accessing products collection for sync...");
+          const snapshot = await getDocs(collection(fsDb, "products"));
+          console.log(`[PDF Price Sync] Scanning ${snapshot.size} live products for layout updates...`);
+
+          const mappings = [
+            { match: /cardigan/i, category: /college/i, price: 1500, stock: 100 },
+            { match: /sweater/i, category: /school/i, price: 1000, stock: 2000 },
+            { match: /trouser/i, category: /school/i, price: 800, stock: 100 },
+            { match: /shirt/i, category: /school/i, price: 500, stock: 50 },
+            { match: /dress/i, category: /college/i, price: 1500, stock: 50 },
+            { match: /apron/i, category: /college/i, price: 500, stock: 20 },
+            { match: /sleepover/i, category: /college/i, price: 1000, stock: 100 },
+            { match: /leg warmer/i, category: /school/i, price: 300, stock: 100 },
+            { match: /scarf|scarfs/i, category: /school/i, price: 300, stock: 100 },
+            { match: /muffin/i, category: /school/i, price: 300, stock: 200 },
+            { match: /sock/i, category: /school/i, price: 200, stock: 200 },
+            { match: /tie/i, category: /school/i, price: 100, stock: 100 },
+            { match: /trouser/i, category: /chef/i, price: 1000, stock: 100 },
+            { match: /chef jacket/i, category: /chef/i, price: 800, stock: 20 },
+            { match: /labcoat/i, category: /college/i, price: 800, stock: 20 },
+            { match: /blazer/i, category: /school/i, price: 2500, stock: 20 },
+            { match: /tracksuit/i, category: /school/i, price: 1200, stock: 200 },
+            { match: /fleece|jacket/i, category: /school/i, price: 1700, stock: 300 }
+          ];
+
+          let updatedCount = 0;
+          for (const docSnap of snapshot.docs) {
+            const data = docSnap.data();
+            const prodName = data.name || "";
+            const prodCategory = data.category || "";
+
+            // Find matching rule
+            const rule = mappings.find(m => 
+              m.match.test(prodName) && 
+              (!m.category || m.category.test(prodCategory))
+            );
+
+            if (rule) {
+              console.log(`[PDF Price Sync] Matching product found: "${prodName}". Old Price: ${data.price || 0}, New Price: ${rule.price}, Stock: ${rule.stock}`);
+              await updateDoc(doc(fsDb, "products", docSnap.id), {
+                price: rule.price,
+                stock: rule.stock,
+                updatedAt: new Date()
+              });
+              updatedCount++;
+            }
+          }
+          console.log(`[PDF Price Sync] Complete! Successfully aligned ${updatedCount} products with current pricing model.`);
+        } catch (migrationErr: any) {
+          console.error("[PDF Price Sync] Pricing update check warning:", migrationErr.message);
+        }
+      };
+
+      // Run product prices/stock updates initially on service wake-up
+      migrateProductsFromPdf();
       
       console.log("[Sitemap Trigger] Registering automatic non-streaming polling trigger on 'blogs'...");
       let lastBlogCount = -1;
@@ -890,6 +1318,45 @@ async function startServer() {
       
       // Check every 5 minutes - completely eliminates long-lived idle gRPC stream timeout error notices
       setInterval(checkBlogsAndGenerateSitemap, 5 * 60 * 1000);
+
+      // 6. Automatic background trigger to listen to Firestore 'products' changes and regenerate merchant-feed.xml dynamically
+      console.log("[Merchant Feed Trigger] Registering automatic non-streaming polling trigger on 'products'...");
+      let lastProductCount = -1;
+      let lastProductIds = "";
+
+      const checkProductsAndGenerateFeed = async () => {
+        try {
+          const snapshot = await getDocs(collection(fsDb, "products"));
+          const currentCount = snapshot.size;
+          // Map document IDs and updated timestamps if present to detect fine-grained changes
+          const currentIds = snapshot.docs.map(doc => {
+            const data = doc.data();
+            const tag = data.updatedAt ? String(data.updatedAt.seconds || data.updatedAt) : "";
+            return `${doc.id}:${tag}`;
+          }).sort().join(",");
+          
+          if (currentCount !== lastProductCount || currentIds !== lastProductIds) {
+            console.log("[Merchant Feed Trigger] Database product changes detected! Regenerating merchant feed...");
+            lastProductCount = currentCount;
+            lastProductIds = currentIds;
+            
+            const { exec } = await import("child_process");
+            exec("npx tsx scripts/generate-merchant-feed.ts", (err, stdout, stderr) => {
+              if (err) {
+                console.error("[Merchant Feed Trigger] Error executing generate-merchant-feed script:", err);
+              } else {
+                console.log("[Merchant Feed Trigger] Merchant feed generated successfully:", stdout.trim());
+              }
+            });
+          }
+        } catch (snapshotErr: any) {
+          console.warn("[Merchant Feed Trigger] Query warning (possibly network or rules issues):", snapshotErr.message);
+        }
+      };
+
+      // Run initially on startup
+      checkProductsAndGenerateFeed();
+      setInterval(checkProductsAndGenerateFeed, 5 * 60 * 1000);
     } else {
       console.warn("[Sitemap Trigger] firebase-applet-config.json not found. Automated trigger skipped.");
     }

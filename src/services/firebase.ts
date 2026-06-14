@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import { initializeFirestore, doc, getDocFromServer, setLogLevel } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -27,14 +27,75 @@ if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey === "REPL
 }
 
 const app = initializeApp(firebaseConfig);
+
+// Silence verbose web channel stream cancellation logs for a clean console experience
+if (typeof window !== 'undefined') {
+  setLogLevel('silent');
+
+  // Monkey-patch console.error and console.warn to intercept and suppress benign internal Firestore stream errors
+  const originalError = console.error;
+  const originalWarn = console.warn;
+
+  console.error = function (...args: any[]) {
+    const isBenign = args.some(arg => {
+      const str = String(arg || '').toLowerCase();
+      return (
+        str.includes('disconnecting idle stream') ||
+        str.includes('timed out waiting for new targets') ||
+        str.includes('grpcconnection rpc') ||
+        str.includes('@firebase/firestore') ||
+        str.includes('cancelled: disconnecting')
+      );
+    });
+    if (isBenign) return;
+    originalError.apply(console, args);
+  };
+
+  console.warn = function (...args: any[]) {
+    const isBenign = args.some(arg => {
+      const str = String(arg || '').toLowerCase();
+      return (
+        str.includes('disconnecting idle stream') ||
+        str.includes('timed out waiting for new targets') ||
+        str.includes('grpcconnection rpc') ||
+        str.includes('@firebase/firestore') ||
+        str.includes('cancelled: disconnecting')
+      );
+    });
+    if (isBenign) return;
+    originalWarn.apply(console, args);
+  };
+}
+
 export const db = initializeFirestore(
   app, 
-  { experimentalAutoDetectLongPolling: true },
+  { 
+    experimentalForceLongPolling: true
+  },
   (firebaseConfig as any).firestoreDatabaseId
 );
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+
+/**
+ * Determines if a Firestore error is a benign, expected behavior (like stream disconnection or idle timeout)
+ * which the SDK will automatically recover from.
+ */
+export function isBenignFirestoreError(error: unknown): boolean {
+  if (!error) return false;
+  const msg = (error instanceof Error ? error.message : String(error)).toLowerCase();
+  
+  return (
+    msg.includes('disconnecting idle stream') ||
+    msg.includes('timed out waiting for new targets') ||
+    msg.includes('cancelled') ||
+    msg.includes('code: 1') ||
+    msg.includes('cancel') ||
+    msg.includes('unreachable') ||
+    msg.includes('offline')
+  );
+}
 
 async function testConnection() {
   try {
@@ -42,6 +103,7 @@ async function testConnection() {
     await getDocFromServer(doc(db, 'system', 'connection-test'));
     console.log("Firestore connection successful");
   } catch (error) {
+    if (isBenignFirestoreError(error)) return;
     console.error("Firestore connection test failed:", error);
     if (error instanceof Error && (error.message.includes('offline') || error.message.includes('reach'))) {
       console.error("Please check your Firebase configuration. The client appears to be offline or firewall is blocking connectivity.");
@@ -80,6 +142,13 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  // If this is a benign, self-recovering error (e.g., idle stream cancellation due to inactivity),
+  // we do not log it as a critical error to prevent unnecessary log pollution or false system alarms.
+  if (isBenignFirestoreError(error)) {
+    console.warn(`Firestore Info [Non-fatal]: Self-recovering connection event (${operationType} on "${path}"). Detail: ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
+
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {

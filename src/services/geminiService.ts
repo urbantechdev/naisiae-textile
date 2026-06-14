@@ -1,8 +1,3 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || (import.meta as any).env.VITE_GEMINI_API_KEY || "" });
-
 export interface GeneratedProduct {
   name: string;
   description: string;
@@ -10,114 +5,6 @@ export interface GeneratedProduct {
   subCategory: string;
   priceSuggestion: number;
   tags: string[];
-}
-
-export async function generateProductDetails(base64Image: string, mimeType: string): Promise<GeneratedProduct> {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite",
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              data: base64Image,
-              mimeType: mimeType,
-            },
-          },
-          {
-            text: `Analyze this image of a textile/apparel product and generate professional product details tailored for the Kenyan market. 
-            Categories MUST be one of: 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits', 'Healthcare', 'Hospitality', 'Branding & Print'.
-            Provide a competitive price suggestion in Kenyan Shillings (KSH) based on local Nairobi wholesale/retail trends (e.g., School Sweaters: 800-1500, Shirts: 400-800, Trousers: 1000-1800).`,
-          },
-        ],
-      },
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            name: { type: Type.STRING },
-            description: { type: Type.STRING },
-            category: { type: Type.STRING },
-            subCategory: { type: Type.STRING },
-            priceSuggestion: { type: Type.NUMBER },
-            tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-          },
-          required: ["name", "description", "category", "priceSuggestion", "tags"],
-        },
-      },
-    });
-
-    const parsedData = JSON.parse(response.text || "{}");
-    return {
-      name: parsedData.name || "AI Generated Product",
-      description: parsedData.description || "",
-      category: parsedData.category || "School Uniforms",
-      subCategory: parsedData.subCategory || "",
-      priceSuggestion: parsedData.priceSuggestion || 0,
-      tags: parsedData.tags || []
-    };
-  } catch (error) {
-    console.error("Gemini AI generation error:", error);
-    throw error;
-  }
-}
-
-export async function generateDescriptionOnly(name: string, category: string, tags: string[]): Promise<string> {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite",
-      contents: `Create a professional, SEO-optimized marketing description for a product named "${name}" in the category "${category}". Tags: ${tags.join(', ')}. Keep it concise but persuasive.`,
-    });
-    
-    return response.text || "Failed to generate description";
-  } catch (error) {
-    console.error("Gemini AI description generation error:", error);
-    throw new Error("Failed to generate description with AI");
-  }
-}
-
-export async function generateProductDataFromText(name: string, category: string): Promise<GeneratedProduct> {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite",
-      contents: `Generate realistic product details for the Kenyan uniform market: ${name} (Category: ${category}). 
-      Provide a persuasive description highlighting durability, Kenyan market price suggestion in KSH, subCategory, and relevant tags.
-      Prices should reflect Uhuru Market/Nairobi Industrial Area competitiveness.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            description: { type: Type.STRING },
-            subCategory: { type: Type.STRING },
-            priceSuggestion: { type: Type.NUMBER },
-            tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-          },
-          required: ["description", "priceSuggestion", "tags"],
-        },
-      },
-    });
-    
-    const parsedData = JSON.parse(response.text || "{}");
-    return {
-      name,
-      description: parsedData.description || "",
-      category,
-      subCategory: parsedData.subCategory || "",
-      priceSuggestion: parsedData.priceSuggestion || 1200,
-      tags: parsedData.tags || [category.toLowerCase()]
-    };
-  } catch (error) {
-    return {
-      name,
-      description: `Premium ${category} solution: ${name}. Designed for durability and performance.`,
-      category,
-      subCategory: "",
-      priceSuggestion: 1200,
-      tags: [category.toLowerCase(), "custom", "premium"]
-    };
-  }
 }
 
 export interface BatchAnalysisResult {
@@ -132,39 +19,103 @@ export interface BatchAnalysisResult {
   }[];
 }
 
+export async function generateProductDetails(base64Image: string, mimeType: string): Promise<GeneratedProduct> {
+  try {
+    const response = await fetch('/api/ai/generate-product-details', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Image, mimeType })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server returned status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+      name: data.name || "AI Generated Product",
+      description: data.description || "",
+      category: data.category || "School Uniforms",
+      subCategory: data.subCategory || "",
+      priceSuggestion: data.priceSuggestion || 0,
+      tags: data.tags || []
+    };
+  } catch (error) {
+    console.error("Gemini AI generation client call failed:", error);
+    throw error;
+  }
+}
+
+export async function generateDescriptionOnly(name: string, category: string, tags: string[]): Promise<string> {
+  try {
+    const response = await fetch('/api/ai/generate-description-only', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, category, tags })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server returned status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.text || "Failed to generate description";
+  } catch (error) {
+    console.error("Gemini AI description generation client call failed:", error);
+    throw new Error("Failed to generate description with AI");
+  }
+}
+
+export async function generateProductDataFromText(name: string, category: string): Promise<GeneratedProduct> {
+  try {
+    const response = await fetch('/api/ai/generate-product-data-from-text', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, category })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server returned status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+      name,
+      description: data.description || "",
+      category,
+      subCategory: data.subCategory || "",
+      priceSuggestion: data.priceSuggestion || 1200,
+      tags: data.tags || [category.toLowerCase()]
+    };
+  } catch (error) {
+    console.error("Gemini AI product text generation client call failed:", error);
+    return {
+      name,
+      description: `Premium ${category} solution: ${name}. Designed for durability and performance.`,
+      category,
+      subCategory: "",
+      priceSuggestion: 1200,
+      tags: [category.toLowerCase(), "custom", "premium"]
+    };
+  }
+}
+
 export async function analyzeBatch(products: any[]): Promise<BatchAnalysisResult> {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite",
-      contents: `Analyze these products for categorization consistency and name optimization: ${JSON.stringify(products.map(p => ({ n: p.name, c: p.category, sc: p.subCategory })))}`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            analyzedProducts: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  originalName: { type: Type.STRING },
-                  suggestedName: { type: Type.STRING },
-                  suggestedCategory: { type: Type.STRING },
-                  suggestedSubCategory: { type: Type.STRING },
-                  suggestedTags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                  isIssueFound: { type: Type.BOOLEAN },
-                  issueDescription: { type: Type.STRING }
-                }
-              }
-            }
-          }
-        },
-      },
+    const response = await fetch('/api/ai/analyze-batch', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ products })
     });
-    
-    return JSON.parse(response.text || '{"analyzedProducts": []}');
+
+    if (!response.ok) {
+      throw new Error(`Server returned status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data as BatchAnalysisResult;
   } catch (error) {
-    console.error("Gemini batch analysis error:", error);
+    console.error("Gemini batch analysis client call failed:", error);
     throw new Error("AI analysis service unavailable");
   }
 }

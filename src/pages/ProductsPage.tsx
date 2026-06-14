@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ProductScrollNavigator } from '../components/ProductScrollNavigator';
 import { motion } from 'motion/react';
-import { ChevronRight, Package, Grid, Layout, Scissors, HelpCircle, Phone } from 'lucide-react';
+import { ChevronRight, Package, Grid, Layout, Scissors, HelpCircle, Phone, MessageSquare, FileText } from 'lucide-react';
 import { collection, onSnapshot, query, where, orderBy, limit } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../services/firebase';
+import { LazyImage } from '../components/LazyImage';
 
 import { useCart } from '../context/CartContext';
 
@@ -16,8 +18,11 @@ export default function ProductsPage() {
     wishlistCount, 
     setIsCartOpen, 
     setIsWishlistOpen,
-    setIsQuoteModalOpen
+    setIsQuoteModalOpen,
+    addToCart,
+    setQuoteProduct
   } = useCart();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [products, setProducts] = useState<any[]>([]);
@@ -137,12 +142,37 @@ export default function ProductsPage() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.1 }}
-                        className={`rounded-3xl overflow-hidden border border-slate-100 shadow-xl ${idx % 2 !== 0 ? 'mt-12' : ''}`}
+                        className={`rounded-3xl overflow-hidden border border-slate-100 shadow-xl flex flex-col justify-between ${idx % 2 !== 0 ? 'mt-12' : ''}`}
                     >
-                        <img src={p.imageUrl} alt={p.name} className="w-full aspect-[4/5] object-cover object-top" loading="lazy" referrerPolicy="no-referrer" />
-                        <div className="p-6 bg-white">
-                            <h4 className="font-bold text-xs uppercase tracking-wider mb-2">{p.name}</h4>
-                            <p className="text-[10px] font-black text-[#C8102E]">BULK PRICE ON REQUEST</p>
+                        <LazyImage src={p.imageUrl} alt={p.name} className="object-cover object-top" wrapperClassName="w-full aspect-[4/5]" placeholderColor="bg-slate-100" />
+                        <div className="p-5 bg-white flex flex-col justify-between flex-grow">
+                            <div>
+                                <h4 className="font-bold text-xs uppercase tracking-wider mb-1 line-clamp-1">{p.name}</h4>
+                                <p className="text-[10px] font-black text-[#C8102E] uppercase tracking-wider mb-3">BULK PRICE ON REQUEST</p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setQuoteProduct(p);
+                                        setIsQuoteModalOpen(true);
+                                    }}
+                                    className="flex-1 bg-[#0A1628] hover:bg-[#C8102E] text-white py-2 px-3 rounded-xl font-extrabold text-[9px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                                    title="Submit wholesale quote request"
+                                >
+                                    <FileText size={11} /> Quote ✉️
+                                </button>
+                                <a
+                                    href={`https://wa.me/254792021795?text=${encodeURIComponent(`Hello Naisiae Textiles, I am interested in ordering a bulk custom volume of "${p.name}". Please let me know the pricing and options.`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-3 rounded-xl font-extrabold text-[9px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                                    title="Direct WhatsApp Inquiry"
+                                >
+                                    <MessageSquare size={11} /> Chat 💬
+                                </a>
+                            </div>
                         </div>
                     </motion.div>
                 ))}
@@ -170,11 +200,41 @@ export default function ProductsPage() {
                         className="group text-left"
                     >
                         <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 relative">
-                             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4]" loading="lazy" referrerPolicy="no-referrer" />
-                             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                             <LazyImage src={p.imageUrl} alt={p.name} className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 bg-[#FDFAF4]" placeholderColor="bg-[#FDFAF4]/20" />
+                             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-20"></div>
                         </div>
-                        <h3 className="text-2xl font-display uppercase tracking-widest mb-2">{p.name}</h3>
-                        <p className="text-white/40 text-[10px] font-black uppercase tracking-[3px]">{p.category}</p>
+                        <h3 className="text-2xl font-display uppercase tracking-widest mb-1">{p.name}</h3>
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="text-white/40 text-[10px] font-black uppercase tracking-[3px]">{p.category}</p>
+                          <span className="text-[16px] font-black text-[#C8961A]">{p.price?.toLocaleString()}/-</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); addToCart(p); }}
+                            className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-2.5 rounded-xl font-extrabold text-[9.5px] uppercase tracking-wide transition-all text-center shadow-sm"
+                            title="Add unit to shopping cart"
+                          >
+                            Add 🛒
+                          </button>
+                          <button 
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              const cartItem = {
+                                ...p,
+                                selectedVariants: p.selectedVariants || {},
+                                quantity: 1,
+                                price: p.price,
+                                priceType: p.priceType || 'fixed'
+                              };
+                              addToCart(cartItem); 
+                              navigate('/checkout');
+                            }}
+                            className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] text-white py-2.5 rounded-xl font-extrabold text-[9.5px] uppercase tracking-wide transition-all text-center shadow-md hover:opacity-95"
+                            title="Secure instant checkout"
+                          >
+                            Buy Now ⚡
+                          </button>
+                        </div>
                     </motion.div>
                 ))}
              </div>
@@ -194,13 +254,14 @@ export default function ProductsPage() {
         <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row gap-24 items-center">
             <div className="lg:w-1/2 relative">
                 <div className="relative">
-                    <img 
-                        src="https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80" 
-                        alt="Customization" 
-                        className="rounded-[4rem] w-full aspect-[4/5] object-cover shadow-2xl" 
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                    />
+                    <div className="rounded-[4rem] overflow-hidden shadow-2xl w-full aspect-[4/5]">
+                        <LazyImage 
+                            src="https://images.unsplash.com/photo-1524333865985-64906560938f?auto=format&fit=crop&q=80" 
+                            alt="Customization" 
+                            className="object-cover" 
+                            placeholderColor="bg-slate-100"
+                        />
+                    </div>
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#C8102E] rounded-full blur-[80px] opacity-20 -z-10"></div>
                 </div>
             </div>

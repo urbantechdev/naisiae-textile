@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
@@ -6,7 +6,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
 
 export function QuoteModal() {
-  const { isQuoteModalOpen, setIsQuoteModalOpen } = useCart();
+  const { isQuoteModalOpen, setIsQuoteModalOpen, quoteProduct, setQuoteProduct } = useCart();
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [quoteForm, setQuoteForm] = useState({ 
     name: '', 
@@ -18,6 +18,31 @@ export function QuoteModal() {
     customLogoName: ''
   });
 
+  const handleClose = useCallback(() => {
+    setIsQuoteModalOpen(false);
+    setQuoteProduct(null);
+  }, [setIsQuoteModalOpen, setQuoteProduct]);
+
+  useEffect(() => {
+    if (isQuoteModalOpen) {
+      if (quoteProduct) {
+        setQuoteForm(prev => ({
+          ...prev,
+          service: quoteProduct.category === 'Textiles' || quoteProduct.category === 'Corporate Workwear' 
+            ? 'Corporate Branding' 
+            : 'School Uniforms',
+          details: `Inquiry regarding bulk/wholesale order of:\n- Product: ${quoteProduct.name}\n- Category: ${quoteProduct.category || 'General'}\n- Volume required: 100 units\n\nPlease supply details on fabric choices, customization, price brackets, and lead times.`
+        }));
+      } else {
+        setQuoteForm(prev => ({
+          ...prev,
+          service: 'School Uniforms',
+          details: ''
+        }));
+      }
+    }
+  }, [isQuoteModalOpen, quoteProduct]);
+
   return (
     <AnimatePresence>
       {isQuoteModalOpen && (
@@ -26,7 +51,7 @@ export function QuoteModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setIsQuoteModalOpen(false)}
+          onClick={handleClose}
         >
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
@@ -40,7 +65,7 @@ export function QuoteModal() {
                 <h2 className="font-display text-3xl text-[#0A1628] leading-none mb-1">Get Custom Quote</h2>
                 <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">Expert branding & uniform consultations</p>
               </div>
-              <button onClick={() => setIsQuoteModalOpen(false)} className="text-slate-400 p-2 hover:text-[#C8102E] transition-colors"><X size={20} /></button>
+              <button type="button" onClick={handleClose} className="text-slate-400 p-2 hover:text-[#C8102E] transition-colors"><X size={20} /></button>
             </div>
 
             <form 
@@ -62,7 +87,7 @@ export function QuoteModal() {
                   setOrderSuccess(true);
                   setTimeout(() => { 
                     setOrderSuccess(false); 
-                    setIsQuoteModalOpen(false);
+                    handleClose();
                     setQuoteForm({ 
                       name: '', 
                       email: '', 

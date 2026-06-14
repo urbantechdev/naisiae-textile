@@ -362,8 +362,8 @@ export function Hero({
               {/* Dynamic decorative visual glow corner inside */}
               <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#C8961A]/10 rounded-full blur-2xl pointer-events-none transition-opacity duration-700 group-hover/spotlight:opacity-100"></div>
               
-              {/* High-end Neon Glow accent bar at the right edge */}
-              <div className="absolute top-0 right-0 bottom-0 w-[4px] bg-gradient-to-b from-[#C8102E] via-[#E94C36] to-[#C8961A] opacity-60 group-hover/spotlight:opacity-100 transition-opacity duration-500 rounded-r-[2.5rem] shadow-[0_0_15px_rgba(200,150,26,0.3)] z-20"></div>
+              {/* High-end accent bar at the right edge in faded grey */}
+              <div className="absolute top-0 right-0 bottom-0 w-[4px] bg-white/10 opacity-40 group-hover/spotlight:opacity-75 transition-opacity duration-500 rounded-r-[2.5rem] z-20"></div>
               
               <div className="flex items-center justify-between mb-4 px-1 relative z-10">
                 <div className="flex flex-col">
@@ -403,8 +403,8 @@ export function Hero({
                       onClick={() => setSelectedQuickViewProduct(p)}
                       className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2.5 flex flex-col items-start text-left transition-all hover:-translate-y-1.5 duration-300 active:scale-95 group/card shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_24px_rgba(200,150,26,0.18)] relative overflow-hidden shrink-0"
                     >
-                      {/* Premium interactive right edge neon glow stripe */}
-                      <div className="absolute top-0 right-0 bottom-0 w-[3px] bg-gradient-to-b from-[#C8102E] via-[#E94C36] to-[#C8961A] opacity-40 group-hover/card:opacity-100 group-hover/card:w-[4.5px] transition-all duration-300 z-20 rounded-r-2xl shadow-[0_0_8px_rgba(200,150,26,0.2)]" />
+                      {/* Premium interactive right edge faded grey stripe */}
+                      <div className="absolute top-0 right-0 bottom-0 w-[3px] bg-white/10 opacity-30 group-hover/card:opacity-60 transition-all duration-300 z-20 rounded-r-2xl" />
                       <div className="w-full aspect-[4/5] bg-white rounded-xl overflow-hidden mb-3 relative border border-white/10 shrink-0">
                         {p.imageUrl ? (
                           <img 

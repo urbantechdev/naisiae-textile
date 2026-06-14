@@ -66,7 +66,7 @@ import {
   where,
   limit
 } from 'firebase/firestore';
-import { auth, db, storage, handleFirestoreError, OperationType } from '../services/firebase';
+import { auth, db, storage, handleFirestoreError, OperationType, isBenignFirestoreError } from '../services/firebase';
 import { signOut } from 'firebase/auth';
 import { 
   ref, 
@@ -355,7 +355,9 @@ export default function AdminDashboard() {
       setChats(currentChats);
       prevChatsRef.current = currentChats;
     }, (error) => {
-      console.error("Chat snapshot error:", error);
+      if (!isBenignFirestoreError(error)) {
+        console.error("Chat snapshot error:", error);
+      }
     });
 
     // Real-time discount rules
@@ -543,6 +545,116 @@ export default function AdminDashboard() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const exportToGoogleMerchantCSV = () => {
+    if (!products || products.length === 0) {
+      setToast({ message: 'No products available to export.', type: 'error' });
+      return;
+    }
+
+    const dataToExport = products.map(p => {
+      // Find the absolute image URL
+      let image_link = p.imageUrl || '';
+      if (image_link && !image_link.startsWith('http')) {
+        const base_url = window.location.origin.includes('localhost') || window.location.origin.includes('run.app')
+          ? window.location.origin 
+          : 'https://naisiaetextiles.com';
+        image_link = `${base_url}${image_link.startsWith('/') ? '' : '/'}${image_link}`;
+      } else if (!image_link) {
+        image_link = 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop';
+      }
+
+      // Check for age group based on names
+      const nameLower = (p.name || '').toLowerCase();
+      let age_group = 'adult';
+      if (nameLower.includes('school') || nameLower.includes('primary') || nameLower.includes('high school') || nameLower.includes('pe') || nameLower.includes('kids') || nameLower.includes('junior')) {
+        age_group = 'kids';
+      }
+
+      // Determine size / color defaults
+      let color = 'Assorted';
+      let size = 'Standard';
+      
+      if (p.variants) {
+        if (typeof p.variants === 'string') {
+          const parts = p.variants.split(',');
+          for (const part of parts) {
+            const eqIdx = part.indexOf('=');
+            if (eqIdx !== -1) {
+              const attrs = part.substring(0, eqIdx).split('|');
+              for (const attr of attrs) {
+                const kv = attr.split(':');
+                if (kv.length === 2) {
+                  const k = kv[0].trim().toLowerCase();
+                  const v = kv[1].trim();
+                  if (k === 'color' || k === 'style') color = v;
+                  if (k === 'size') size = v;
+                }
+              }
+            }
+          }
+        } else if (Array.isArray(p.variants)) {
+          const colorVar = p.variants.find(v => (v.type || '').toLowerCase() === 'color' || (v.type || '').toLowerCase() === 'style');
+          if (colorVar) color = colorVar.value || 'Assorted';
+          const sizeVar = p.variants.find(v => (v.type || '').toLowerCase() === 'size');
+          if (sizeVar) size = sizeVar.value || 'Standard';
+        }
+      }
+
+      // Determine standard google product category
+      const catLower = (p.category || '').toLowerCase();
+      let google_category = 'Apparel & Accessories > Clothing > Uniforms';
+      if (catLower.includes('corporate') || catLower.includes('workwear')) {
+        google_category = 'Apparel & Accessories > Clothing > Uniforms';
+      } else if (catLower.includes('sports') || catLower.includes('pe')) {
+        google_category = 'Apparel & Accessories > Clothing > Activewear';
+      } else if (catLower.includes('textiles') || catLower.includes('fabric')) {
+        google_category = 'Arts & Entertainment > Hobbies & Creative Arts > Crafts & Hobbies > Fibers & Textiles > Fabric';
+      }
+
+      // Ensure description is rich, compliant and contains NO forbidden marketing slogans (sale, discount, promo, buy now)
+      let googleDesc = (p.description || '').replace(/(buy now|best price|free shipping|sale|promo|discount|special offer|whatsapp us|call now|\+254)/gi, '').trim();
+      if (googleDesc.split(/\s+/).length < 5) {
+        googleDesc = `${p.name} - high-quality institutional grade bespoke apparel. This premium garment features durable combed textile fibers, reinforced stitching, and anti-pilling materials engineered specifically for daily wear and outstanding durability. Certified school and corporate wear standard.`;
+      }
+
+      const base_link = window.location.origin.includes('localhost') || window.location.origin.includes('run.app')
+        ? window.location.origin
+        : 'https://naisiaetextiles.com';
+
+      return {
+        'id': p.id || `naisiae_${p.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`,
+        'title': p.name.length > 10 ? p.name : `Naisiae ${p.name}`,
+        'description': googleDesc.substring(0, 4999),
+        'link': `${base_link}/products/?product=${encodeURIComponent(p.id || p.name)}`,
+        'image_link': image_link,
+        'availability': (p.active && p.stock !== 0) ? 'in stock' : 'out of stock',
+        'price': `${p.price || 1200} KES`,
+        'condition': 'new',
+        'brand': 'Naisiae',
+        'google_product_category': google_category,
+        'identifier_exists': 'no',
+        'mpn': `NAI-${(p.id || p.name).toUpperCase().replace(/[^A-Z0-9]/g, '-')}`,
+        'gender': 'unisex',
+        'age_group': age_group,
+        'color': color,
+        'size': size,
+        'adult': 'no'
+      };
+    });
+
+    const csv = Papa.unparse(dataToExport);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `google_shopping_feed_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setToast({ message: 'Google Shopping Feed downloaded successfully!', type: 'success' });
   };
 
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1668,6 +1780,13 @@ export default function AdminDashboard() {
                           title="Export to CSV"
                         >
                           <Download size={14} /> Export
+                        </button>
+                        <button 
+                          onClick={exportToGoogleMerchantCSV}
+                          className="px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-[#F59E0B]/30 bg-[#FFFBEB] hover:bg-[#FEF3C7] transition-all text-[#B45309]"
+                          title="Generate and export a Google Merchant Center Shopping Feed"
+                        >
+                          <Sparkles size={14} className="text-[#D97706]" /> Export Google Feed ⚡
                         </button>
                         <label className="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-[#E2E8F0] hover:bg-slate-50 transition-all text-[#64748B]" title="Import from CSV, Excel or SVG">
                           <Upload size={14} /> Import

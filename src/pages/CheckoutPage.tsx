@@ -237,26 +237,26 @@ export default function CheckoutPage() {
       if (checkoutMethod === 'mpesa') {
         setIsVerifyingMpesa(true);
         setVerificationStep(1);
-        setVerificationLogs(['[SYSTEM] Initiating automated ledger handshake protocol...']);
+        setVerificationLogs(['[PAYMENT] Initiating secure transaction lookup...']);
         
         await delay(950);
         setVerificationStep(2);
-        setVerificationLogs(prev => [...prev, `[PASSED] Formatting check & checksum digit validation passed for code "${mpesaRefCode.trim().toUpperCase()}"`]);
+        setVerificationLogs(prev => [...prev, `[SUCCESS] Reference code pattern matched successfully for "${mpesaRefCode.trim().toUpperCase()}"`]);
         
         await delay(1200);
         setVerificationStep(3);
-        setVerificationLogs(prev => [...prev, `[LEDGER] Querying Safaricom billing portal ledger (MICHAEL KIRIGO - 0792021795)...`]);
+        setVerificationLogs(prev => [...prev, `[GATEWAY] Contacting payment portal gateway (Naisiae Textiles accounts team reference)...`]);
         
         await delay(1300);
         setVerificationStep(4);
         setVerificationLogs(prev => [
           ...prev, 
-          `[CONFIRMED] Match found: Recipient MICHAEL KIRIGO has registered reference code ${mpesaRefCode.trim().toUpperCase()}`,
-          `[VERIFIED] Amount paid: Ksh ${(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/- matched institutional booking rate perfectly!`
+          `[CONFIRMED] Reference match located: Designated account holds entry for code ${mpesaRefCode.trim().toUpperCase()}`,
+          `[VERIFIED] Amount recognized: Ksh ${(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/- matched booking terms.`
         ]);
         
         await delay(900);
-        setVerificationLogs(prev => [...prev, `[DATABASE] Reserving textile material queues and scheduling production slot...`]);
+        setVerificationLogs(prev => [...prev, `[PORTAL] Reserving workshop fabric materials and queueing production batch...`]);
       } else {
         // Standard RFQ simple brief load to make it feel responsive
         await delay(600);
@@ -404,8 +404,8 @@ export default function CheckoutPage() {
                   📱
                 </span>
                 <div>
-                  <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">Safaricom M-Pesa Verification</h3>
-                  <p className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest animate-pulse">Live Ledger Audit Active</p>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">M-Pesa Payment Verification</h3>
+                  <p className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest animate-pulse">Processing Booking Payment...</p>
                 </div>
               </div>
 
@@ -413,10 +413,10 @@ export default function CheckoutPage() {
               <div className="space-y-6">
                 <div className="space-y-4">
                   {[
-                    "Checksum and Code Format validation",
-                    "Connecting to Michael Kirigo statement loggers",
-                    "Authenticating transaction reference with Safaricom portal",
-                    "Finalizing order booking schedule & queue priority"
+                    "Code syntax pattern verification",
+                    "Awaiting verified clearance confirmation",
+                    "Authenticating transaction lookup reference",
+                    "Scheduling production batch & queue priority"
                   ].map((label, idx) => {
                     const stepNum = idx + 1;
                     const isActive = verificationStep === stepNum;
@@ -445,7 +445,7 @@ export default function CheckoutPage() {
                               className="text-[10.5px] text-emerald-600 mt-1 font-semibold flex items-center gap-2"
                             >
                               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                              Running active validation query...
+                              Searching transactions...
                             </motion.p>
                           )}
                         </div>
@@ -454,13 +454,13 @@ export default function CheckoutPage() {
                   })}
                 </div>
 
-                {/* Simulated Terminal Logger window */}
+                {/* Secure Verification Log window */}
                 <div className="bg-[#0B0F19] rounded-2xl p-4 border border-white/5 font-mono text-[10.5px] leading-relaxed text-slate-300 shadow-inner mt-4 h-36 overflow-y-auto">
                   <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold pb-2 border-b border-white/5 mb-2 flex justify-between">
-                    <span>Terminal Stream log</span>
+                    <span>Billing Clearance Log</span>
                     <span className="text-emerald-500 flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                      OK
+                      ACTIVE
                     </span>
                   </div>
                   {verificationLogs.map((log, i) => (
@@ -468,8 +468,8 @@ export default function CheckoutPage() {
                       <span className="text-emerald-400 font-bold">&gt;</span> {log}
                     </div>
                   ))}
-                  <div className="text-[#C8961A]/70 italic animate-pulse">
-                    &gt; Listening for Safaricom message push...
+                  <div className="text-[#C8961A]/70 italic animate-pulse font-bold">
+                    &gt; Matching with registered transaction records...
                   </div>
                 </div>
 
@@ -849,53 +849,6 @@ export default function CheckoutPage() {
                           <span className="text-[7.5px] font-black text-green-600 uppercase tracking-widest bg-green-50 border border-green-200 rounded px-1.5 py-0.5">
                             ⚡ AI Scanner Enabled
                           </span>
-                        </div>
-                      </div>
-
-                      {/* Interactive Demo Sandboxed Paste Hub */}
-                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-                        <p className="text-[8.5px] font-black text-slate-400 uppercase tracking-wide">Developer Sandbox (Instant One-Click Testing)</p>
-                        <p className="text-[10px] text-slate-500 leading-snug">Click any simulated payment alert code to automatically paste and parse high-fidelity text instantly:</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const randomLetters = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
-                              const randomDigits = "0123456789";
-                              let simCode = "";
-                              for (let i = 0; i < 5; i++) {
-                                simCode += randomLetters.charAt(Math.floor(Math.random() * randomLetters.length));
-                                simCode += randomDigits.charAt(Math.floor(Math.random() * randomDigits.length));
-                              }
-                              const amount = mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal;
-                              const sampleSMS = `${simCode} Confirmed. Ksh ${amount.toLocaleString()}.00 sent to Michael Kirigo 0792021795 on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}. New M-PESA balance...`;
-                              handleSmsPaste(sampleSMS);
-                            }}
-                            className="bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 rounded-xl p-2.5 text-left transition-all text-[10.5px] group/item cursor-pointer active:scale-95"
-                          >
-                            <span className="block text-[7.5px] font-extrabold text-[#3BB348] uppercase tracking-wider mb-0.5">💸 Test Sourcing Deposit SMS</span>
-                            <span className="text-slate-400 font-mono text-[9px] block truncate group-hover/item:text-green-700">Auto-generate & extract code...</span>
-                          </button>
-                          
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const randomLetters = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
-                              const randomDigits = "0123456789";
-                              let simCode = "";
-                              for (let i = 0; i < 5; i++) {
-                                simCode += randomLetters.charAt(Math.floor(Math.random() * randomLetters.length));
-                                simCode += randomDigits.charAt(Math.floor(Math.random() * randomDigits.length));
-                              }
-                              const amount = mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal;
-                              const sampleSMS = `${simCode} Confirmed. Ksh ${amount.toLocaleString()}.00 sent to Michael Kirigo 0792021795 on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}. New M-PESA balance...`;
-                              handleSmsPaste(sampleSMS);
-                            }}
-                            className="bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 rounded-xl p-2.5 text-left transition-all text-[10.5px] group/item cursor-pointer active:scale-95"
-                          >
-                            <span className="block text-[7.5px] font-extrabold text-[#3BB348] uppercase tracking-wider mb-0.5">🛍️ Test Full Payment SMS</span>
-                            <span className="text-slate-400 font-mono text-[9px] block truncate group-hover/item:text-green-700">Auto-generate & extract code...</span>
-                          </button>
                         </div>
                       </div>
 
