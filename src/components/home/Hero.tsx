@@ -216,6 +216,57 @@ export function Hero({
 
       <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-24 sm:pt-36 pb-24 lg:py-0 gap-8 lg:gap-10">
         <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
+          {/* Desktop Search on top of the sliding text of the left column */}
+          <div className="hidden lg:block w-full group relative z-40 mb-2">
+            <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+              <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={24} />
+            </div>
+            <input 
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
+              placeholder="Search products..."
+              className="w-full bg-white border border-slate-200 lg:border-white/20 rounded-3xl pl-16 pr-6 py-5 lg:py-6 text-[#0E121C] text-lg lg:text-xl outline-none focus:ring-4 focus:ring-[#C8102E]/35 transition-all placeholder:text-slate-400 shadow-2xl"
+            />
+            <AnimatePresence>
+              {showSearchSuggestions && searchResults.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 mt-4 bg-white border border-slate-100 rounded-3xl shadow-[0_45px_90px_rgba(0,0,0,0.65)] overflow-hidden max-h-[400px] overflow-y-auto z-[60]"
+                >
+                  {searchResults.map((product) => (
+                    <div 
+                      key={product.id}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setSelectedQuickViewProduct(product);
+                        setSearchQuery('');
+                        setShowSearchSuggestions(false);
+                      }}
+                      className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors border-b border-slate-50 last:border-none group/search"
+                    >
+                      <div className="w-16 h-16 rounded-xl bg-slate-100 p-2 flex items-center justify-center overflow-hidden shrink-0">
+                        <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-black text-[#0E121C] uppercase tracking-wider mb-1">{product.name}</p>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
+                          <span className="text-xs font-bold text-slate-400">{product.price.toLocaleString()}/-</span>
+                        </div>
+                      </div>
+                      <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A]/80 group-hover/search:translate-x-1 transition-all" size={20} />
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="min-h-[140px] sm:min-h-[180px] lg:min-h-[220px] flex flex-col justify-center">
             <AnimatePresence mode="wait">
               <motion.div 
@@ -305,60 +356,10 @@ export function Hero({
           </div>
         </div>
 
-        <div className="flex max-w-xl lg:max-w-[670px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28">
-          <div className="hidden lg:block w-full lg:max-w-[670px] group relative">
-            <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-              <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={24} />
-            </div>
-            <input 
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-              placeholder="Search products"
-              className="w-full bg-white border border-slate-200 lg:border-white/20 rounded-3xl pl-16 pr-6 py-5 lg:py-8 text-[#0E121C] text-xl lg:text-2xl outline-none focus:ring-4 focus:ring-[#C8102E]/30 transition-all placeholder:text-slate-400 shadow-2xl"
-            />
-            <AnimatePresence>
-              {showSearchSuggestions && searchResults.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 mt-4 bg-white border border-slate-100 rounded-3xl shadow-[0_40px_80px_rgba(0,0,0,0.5)] overflow-hidden max-h-[400px] overflow-y-auto z-[60]"
-                >
-                  {searchResults.map((product) => (
-                    <div 
-                      key={product.id}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        setSelectedQuickViewProduct(product);
-                        setSearchQuery('');
-                        setShowSearchSuggestions(false);
-                      }}
-                      className="p-5 hover:bg-slate-50 cursor-pointer flex items-center gap-5 transition-colors border-b border-slate-50 last:border-none group/search"
-                    >
-                      <div className="w-16 h-16 rounded-xl bg-slate-100 p-2 flex items-center justify-center overflow-hidden shrink-0">
-                        <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-black text-[#0E121C] uppercase tracking-wider mb-1">{product.name}</p>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
-                          <span className="text-xs font-bold text-slate-400">{product.price.toLocaleString()}/-</span>
-                        </div>
-                      </div>
-                      <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A] group-hover/search:translate-x-1 transition-all" size={20} />
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
+        <div className="flex max-w-xl lg:max-w-[540px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28 transform lg:translate-x-12">
           {/* Spotlight Picks Block */}
           {shuffledProducts.length > 0 && (
-            <div className="w-full lg:max-w-[670px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
+            <div className="w-full lg:max-w-[540px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
               {/* Dynamic decorative visual glow corner inside */}
               <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#C8961A]/10 rounded-full blur-2xl pointer-events-none transition-opacity duration-700 group-hover/spotlight:opacity-100"></div>
               

@@ -43,6 +43,34 @@ export function CatalogSection({
   wishlist
 }: CatalogSectionProps) {
   const navigate = useNavigate();
+  const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
+  const clickTimeoutRef = React.useRef<{ [key: string]: NodeJS.Timeout | null }>({});
+
+  React.useEffect(() => {
+    return () => {
+      // Cleanup timeouts on unmount to prevent memory leaks
+      Object.values(clickTimeoutRef.current).forEach((t) => {
+        if (t) clearTimeout(t);
+      });
+    };
+  }, []);
+
+  const handleProductInteraction = (product: any) => {
+    const productId = product.id;
+    if (clickTimeoutRef.current[productId]) {
+      clearTimeout(clickTimeoutRef.current[productId]!);
+      clickTimeoutRef.current[productId] = null;
+      // Double tap -> preview popup
+      setSelectedQuickViewProduct(product);
+    } else {
+      clickTimeoutRef.current[productId] = setTimeout(() => {
+        clickTimeoutRef.current[productId] = null;
+        // Single tap -> expand description inline
+        setExpandedProductId((prev) => (prev === productId ? null : productId));
+      }, 250);
+    }
+  };
+
   return (
     <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8 scroll-mt-24">
       <div id="shop" className="absolute -mt-24"></div>
@@ -63,8 +91,8 @@ export function CatalogSection({
                   <button
                     key={`${tab}-${idx}`}
                     onClick={() => {
-                      setActiveTab(tab);
-                      setActiveSubCategory(null);
+                       setActiveTab(tab);
+                       setActiveSubCategory(null);
                     }}
                     className={`whitespace-nowrap text-[13px] font-black uppercase tracking-[2px] pb-2 transition-all border-b-2 shrink-0 ${
                       isSelected 
@@ -154,7 +182,7 @@ export function CatalogSection({
           ))}
         </div>
 
-        <div className="relative w-full lg:max-w-md lg:ml-auto">
+        <div className="relative w-full lg:max-w-md lg:ml-auto transform lg:translate-x-6">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input 
             type="text"
@@ -175,99 +203,153 @@ export function CatalogSection({
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
-        {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => (
-          <motion.div 
-            key={product.id}
-            whileHover={{ y: -6 }}
-            className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col"
-          >
-            <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
-              {product.imageUrl ? (
-                <img 
-                  src={product.imageUrl} 
-                  alt={product.name} 
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
-                  loading="lazy" 
-                  decoding="async" 
-                  referrerPolicy="no-referrer" 
-                />
-              ) : (
-                <Package size={40} className="text-[#C8961A]/20" />
-              )}
-              {product.badge && (
-                <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase shadow-sm">{product.badge}</span>
-              )}
-              <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
-                <button 
-                  onClick={() => toggleWishlist(product)}
-                  className={`w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
-                    wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:bg-[#C8102E] hover:text-white"
-                  }`}
-                >
-                  <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
-                </button>
-              </div>
-            </div>
-            <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-1" onClick={() => setSelectedQuickViewProduct(product)}>
-              <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-              <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
-              <div className="mt-auto pt-3">
-                {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
-                  <div className="flex flex-col gap-2">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
-                      className="w-full bg-[#C8961A] hover:bg-[#B08214] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
-                    >
-                      <MessageSquare size={12} />
-                      Enquire
-                    </button>
-                    <a 
-                      href="tel:+254792021795"
-                      onClick={(e) => e.stopPropagation()}
-                      className="w-full bg-[#C8102E] hover:bg-[#A30D22] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 text-center"
-                    >
-                      <Phone size={12} />
-                      Call Now
-                    </a>
-                  </div>
+        {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => {
+          const isExpanded = expandedProductId === product.id;
+          return (
+            <motion.div 
+              key={product.id}
+              layout
+              whileHover={{ y: isExpanded ? 0 : -6 }}
+              className={`group bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col ${
+                isExpanded 
+                  ? 'border-[#C8961A] ring-2 ring-[#C8961A]/20 col-span-2 md:col-span-2 lg:col-span-2' 
+                  : 'border-[#E4E8EF]'
+              }`}
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => handleProductInteraction(product)}>
+                {product.imageUrl ? (
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
+                    loading="lazy" 
+                    decoding="async" 
+                    referrerPolicy="no-referrer" 
+                  />
                 ) : (
-                  <>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[15px] sm:text-lg font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
-                    </div>
-                    <div className="flex gap-1.5">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                        className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-colors text-center shadow-sm"
-                        title="Add unit to shopping cart"
-                      >
-                        Add 🛒
-                      </button>
-                      <button 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          const cartItem = {
-                            ...product,
-                            selectedVariants: {},
-                            quantity: 1,
-                            price: product.price,
-                            priceType: product.priceType || 'fixed'
-                          };
-                          addToCart(cartItem); 
-                          navigate('/checkout');
-                        }}
-                        className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center shadow-sm"
-                        title="Secure instant checkout"
-                      >
-                        Buy Now ⚡
-                      </button>
-                    </div>
-                  </>
+                  <Package size={40} className="text-[#C8961A]/20" />
                 )}
+                {product.badge && (
+                  <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase shadow-sm">{product.badge}</span>
+                )}
+                <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
+                  <button 
+                    onClick={() => toggleWishlist(product)}
+                    className={`w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
+                      wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:bg-[#C8102E] hover:text-white"
+                    }`}
+                  >
+                    <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
+                  </button>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )) : (
+              <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-1" onClick={() => handleProductInteraction(product)}>
+                <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
+                
+                {/* Interactive hint */}
+                <span className="text-[9px] text-[#C8961A] font-bold mb-2 block leading-none antialiased">
+                  {isExpanded ? '⚡ Double-click to preview • Click to collapse' : 'ℹ️ Click once to expand specs'}
+                </span>
+
+                <div className="mt-auto pt-3">
+                  {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
+                    <div className="flex flex-col gap-2">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                        className="w-full bg-[#C8961A] hover:bg-[#B08214] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+                      >
+                        <MessageSquare size={12} />
+                        Enquire
+                      </button>
+                      <a 
+                        href="tel:+254792021795"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-full bg-[#C8102E] hover:bg-[#A30D22] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 text-center"
+                      >
+                        <Phone size={12} />
+                        Call Now
+                      </a>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[15px] sm:text-lg font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
+                      </div>
+                      <div className="flex gap-1.5">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                          className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-colors text-center shadow-sm"
+                          title="Add unit to shopping cart"
+                        >
+                          Add 🛒
+                        </button>
+                        <button 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            const cartItem = {
+                              ...product,
+                              selectedVariants: {},
+                              quantity: 1,
+                              price: product.price,
+                              priceType: product.priceType || 'fixed'
+                            };
+                            addToCart(cartItem); 
+                            navigate('/checkout');
+                          }}
+                          className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center shadow-sm"
+                          title="Secure instant checkout"
+                        >
+                          Buy Now ⚡
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Expandable info tray which shifts below elements on layout expansion */}
+              {isExpanded && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="border-t border-slate-100 bg-slate-50/80 p-4 text-xs space-y-3 cursor-default"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div>
+                    <span className="font-extrabold uppercase tracking-wide text-slate-400 text-[9px] block">Description & Crafting Specs</span>
+                    <p className="text-slate-600 mt-1 leading-relaxed">
+                      {product.description || "Premium tailor-crafted apparel made from heavy-duty Nairobi Uhuru Market textile fabrics, with double-stitching construction in vibrant colorways to maximize longevity."}
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/50">
+                    <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
+                      <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Availability</span>
+                      <span className="font-extrabold text-[#0E121C]">{(product.stock && Number(product.stock) > 0) ? `${product.stock} units` : 'Instock / Tailored'}</span>
+                    </div>
+                    <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
+                      <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Material Quality</span>
+                      <span className="font-extrabold text-[#C8961A]">{product.tags?.includes('corporate') ? 'Super Wool' : 'Standard Drill'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium pt-2 border-t border-dashed border-slate-200">
+                    <span className="flex items-center gap-1 text-[9px]">⚡ Double-tap to preview modal</span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
+                      className="text-[#C8102E] font-black uppercase text-[8px] tracking-wider hover:underline cursor-pointer"
+                    >
+                      Collapse ▲
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          );
+        }) : (
           <div className="col-span-full py-20 text-center text-gray-400">
             <p>No products found. Add some from the admin panel!</p>
           </div>

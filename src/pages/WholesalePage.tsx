@@ -46,6 +46,7 @@ export default function WholesalePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [inquiryQty, setInquiryQty] = useState(50);
   const [customizationDetails, setCustomizationDetails] = useState('');
   const [siteSettings, setSiteSettings] = useState<any>(null);
@@ -189,7 +190,11 @@ export default function WholesalePage() {
                   addToCart={addToCart}
                   toggleWishlist={toggleWishlist}
                   isWishlisted={wishlist.some(p => p.id === product.id)}
-                  onClick={() => setSelectedProduct(product)}
+                  isExpanded={expandedProductId === product.id}
+                  onInteract={() => {
+                    setExpandedProductId(prev => prev === product.id ? null : product.id);
+                  }}
+                  onPreview={() => setSelectedProduct(product)}
                 />
               ))}
             </div>
@@ -401,29 +406,56 @@ export default function WholesalePage() {
   );
 }
 
-function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onClick }: any) {
+function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, isExpanded, onInteract, onPreview }: any) {
+  const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+    };
+  }, []);
+
+  const handleClick = () => {
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+      // Double tap -> preview dialog
+      onPreview();
+    } else {
+      clickTimeoutRef.current = setTimeout(() => {
+        clickTimeoutRef.current = null;
+        // Single tap -> toggle description
+        onInteract();
+      }, 250);
+    }
+  };
+
   return (
     <motion.div 
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="group relative"
+      className={`group relative flex flex-col justify-between bg-white border rounded-[32px] p-4 transition-all duration-300 ${
+        isExpanded 
+          ? 'border-[#C8961A] shadow-2xl col-span-1 md:col-span-2' 
+          : 'border-transparent shadow-sm hover:shadow-xl'
+      }`}
     >
       <div 
-        onClick={onClick}
-        className="aspect-[4/5] bg-[#F1F5F9] rounded-[32px] overflow-hidden relative mb-6 cursor-pointer flex items-center justify-center"
+        onClick={handleClick}
+        className="aspect-[4/3] bg-[#F1F5F9] rounded-[24px] overflow-hidden relative mb-6 cursor-pointer flex items-center justify-center p-2"
       >
         {product.imageUrl ? (
           <img 
             src={product.imageUrl} 
             alt={product.name}
-            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover rounded-[20px] transition-all duration-700 group-hover:scale-105"
           />
         ) : (
           <Package size={64} className="text-slate-200" />
         )}
         
-        <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3">
+        <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[24px]">
           <button 
             onClick={(e) => { e.stopPropagation(); addToCart(product); }}
             className="w-12 h-12 rounded-2xl bg-white text-[#0A1628] flex items-center justify-center hover:bg-[#C8102E] hover:text-white transition-all shadow-xl hover:-translate-y-1"
@@ -441,20 +473,26 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onCli
         </div>
 
         {product.badge && (
-          <span className="absolute top-6 left-6 bg-[#C8102E] text-white text-[10px] font-black px-4 py-1.5 rounded-full tracking-[2px] uppercase shadow-lg">
+          <span className="absolute top-4 left-4 bg-[#C8102E] text-white text-[8px] font-black px-3 py-1 rounded-full tracking-[2px] uppercase shadow-lg">
             {product.badge}
           </span>
         )}
       </div>
 
-      <div className="px-2">
-        <div className="flex items-center gap-2 mb-2">
+      <div className="px-2 flex flex-col flex-1" onClick={handleClick}>
+        <div className="flex items-center gap-2 mb-2 cursor-pointer">
           <span className="text-[9px] font-black text-[#C8961A] uppercase tracking-[3px]">{product.category}</span>
           <div className="h-[1px] flex-1 bg-slate-100"></div>
           <Package size={12} className="text-slate-300" />
         </div>
-        <h3 className="font-display text-3xl text-[#0A1628] leading-none mb-3 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
-        <div className="flex flex-col gap-3">
+        <h3 className="font-display text-2xl text-[#0A1628] leading-tight mb-2 group-hover:text-[#C8102E] transition-colors cursor-pointer">{product.name}</h3>
+        
+        {/* Interactive hint */}
+        <span className="text-[9px] text-[#C8961A] font-bold mb-3 block leading-none antialiased cursor-pointer">
+          {isExpanded ? '⚡ Double-tap to preview • Click to collapse' : 'ℹ️ Click once to expand specs'}
+        </span>
+
+        <div className="flex flex-col gap-3 mt-auto">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
               Bulk Inquiry Required
@@ -482,6 +520,46 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onCli
           </div>
         </div>
       </div>
+
+      {/* Expandable description block */}
+      {isExpanded && (
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25 }}
+          className="mt-4 border-t border-slate-100 bg-slate-50/80 p-4 rounded-2xl text-xs space-y-3 cursor-default"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div>
+            <span className="font-extrabold uppercase tracking-wide text-slate-400 text-[9px] block">Material Specifications</span>
+            <p className="text-slate-600 mt-1 leading-relaxed">
+              {product.description || "Premium tailor-made textiles sourced from reputable local mills in Nairobi. Form-retaining heavy drill fabric with non-fade coloration suited for high duty wear cycles."}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/30">
+            <div className="bg-white p-2 border border-slate-100 rounded-lg shadow-sm">
+              <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Availability</span>
+              <span className="font-extrabold text-[#0E121C]">Custom Order</span>
+            </div>
+            <div className="bg-white p-2 border border-slate-100 rounded-lg shadow-sm">
+              <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Lead Time</span>
+              <span className="font-extrabold text-[#C8961A]">14 - 21 Days</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium pt-2 border-t border-dashed border-slate-200">
+            <span className="flex items-center gap-1 text-[8px]">⚡ Double-tap to preview modal</span>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onInteract(); }}
+              className="text-[#C8102E] font-black uppercase text-[8px] tracking-wider hover:underline cursor-pointer"
+            >
+              Collapse ▲
+            </button>
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

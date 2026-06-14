@@ -20,6 +20,34 @@ export function WholesaleDeals({
     p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')
   );
 
+  const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
+  const clickTimeoutRef = React.useRef<{ [key: string]: NodeJS.Timeout | null }>({});
+
+  React.useEffect(() => {
+    return () => {
+      // Clean up timeouts on unmount
+      Object.values(clickTimeoutRef.current).forEach((t) => {
+        if (t) clearTimeout(t);
+      });
+    };
+  }, []);
+
+  const handleProductInteraction = (product: any) => {
+    const productId = product.id;
+    if (clickTimeoutRef.current[productId]) {
+      clearTimeout(clickTimeoutRef.current[productId]!);
+      clickTimeoutRef.current[productId] = null;
+      // Double tap -> preview popup
+      setSelectedQuickViewProduct(product);
+    } else {
+      clickTimeoutRef.current[productId] = setTimeout(() => {
+        clickTimeoutRef.current[productId] = null;
+        // Single tap -> expand
+        setExpandedProductId((prev) => (prev === productId ? null : productId));
+      }, 250);
+    }
+  };
+
   return (
     <section id="wholesale-deals" className="py-20 bg-white border-b border-slate-100">
       <div className="max-w-[1440px] mx-auto px-8">
@@ -38,47 +66,102 @@ export function WholesaleDeals({
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
           {wholesaleProducts
             .slice(0, showAllWholesale ? undefined : 6)
-            .map(product => (
-              <motion.div 
-                key={product.id}
-                whileHover={{ y: -6 }}
-                className="group bg-white border border-[#E4E8EF] rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => setSelectedQuickViewProduct(product)}>
-                  {product.imageUrl ? (
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
-                      loading="lazy" 
-                      referrerPolicy="no-referrer" 
-                    />
-                  ) : (
-                    <Package size={40} className="text-[#00C4CC]/20" />
-                  )}
-                  <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-[13px] mb-3 leading-tight line-clamp-2 min-h-[2.5rem] text-[#0E121C]">{product.name}</h3>
-                  <div className="flex flex-col gap-2">
-                    <button 
-                      onClick={() => setSelectedQuickViewProduct(product)}
-                      className="w-full py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-                    >
-                      <MessageSquare size={12} />
-                      Enquire
-                    </button>
-                    <a 
-                      href="tel:+254792021795"
-                      className="w-full py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-                    >
-                      <Phone size={12} />
-                      Call Now
-                    </a>
+            .map(product => {
+              const isExpanded = expandedProductId === product.id;
+              return (
+                <motion.div 
+                  key={product.id}
+                  layout
+                  whileHover={{ y: isExpanded ? 0 : -6 }}
+                  className={`group bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col ${
+                    isExpanded 
+                      ? 'border-[#00C4CC] ring-2 ring-[#00C4CC]/20 col-span-2 md:col-span-2 lg:col-span-2' 
+                      : 'border-[#E4E8EF]'
+                  }`}
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => handleProductInteraction(product)}>
+                    {product.imageUrl ? (
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer" 
+                      />
+                    ) : (
+                      <Package size={40} className="text-[#00C4CC]/20" />
+                    )}
+                    <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
                   </div>
-                </div>
-              </motion.div>
-            ))
+                  <div className="p-4 cursor-pointer flex flex-col flex-grow" onClick={() => handleProductInteraction(product)}>
+                    <h3 className="font-bold text-[13px] mb-2 leading-tight line-clamp-1 text-[#0E121C]">{product.name}</h3>
+                    
+                    {/* Interactive hint */}
+                    <span className="text-[9px] text-[#00C4CC] font-bold mb-3 block leading-none antialiased">
+                      {isExpanded ? '⚡ Double-click to preview • Click to collapse' : 'ℹ️ Click once to expand specs'}
+                    </span>
+
+                    <div className="flex flex-col gap-2 mt-auto">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                        className="w-full py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                      >
+                        <MessageSquare size={12} />
+                        Enquire
+                      </button>
+                      <a 
+                        href="tel:+254792021795"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-full py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
+                      >
+                        <Phone size={12} />
+                        Call Now
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Expand tray */}
+                  {isExpanded && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="border-t border-slate-100 bg-slate-50/80 p-4 text-xs space-y-3 cursor-default"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div>
+                        <span className="font-extrabold uppercase tracking-wide text-slate-400 text-[9px] block">Bulk Supply Details</span>
+                        <p className="text-slate-600 mt-1 leading-relaxed">
+                          {product.description || "Premium high-grade textiles tailored for institutional bulk supply. High threadcount fabrics suited for regular intensive washing schedules."}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/50">
+                        <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
+                          <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
+                          <span className="font-extrabold text-[#0E121C]">50 Units</span>
+                        </div>
+                        <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
+                          <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Industry Fit</span>
+                          <span className="font-extrabold text-[#00C4CC]">Hospitality / School</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium pt-2 border-t border-dashed border-slate-200">
+                        <span className="flex items-center gap-1 text-[9px]">⚡ Double-tap to preview modal</span>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
+                          className="text-[#FF4F5A] font-black uppercase text-[8px] tracking-wider hover:underline cursor-pointer"
+                        >
+                          Collapse ▲
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              );
+            })
           }
         </div>
 
