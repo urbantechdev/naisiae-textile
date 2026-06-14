@@ -215,9 +215,9 @@ export function Hero({
       </div>
 
       <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-24 sm:pt-36 pb-24 lg:py-0 gap-8 lg:gap-10">
-        <div className="max-w-xl lg:max-w-2xl w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
+        <div className="max-w-xl lg:max-w-[750px] w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
           {/* Desktop Search on top of the sliding text of the left column */}
-          <div className="hidden lg:block w-full group relative z-40 mb-2">
+          <div className="hidden lg:block w-full lg:max-w-[480px] group relative z-40 mb-2">
             <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
               <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={24} />
             </div>
@@ -356,10 +356,10 @@ export function Hero({
           </div>
         </div>
 
-        <div className="flex max-w-xl lg:max-w-[540px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28 transform lg:translate-x-12">
+        <div className="flex max-w-xl lg:max-w-[450px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28 transform lg:translate-x-8">
           {/* Spotlight Picks Block */}
           {shuffledProducts.length > 0 && (
-            <div className="w-full lg:max-w-[540px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
+            <div className="w-full lg:max-w-[450px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
               {/* Dynamic decorative visual glow corner inside */}
               <div className="absolute -top-12 -right-12 w-24 h-24 bg-[#C8961A]/10 rounded-full blur-2xl pointer-events-none transition-opacity duration-700 group-hover/spotlight:opacity-100"></div>
               
