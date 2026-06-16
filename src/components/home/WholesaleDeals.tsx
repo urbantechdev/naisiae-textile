@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Package, ChevronRight, Plus, Phone, MessageSquare } from 'lucide-react';
+import { Package, ChevronRight, Plus, Phone, MessageSquare, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface WholesaleDealsProps {
@@ -72,92 +72,160 @@ export function WholesaleDeals({
                 <motion.div 
                   key={product.id}
                   layout
-                  whileHover={{ y: isExpanded ? 0 : -6 }}
-                  className={`group bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col ${
+                  whileHover={isExpanded ? undefined : { y: -6 }}
+                  className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-300 ${
                     isExpanded 
-                      ? 'border-[#00C4CC] ring-2 ring-[#00C4CC]/20 col-span-2 md:col-span-2 lg:col-span-2' 
-                      : 'border-[#E4E8EF]'
+                      ? "col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#00C4CC]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
+                      : "border-[#E4E8EF] hover:shadow-2xl hover:border-[#00C4CC]/30"
                   }`}
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => handleProductInteraction(product)}>
-                    {product.imageUrl ? (
-                      <img 
-                        src={product.imageUrl} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
-                        loading="lazy" 
-                        referrerPolicy="no-referrer" 
-                      />
-                    ) : (
-                      <Package size={40} className="text-[#00C4CC]/20" />
-                    )}
-                    <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
-                  </div>
-                  <div className="p-4 cursor-pointer flex flex-col flex-grow" onClick={() => handleProductInteraction(product)}>
-                    <h3 className="font-bold text-[13px] mb-2 leading-tight line-clamp-1 text-[#0E121C]">{product.name}</h3>
-                    
-                    {/* Interactive hint */}
-                    <span className="text-[9px] text-[#00C4CC] font-bold mb-3 block leading-none antialiased">
-                      {isExpanded ? '⚡ Double-click to preview • Click to collapse' : 'ℹ️ Click once to expand specs'}
-                    </span>
-
-                    <div className="flex flex-col gap-2 mt-auto">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
-                        className="w-full py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-                      >
-                        <MessageSquare size={12} />
-                        Enquire
-                      </button>
-                      <a 
-                        href="tel:+254792021795"
-                        onClick={(e) => e.stopPropagation()}
-                        className="w-full py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
-                      >
-                        <Phone size={12} />
-                        Call Now
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Expand tray */}
-                  {isExpanded && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="border-t border-slate-100 bg-slate-50/80 p-4 text-xs space-y-3 cursor-default"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div>
-                        <span className="font-extrabold uppercase tracking-wide text-slate-400 text-[9px] block">Bulk Supply Details</span>
-                        <p className="text-slate-600 mt-1 leading-relaxed">
-                          {product.description || "Premium high-grade textiles tailored for institutional bulk supply. High threadcount fabrics suited for regular intensive washing schedules."}
-                        </p>
+                  {!isExpanded ? (
+                    <>
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => handleProductInteraction(product)}>
+                        {product.imageUrl ? (
+                          <img 
+                            src={product.imageUrl} 
+                            alt={product.name} 
+                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
+                            loading="lazy" 
+                            referrerPolicy="no-referrer" 
+                          />
+                        ) : (
+                          <Package size={40} className="text-[#00C4CC]/20" />
+                        )}
+                        <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
                       </div>
+                      <div className="p-4 cursor-pointer flex flex-col flex-grow" onClick={() => handleProductInteraction(product)}>
+                        <h3 className="font-bold text-[13px] mb-2 leading-tight line-clamp-1 text-[#0E121C]">{product.name}</h3>
+                        
+                        {/* Interactive hint */}
+                        <span className="text-[9px] text-[#00C4CC] font-bold mb-3 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-2">
+                          <span>✨</span> Tap to inspect details
+                        </span>
 
-                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/50">
-                        <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
-                          <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
-                          <span className="font-extrabold text-[#0E121C]">50 Units</span>
-                        </div>
-                        <div className="bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
-                          <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Industry Fit</span>
-                          <span className="font-extrabold text-[#00C4CC]">Hospitality / School</span>
+                        <div className="flex flex-col gap-2 mt-auto">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                            className="w-full py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                          >
+                            <MessageSquare size={12} />
+                            Enquire
+                          </button>
+                          <a 
+                            href="tel:+254792021795"
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-full py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
+                          >
+                            <Phone size={12} />
+                            Call Now
+                          </a>
                         </div>
                       </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col md:flex-row h-full">
+                      {/* Left Column: Product visual card and cost */}
+                      <div className="w-full md:w-5/12 bg-white flex flex-col border-b md:border-b-0 md:border-r border-slate-100 shrink-0">
+                        <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-[#FDFAF4] flex items-center justify-center p-2">
+                          {product.imageUrl ? (
+                            <img 
+                              src={product.imageUrl} 
+                              alt={product.name} 
+                              className="w-full h-full object-cover object-top" 
+                              loading="lazy" 
+                              referrerPolicy="no-referrer" 
+                            />
+                          ) : (
+                            <Package size={50} className="text-[#00C4CC]/20" />
+                          )}
+                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">Wholesale</span>
+                        </div>
+                        <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
+                          <div>
+                            <div className="text-[9px] text-[#00C4CC] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                            <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
+                          </div>
+                          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Wholesale Spec</span>
+                            <span className="text-base font-black text-[#00C4CC]">{product.price.toLocaleString()}/-</span>
+                          </div>
+                        </div>
+                      </div>
 
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium pt-2 border-t border-dashed border-slate-200">
-                        <span className="flex items-center gap-1 text-[9px]">⚡ Double-tap to preview modal</span>
+                      {/* Right Column: Spec details and actions */}
+                      <div className="w-full md:w-7/12 p-4 sm:p-5 flex flex-col justify-between bg-white relative">
                         <button 
                           onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
-                          className="text-[#FF4F5A] font-black uppercase text-[8px] tracking-wider hover:underline cursor-pointer"
+                          className="absolute right-3 top-3 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-red-500 border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95 z-20"
+                          title="Collapse details view"
                         >
-                          Collapse ▲
+                          <X size={15} />
                         </button>
+
+                        <div className="pr-6">
+                          <span className="inline-block bg-slate-50 border border-slate-100 text-slate-500 text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Bulk Supply Specifications</span>
+                          
+                          <div className="space-y-3.5 mt-2">
+                            <div>
+                              <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Catalog Description</h4>
+                              <p className="text-[11.5px] text-slate-600 leading-relaxed font-bold">
+                                {product.description || "Premium high-grade textiles tailored for institutional bulk supply. High threadcount fabrics suited for regular intensive washing schedules."}
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 pt-1">
+                              <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
+                                <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
+                                <span className="font-extrabold text-[#0E121C] text-[11px]">50 Units</span>
+                              </div>
+                              <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
+                                <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Industry Fit</span>
+                                <span className="font-extrabold text-[#00C4CC] text-[11px]">Hospitality / School</span>
+                              </div>
+                            </div>
+
+                            {product.tags && product.tags.length > 0 && (
+                              <div>
+                                <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Fabric Properties</h4>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {product.tags.map((t: string, idx: number) => (
+                                    <span key={idx} className="bg-slate-100 border border-slate-200 text-[#00C4CC] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
+                                      #{t}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
+                          <div className="grid grid-cols-2 gap-2">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                              className="bg-[#00C4CC] hover:bg-[#008F94] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                            >
+                              <MessageSquare size={13} />
+                              Enquire
+                            </button>
+                            <a 
+                              href="tel:+254792021795"
+                              onClick={(e) => e.stopPropagation()}
+                              className="bg-[#FF4F5A] hover:bg-[#E03B46] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 text-center shadow-sm"
+                            >
+                              <Phone size={13} />
+                              Call Now
+                            </a>
+                          </div>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                            className="w-full text-[#00C4CC] hover:text-[#FF4F5A] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
+                          >
+                            🔍 Open full-screen overlay modal
+                          </button>
+                        </div>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                 </motion.div>
               );
