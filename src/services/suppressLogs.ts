@@ -49,3 +49,34 @@ console.warn = function (...args: any[]) {
   if (isBenignMessage(...args)) return;
   originalWarn.apply(console, args);
 };
+
+// Handle unhandled promise rejections and global browser window error events for benign Firestore events
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    if (isBenignMessage(event.reason)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, true);
+
+  window.addEventListener('error', (event) => {
+    if (isBenignMessage(event.error || event.message)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, true);
+} else if (typeof process !== 'undefined') {
+  // Prevent unhandled rejections on the Node server for benign Firestore errors
+  process.on('unhandledRejection', (reason) => {
+    if (isBenignMessage(reason)) {
+      return;
+    }
+  });
+
+  process.on('uncaughtException', (error) => {
+    if (isBenignMessage(error)) {
+      return;
+    }
+  });
+}
+

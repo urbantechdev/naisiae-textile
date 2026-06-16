@@ -362,7 +362,13 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      if (user && user.email === 'naisiaetext@gmail.com') {
+      const adminEmails = [
+        'naisiaetext@gmail.com',
+        'Kirigommk@gmail.com',
+        'Kgeokom@gmail.com',
+        'naisiaetextile@gmail.com'
+      ];
+      if (user && user.email && adminEmails.includes(user.email)) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

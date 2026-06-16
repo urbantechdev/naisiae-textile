@@ -124,7 +124,10 @@ import { BrainCircuit } from 'lucide-react';
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
-  const [activeView, setActiveView] = useState('overview');
+  const [activeView, setActiveView] = useState(() => {
+    const userEmail = auth.currentUser?.email || '';
+    return userEmail === 'naisiaetext@gmail.com' ? 'overview' : 'products';
+  });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
@@ -169,6 +172,13 @@ export default function AdminDashboard() {
   const [selectedQuoteIds, setSelectedQuoteIds] = useState<string[]>([]);
   
   const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
+
+  useEffect(() => {
+    if (!isSuperAdmin && activeView !== 'products') {
+      setActiveView('products');
+    }
+  }, [activeView, isSuperAdmin]);
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<BatchAnalysisResult | null>(null);
   const [stagedProducts, setStagedProducts] = useState<any[] | null>(null);
@@ -1421,19 +1431,23 @@ export default function AdminDashboard() {
            </button>
         </div>
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          <MobileNavItem active={activeView === 'overview'} onClick={() => { setActiveView('overview'); setIsMobileMenuOpen(false); }} icon={<LayoutDashboard size={18} />} label="Overview" />
+          {isSuperAdmin && <MobileNavItem active={activeView === 'overview'} onClick={() => { setActiveView('overview'); setIsMobileMenuOpen(false); }} icon={<LayoutDashboard size={18} />} label="Overview" />}
           <MobileNavItem active={activeView === 'products'} onClick={() => { setActiveView('products'); setIsMobileMenuOpen(false); }} icon={<Package size={18} />} label="Products" badge={lowStockProductsCount} />
-          <MobileNavItem active={activeView === 'quotes'} onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} icon={<MessageSquare size={18} />} label="Quotes" badge={newQuotesCount} />
-          <MobileNavItem active={activeView === 'wishlists'} onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} icon={<Heart size={18} />} label="Wishlists" />
-          <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
-          <MobileNavItem active={activeView === 'live-support'} onClick={() => { setActiveView('live-support'); setIsMobileMenuOpen(false); }} icon={<Headset size={18} />} label="Live Support" />
-          <MobileNavItem active={activeView === 'chat-settings'} onClick={() => { setActiveView('chat-settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Messaging" />
-          <MobileNavItem active={activeView === 'content'} onClick={() => { setActiveView('content'); setIsMobileMenuOpen(false); }} icon={<Edit2 size={18} />} label="Pages Content" />
-          <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
-          <MobileNavItem active={activeView === 'users'} onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} icon={<Users size={18} />} label="Team" />
-          <MobileNavItem active={activeView === 'analytics'} onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} icon={<BarChart3 size={18} />} label="Analytics" />
-          <MobileNavItem active={activeView === 'seo-audit'} onClick={() => { setActiveView('seo-audit'); setIsMobileMenuOpen(false); }} icon={<ShieldCheck size={18} />} label="SEO Audit" />
-          <MobileNavItem active={activeView === 'settings'} onClick={() => { setActiveView('settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Settings" />
+          {isSuperAdmin && (
+            <>
+              <MobileNavItem active={activeView === 'quotes'} onClick={() => { setActiveView('quotes'); setIsMobileMenuOpen(false); }} icon={<MessageSquare size={18} />} label="Quotes" badge={newQuotesCount} />
+              <MobileNavItem active={activeView === 'wishlists'} onClick={() => { setActiveView('wishlists'); setIsMobileMenuOpen(false); }} icon={<Heart size={18} />} label="Wishlists" />
+              <MobileNavItem active={activeView === 'promotions'} onClick={() => { setActiveView('promotions'); setIsMobileMenuOpen(false); }} icon={<Megaphone size={18} />} label="Marketing" />
+              <MobileNavItem active={activeView === 'live-support'} onClick={() => { setActiveView('live-support'); setIsMobileMenuOpen(false); }} icon={<Headset size={18} />} label="Live Support" />
+              <MobileNavItem active={activeView === 'chat-settings'} onClick={() => { setActiveView('chat-settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Messaging" />
+              <MobileNavItem active={activeView === 'content'} onClick={() => { setActiveView('content'); setIsMobileMenuOpen(false); }} icon={<Edit2 size={18} />} label="Pages Content" />
+              <MobileNavItem active={activeView === 'reviews'} onClick={() => { setActiveView('reviews'); setIsMobileMenuOpen(false); }} icon={<Star size={18} />} label="Reviews" badge={pendingReviewsCount} />
+              <MobileNavItem active={activeView === 'users'} onClick={() => { setActiveView('users'); setIsMobileMenuOpen(false); }} icon={<Users size={18} />} label="Team" />
+              <MobileNavItem active={activeView === 'analytics'} onClick={() => { setActiveView('analytics'); setIsMobileMenuOpen(false); }} icon={<BarChart3 size={18} />} label="Analytics" />
+              <MobileNavItem active={activeView === 'seo-audit'} onClick={() => { setActiveView('seo-audit'); setIsMobileMenuOpen(false); }} icon={<ShieldCheck size={18} />} label="SEO Audit" />
+              <MobileNavItem active={activeView === 'settings'} onClick={() => { setActiveView('settings'); setIsMobileMenuOpen(false); }} icon={<Settings size={18} />} label="Settings" />
+            </>
+          )}
         </nav>
       </div>
 
@@ -1964,12 +1978,14 @@ export default function AdminDashboard() {
                                   >
                                     <Edit2 size={16} />
                                   </button>
-                                  <button 
-                                    onClick={() => handleDeleteProduct(item.id)}
-                                    className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                  {isSuperAdmin && (
+                                    <button 
+                                      onClick={() => handleDeleteProduct(item.id)}
+                                      className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -4116,6 +4132,7 @@ function AdminSidebar({
   handleLogout,
   siteLogo
 }: any) {
+  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
   const navItems = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Inventory', icon: Package, badge: badges.lowStockProductsCount },
@@ -4133,6 +4150,10 @@ function AdminSidebar({
     { id: 'seo-audit', label: 'SEO Audit', icon: ShieldCheck },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
+
+  const allowedNavItems = isSuperAdmin 
+    ? navItems 
+    : navItems.filter(item => item.id === 'products');
 
   return (
     <aside 
@@ -4169,7 +4190,7 @@ function AdminSidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto py-8 px-4 space-y-1.5 scrollbar-hide">
-        {navItems.map((item) => (
+        {allowedNavItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveView(item.id)}
@@ -4229,6 +4250,7 @@ function AdminSidebar({
 }
 
 function AdminBottomNav({ activeView, setActiveView, badges }: any) {
+  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
   const items = [
     { id: 'overview', label: 'Dash', icon: LayoutDashboard },
     { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
@@ -4237,9 +4259,13 @@ function AdminBottomNav({ activeView, setActiveView, badges }: any) {
     { id: 'settings', label: 'Meta', icon: Settings },
   ];
 
+  const allowedItems = isSuperAdmin 
+    ? items 
+    : items.filter(item => item.id === 'products');
+
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/95 backdrop-blur-md border-t border-white/5 flex items-center justify-around px-4 z-[60] pb-5">
-      {items.map((item) => (
+      {allowedItems.map((item) => (
         <button
           key={item.id}
           onClick={() => setActiveView(item.id)}
@@ -4340,7 +4366,7 @@ function StatCard({ label, value, trend, icon, onClick }: any) {
   );
 }
 
-function SortableImage({ url, index, onRemove }: any) {
+function SortableImage({ url, index, onRemove, disabled }: any) {
   const {
     attributes,
     listeners,
@@ -4348,7 +4374,7 @@ function SortableImage({ url, index, onRemove }: any) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: url });
+  } = useSortable({ id: url, disabled: disabled });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -4368,20 +4394,24 @@ function SortableImage({ url, index, onRemove }: any) {
       ) : (
         <ImageIcon size={24} className="text-slate-300" />
       )}
-      <div 
-        {...attributes} 
-        {...listeners}
-        className="absolute top-1 left-1 bg-white/80 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-slate-500 hover:text-[#1C3560] shadow-sm z-10"
-      >
-        <GripVertical size={12} />
-      </div>
-      <button 
-        type="button"
-        onClick={() => onRemove(index)}
-        className="absolute top-1 right-1 bg-white/90 text-red-600 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10"
-      >
-        <X size={12} />
-      </button>
+      {!disabled && (
+        <div 
+          {...attributes} 
+          {...listeners}
+          className="absolute top-1 left-1 bg-white/80 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-slate-500 hover:text-[#1C3560] shadow-sm z-10"
+        >
+          <GripVertical size={12} />
+        </div>
+      )}
+      {!disabled && (
+        <button 
+          type="button"
+          onClick={() => onRemove(index)}
+          className="absolute top-1 right-1 bg-white/90 text-red-600 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10"
+        >
+          <X size={12} />
+        </button>
+      )}
       {index === 0 && (
         <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[8px] font-black uppercase py-1 text-center pointer-events-none">Primary</div>
       )}
@@ -4390,6 +4420,9 @@ function SortableImage({ url, index, onRemove }: any) {
 }
 
 function ProductForm({ initialData, onSubmit, setToast, productCategories }: any) {
+  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
+  const disableNonPriceFields = !!initialData && !isSuperAdmin;
+
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -4790,53 +4823,57 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
         <div className="flex justify-between items-end px-1">
           <div>
             <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider mb-0.5 block">Product Gallery</label>
-            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Drag images to reorder. First image is primary.</p>
+            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+              {disableNonPriceFields ? "Gallery assets are managed by Super Admin." : "Drag images to reorder. First image is primary."}
+            </p>
           </div>
-          <div className="flex gap-2">
-            <button
-               type="button"
-               onClick={() => setIsUrlModalOpen(true)}
-               className="flex items-center gap-2 bg-slate-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-md active:scale-95"
-            >
-              <LinkIcon size={12} /> Import via URL
-            </button>
-            {formData.imageUrls.length > 0 && (
+          {!disableNonPriceFields && (
+            <div className="flex gap-2">
               <button
-                type="button"
-                onClick={handleAIAnalyze}
-                disabled={isAnalyzing || uploading}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ${
-                  isAnalyzing 
-                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                    : 'bg-[#C8961A] text-[#0A1628] hover:bg-[#B08416]'
-                }`}
+                 type="button"
+                 onClick={() => setIsUrlModalOpen(true)}
+                 className="flex items-center gap-2 bg-slate-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-md active:scale-95"
               >
-                {isAnalyzing ? (
-                  <>
-                    <div className="w-3 h-3 border-2 border-t-transparent border-[#0A1628] rounded-full animate-spin"></div>
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <BrainCircuit size={12} />
-                    Generate with AI
-                  </>
-                )}
+                <LinkIcon size={12} /> Import via URL
               </button>
-            )}
-            <label className="cursor-pointer group flex items-center gap-2 bg-[#1C3560] text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md active:scale-95">
-            <Upload size={12} /> Add Images
-            <input 
-              type="file" 
-              multiple 
-              className="hidden" 
-              accept="image/*" 
-              onChange={handleFileUpload}
-              disabled={uploading}
-            />
-          </label>
+              {formData.imageUrls.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleAIAnalyze}
+                  disabled={isAnalyzing || uploading}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ${
+                    isAnalyzing 
+                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                      : 'bg-[#C8961A] text-[#0A1628] hover:bg-[#B08416]'
+                  }`}
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-t-transparent border-[#0A1628] rounded-full animate-spin"></div>
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <BrainCircuit size={12} />
+                      Generate with AI
+                    </>
+                  )}
+                </button>
+              )}
+              <label className="cursor-pointer group flex items-center gap-2 bg-[#1C3560] text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md active:scale-95">
+                <Upload size={12} /> Add Images
+                <input 
+                  type="file" 
+                  multiple 
+                  className="hidden" 
+                  accept="image/*" 
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
+          )}
         </div>
-      </div>
 
         {uploading && (
           <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 animate-pulse">
@@ -4861,23 +4898,26 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                   url={url} 
                   index={index} 
                   onRemove={removeImage} 
+                  disabled={disableNonPriceFields}
                 />
               ))}
             </SortableContext>
           </DndContext>
           
-          <label className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-all group ${isDraggingOver ? 'border-[#C8102E] bg-white' : 'border-slate-200 hover:border-[#1C3560] hover:bg-slate-50'}`}>
-            <Plus size={16} className="text-slate-300 group-hover:text-[#1C3560] transition-colors" />
-            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">More</span>
-            <input 
-              type="file" 
-              multiple 
-              className="hidden" 
-              accept="image/*" 
-              onChange={handleFileUpload}
-              disabled={uploading}
-            />
-          </label>
+          {!disableNonPriceFields && (
+            <label className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-all group ${isDraggingOver ? 'border-[#C8102E] bg-white' : 'border-slate-200 hover:border-[#1C3560] hover:bg-slate-50'}`}>
+              <Plus size={16} className="text-slate-300 group-hover:text-[#1C3560] transition-colors" />
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">More</span>
+              <input 
+                type="file" 
+                multiple 
+                className="hidden" 
+                accept="image/*" 
+                onChange={handleFileUpload}
+                disabled={uploading}
+              />
+            </label>
+          )}
         </div>
 
         {isDraggingOver && (
@@ -4897,21 +4937,23 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             <label className="text-[11px] font-black uppercase text-[#1E293B] tracking-wider">Product Variants</label>
             <p className="text-[9px] text-[#64748B] font-bold uppercase mt-0.5">Manage Size, Color, and Materials</p>
           </div>
-          <button 
-            type="button"
-            onClick={() => setShowVariantForm(!showVariantForm)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
-              showVariantForm 
-                ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100' 
-                : 'bg-[#1C3560] text-white hover:bg-[#0A1628]'
-            }`}
-          >
-            {showVariantForm ? <X size={14} /> : <Plus size={14} />}
-            {showVariantForm ? 'Cancel' : 'Add New Variant'}
-          </button>
+          {!disableNonPriceFields && (
+            <button 
+              type="button"
+              onClick={() => setShowVariantForm(!showVariantForm)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
+                showVariantForm 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100' 
+                  : 'bg-[#1C3560] text-white hover:bg-[#0A1628]'
+              }`}
+            >
+              {showVariantForm ? <X size={14} /> : <Plus size={14} />}
+              {showVariantForm ? 'Cancel' : 'Add New Variant'}
+            </button>
+          )}
         </div>
 
-        {!showVariantForm && (
+        {!showVariantForm && !disableNonPriceFields && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
@@ -5112,13 +5154,15 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                     </div>
                   </div>
                 </div>
-                <button 
-                  type="button"
-                  onClick={() => removeVariant(v.id)}
-                  className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                >
-                  <Trash2 size={16} />
-                </button>
+                {!disableNonPriceFields && (
+                  <button 
+                    type="button"
+                    onClick={() => removeVariant(v.id)}
+                    className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
               </motion.div>
             ))}
           </div>
@@ -5133,48 +5177,50 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
       </div>
 
       {/* AI Content Generator Section */}
-      <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-          <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
-        </div>
-        <div className="flex items-start justify-between relative z-10">
-          <div>
-            <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
-              <Sparkles size={16} className="text-indigo-500 animate-pulse" />
-              AI Product Drafter
-            </h4>
-            <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
-              Draft full details instantly based on name & category
-            </p>
+      {!disableNonPriceFields && (
+        <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
           </div>
-          <button
-            type="button"
-            onClick={handleAIGenerateFull}
-            disabled={isGeneratingFull || !formData.name}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg active:scale-95 ${
-              isGeneratingFull || !formData.name
-                ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
-                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
-            }`}
-          >
-            {isGeneratingFull ? (
-              <>
-                <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                Drafting Content...
-              </>
-            ) : (
-              <>
-                <Zap size={14} />
-                Magic Draft
-              </>
-            )}
-          </button>
+          <div className="flex items-start justify-between relative z-10">
+            <div>
+              <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+                <Sparkles size={16} className="text-indigo-500 animate-pulse" />
+                AI Product Drafter
+              </h4>
+              <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
+                Draft full details instantly based on name & category
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAIGenerateFull}
+              disabled={isGeneratingFull || !formData.name}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg active:scale-95 ${
+                isGeneratingFull || !formData.name
+                  ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
+              }`}
+            >
+              {isGeneratingFull ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                  Drafting Content...
+                </>
+              ) : (
+                <>
+                  <Zap size={14} />
+                  Magic Draft
+                </>
+              )}
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-500 italic relative z-10 leading-relaxed max-w-[80%]">
+            "Magic Draft" will automatically generate a professional name, market-ready description, 
+            competitive price suggestion, and relevant search tags for you.
+          </p>
         </div>
-        <p className="text-[10px] text-slate-500 italic relative z-10 leading-relaxed max-w-[80%]">
-          "Magic Draft" will automatically generate a professional name, market-ready description, 
-          competitive price suggestion, and relevant search tags for you.
-        </p>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5 flex-1">
@@ -5183,7 +5229,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             required 
             value={formData.name}
             onChange={e => setFormData({...formData, name: e.target.value})}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+            disabled={disableNonPriceFields}
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
           />
         </div>
         <div className="space-y-1.5">
@@ -5191,7 +5238,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <select 
             value={formData.category}
             onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors"
+            disabled={disableNonPriceFields}
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -5205,7 +5253,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             <select 
               value={formData.subCategory}
               onChange={e => setFormData({...formData, subCategory: e.target.value})}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors"
+              disabled={disableNonPriceFields}
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <option value="">Select Item Type...</option>
               {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
@@ -5214,7 +5263,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
               placeholder="Or type custom item name..."
               value={formData.subCategory}
               onChange={e => setFormData({...formData, subCategory: e.target.value})}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors"
+              disabled={disableNonPriceFields}
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
             />
           </div>
           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 ml-1">Helps customers find specific items like sweaters or trousers faster.</p>
@@ -5227,23 +5277,25 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
+              disabled={disableNonPriceFields}
               onClick={() => setFormData({...formData, priceType: 'fixed'})}
               className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
                 formData.priceType === 'fixed' 
                   ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
                   : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-              }`}
+              } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               Fixed Price
             </button>
             <button
               type="button"
+              disabled={disableNonPriceFields}
               onClick={() => setFormData({...formData, priceType: 'wholesale'})}
               className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
                 formData.priceType === 'wholesale' 
                   ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
                   : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-              }`}
+              } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               Inquiry Only
             </button>
@@ -5321,27 +5373,29 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Or Provide Image URL</label>
-        <div className="flex gap-2">
-          <input 
-            placeholder="https://images.unsplash.com/..." 
-            value={formData.imageUrl}
-            onChange={e => {
-              const url = e.target.value;
-              setFormData({
-                ...formData, 
-                imageUrl: url,
-                imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
-              });
-            }}
-            className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-          />
-          <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
-            {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
+      {!disableNonPriceFields && (
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Or Provide Image URL</label>
+          <div className="flex gap-2">
+            <input 
+              placeholder="https://images.unsplash.com/..." 
+              value={formData.imageUrl}
+              onChange={e => {
+                const url = e.target.value;
+                setFormData({
+                  ...formData, 
+                  imageUrl: url,
+                  imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
+                });
+              }}
+              className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+            />
+            <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
+              {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="space-y-1.5 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
         <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Tags & Organization</label>
@@ -5352,13 +5406,15 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
             <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
               <Package size={10} className="text-[#C8961A]" />
               {tag}
-              <button 
-                type="button" 
-                onClick={() => removeTag(tag)}
-                className="hover:text-red-300 transition-colors ml-1"
-              >
-                <X size={10} />
-              </button>
+              {!disableNonPriceFields && (
+                <button 
+                  type="button" 
+                  onClick={() => removeTag(tag)}
+                  className="hover:text-red-300 transition-colors ml-1"
+                >
+                  <X size={10} />
+                </button>
+              )}
             </span>
           ))}
           {formData.tags.length === 0 && (
@@ -5369,70 +5425,77 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           )}
         </div>
 
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
-            <input 
-              placeholder="Type tag and press enter... (e.g. Winter)" 
-              value={currentTag}
-              onChange={e => setCurrentTag(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-              className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
-            />
-            <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
-          </div>
-          <button 
-            type="button"
-            onClick={addTag}
-            className="px-6 py-2 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
-          >
-            Add
-          </button>
-        </div>
-
-        <div className="pt-3">
-          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Suggested Tags</p>
-          <div className="flex flex-wrap gap-1.5">
-            {['summer', 'winter', 'clearance', 'bestseller', 'new-arrival', 'secondary', 'primary', 'corporate', 'knitwear'].map(sTag => (
-              <button
-                key={sTag}
-                type="button"
-                onClick={() => {
-                  if (!formData.tags.includes(sTag)) {
-                    setFormData({ ...formData, tags: [...formData.tags, sTag] });
-                  }
-                }}
-                className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
-                  formData.tags.includes(sTag) 
-                    ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
-                    : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
-                }`}
+        {!disableNonPriceFields && (
+          <>
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <input 
+                  placeholder="Type tag and press enter... (e.g. Winter)" 
+                  value={currentTag}
+                  onChange={e => setCurrentTag(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
+                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
+                />
+                <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
+              </div>
+              <button 
+                type="button" 
+                onClick={addTag}
+                className="px-6 py-2 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
               >
-                {sTag}
+                Add
               </button>
-            ))}
-          </div>
-        </div>
+            </div>
+
+            <div className="pt-3">
+              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Suggested Tags</p>
+              <div className="flex flex-wrap gap-1.5">
+                {['summer', 'winter', 'clearance', 'bestseller', 'new-arrival', 'secondary', 'primary', 'corporate', 'knitwear'].map(sTag => (
+                  <button
+                    key={sTag}
+                    type="button"
+                    onClick={() => {
+                      if (!formData.tags.includes(sTag)) {
+                        setFormData({ ...formData, tags: [...formData.tags, sTag] });
+                      }
+                    }}
+                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
+                      formData.tags.includes(sTag) 
+                        ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
+                        : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
+                    }`}
+                  >
+                    {sTag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="space-y-1.5">
         <div className="flex justify-between items-center px-1">
           <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Short Description</label>
-          <button
-            type="button"
-            onClick={handleGenerateDescription}
-            disabled={isGeneratingDescription}
-            className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
-          >
-            <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
-            {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
-          </button>
+          {!disableNonPriceFields && (
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={isGeneratingDescription}
+              className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+            >
+              <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
+              {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
+            </button>
+          )}
         </div>
         <textarea 
           rows={3} 
           required
           value={formData.description}
           onChange={e => setFormData({...formData, description: e.target.value})}
-          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors resize-none" 
+          disabled={disableNonPriceFields}
+          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
         ></textarea>
       </div>
 
@@ -5442,7 +5505,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <select 
             value={formData.badge}
             onChange={e => setFormData({...formData, badge: e.target.value})}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors"
+            disabled={disableNonPriceFields}
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
           </select>
@@ -5451,8 +5515,9 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <div className="flex items-center gap-3">
             <button 
               type="button"
+              disabled={disableNonPriceFields}
               onClick={() => setFormData({...formData, active: !formData.active})}
-              className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'}`}
+              className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
             </button>
@@ -5462,6 +5527,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <div className="flex items-center gap-3">
             <button 
               type="button"
+              disabled={disableNonPriceFields}
               onClick={() => {
                 const isWholesale = formData.tags.includes('Wholesale');
                 if (isWholesale) {
@@ -5470,7 +5536,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                   setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
                 }
               }}
-              className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'}`}
+              className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
             </button>

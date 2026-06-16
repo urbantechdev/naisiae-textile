@@ -26,12 +26,19 @@ export default function LoginPage() {
     
     if (!userDoc.exists()) {
       // First time login - check for active invitations
-      let role = (user.email === 'naisiaetext@gmail.com') ? 'admin' : 'user';
+      const adminEmails = [
+        'naisiaetext@gmail.com',
+        'Kirigommk@gmail.com',
+        'Kgeokom@gmail.com',
+        'naisiaetextile@gmail.com'
+      ];
+      const isAnyAdmin = user.email && adminEmails.includes(user.email);
+      let role = isAnyAdmin ? 'admin' : 'user';
       
       try {
         const inviteDoc = await getDoc(doc(db, 'invites', user.email));
         if (inviteDoc.exists()) {
-          role = inviteDoc.data().role === 'admin' && user.email !== 'naisiaetext@gmail.com' ? 'user' : inviteDoc.data().role;
+          role = inviteDoc.data().role === 'admin' && !adminEmails.includes(user.email) ? 'user' : inviteDoc.data().role;
           // Delete invitation after use
           try {
             await deleteDoc(doc(db, 'invites', user.email));
@@ -48,7 +55,7 @@ export default function LoginPage() {
           lastLogin: new Date().toISOString()
         });
         
-        if (user.email === 'naisiaetext@gmail.com') {
+        if (isAnyAdmin) {
           navigate('/admin');
         } else {
           navigate('/');
@@ -59,9 +66,16 @@ export default function LoginPage() {
       }
     } else {
       const userData = userDoc.data();
+      const adminEmails = [
+        'naisiaetext@gmail.com',
+        'Kirigommk@gmail.com',
+        'Kgeokom@gmail.com',
+        'naisiaetextile@gmail.com'
+      ];
+      const isAnyAdmin = user.email && adminEmails.includes(user.email);
       
-      // AUTO-UPGRADE logic for the primary admin email
-      if (user.email === 'naisiaetext@gmail.com' && userData.role !== 'admin') {
+      // AUTO-UPGRADE logic for admins
+      if (isAnyAdmin && userData.role !== 'admin') {
         try {
           await setDoc(doc(db, 'users', user.uid), { role: 'admin' }, { merge: true });
           navigate('/admin');
@@ -71,7 +85,7 @@ export default function LoginPage() {
         }
       }
 
-      if (user.email === 'naisiaetext@gmail.com') {
+      if (isAnyAdmin) {
         navigate('/admin');
       } else {
         navigate('/');
