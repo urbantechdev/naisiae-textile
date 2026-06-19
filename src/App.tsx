@@ -11,8 +11,6 @@ import { doc, getDoc } from 'firebase/firestore';
 
 // Direct static page imports for elite performance (hitting 90+ Score by removing chunk waterfalls)
 import HomePage from './pages/HomePage';
-import AdminDashboard from './pages/AdminDashboard';
-import LoginPage from './pages/LoginPage';
 import AboutPage from './pages/AboutPage';
 import WholesalePage from './pages/WholesalePage';
 import ContactPage from './pages/ContactPage';
@@ -30,6 +28,8 @@ import CareersPage from './pages/CareersPage';
 // Code-split heavy pages to optimize initial bundle payload and improve Core Web Vitals
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { InactivityHandler } from './components/InactivityHandler';
