@@ -4118,6 +4118,8 @@ export default function AdminDashboard() {
         activeView={activeView}
         setActiveView={setActiveView}
         badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+        chats={chats}
+        onAddProduct={() => { setEditingItem(null); setIsModalOpen(true); }}
       />
     </div>
   </div>
@@ -4250,47 +4252,99 @@ function AdminSidebar({
   );
 }
 
-function AdminBottomNav({ activeView, setActiveView, badges }: any) {
+function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct }: any) {
   const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
-  const items = [
+  
+  // Calculate unread active chats from customers dynamically
+  const activeChatCount = chats ? chats.filter((c: any) => c.lastSender !== 'admin').length : 0;
+
+  const leftItems = [
     { id: 'overview', label: 'Dash', icon: LayoutDashboard },
     { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
-    { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
-    { id: 'chat-settings', label: 'Messaging', icon: Phone },
-    { id: 'settings', label: 'Meta', icon: Settings },
   ];
 
-  const allowedItems = isSuperAdmin 
-    ? items 
-    : items.filter(item => item.id === 'products');
+  const rightItems = [
+    { id: 'live-support', label: 'Chat', icon: Headset, badge: activeChatCount },
+    { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
+  ];
+
+  if (!isSuperAdmin) {
+    return (
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/95 backdrop-blur-md border-t border-white/5 flex items-center justify-around px-4 z-[60] pb-5">
+        <button
+          onClick={() => setActiveView('products')}
+          className={`relative flex flex-col items-center justify-center gap-1.5 w-16 h-full transition-all text-[#C8961A]`}
+        >
+          <div className="p-2 rounded-xl bg-[#C8961A]/10 scale-110">
+            <Package size={22} />
+          </div>
+          <span className="text-[7px] font-black uppercase tracking-[1px]">Stock</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/95 backdrop-blur-md border-t border-white/5 flex items-center justify-around px-4 z-[60] pb-5">
-      {allowedItems.map((item) => (
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/98 backdrop-blur-lg border-t border-white/10 flex items-center justify-between px-6 z-[60] pb-5">
+      {/* Left Navigation Tabs */}
+      <div className="flex items-center justify-around flex-1">
+        {leftItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveView(item.id)}
+            className={`relative flex flex-col items-center justify-center gap-1 w-14 h-full transition-all ${
+              activeView === item.id ? 'text-[#C8961A]' : 'text-white/40'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-all ${activeView === item.id ? 'bg-[#C8961A]/10 scale-110 text-[#C8961A]' : 'text-white/50'}`}>
+              <item.icon size={20} />
+            </div>
+            <span className="text-[8px] font-bold uppercase tracking-[0.5px] scale-90">{item.label}</span>
+            {item.badge > 0 && (
+              <span className="absolute top-1 right-1 bg-[#C8102E] text-white text-[7px] font-black px-1 py-0.5 rounded-full flex items-center justify-center min-w-[14px] shadow-lg border border-white/10">
+                {item.badge}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Floating Centered Plus Button for Quick Add Product trigger */}
+      <div className="relative flex justify-center items-center w-16 h-full -mt-5 z-20">
         <button
-          key={item.id}
-          onClick={() => setActiveView(item.id)}
-          className={`relative flex flex-col items-center justify-center gap-1.5 w-16 h-full transition-all ${
-            activeView === item.id ? 'text-[#C8961A]' : 'text-white/30'
-          }`}
+          onClick={(e) => {
+            e.preventDefault();
+            onAddProduct();
+          }}
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(194,17,46,0.4)] hover:scale-105 active:scale-95 transition-all border-2 border-[#0A1628] focus:outline-none"
+          title="Add New Product"
         >
-          <div className={`p-2 rounded-xl transition-all ${activeView === item.id ? 'bg-[#C8961A]/10 scale-110' : ''}`}>
-            <item.icon size={22} />
-          </div>
-          <span className="text-[7px] font-black uppercase tracking-[1px]">{item.label}</span>
-          {item.badge > 0 && (
-            <span className="absolute top-2 right-2 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[16px] shadow-lg border border-white/10 animate-bounce">
-              {item.badge}
-            </span>
-          )}
-          {activeView === item.id && (
-            <motion.div 
-              layoutId="mobileNavActiveIndicator"
-              className="absolute -bottom-1 w-8 h-1 bg-[#C8961A] rounded-full shadow-[0_0_10px_rgba(200,150,26,0.6)]"
-            />
-          )}
+          <Plus size={24} className="stroke-[3]" />
         </button>
-      ))}
+      </div>
+
+      {/* Right Navigation Tabs */}
+      <div className="flex items-center justify-around flex-1">
+        {rightItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveView(item.id)}
+            className={`relative flex flex-col items-center justify-center gap-1 w-14 h-full transition-all ${
+              activeView === item.id ? 'text-[#C8961A]' : 'text-white/40'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-all ${activeView === item.id ? 'bg-[#C8961A]/10 scale-110 text-[#C8961A]' : 'text-white/50'}`}>
+              <item.icon size={20} />
+            </div>
+            <span className="text-[8px] font-bold uppercase tracking-[0.5px] scale-90">{item.label}</span>
+            {item.badge > 0 && (
+              <span className="absolute top-1 right-1 bg-[#C8102E] text-white text-[7px] font-black px-1 py-0.5 rounded-full flex items-center justify-center min-w-[14px] shadow-lg border border-white/10">
+                {item.badge}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

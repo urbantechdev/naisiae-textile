@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Mail, ShieldCheck } from 'lucide-react';
+import { Phone, Mail, Fingerprint } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export function Footer() {
@@ -76,8 +76,12 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 order-2 md:order-1 text-center md:text-left">
           <div className="flex items-center gap-2">
             <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
-            <Link to="/admin" className="text-white/5 hover:text-[#00C4CC]/20 transition-colors" title="Management">
-              <ShieldCheck size={10} />
+            <Link 
+              to="/admin" 
+              className="inline-flex items-center justify-center ml-1.5 p-1 rounded-md text-white/5 hover:text-[#00C4CC] hover:bg-white/[0.03] transition-all duration-300 hover:scale-[1.15] active:scale-90 group cursor-pointer" 
+              title="Secure Console"
+            >
+              <Fingerprint size={12} className="transition-transform duration-500 group-hover:rotate-45" />
             </Link>
           </div>
           <a 
