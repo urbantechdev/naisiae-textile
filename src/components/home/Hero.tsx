@@ -49,12 +49,28 @@ export function Hero({
     setShuffledProducts(shuffled.slice(0, 3));
   }, [products]);
 
+  const productsRef = React.useRef(products);
+  React.useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
+
   React.useEffect(() => {
     if (products && products.length > 0) {
       const shuffled = [...products].sort(() => 0.5 - Math.random());
       setShuffledProducts(shuffled.slice(0, 3));
     }
   }, [products]);
+
+  React.useEffect(() => {
+    if (isReshufflingPaused) return;
+    const interval = setInterval(() => {
+      const currentProducts = productsRef.current;
+      if (!currentProducts || currentProducts.length === 0) return;
+      const shuffled = [...currentProducts].sort(() => 0.5 - Math.random());
+      setShuffledProducts(shuffled.slice(0, 3));
+    }, 7000);
+    return () => clearInterval(interval);
+  }, [isReshufflingPaused]);
 
   React.useEffect(() => {
     const checkMobileWidth = () => {
