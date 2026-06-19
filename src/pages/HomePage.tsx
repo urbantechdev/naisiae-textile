@@ -940,13 +940,13 @@ export default function HomePage() {
                           onClick={() => setActiveThumbnailIndex(idx)}
                           className={`relative w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
                             activeThumbnailIndex === idx 
-                              ? 'border-[#8B3DFF] scale-105 shadow-md' 
+                              ? 'border-[#C8961A] scale-105 shadow-md' 
                               : 'border-white hover:border-slate-200'
                           }`}
                         >
                           <img src={url} className="w-full h-full object-cover" alt={`view ${idx + 1}`} />
                           {activeThumbnailIndex === idx && (
-                            <div className="absolute inset-0 bg-[#8B3DFF]/5" />
+                            <div className="absolute inset-0 bg-[#C8961A]/5" />
                           )}
                         </button>
                       ))}
@@ -955,7 +955,7 @@ export default function HomePage() {
                 })()}
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-6 lg:top-10 left-6 lg:left-10 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-[0_4px_12px_rgba(125,42,232,0.3)] z-20 animate-pulse">
+                  <span className="absolute top-6 lg:top-10 left-6 lg:left-10 bg-gradient-to-r from-[#FF4F5A] to-[#C8961A] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-[0_4px_12px_rgba(200,150,26,0.35)] z-20 animate-pulse">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}

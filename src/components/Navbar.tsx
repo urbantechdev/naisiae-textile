@@ -497,7 +497,7 @@ export function Navbar({
             <button 
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Cart"
-              className="group relative p-3 md:p-4 bg-[#8B3DFF] text-white hover:bg-[#7D2AE8] hover:shadow-[0_0_20px_rgba(139,61,255,0.4)] transition-all duration-550 rounded-xl md:rounded-2xl shadow-xl active:scale-90"
+              className="group relative p-3 md:p-4 bg-[#C8961A] text-white hover:bg-[#B08011] hover:shadow-[0_0_20px_rgba(200,150,26,0.4)] transition-all duration-550 rounded-xl md:rounded-2xl shadow-xl active:scale-90"
             >
               <ShoppingBag size={20} className="relative z-10 md:w-5.5 md:h-5.5" />
               {cartCount > 0 && (
