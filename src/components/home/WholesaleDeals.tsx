@@ -8,13 +8,15 @@ interface WholesaleDealsProps {
   showAllWholesale: boolean;
   setShowAllWholesale: (show: boolean) => void;
   setSelectedQuickViewProduct: (product: any) => void;
+  onProductTap?: () => void;
 }
 
 export function WholesaleDeals({ 
   products, 
   showAllWholesale, 
   setShowAllWholesale, 
-  setSelectedQuickViewProduct 
+  setSelectedQuickViewProduct,
+  onProductTap
 }: WholesaleDealsProps) {
   const wholesaleProducts = products.filter(p => 
     p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')
@@ -33,6 +35,7 @@ export function WholesaleDeals({
   }, []);
 
   const handleProductInteraction = (product: any) => {
+    onProductTap?.();
     const productId = product.id;
     if (clickTimeoutRef.current[productId]) {
       clearTimeout(clickTimeoutRef.current[productId]!);
@@ -107,7 +110,7 @@ export function WholesaleDeals({
 
                         <div className="flex flex-row sm:flex-col gap-2 mt-auto pt-2">
                           <button 
-                            onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                            onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
                             className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
                           >
                             <MessageSquare size={11} />
@@ -204,7 +207,7 @@ export function WholesaleDeals({
                         <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
                           <div className="grid grid-cols-2 gap-2">
                             <button 
-                              onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                              onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
                               className="bg-[#00C4CC] hover:bg-[#008F94] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                             >
                               <MessageSquare size={13} />
@@ -220,7 +223,7 @@ export function WholesaleDeals({
                             </a>
                           </div>
                           <button 
-                            onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                            onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
                             className="w-full text-[#00C4CC] hover:text-[#FF4F5A] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
                           >
                             🔍 Open full-screen overlay modal

@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../services/firebase';
 import { useCart } from '../context/CartContext';
 import { SEED_URLS } from '../constants/seedData';
+import { appExperience } from '../utils/haptics';
 
 const DEFAULT_MEGA_MENUS = [
   { 
@@ -830,7 +831,11 @@ export function Navbar({
         {/* Top visual brand line divider */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A]" />
 
-        <Link to="/" className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname === '/' ? 'text-[#C8961A]' : 'text-white/45'}`}>
+        <Link 
+          to="/" 
+          onClick={() => appExperience.triggerFeedback('tap')} 
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname === '/' ? 'text-[#C8961A]' : 'text-white/45'}`}
+        >
           <Home size={20} className={location.pathname === '/' ? 'scale-110 drop-shadow-[0_0_6px_rgba(200,150,26,0.5)]' : 'opacity-80'} />
           <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname === '/' ? 'text-[#C8961A]' : 'text-white/50'}`}>Home</span>
           {location.pathname === '/' && (
@@ -838,7 +843,11 @@ export function Navbar({
           )}
         </Link>
 
-        <Link to="/products" className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/products') ? 'text-[#C8961A]' : 'text-white/45'}`}>
+        <Link 
+          to="/products" 
+          onClick={() => appExperience.triggerFeedback('tap')} 
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/products') ? 'text-[#C8961A]' : 'text-white/45'}`}
+        >
           <Package size={20} className={location.pathname.startsWith('/products') ? 'scale-110 drop-shadow-[0_0_6px_rgba(200,150,26,0.5)]' : 'opacity-80'} />
           <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/products') ? 'text-[#C8961A]' : 'text-white/50'}`}>Product</span>
           {location.pathname.startsWith('/products') && (
@@ -848,7 +857,10 @@ export function Navbar({
 
         <div className="flex-1 -mt-7 flex flex-col items-center relative z-[70]">
           <button 
-            onClick={() => setIsQuoteModalOpen(true)}
+            onClick={() => {
+              appExperience.triggerFeedback('success');
+              setIsQuoteModalOpen(true);
+            }}
             className="w-13 h-13 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-full border-[3px] border-[#0E121C] flex items-center justify-center text-white shadow-[0_6px_20px_rgba(200,16,46,0.4)] active:scale-90 transition-transform relative group/quote"
           >
             {/* Soft backdrop pulsating glow */}
@@ -862,6 +874,7 @@ export function Navbar({
           href={`https://wa.me/${(chatSettings?.whatsapp || '254792021795').replace(/\+/g, '')}?text=${encodeURIComponent(chatSettings?.message || 'Hello! I need assistance.')}`}
           target="_blank" 
           rel="noopener noreferrer"
+          onClick={() => appExperience.triggerFeedback('tap')}
           className="flex-1 flex flex-col items-center py-1 gap-1 text-white/45 active:text-[#C8961A] active:scale-95 transition-all text-center"
         >
           <MessageSquare size={20} className="opacity-80" />
@@ -870,6 +883,7 @@ export function Navbar({
 
         <a 
           href="tel:+254792021795"
+          onClick={() => appExperience.triggerFeedback('tap')}
           className="flex-1 flex flex-col items-center py-1 gap-1 text-white/45 active:text-[#C8961A] active:scale-95 transition-all text-center"
         >
           <Phone size={20} className="opacity-80" />

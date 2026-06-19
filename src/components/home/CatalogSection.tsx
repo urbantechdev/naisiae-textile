@@ -21,6 +21,7 @@ interface CatalogSectionProps {
   toggleWishlist: (product: any) => void;
   addToCart: (product: any) => void;
   wishlist: any[];
+  onProductTap?: () => void;
 }
 
 export function CatalogSection({
@@ -40,13 +41,15 @@ export function CatalogSection({
   setSelectedQuickViewProduct,
   toggleWishlist,
   addToCart,
-  wishlist
+  wishlist,
+  onProductTap
 }: CatalogSectionProps) {
   const navigate = useNavigate();
   const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
 
   const handleProductInteraction = (product: any, e: React.MouseEvent) => {
     e.stopPropagation();
+    onProductTap?.();
     if (expandedProductId === product.id) {
       setExpandedProductId(null);
     } else {
@@ -378,7 +381,7 @@ export function CatalogSection({
                       {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
                         <div className="grid grid-cols-2 gap-2">
                           <button 
-                            onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                            onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
                             className="bg-[#C8961A] hover:bg-[#B08214] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                           >
                             <MessageSquare size={13} />
@@ -423,7 +426,7 @@ export function CatalogSection({
                         </div>
                       )}
                       <button 
-                        onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
+                        onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
                         className="w-full text-[#C8961A] hover:text-[#C8102E] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
                       >
                         🔍 Open full screen overlay modal

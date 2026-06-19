@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Package, ChevronRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { appExperience } from '../../utils/haptics';
 
 interface SpecialtiesProps {
   categories: any[];
@@ -10,14 +11,14 @@ interface SpecialtiesProps {
 
 export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
   return (
-    <section id="specialties" className="py-24 bg-white border-b border-slate-100">
+    <section id="specialties" className="py-12 sm:py-24 bg-white border-b border-slate-100">
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
-        <div className="flex justify-between items-end mb-12">
+        <div className="flex justify-between items-end mb-6 sm:mb-12">
           <div>
-            <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-4">
+            <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-2 sm:mb-4">
               <div className="w-8 h-[2px] bg-[#C8102E]"></div> Our Specialties
             </div>
-            <h2 className="text-4xl lg:text-5xl font-display text-[#0A1628] leading-none mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-[#0A1628] leading-none">
               Featured Categories
             </h2>
           </div>
@@ -26,7 +27,94 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
           </Link>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
+        {/* Mobile View: Circular App-style Category Bubbles with Horizontal Scroll */}
+        <div className="flex sm:hidden overflow-x-auto pb-4 gap-5 scroll-smooth snap-x snap-mandatory -mx-4 px-4 hide-scrollbar">
+          {categories.length > 0 ? (
+            categories.map((cat, idx) => {
+              // Map elegant fallback symbols/emojis
+              const getEmoji = (title: string) => {
+                const t = title.toLowerCase();
+                if (t.includes('school')) return '🏫';
+                if (t.includes('college') || t.includes('university') || t.includes('wear')) return '🎓';
+                if (t.includes('corporate') || t.includes('office') || t.includes('suit')) return '👔';
+                if (t.includes('sport') || t.includes('kit') || t.includes('tracksuit')) return '⚽';
+                return '👕';
+              };
+
+              const handleCategoryClick = () => {
+                appExperience.triggerFeedback('tap');
+                setActiveTab(cat.title);
+                const shopEl = document.getElementById('catalog-section') || document.getElementById('shop');
+                if (shopEl) {
+                  const offset = 80;
+                  const elementPosition = shopEl.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - offset;
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              };
+
+              return (
+                <motion.button
+                  key={`mobile-bubble-${cat.id || idx}`}
+                  onClick={handleCategoryClick}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.05, type: "spring", stiffness: 100 }}
+                  className="flex flex-col items-center flex-shrink-0 snap-center focus:outline-none"
+                >
+                  {/* Bubble Container */}
+                  <div className="relative group/bubble">
+                    {/* Ring background gradient effect */}
+                    <div className="absolute -inset-0.5 bg-gradient-to-tr from-[#C8961A] to-[#C8102E] rounded-full blur-[2px] opacity-75 group-hover/bubble:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Inner Circle Image/Fallbacks */}
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white border border-white flex items-center justify-center p-0.5 shadow-md">
+                      {cat.image ? (
+                        <img 
+                          src={cat.image} 
+                          className="w-full h-full object-cover rounded-full" 
+                          alt={cat.title} 
+                          loading="lazy" 
+                          referrerPolicy="no-referrer" 
+                        />
+                      ) : (
+                        <span className="text-2xl">{getEmoji(cat.title)}</span>
+                      )}
+                    </div>
+
+                    {/* App-like Crown badge for top picks */}
+                    {idx === 0 && (
+                      <span className="absolute -top-1 -right-1 bg-[#C8961A] text-white text-[7px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-sm">
+                        👑
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Label */}
+                  <span className="text-[10px] font-extrabold text-slate-800 text-center tracking-wide mt-2 max-w-[72px] line-clamp-2 leading-tight">
+                    {cat.title}
+                  </span>
+                </motion.button>
+              );
+            })
+          ) : (
+            Array(5).fill(0).map((_, i) => (
+              <div key={i} className="flex flex-col items-center flex-shrink-0 snap-center">
+                <div className="w-16 h-16 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center animate-pulse">
+                  <Package className="text-slate-300" size={20} />
+                </div>
+                <div className="w-12 h-2 bg-slate-100 rounded mt-2"></div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop & Tablet grid view (unchanged/highly polished cards) */}
+        <div className="hidden sm:grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
           {categories.length > 0 ? (
             categories.slice(0, 4).map((cat, idx) => (
               <motion.div 
@@ -38,6 +126,7 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
                 whileHover={{ y: -6 }}
                 className="group relative h-[350px] rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
                 onClick={() => {
+                  appExperience.triggerFeedback('tap');
                   setActiveTab(cat.title);
                   const shopEl = document.getElementById('catalog-section') || document.getElementById('shop');
                   if (shopEl) {

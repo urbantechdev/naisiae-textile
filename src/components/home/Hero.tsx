@@ -16,6 +16,9 @@ interface HeroProps {
   setSelectedQuickViewProduct: (product: any) => void;
   setIsQuoteModalOpen: (open: boolean) => void;
   products?: any[];
+  onProductTap?: () => void;
+  isReshufflingPaused?: boolean;
+  setIsReshufflingPaused?: (paused: boolean) => void;
 }
 
 export function Hero({
@@ -29,7 +32,10 @@ export function Hero({
   searchResults,
   setSelectedQuickViewProduct,
   setIsQuoteModalOpen,
-  products = []
+  products = [],
+  onProductTap,
+  isReshufflingPaused,
+  setIsReshufflingPaused
 }: HeroProps) {
   const { setIsCatalogueModalOpen } = useCart();
   const heroImages = siteSettings?.heroImages || [];
@@ -431,13 +437,29 @@ export function Hero({
               <div className="flex items-center justify-between mb-4 px-1 relative z-10">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-pulse"></span>
-                    <span className="text-[11px] font-black text-[#C8961A] tracking-[2px] uppercase">Spotlight Picks</span>
+                    <span className={`w-2 h-2 rounded-full ${isReshufflingPaused ? 'bg-amber-500' : 'bg-[#C8961A] animate-pulse'}`}></span>
+                    <span className="text-[11px] font-black text-[#C8961A] tracking-[2px] uppercase">
+                      Spotlight Picks {isReshufflingPaused && "(Paused)"}
+                    </span>
                   </div>
-                  <span className="text-[7px] font-black text-white/30 uppercase tracking-[1.5px] mt-0.5">High Performance Selections</span>
+                  <span className="text-[7px] font-black text-white/30 uppercase tracking-[1.5px] mt-0.5">
+                    {isReshufflingPaused ? (
+                      <button 
+                        onClick={() => setIsReshufflingPaused?.(false)} 
+                        className="text-[#C8961A]/80 hover:text-[#C8961A] transition-colors font-extrabold flex items-center gap-1"
+                      >
+                        <span>▶</span> Resume auto-shuffling
+                      </button>
+                    ) : (
+                      "High Performance Selections"
+                    )}
+                  </span>
                 </div>
                 <button 
-                  onClick={reshuffle}
+                  onClick={() => {
+                    reshuffle();
+                    // Clicking reshuffle can also trigger user interaction but let's allow manual reshuffle to work
+                  }}
                   className="flex items-center gap-1.5 text-white/40 hover:text-white text-[9px] font-black tracking-widest uppercase bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full cursor-pointer transition-all active:scale-95 group/shuffle font-sans border border-white/5 hover:border-white/10"
                 >
                   <RefreshCw size={10} className="group-hover/shuffle:rotate-180 transition-transform duration-500 text-[#C8961A]" />
@@ -463,7 +485,7 @@ export function Hero({
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: idx * 0.1 }}
-                      onClick={() => setSelectedQuickViewProduct(p)}
+                      onClick={() => { onProductTap?.(); setSelectedQuickViewProduct(p); }}
                       className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2 sm:p-2.5 flex flex-col items-start text-left transition-all hover:translate-y-0 sm:hover:-translate-y-1.5 duration-300 active:scale-95 group/card shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_24px_rgba(200,150,26,0.18)] relative overflow-hidden shrink-0 w-[130px] sm:w-auto snap-start"
                     >
                       {/* Premium interactive right edge faded grey stripe */}

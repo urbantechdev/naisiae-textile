@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { onSnapshot, doc, setDoc, serverTimestamp, query, collection, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { appExperience } from '../utils/haptics';
 
 export interface CartItem {
   id: string;
@@ -221,6 +222,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, product];
     });
+    
+    appExperience.triggerFeedback(existed ? 'pop' : 'success');
+    
     setToast({
       message: existed 
         ? `Removed "${product.name || 'item'}" from your saved designs.` 
@@ -236,6 +240,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const wishlistCount = useMemo(() => wishlist.length, [wishlist]);
 
   const addToCart = useCallback((newItem: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
+    appExperience.triggerFeedback('cart_add');
+    
     setCart((prev) => {
       const existingIndex = prev.findIndex(
         (item) => 
@@ -261,10 +267,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const removeFromCart = useCallback((id: string, variants?: Record<string, string>) => {
+    appExperience.triggerFeedback('pop');
     setCart((prev) => prev.filter((item) => !(item.id === id && areVariantsEqual(item.selectedVariants, variants))));
   }, []);
 
   const updateQuantity = useCallback((id: string, quantity: number, variants?: Record<string, string>) => {
+    appExperience.triggerFeedback('tap');
     if (quantity <= 0) {
       removeFromCart(id, variants);
       return;
@@ -277,6 +285,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [removeFromCart]);
 
   const clearCart = useCallback(() => {
+    appExperience.triggerFeedback('pop');
     setCart([]);
     setAppliedPromo(null);
   }, []);
@@ -290,9 +299,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const discount = PROMO_CODES[upperCode];
     
     if (discount !== undefined) {
+      appExperience.triggerFeedback('success');
       setAppliedPromo({ code: upperCode, discount });
       return { success: true, message: `Applied ${upperCode} successfully!` };
     }
+    appExperience.triggerFeedback('pop');
     return { success: false, message: 'Invalid promo code.' };
   }, []);
 

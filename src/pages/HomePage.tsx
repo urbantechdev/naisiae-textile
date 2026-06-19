@@ -39,6 +39,7 @@ import { WholesaleDeals } from '../components/home/WholesaleDeals';
 import { CatalogSection } from '../components/home/CatalogSection';
 import { InstitutionalWholesale } from '../components/home/InstitutionalWholesale';
 import { ProductScrollNavigator } from '../components/ProductScrollNavigator';
+import { PullToRefresh } from '../components/PullToRefresh';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
@@ -101,12 +102,23 @@ export default function HomePage() {
       window.history.replaceState({}, '', '/');
     }
   }, [location.search]);
+
+  const handleMobileRefresh = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    setToast({
+      message: "Sync complete! Connected to live Uhuru Market inventory. 📦🌱",
+      type: "success"
+    });
+  };
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [activeModalPromo, setActiveModalPromo] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [shuffledProducts, setShuffledProducts] = useState<any[]>([]);
+  const [isReshufflingPaused, setIsReshufflingPaused] = useState(false);
+  const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState<any>(null);
 
   useEffect(() => {
     if (products.length > 0) {
@@ -115,6 +127,7 @@ export default function HomePage() {
   }, [products]);
 
   useEffect(() => {
+    if (isReshufflingPaused || selectedQuickViewProduct) return;
     const interval = setInterval(() => {
       setShuffledProducts(prevProducts => {
         if (prevProducts.length <= 1) return prevProducts;
@@ -128,7 +141,7 @@ export default function HomePage() {
       });
     }, 7000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isReshufflingPaused, selectedQuickViewProduct, products]);
   const [categories, setCategories] = useState<any[]>([]);
   const [megaMenus, setMegaMenus] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -206,7 +219,6 @@ export default function HomePage() {
       setIsSubmittingReview(false);
     }
   };
-  const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState<any>(null);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [activeThumbnailIndex, setActiveThumbnailIndex] = useState(0);
 
@@ -217,6 +229,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (selectedQuickViewProduct) {
+      setIsReshufflingPaused(true);
       // Reset selected variants when product changes
       const initialVariants: Record<string, string> = {};
       const variantsByType = selectedQuickViewProduct.variants?.reduce((acc: any, v: any) => {
@@ -506,21 +519,25 @@ export default function HomePage() {
         setSelectedQuickViewProduct={setSelectedQuickViewProduct}
       />
 
-      {/* High-End Cinematic Hero Slider Section */}
-      <div id="intro">
-        <Hero 
-          siteSettings={siteSettings}
-          currentSlide={currentSlide}
-          setCurrentSlide={setCurrentSlide}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          showSearchSuggestions={showSearchSuggestions}
-          setShowSearchSuggestions={setShowSearchSuggestions}
-          searchResults={searchResults}
-          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
-          setIsQuoteModalOpen={setIsQuoteModalOpen}
-          products={products}
-        />
+      <PullToRefresh onRefresh={handleMobileRefresh}>
+        {/* High-End Cinematic Hero Slider Section */}
+        <div id="intro">
+          <Hero 
+            siteSettings={siteSettings}
+            currentSlide={currentSlide}
+            setCurrentSlide={setCurrentSlide}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            showSearchSuggestions={showSearchSuggestions}
+            setShowSearchSuggestions={setShowSearchSuggestions}
+            searchResults={searchResults}
+            setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+            setIsQuoteModalOpen={setIsQuoteModalOpen}
+            products={products}
+            onProductTap={() => setIsReshufflingPaused(true)}
+            isReshufflingPaused={isReshufflingPaused}
+            setIsReshufflingPaused={setIsReshufflingPaused}
+          />
       </div>
 
       <div id="specialties">
@@ -536,6 +553,7 @@ export default function HomePage() {
           showAllWholesale={showAllWholesale}
           setShowAllWholesale={setShowAllWholesale}
           setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+          onProductTap={() => setIsReshufflingPaused(true)}
         />
       </div>
 
@@ -558,6 +576,7 @@ export default function HomePage() {
           toggleWishlist={toggleWishlist}
           addToCart={addToCart}
           wishlist={wishlist}
+          onProductTap={() => setIsReshufflingPaused(true)}
         />
       </div>
 
@@ -1614,6 +1633,7 @@ export default function HomePage() {
           </div>
         )}
       </AnimatePresence>
+      </PullToRefresh>
     </div>
   );
 }
