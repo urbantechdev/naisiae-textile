@@ -44,7 +44,8 @@ import {
   Headset,
   Phone,
   Link as LinkIcon,
-  ShieldCheck
+  ShieldCheck,
+  Coins
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -3760,7 +3761,7 @@ export default function AdminDashboard() {
       {/* Product Modal */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 pt-16 md:pt-4">
+          <div className="fixed inset-0 z-50 flex items-stretch md:items-center justify-center p-0 md:p-4">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -3769,12 +3770,12 @@ export default function AdminDashboard() {
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 40 }}
+              initial={{ scale: 1, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 40 }}
-              className="relative bg-white w-full max-w-xl rounded-t-3xl md:rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] md:max-h-[85vh] flex flex-col mt-auto md:mt-0"
+              exit={{ scale: 1, opacity: 0, y: 50 }}
+              className="relative bg-white w-full max-w-xl rounded-none md:rounded-2xl shadow-2xl overflow-hidden h-full md:h-auto max-h-full md:max-h-[85vh] flex flex-col mt-0 md:mt-0"
             >
-              <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
+              <div className="p-4 md:p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
                 <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
                   {editingItem ? 'Edit Product' : 'Add New Product'}
                 </h3>
@@ -4433,20 +4434,20 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [currentTag, setCurrentTag] = useState('');
   const [showVariantForm, setShowVariantForm] = useState(false);
-  const [newVariant, setNewVariant] = useState({
+  const [newVariant, setNewVariant] = useState<any>({
     type: 'Size',
     value: '',
-    price: 0,
-    stock: 0,
+    price: '',
+    stock: '',
     imageUrl: ''
   });
   
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     category: initialData?.category || 'School Uniforms',
-    price: initialData?.price || 0,
-    wholesalePrice: initialData?.wholesalePrice || initialData?.price || 0,
-    oldPrice: initialData?.oldPrice || 0,
+    price: initialData?.price !== undefined ? initialData.price : '',
+    wholesalePrice: initialData?.wholesalePrice !== undefined ? initialData.wholesalePrice : '',
+    oldPrice: initialData?.oldPrice !== undefined ? initialData.oldPrice : '',
     description: initialData?.description || '',
     imageUrl: initialData?.imageUrl || '',
     imageUrls: initialData?.imageUrls || (initialData?.imageUrl ? [initialData.imageUrl] : []),
@@ -4455,12 +4456,22 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
     tags: initialData?.tags || (initialData?.tag ? [initialData.tag] : []),
     variants: initialData?.variants || [],
     subCategory: initialData?.subCategory || '',
-    stock: initialData?.stock || 0,
+    stock: initialData?.stock !== undefined ? initialData.stock : '',
     priceType: initialData?.priceType || 'fixed'
   });
 
   const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
   const [urlInput, setUrlInput] = useState('');
+
+  const [useWizard, setUseWizard] = useState(!initialData);
+  const [activeStep, setActiveStep] = useState(0);
+
+  const steps = [
+    { title: "Core Profile", description: "Identity, description and AI assist" },
+    { title: "Visual Assets", description: "Draggable gallery and external URLs" },
+    { title: "Value & Logistics", description: "Prices, stock levels and sourcing modes" },
+    { title: "Variants & Tags", description: "Sizes, color profiles and product tags" }
+  ];
 
   const resolveImageUrl = async () => {
     if (!urlInput) return;
@@ -4626,9 +4637,17 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
     if (!newVariant.value) return;
     setFormData({
       ...formData,
-      variants: [...formData.variants, { ...newVariant, id: Date.now().toString() }]
+      variants: [
+        ...formData.variants,
+        {
+          ...newVariant,
+          price: Number(newVariant.price) || 0,
+          stock: Number(newVariant.stock) || 0,
+          id: Date.now().toString()
+        }
+      ]
     });
-    setNewVariant({ type: 'Size', value: '', price: formData.price, stock: 0, imageUrl: formData.imageUrl });
+    setNewVariant({ type: 'Size', value: '', price: '', stock: '', imageUrl: formData.imageUrl });
     setShowVariantForm(false);
   };
 
@@ -4798,7 +4817,14 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
     
     setLoading(true);
     try {
-      await onSubmit(formData);
+      const payload = {
+        ...formData,
+        price: Number(formData.price) || 0,
+        wholesalePrice: Number(formData.wholesalePrice) || 0,
+        oldPrice: Number(formData.oldPrice) || 0,
+        stock: Number(formData.stock) || 0
+      };
+      await onSubmit(payload);
     } catch (error) {
       setToast({ message: "Failed to save product. Please check your connection.", type: 'error' });
     } finally {
@@ -4808,749 +4834,866 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden flex-1">
+      {/* Mode Selector Toggle */}
+      <div className="px-6 pt-3 flex gap-4 border-b border-slate-100 bg-white z-20 shrink-0">
+        <button
+          type="button"
+          onClick={() => setUseWizard(true)}
+          className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-slate-600'}`}
+        >
+          ✨ Interactive Wizard
+          {useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
+        </button>
+        <button
+          type="button"
+          onClick={() => setUseWizard(false)}
+          className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${!useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-[#0A1628]'}`}
+        >
+          📋 Classic Full Form
+          {!useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
+        </button>
+      </div>
+
+      {/* Step Progress Bar */}
+      {useWizard && (
+        <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 sticky top-0 z-20 shrink-0">
+          <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-500 tracking-wider mb-2">
+            <span className="text-[#0A1628]">{steps[activeStep].title}</span>
+            <span className="text-[#C8102E]">Step {activeStep + 1} of {steps.length}</span>
+          </div>
+          <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+            <div 
+              className="bg-[#C8102E] h-full transition-all duration-300"
+              style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar pb-10">
         {/* Image Gallery Section */}
-        <div 
-          className={`space-y-4 p-5 rounded-3xl border-2 transition-all duration-300 relative group/dropzone ${
-          isDraggingOver 
-            ? 'border-[#C8102E] bg-[#C8102E]/5 scale-[0.99] border-dashed ring-4 ring-[#C8102E]/10' 
-            : 'border-slate-100 bg-slate-50/30 border-dashed'
-        }`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <div className="flex justify-between items-end px-1">
-          <div>
-            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider mb-0.5 block">Product Gallery</label>
-            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
-              {disableNonPriceFields ? "Gallery assets are managed by Super Admin." : "Drag images to reorder. First image is primary."}
-            </p>
-          </div>
-          {!disableNonPriceFields && (
-            <div className="flex gap-2">
-              <button
-                 type="button"
-                 onClick={() => setIsUrlModalOpen(true)}
-                 className="flex items-center gap-2 bg-slate-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-md active:scale-95"
-              >
-                <LinkIcon size={12} /> Import via URL
-              </button>
-              {formData.imageUrls.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleAIAnalyze}
-                  disabled={isAnalyzing || uploading}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ${
-                    isAnalyzing 
-                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                      : 'bg-[#C8961A] text-[#0A1628] hover:bg-[#B08416]'
-                  }`}
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <div className="w-3 h-3 border-2 border-t-transparent border-[#0A1628] rounded-full animate-spin"></div>
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <BrainCircuit size={12} />
-                      Generate with AI
-                    </>
-                  )}
-                </button>
-              )}
-              <label className="cursor-pointer group flex items-center gap-2 bg-[#1C3560] text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md active:scale-95">
-                <Upload size={12} /> Add Images
-                <input 
-                  type="file" 
-                  multiple 
-                  className="hidden" 
-                  accept="image/*" 
-                  onChange={handleFileUpload}
-                  disabled={uploading}
-                />
-              </label>
-            </div>
-          )}
-        </div>
-
-        {uploading && (
-          <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 animate-pulse">
-            <div className="w-4 h-4 border-2 border-t-transparent border-[#C8102E] rounded-full animate-spin"></div>
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Uploading Assets...</span>
-          </div>
-        )}
-
-        <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext 
-              items={formData.imageUrls}
-              strategy={horizontalListSortingStrategy}
-            >
-              {formData.imageUrls.map((url: string, index: number) => (
-                <SortableImage 
-                  key={url} 
-                  url={url} 
-                  index={index} 
-                  onRemove={removeImage} 
-                  disabled={disableNonPriceFields}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-          
-          {!disableNonPriceFields && (
-            <label className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-all group ${isDraggingOver ? 'border-[#C8102E] bg-white' : 'border-slate-200 hover:border-[#1C3560] hover:bg-slate-50'}`}>
-              <Plus size={16} className="text-slate-300 group-hover:text-[#1C3560] transition-colors" />
-              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">More</span>
-              <input 
-                type="file" 
-                multiple 
-                className="hidden" 
-                accept="image/*" 
-                onChange={handleFileUpload}
-                disabled={uploading}
-              />
-            </label>
-          )}
-        </div>
-
-        {isDraggingOver && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm rounded-3xl pointer-events-none">
-            <div className="w-16 h-16 rounded-full bg-[#C8102E] flex items-center justify-center text-white animate-bounce shadow-xl shadow-[#C8102E]/20">
-              <Upload size={32} />
-            </div>
-            <p className="mt-4 text-sm font-black text-[#C8102E] uppercase tracking-widest">Drop to Upload</p>
-          </div>
-        )}
-      </div>
-
-      {/* Variants Section */}
-      <div className="space-y-6 pt-6 border-t border-slate-100 bg-slate-50/30 p-4 rounded-3xl">
-        <div className="flex justify-between items-center px-1">
-          <div>
-            <label className="text-[11px] font-black uppercase text-[#1E293B] tracking-wider">Product Variants</label>
-            <p className="text-[9px] text-[#64748B] font-bold uppercase mt-0.5">Manage Size, Color, and Materials</p>
-          </div>
-          {!disableNonPriceFields && (
-            <button 
-              type="button"
-              onClick={() => setShowVariantForm(!showVariantForm)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
-                showVariantForm 
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100' 
-                  : 'bg-[#1C3560] text-white hover:bg-[#0A1628]'
-              }`}
-            >
-              {showVariantForm ? <X size={14} /> : <Plus size={14} />}
-              {showVariantForm ? 'Cancel' : 'Add New Variant'}
-            </button>
-          )}
-        </div>
-
-        {!showVariantForm && !disableNonPriceFields && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
-                <Palette size={13} className="text-[#C8961A]" />
-                Quick Colors
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {commonColors.map((color, idx) => (
-                  <button
-                    key={`${color.name}-${idx}`}
-                    type="button"
-                    onClick={() => quickAddColor(color.name)}
-                    className="group relative flex items-center gap-2 bg-white px-2.5 py-2 rounded-xl border border-slate-200 hover:border-[#F59E0B] hover:shadow-md transition-all active:scale-95"
-                    title={`Quick add ${color.name}`}
-                  >
-                    <div 
-                      className="w-3.5 h-3.5 rounded-full border border-slate-200 shadow-inner" 
-                      style={{ backgroundColor: color.hex }}
-                    />
-                    <span className="text-[9px] font-black text-slate-700 uppercase tracking-tight">{color.name}</span>
-                    <Plus size={8} className="text-slate-300 group-hover:text-[#F59E0B]" />
-                  </button>
-                ))}
+        {(!useWizard || activeStep === 1) && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {useWizard && (
+              <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
+                <Camera className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+                <div>
+                  <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Gallery & Visual Assets</h4>
+                  <p className="text-[10px] text-slate-500 font-medium">Add screenshots or photo galleries. The first image will be set as primary thumbnail. Drag to sort assets.</p>
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
-                <Maximize2 size={13} className="text-[#C8961A]" />
-                Quick Sizes
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {commonSizes.map(size => (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={() => {
-                      setFormData(prev => ({
-                        ...prev,
-                        variants: [...prev.variants, { id: Date.now().toString() + Math.random(), type: 'Size', value: size, price: 0, stock: 0, imageUrl: formData.imageUrl }]
-                      }));
-                    }}
-                    className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-[9px] font-black text-slate-700 uppercase hover:border-[#1C3560] hover:bg-[#1C3560]/5 transition-all active:scale-95 flex items-center gap-1.5"
-                  >
-                    {size} <Plus size={8} className="text-slate-300" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showVariantForm && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-6 rounded-[2rem] border-2 border-[#E2E8F0] shadow-xl space-y-6"
+            )}
+            <div 
+              className={`space-y-4 p-5 rounded-3xl border-2 transition-all duration-300 relative group/dropzone ${
+              isDraggingOver 
+                ? 'border-[#C8102E] bg-[#C8102E]/5 scale-[0.99] border-dashed ring-4 ring-[#C8102E]/10' 
+                : 'border-slate-100 bg-slate-50/30 border-dashed'
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Variant Type</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['Size', 'Color', 'Material'].map(t => (
+            <div className="flex justify-between items-end px-1">
+              <div>
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider mb-0.5 block">Product Gallery</label>
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+                  {disableNonPriceFields ? "Gallery assets are managed by Super Admin." : "Drag images to reorder. First image is primary."}
+                </p>
+              </div>
+              {!disableNonPriceFields && (
+                <div className="flex gap-2">
+                  <button
+                     type="button"
+                     onClick={() => setIsUrlModalOpen(true)}
+                     className="flex items-center gap-2 bg-slate-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-slate-700 transition-all shadow-md active:scale-95"
+                  >
+                    <LinkIcon size={12} /> Import via URL
+                  </button>
+                  {formData.imageUrls.length > 0 && (
                     <button
-                      key={t}
                       type="button"
-                      onClick={() => setNewVariant({...newVariant, type: t})}
-                      className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
-                        newVariant.type === t 
-                          ? 'bg-[#1C3560] text-white border-[#1C3560] shadow-lg' 
-                          : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100 hover:text-slate-600'
+                      onClick={handleAIAnalyze}
+                      disabled={isAnalyzing || uploading}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95 ${
+                        isAnalyzing 
+                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                          : 'bg-[#C8961A] text-[#0A1628] hover:bg-[#B08416]'
                       }`}
                     >
-                      {t}
+                      {isAnalyzing ? (
+                        <>
+                          <div className="w-3 h-3 border-2 border-t-transparent border-[#0A1628] rounded-full animate-spin"></div>
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <BrainCircuit size={12} />
+                          Generate with AI
+                        </>
+                      )}
                     </button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">
-                  Value <span className="text-slate-400 font-bold">(e.g. XL, Navy Blue)</span>
-                </label>
-                <input 
-                  type="text"
-                  placeholder="Enter variant name..."
-                  value={newVariant.value}
-                  onChange={e => setNewVariant({...newVariant, value: e.target.value})}
-                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm font-bold placeholder:text-slate-300 outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Price Offset (/-)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">+</span>
-                  <input 
-                    type="number"
-                    value={newVariant.price}
-                    onChange={e => setNewVariant({...newVariant, price: parseFloat(e.target.value) || 0})}
-                    className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-8 pr-4 py-3 text-sm font-bold outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
-                    placeholder="0"
-                  />
-                </div>
-                <p className="text-[8px] text-slate-400 font-black uppercase tracking-widest ml-1">Added to base product price</p>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Stock Amount</label>
-                <input 
-                  type="number"
-                  value={newVariant.stock}
-                  onChange={e => setNewVariant({...newVariant, stock: parseInt(e.target.value) || 0})}
-                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1 flex items-center gap-2">
-                <ImageIcon size={12} className="text-[#C8961A]" />
-                Associate Image <span className="text-[8px] text-slate-400 normal-case tracking-normal">(Optional)</span>
-              </label>
-              <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide">
-                <button
-                  type="button"
-                  onClick={() => setNewVariant({...newVariant, imageUrl: ''})}
-                  className={`shrink-0 w-16 h-16 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${!newVariant.imageUrl ? 'border-[#C8102E] bg-red-50 text-[#C8102E]' : 'border-slate-100 text-slate-300 hover:border-slate-300'}`}
-                >
-                  <Ban size={16} />
-                  <span className="text-[8px] font-black uppercase">None</span>
-                </button>
-                {formData.imageUrls.map((url: string, i: number) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setNewVariant({...newVariant, imageUrl: url})}
-                    className={`shrink-0 w-16 h-16 rounded-2xl border-2 transition-all overflow-hidden p-0.5 ${newVariant.imageUrl === url ? 'border-[#C8102E] scale-95 shadow-lg ring-4 ring-red-500/10' : 'border-transparent opacity-60 hover:opacity-100 hover:border-slate-200'}`}
-                  >
-                  {url ? (
-                    <img src={url} className="w-full h-full object-contain rounded-[14px] bg-white" alt={`Gallery ${i}`} />
-                  ) : (
-                    <ImageIcon size={16} />
                   )}
-                  </button>
-                ))}
+                  <label className="cursor-pointer group flex items-center gap-2 bg-[#1C3560] text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md active:scale-95">
+                    <Upload size={12} /> Add Images
+                    <input 
+                      type="file" 
+                      multiple 
+                      className="hidden" 
+                      accept="image/*" 
+                      onChange={handleFileUpload}
+                      disabled={uploading}
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
+
+            {uploading && (
+              <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100 animate-pulse">
+                <div className="w-4 h-4 border-2 border-t-transparent border-[#C8102E] rounded-full animate-spin"></div>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Uploading Assets...</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext 
+                  items={formData.imageUrls}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  {formData.imageUrls.map((url: string, index: number) => (
+                    <SortableImage 
+                      key={url} 
+                      url={url} 
+                      index={index} 
+                      onRemove={removeImage} 
+                      disabled={disableNonPriceFields}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+              
+              {!disableNonPriceFields && (
+                <label className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-all group ${isDraggingOver ? 'border-[#C8102E] bg-white' : 'border-slate-200 hover:border-[#1C3560] hover:bg-slate-50'}`}>
+                  <Plus size={16} className="text-slate-300 group-hover:text-[#1C3560] transition-colors" />
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">More</span>
+                  <input 
+                    type="file" 
+                    multiple 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleFileUpload}
+                    disabled={uploading}
+                  />
+                </label>
+              )}
+            </div>
+
+            {isDraggingOver && (
+              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm rounded-3xl pointer-events-none">
+                <div className="w-16 h-16 rounded-full bg-[#C8102E] flex items-center justify-center text-white animate-bounce shadow-xl shadow-[#C8102E]/20">
+                  <Upload size={32} />
+                </div>
+                <p className="mt-4 text-sm font-black text-[#C8102E] uppercase tracking-widest">Drop to Upload</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {(!useWizard || activeStep === 3) && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {useWizard && (
+            <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
+              <Palette className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+              <div>
+                <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Variants and Custom Tagging</h4>
+                <p className="text-[10px] text-slate-500 font-medium">Apply filter categories, specify size offsets, create inventory variants, and insert searching attributes.</p>
               </div>
             </div>
-
-            <button 
-              type="button"
-              onClick={addVariant}
-              className="w-full py-4 bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:scale-[0.99] transition-all shadow-xl shadow-[#C2112E]/20 flex items-center justify-center gap-3"
-            >
-              <CheckCircle2 size={16} /> Save This Variant
-            </button>
-          </motion.div>
-        )}
-
-        <div className="space-y-3">
-          {formData.variants.length > 0 && (
-            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 ml-1">Defined Variants ({formData.variants.length})</label>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {formData.variants.map((v: any) => (
-              <motion.div 
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                key={v.id} 
-                className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl group shadow-sm hover:shadow-md hover:border-[#C8102E] transition-all"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    {v.imageUrl ? (
-                      <img src={v.imageUrl} className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-100 shadow-sm" alt={v.value} />
-                    ) : (
-                      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-300">
-                        <ImageIcon size={20} />
-                      </div>
-                    )}
-                    <span className="absolute -top-2 -right-2 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded-lg border border-white">
-                      {v.type}
-                    </span>
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-black text-[#1E293B] uppercase tracking-wide">{v.value}</h5>
-                    <div className="flex items-center gap-4 mt-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Price +</span>
-                        <span className="text-[11px] text-[#C8102E] font-black">{v.price.toLocaleString()}/-</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 border-l border-slate-100 pl-4">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Stock</span>
-                        <span className={`text-[11px] font-black ${v.stock > 10 ? 'text-green-600' : 'text-amber-500'}`}>{v.stock}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {!disableNonPriceFields && (
-                  <button 
-                    type="button"
-                    onClick={() => removeVariant(v.id)}
-                    className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </motion.div>
-            ))}
-          </div>
-          {formData.variants.length === 0 && !showVariantForm && (
-            <div className="text-center py-12 bg-white/50 border-2 border-dashed border-slate-100 rounded-[2.5rem]">
-              <Package className="mx-auto text-slate-200 mb-3" size={32} />
-              <p className="text-[10px] text-slate-400 font-black uppercase tracking-[3px]">Stock Keeping Units (SKU)</p>
-              <p className="text-[9px] text-slate-300 font-bold uppercase mt-1">Define sizes or colors to track individual stock</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* AI Content Generator Section */}
-      {!disableNonPriceFields && (
-        <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
-          </div>
-          <div className="flex items-start justify-between relative z-10">
-            <div>
-              <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
-                <Sparkles size={16} className="text-indigo-500 animate-pulse" />
-                AI Product Drafter
-              </h4>
-              <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
-                Draft full details instantly based on name & category
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleAIGenerateFull}
-              disabled={isGeneratingFull || !formData.name}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg active:scale-95 ${
-                isGeneratingFull || !formData.name
-                  ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
-              }`}
-            >
-              {isGeneratingFull ? (
-                <>
-                  <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                  Drafting Content...
-                </>
-              ) : (
-                <>
-                  <Zap size={14} />
-                  Magic Draft
-                </>
-              )}
-            </button>
-          </div>
-          <p className="text-[10px] text-slate-500 italic relative z-10 leading-relaxed max-w-[80%]">
-            "Magic Draft" will automatically generate a professional name, market-ready description, 
-            competitive price suggestion, and relevant search tags for you.
-          </p>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5 flex-1">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Name</label>
-          <input 
-            required 
-            value={formData.name}
-            onChange={e => setFormData({...formData, name: e.target.value})}
-            disabled={disableNonPriceFields}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
-          />
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Category</label>
-          <select 
-            value={formData.category}
-            onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
-            disabled={disableNonPriceFields}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-      </div>
-
-      {formData.category === 'School Uniforms' && (
-        <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Sub-Category (Uniform Item)</label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <select 
-              value={formData.subCategory}
-              onChange={e => setFormData({...formData, subCategory: e.target.value})}
-              disabled={disableNonPriceFields}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              <option value="">Select Item Type...</option>
-              {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
-            </select>
-            <input 
-              placeholder="Or type custom item name..."
-              value={formData.subCategory}
-              onChange={e => setFormData({...formData, subCategory: e.target.value})}
-              disabled={disableNonPriceFields}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-            />
-          </div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 ml-1">Helps customers find specific items like sweaters or trousers faster.</p>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div className="space-y-1.5 pt-[22px] sm:pt-0">
-          <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Sourcing Mode</label>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              disabled={disableNonPriceFields}
-              onClick={() => setFormData({...formData, priceType: 'fixed'})}
-              className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
-                formData.priceType === 'fixed' 
-                  ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
-                  : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-              } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-            >
-              Fixed Price
-            </button>
-            <button
-              type="button"
-              disabled={disableNonPriceFields}
-              onClick={() => setFormData({...formData, priceType: 'wholesale'})}
-              className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
-                formData.priceType === 'wholesale' 
-                  ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
-                  : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-              } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-            >
-              Inquiry Only
-            </button>
-          </div>
-        </div>
-        <div className="space-y-1.5 flex flex-col justify-end">
-          <div className="flex items-center justify-between px-1">
-            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (/-)</label>
-            <button
-              type="button"
-              onClick={handleSuggestPrice}
-              disabled={isSuggestingPrice}
-              className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
-            >
-              <Sparkles size={12} className={isSuggestingPrice ? "animate-pulse" : ""} />
-              {isSuggestingPrice ? "Analyzing Market..." : "Suggest Price"}
-            </button>
-          </div>
-          <div className="relative">
-            <input 
-              type="number" 
-              required 
-              value={formData.price}
-              onChange={e => setFormData({...formData, price: Number(e.target.value)})}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
-          </div>
-          {pricingReasoning && (
-            <motion.div 
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-2 p-3 bg-[#EAB308]/5 border border-[#EAB308]/20 rounded-xl flex gap-3"
-            >
-              <div className="pt-0.5"><Zap size={14} className="text-[#C8961A]" /></div>
-              <p className="text-[10px] text-slate-600 font-bold leading-relaxed">
-                <span className="text-[#C8961A] font-black uppercase tracking-wider block mb-0.5">AI Insights & Market Research:</span>
-                {pricingReasoning}
-              </p>
-            </motion.div>
-          )}
-        </div>
-        <div className="space-y-1.5 pt-[22px] sm:pt-0">
-          <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (/-)</label>
-          <div className="relative">
-            <input 
-              type="number" 
-              value={formData.wholesalePrice}
-              onChange={e => setFormData({...formData, wholesalePrice: Number(e.target.value)})}
-              className="w-full bg-orange-50 border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:border-orange-500 outline-none transition-colors text-orange-700 font-bold" 
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest pointer-events-none">BULK</div>
-          </div>
-        </div>
-        <div className="space-y-1.5 pt-[22px] sm:pt-0">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Old Price (Optional)</label>
-          <div className="relative">
-            <input 
-              type="number" 
-              value={formData.oldPrice}
-              onChange={e => setFormData({...formData, oldPrice: Number(e.target.value)})}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
-          </div>
-        </div>
-        <div className="space-y-1.5 pt-[22px] sm:pt-0">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1 sm:mt-[22px]">Base Stock (If no variants)</label>
-          <input 
-            type="number" 
-            value={formData.stock}
-            onChange={e => setFormData({...formData, stock: parseInt(e.target.value)})}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-          />
-        </div>
-      </div>
-
-      {!disableNonPriceFields && (
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Or Provide Image URL</label>
-          <div className="flex gap-2">
-            <input 
-              placeholder="https://images.unsplash.com/..." 
-              value={formData.imageUrl}
-              onChange={e => {
-                const url = e.target.value;
-                setFormData({
-                  ...formData, 
-                  imageUrl: url,
-                  imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
-                });
-              }}
-              className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-            />
-            <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
-              {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="space-y-1.5 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-        <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Tags & Organization</label>
-        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 mb-2">Helpful for grouping products (e.g., Seasonal, Stock Status)</p>
-        
-        <div className="flex flex-wrap gap-2 mb-3 min-h-[32px]">
-          {formData.tags.map((tag: string) => (
-            <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
-              <Package size={10} className="text-[#C8961A]" />
-              {tag}
+          <div className="space-y-6 pt-6 border-t border-slate-100 bg-slate-50/30 p-4 rounded-3xl">
+            <div className="flex justify-between items-center px-1">
+              <div>
+                <label className="text-[11px] font-black uppercase text-[#1E293B] tracking-wider">Product Variants</label>
+                <p className="text-[9px] text-[#64748B] font-bold uppercase mt-0.5">Manage Size, Color, and Materials</p>
+              </div>
               {!disableNonPriceFields && (
                 <button 
-                  type="button" 
-                  onClick={() => removeTag(tag)}
-                  className="hover:text-red-300 transition-colors ml-1"
+                  type="button"
+                  onClick={() => setShowVariantForm(!showVariantForm)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
+                    showVariantForm 
+                      ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-100' 
+                      : 'bg-[#1C3560] text-white hover:bg-[#0A1628]'
+                  }`}
                 >
-                  <X size={10} />
+                  {showVariantForm ? <X size={14} /> : <Plus size={14} />}
+                  {showVariantForm ? 'Cancel' : 'Add New Variant'}
                 </button>
               )}
-            </span>
-          ))}
-          {formData.tags.length === 0 && (
-            <div className="w-full py-4 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl bg-white/50">
-              <Filter size={14} className="text-slate-300 mb-1" />
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">No tags assigned yet</span>
             </div>
-          )}
-        </div>
 
-        {!disableNonPriceFields && (
-          <>
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <input 
-                  placeholder="Type tag and press enter... (e.g. Winter)" 
-                  value={currentTag}
-                  onChange={e => setCurrentTag(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                  className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
-                />
-                <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
+            {!showVariantForm && !disableNonPriceFields && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
+                    <Palette size={13} className="text-[#C8961A]" />
+                    Quick Colors
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {commonColors.map((color, idx) => (
+                      <button
+                        key={`${color.name}-${idx}`}
+                        type="button"
+                        onClick={() => quickAddColor(color.name)}
+                        className="group relative flex items-center gap-2 bg-white px-2.5 py-2 rounded-xl border border-slate-200 hover:border-[#F59E0B] hover:shadow-md transition-all active:scale-95"
+                        title={`Quick add ${color.name}`}
+                      >
+                        <div 
+                          className="w-3.5 h-3.5 rounded-full border border-slate-200 shadow-inner" 
+                          style={{ backgroundColor: color.hex }}
+                        />
+                        <span className="text-[9px] font-black text-slate-700 uppercase tracking-tight">{color.name}</span>
+                        <Plus size={8} className="text-slate-300 group-hover:text-[#F59E0B]" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 flex items-center gap-2">
+                    <Maximize2 size={13} className="text-[#C8961A]" />
+                    Quick Sizes
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {commonSizes.map(size => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            variants: [...prev.variants, { id: Date.now().toString() + Math.random(), type: 'Size', value: size, price: 0, stock: 0, imageUrl: formData.imageUrl }]
+                          }));
+                        }}
+                        className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-[9px] font-black text-slate-700 uppercase hover:border-[#1C3560] hover:bg-[#1C3560]/5 transition-all active:scale-95 flex items-center gap-1.5"
+                      >
+                        {size} <Plus size={8} className="text-slate-300" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <button 
-                type="button" 
-                onClick={addTag}
-                className="px-6 py-2 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
-              >
-                Add
-              </button>
-            </div>
+            )}
 
-            <div className="pt-3">
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Suggested Tags</p>
-              <div className="flex flex-wrap gap-1.5">
-                {['summer', 'winter', 'clearance', 'bestseller', 'new-arrival', 'secondary', 'primary', 'corporate', 'knitwear'].map(sTag => (
-                  <button
-                    key={sTag}
-                    type="button"
-                    onClick={() => {
-                      if (!formData.tags.includes(sTag)) {
-                        setFormData({ ...formData, tags: [...formData.tags, sTag] });
-                      }
-                    }}
-                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
-                      formData.tags.includes(sTag) 
-                        ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
-                        : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
-                    }`}
+            {showVariantForm && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white p-6 rounded-[2rem] border-2 border-[#E2E8F0] shadow-xl space-y-6"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Variant Type</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {['Size', 'Color', 'Material'].map(t => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setNewVariant({...newVariant, type: t})}
+                          className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                            newVariant.type === t 
+                              ? 'bg-[#1C3560] text-white border-[#1C3560] shadow-lg' 
+                              : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100 hover:text-slate-600'
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">
+                      Value <span className="text-slate-400 font-bold">(e.g. XL, Navy Blue)</span>
+                    </label>
+                    <input 
+                      type="text"
+                      placeholder="Enter variant name..."
+                      value={newVariant.value}
+                      onChange={e => setNewVariant({...newVariant, value: e.target.value})}
+                      className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm font-bold placeholder:text-slate-300 outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Price Offset (/-)</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">+</span>
+                      <input 
+                        type="number"
+                        value={newVariant.price}
+                        onChange={e => setNewVariant({...newVariant, price: e.target.value === '' ? '' : parseFloat(e.target.value)})}
+                        className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-8 pr-4 py-3 text-sm font-bold outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
+                        placeholder="0"
+                      />
+                    </div>
+                    <p className="text-[8px] text-slate-400 font-black uppercase tracking-widest ml-1">Added to base product price</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1">Stock Amount</label>
+                    <input 
+                      type="number"
+                      value={newVariant.stock}
+                      onChange={e => setNewVariant({...newVariant, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
+                      className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#C8102E] focus:bg-white transition-all shadow-inner"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase text-[#1E293B] tracking-widest ml-1 flex items-center gap-2">
+                    <ImageIcon size={12} className="text-[#C8961A]" />
+                    Associate Image <span className="text-[8px] text-slate-400 normal-case tracking-normal">(Optional)</span>
+                  </label>
+                  <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide">
+                    <button
+                      type="button"
+                      onClick={() => setNewVariant({...newVariant, imageUrl: ''})}
+                      className={`shrink-0 w-16 h-16 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${!newVariant.imageUrl ? 'border-[#C8102E] bg-red-50 text-[#C8102E]' : 'border-slate-100 text-slate-300 hover:border-slate-300'}`}
+                    >
+                      <Ban size={16} />
+                      <span className="text-[8px] font-black uppercase">None</span>
+                    </button>
+                    {formData.imageUrls.map((url: string, i: number) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setNewVariant({...newVariant, imageUrl: url})}
+                        className={`shrink-0 w-16 h-16 rounded-2xl border-2 transition-all overflow-hidden p-0.5 ${newVariant.imageUrl === url ? 'border-[#C8102E] scale-95 shadow-lg ring-4 ring-red-500/10' : 'border-transparent opacity-60 hover:opacity-100 hover:border-slate-200'}`}
+                      >
+                      {url ? (
+                        <img src={url} className="w-full h-full object-contain rounded-[14px] bg-white text-xs" alt={`Gallery ${i}`} />
+                      ) : (
+                        <ImageIcon size={16} />
+                      )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <button 
+                  type="button"
+                  onClick={addVariant}
+                  className="w-full py-4 bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white text-[11px] font-black uppercase tracking-[3px] rounded-2xl hover:scale-[0.99] transition-all shadow-xl shadow-[#C2112E]/20 flex items-center justify-center gap-3"
+                >
+                  <CheckCircle2 size={16} /> Save This Variant
+                </button>
+              </motion.div>
+            )}
+
+            <div className="space-y-3">
+              {formData.variants.length > 0 && (
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-widest px-1 ml-1">Defined Variants ({formData.variants.length})</label>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {formData.variants.map((v: any) => (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    key={v.id} 
+                    className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl group shadow-sm hover:shadow-md hover:border-[#C8102E] transition-all"
                   >
-                    {sTag}
-                  </button>
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        {v.imageUrl ? (
+                          <img src={v.imageUrl} className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-100 shadow-sm" alt={v.value} />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-300">
+                            <ImageIcon size={20} />
+                          </div>
+                        )}
+                        <span className="absolute -top-2 -right-2 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded-lg border border-white">
+                          {v.type}
+                        </span>
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-black text-[#1E293B] uppercase tracking-wide">{v.value}</h5>
+                        <div className="flex items-center gap-4 mt-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Price +</span>
+                            <span className="text-[11px] text-[#C8102E] font-black">{v.price.toLocaleString()}/-</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 border-l border-slate-100 pl-4">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Stock</span>
+                            <span className={`text-[11px] font-black ${v.stock > 10 ? 'text-green-600' : 'text-amber-500'}`}>{v.stock}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {!disableNonPriceFields && (
+                      <button 
+                        type="button"
+                        onClick={() => removeVariant(v.id)}
+                        className="w-9 h-9 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </motion.div>
                 ))}
               </div>
+              {formData.variants.length === 0 && !showVariantForm && (
+                <div className="text-center py-12 bg-white/50 border-2 border-dashed border-slate-100 rounded-[2.5rem]">
+                  <Package className="mx-auto text-slate-200 mb-3" size={32} />
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-[3px]">Stock Keeping Units (SKU)</p>
+                  <p className="text-[9px] text-slate-300 font-bold uppercase mt-1">Define sizes or colors to track individual stock</p>
+                </div>
+              )}
             </div>
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
 
-      <div className="space-y-1.5">
-        <div className="flex justify-between items-center px-1">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Short Description</label>
+      {/* STEP 0: Identity, description and AI assist */}
+      {(!useWizard || activeStep === 0) && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {useWizard && (
+            <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
+              <Sparkles className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+              <div>
+                <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Core Profile & Categorization</h4>
+                <p className="text-[10px] text-slate-500 font-medium">Specify the name, category and write a summary. You can use the AI assistant below to draft these automagically!</p>
+              </div>
+            </div>
+          )}
+
+          {/* AI Content Generator Section */}
           {!disableNonPriceFields && (
-            <button
-              type="button"
-              onClick={handleGenerateDescription}
-              disabled={isGeneratingDescription}
-              className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
-            >
-              <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
-              {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
-            </button>
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
+              </div>
+              <div className="flex items-start justify-between relative z-10">
+                <div>
+                  <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+                    <Sparkles size={16} className="text-indigo-500 animate-pulse" />
+                    AI Product Drafter
+                  </h4>
+                  <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
+                    Draft full details instantly based on name & category
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAIGenerateFull}
+                  disabled={isGeneratingFull || !formData.name}
+                  className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg active:scale-95 ${
+                    isGeneratingFull || !formData.name
+                      ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
+                      : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
+                  }`}
+                >
+                  {isGeneratingFull ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                      Drafting Content...
+                    </>
+                  ) : (
+                    <>
+                      <Zap size={14} />
+                      Magic Draft
+                    </>
+                  )}
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-500 italic relative z-10 leading-relaxed max-w-[80%]">
+                "Magic Draft" will automatically generate a professional name, market-ready description, 
+                competitive price suggestion, and relevant search tags for you.
+              </p>
+            </div>
+          )}
+
+          {/* Product Name & Category */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5 flex-1">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Name</label>
+              <input 
+                required 
+                value={formData.name}
+                onChange={e => setFormData({...formData, name: e.target.value})}
+                disabled={disableNonPriceFields}
+                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Category</label>
+              <select 
+                value={formData.category}
+                onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
+                disabled={disableNonPriceFields}
+                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Sub-Category (Uniform Item) */}
+          {formData.category === 'School Uniforms' && (
+            <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Sub-Category (Uniform Item)</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <select 
+                  value={formData.subCategory}
+                  onChange={e => setFormData({...formData, subCategory: e.target.value})}
+                  disabled={disableNonPriceFields}
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select Item Type...</option>
+                  {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
+                </select>
+                <input 
+                  placeholder="Or type custom item name..."
+                  value={formData.subCategory}
+                  onChange={e => setFormData({...formData, subCategory: e.target.value})}
+                  disabled={disableNonPriceFields}
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                />
+              </div>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 ml-1">Helps customers find specific items like sweaters or trousers faster.</p>
+            </div>
+          )}
+
+          {/* Short Description */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between items-center px-1">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Short Description</label>
+              {!disableNonPriceFields && (
+                <button
+                  type="button"
+                  onClick={handleGenerateDescription}
+                  disabled={isGeneratingDescription}
+                  className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+                >
+                  <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
+                  {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
+                </button>
+              )}
+            </div>
+            <textarea 
+              rows={3} 
+              required
+              value={formData.description}
+              onChange={e => setFormData({...formData, description: e.target.value})}
+              disabled={disableNonPriceFields}
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
+            ></textarea>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 2: Value & Logistics */}
+      {(!useWizard || activeStep === 2) && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {useWizard && (
+            <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
+              <Coins className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+              <div>
+                <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Value, Pricing & Logistics</h4>
+                <p className="text-[10px] text-slate-500 font-medium">Configure fixed retail prices, wholesale margins, old price comparisons (for sales/discounts), and baseline inventory stock.</p>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="space-y-1.5 pt-[22px] sm:pt-0">
+              <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Sourcing Mode</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  disabled={disableNonPriceFields}
+                  onClick={() => setFormData({...formData, priceType: 'fixed'})}
+                  className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                    formData.priceType === 'fixed' 
+                      ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
+                      : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+                  } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  Fixed Price
+                </button>
+                <button
+                  type="button"
+                  disabled={disableNonPriceFields}
+                  onClick={() => setFormData({...formData, priceType: 'wholesale'})}
+                  className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                    formData.priceType === 'wholesale' 
+                      ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
+                      : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+                  } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  Inquiry Only
+                </button>
+              </div>
+            </div>
+            <div className="space-y-1.5 flex flex-col justify-end">
+              <div className="flex items-center justify-between px-1">
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (/-)</label>
+                <button
+                  type="button"
+                  onClick={handleSuggestPrice}
+                  disabled={isSuggestingPrice}
+                  className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+                >
+                  <Sparkles size={12} className={isSuggestingPrice ? "animate-pulse" : ""} />
+                  {isSuggestingPrice ? "Analyzing Market..." : "Suggest Price"}
+                </button>
+              </div>
+              <div className="relative">
+                <input 
+                  type="number" 
+                  required 
+                  value={formData.price}
+                  onChange={e => setFormData({...formData, price: e.target.value === '' ? '' : Number(e.target.value)})}
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
+              </div>
+              {pricingReasoning && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-2 p-3 bg-[#EAB308]/5 border border-[#EAB308]/20 rounded-xl flex gap-3"
+                >
+                  <div className="pt-0.5"><Zap size={14} className="text-[#C8961A]" /></div>
+                  <p className="text-[10px] text-slate-600 font-bold leading-relaxed">
+                    <span className="text-[#C8961A] font-black uppercase tracking-wider block mb-0.5">AI Insights & Market Research:</span>
+                    {pricingReasoning}
+                  </p>
+                </motion.div>
+              )}
+            </div>
+            <div className="space-y-1.5 pt-[22px] sm:pt-0">
+              <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (/-)</label>
+              <div className="relative">
+                <input 
+                  type="number" 
+                  value={formData.wholesalePrice}
+                  onChange={e => setFormData({...formData, wholesalePrice: e.target.value === '' ? '' : Number(e.target.value)})}
+                  className="w-full bg-orange-50 border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:border-orange-500 outline-none transition-colors text-orange-700 font-bold" 
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest pointer-events-none">BULK</div>
+              </div>
+            </div>
+            <div className="space-y-1.5 pt-[22px] sm:pt-0">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Old Price (Optional)</label>
+              <div className="relative">
+                <input 
+                  type="number" 
+                  value={formData.oldPrice}
+                  onChange={e => setFormData({...formData, oldPrice: e.target.value === '' ? '' : Number(e.target.value)})}
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
+              </div>
+            </div>
+            <div className="space-y-1.5 pt-[22px] sm:pt-0">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Base Stock (If no variants)</label>
+              <input 
+                type="number" 
+                value={formData.stock}
+                onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
+                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+              />
+            </div>
+          </div>
+
+          {!disableNonPriceFields && (
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Or Provide Image URL</label>
+              <div className="flex gap-2">
+                <input 
+                  placeholder="https://images.unsplash.com/..." 
+                  value={formData.imageUrl}
+                  onChange={e => {
+                    const url = e.target.value;
+                    setFormData({
+                      ...formData, 
+                      imageUrl: url,
+                      imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
+                    });
+                  }}
+                  className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                />
+                <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
+                  {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
+                </div>
+              </div>
+            </div>
           )}
         </div>
-        <textarea 
-          rows={3} 
-          required
-          value={formData.description}
-          onChange={e => setFormData({...formData, description: e.target.value})}
-          disabled={disableNonPriceFields}
-          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
-        ></textarea>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Promotion Badge</label>
-          <select 
-            value={formData.badge}
-            onChange={e => setFormData({...formData, badge: e.target.value})}
-            disabled={disableNonPriceFields}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
-          </select>
-        </div>
-        <div className="flex items-center gap-6 mt-6">
-          <div className="flex items-center gap-3">
-            <button 
-              type="button"
-              disabled={disableNonPriceFields}
-              onClick={() => setFormData({...formData, active: !formData.active})}
-              className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-            >
-              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
-            </button>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{formData.active ? 'Public' : 'Hidden'}</span>
+      {(!useWizard || activeStep === 3) && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="space-y-1.5 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Tags & Organization</label>
+            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 mb-2">Helpful for grouping products (e.g., Seasonal, Stock Status)</p>
+            
+            <div className="flex flex-wrap gap-2 mb-3 min-h-[32px]">
+              {formData.tags.map((tag: string) => (
+                <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
+                  <Package size={10} className="text-[#C8961A]" />
+                  {tag}
+                  {!disableNonPriceFields && (
+                    <button 
+                      type="button" 
+                      onClick={() => removeTag(tag)}
+                      className="hover:text-red-300 transition-colors ml-1"
+                    >
+                      <X size={10} />
+                    </button>
+                  )}
+                </span>
+              ))}
+              {formData.tags.length === 0 && (
+                <div className="w-full py-4 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl bg-white/50">
+                  <Filter size={14} className="text-slate-300 mb-1" />
+                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">No tags assigned yet</span>
+                </div>
+              )}
+            </div>
+
+            {!disableNonPriceFields && (
+              <>
+                <div className="flex gap-2">
+                  <div className="flex-1 relative">
+                    <input 
+                      placeholder="Type tag and press enter... (e.g. Winter)" 
+                      value={currentTag}
+                      onChange={e => setCurrentTag(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
+                      className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
+                    />
+                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={addTag}
+                    className="px-6 py-2 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                <div className="pt-3">
+                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Suggested Tags</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['summer', 'winter', 'clearance', 'bestseller', 'new-arrival', 'secondary', 'primary', 'corporate', 'knitwear'].map(sTag => (
+                      <button
+                        key={sTag}
+                        type="button"
+                        onClick={() => {
+                          if (!formData.tags.includes(sTag)) {
+                            setFormData({ ...formData, tags: [...formData.tags, sTag] });
+                          }
+                        }}
+                        className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
+                          formData.tags.includes(sTag) 
+                            ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
+                        }`}
+                      >
+                        {sTag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <button 
-              type="button"
-              disabled={disableNonPriceFields}
-              onClick={() => {
-                const isWholesale = formData.tags.includes('Wholesale');
-                if (isWholesale) {
-                  setFormData({ ...formData, tags: formData.tags.filter((t: string) => t !== 'Wholesale') });
-                } else {
-                  setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
-                }
-              }}
-              className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-            >
-              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
-            </button>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Wholesale Deal</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Promotion Badge</label>
+              <select 
+                value={formData.badge}
+                onChange={e => setFormData({...formData, badge: e.target.value})}
+                disabled={disableNonPriceFields}
+                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
+              </select>
+            </div>
+            <div className="flex items-center gap-6 mt-6">
+              <div className="flex items-center gap-3">
+                <button 
+                  type="button"
+                  disabled={disableNonPriceFields}
+                  onClick={() => setFormData({...formData, active: !formData.active})}
+                  className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
+                </button>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{formData.active ? 'Public' : 'Hidden'}</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button 
+                  type="button"
+                  disabled={disableNonPriceFields}
+                  onClick={() => {
+                    const isWholesale = formData.tags.includes('Wholesale');
+                    if (isWholesale) {
+                      setFormData({ ...formData, tags: formData.tags.filter((t: string) => t !== 'Wholesale') });
+                    } else {
+                      setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
+                    }
+                  }}
+                  className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
+                </button>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Wholesale Deal</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      </div>
+      )}
+    </div>
 
-      <div className="shrink-0 p-6 bg-white border-t border-slate-100 z-20">
+      <div className="shrink-0 p-4 md:p-6 bg-white border-t border-slate-100 z-20 flex flex-col gap-2">
+        {useWizard && (
+          <div className="grid grid-cols-2 gap-3 mb-1">
+            <button
+              type="button"
+              disabled={activeStep === 0}
+              onClick={() => setActiveStep((prev: number) => prev - 1)}
+              className="h-11 bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-50 disabled:cursor-not-allowed rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 border border-slate-200"
+            >
+              ← Back
+            </button>
+            <button
+              type="button"
+              disabled={activeStep === steps.length - 1}
+              onClick={() => setActiveStep((prev: number) => prev + 1)}
+              className="h-11 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:scale-[1.01] text-white disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-md shadow-red-500/10"
+            >
+              Next Step →
+            </button>
+          </div>
+        )}
         <button 
           disabled={loading || uploading}
           type="submit" 
-          className="w-full h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.02] active:scale-[0.98] text-white rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
+          className="w-full h-12 md:h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl md:rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
         >
           {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
         </button>

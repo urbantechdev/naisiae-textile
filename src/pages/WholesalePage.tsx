@@ -49,6 +49,7 @@ export default function WholesalePage() {
   const [inquiryQty, setInquiryQty] = useState(50);
   const [customizationDetails, setCustomizationDetails] = useState('');
   const [siteSettings, setSiteSettings] = useState<any>(null);
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
@@ -190,6 +191,8 @@ export default function WholesalePage() {
                   toggleWishlist={toggleWishlist}
                   isWishlisted={wishlist.some(p => p.id === product.id)}
                   onPreview={() => setSelectedProduct(product)}
+                  isExpanded={expandedProductId === product.id}
+                  onToggleExpand={() => setExpandedProductId(expandedProductId === product.id ? null : product.id)}
                 />
               ))}
             </div>
@@ -401,97 +404,206 @@ export default function WholesalePage() {
   );
 }
 
-function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPreview }: any) {
-  const handleClick = () => {
-    onPreview();
+function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPreview, isExpanded, onToggleExpand }: any) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleExpand();
   };
 
   return (
     <motion.div 
       layout
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="group relative flex flex-col justify-between bg-white border border-transparent rounded-[32px] p-4 transition-all duration-300 shadow-sm hover:shadow-xl"
+      className={`group relative flex flex-col justify-between bg-white border rounded-[32px] p-5 transition-all duration-300 ${
+        isExpanded 
+          ? "col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70 border-transparent" 
+          : "border-[#E4E8EF] hover:shadow-xl hover:border-[#C8961A]/20"
+      }`}
     >
-      <div 
-        onClick={handleClick}
-        className="aspect-[4/3] bg-[#F1F5F9] rounded-[24px] overflow-hidden relative mb-6 cursor-pointer flex items-center justify-center p-2"
-      >
-        {product.imageUrl ? (
-          <img 
-            src={product.imageUrl} 
-            alt={product.name}
-            className="w-full h-full object-cover rounded-[20px] transition-all duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <Package size={64} className="text-slate-200" />
-        )}
-        
-        <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[24px]">
-          <button 
-            onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-            className="w-12 h-12 rounded-2xl bg-white text-[#0A1628] flex items-center justify-center hover:bg-[#C8102E] hover:text-white transition-all shadow-xl hover:-translate-y-1"
+      {!isExpanded ? (
+        <>
+          <div 
+            onClick={handleClick}
+            className="aspect-[4/3] bg-[#F1F5F9] rounded-[24px] overflow-hidden relative mb-6 cursor-pointer flex items-center justify-center p-2"
           >
-            <Plus size={20} />
-          </button>
-          <button 
-            onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl hover:-translate-y-1 ${
-              isWishlisted ? 'bg-[#C8102E] text-white' : 'bg-white text-slate-400 hover:text-red-500'
-            }`}
-          >
-            <Heart size={20} className={isWishlisted ? "fill-current" : ""} />
-          </button>
-        </div>
+            {product.imageUrl ? (
+              <img 
+                src={product.imageUrl} 
+                alt={product.name}
+                className="w-full h-full object-cover rounded-[20px] transition-all duration-700 group-hover:scale-105"
+              />
+            ) : (
+              <Package size={64} className="text-slate-200" />
+            )}
+            
+            <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[24px]" onClick={(e) => e.stopPropagation()}>
+              <button 
+                onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                className="w-12 h-12 rounded-2xl bg-white text-[#0A1628] flex items-center justify-center hover:bg-[#C8102E] hover:text-white transition-all shadow-xl hover:-translate-y-1"
+              >
+                <Plus size={20} />
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl hover:-translate-y-1 ${
+                  isWishlisted ? 'bg-[#C8102E] text-white' : 'bg-white text-slate-400 hover:text-red-500'
+                }`}
+              >
+                <Heart size={20} className={isWishlisted ? "fill-current" : ""} />
+              </button>
+            </div>
 
-        {product.badge && (
-          <span className="absolute top-4 left-4 bg-[#C8102E] text-white text-[8px] font-black px-3 py-1 rounded-full tracking-[2px] uppercase shadow-lg">
-            {product.badge}
-          </span>
-        )}
-      </div>
+            {product.badge && (
+              <span className="absolute top-4 left-4 bg-[#C8102E] text-white text-[8px] font-black px-3 py-1 rounded-full tracking-[2px] uppercase shadow-lg">
+                {product.badge}
+              </span>
+            )}
+          </div>
 
-      <div className="px-2 flex flex-col flex-1" onClick={handleClick}>
-        <div className="flex items-center gap-2 mb-2 cursor-pointer">
-          <span className="text-[9px] font-black text-[#C8961A] uppercase tracking-[3px]">{product.category}</span>
-          <div className="h-[1px] flex-1 bg-slate-100"></div>
-          <Package size={12} className="text-slate-300" />
-        </div>
-        <h3 className="font-display text-2xl text-[#0A1628] leading-tight mb-2 group-hover:text-[#C8102E] transition-colors cursor-pointer">{product.name}</h3>
-        
-        {/* Interactive hint */}
-        <span className="text-[9px] text-[#C8961A]/75 font-bold mb-3 block leading-none antialiased cursor-pointer">
-          ℹ️ Click to preview details
-        </span>
-
-        <div className="flex flex-col gap-3 mt-auto">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
-              Bulk Inquiry Required
+          <div className="px-2 flex flex-col flex-1 cursor-pointer" onClick={handleClick}>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[9px] font-black text-[#C8961A] uppercase tracking-[3px]">{product.category}</span>
+              <div className="h-[1px] flex-1 bg-slate-100"></div>
+              <Package size={12} className="text-slate-300" />
+            </div>
+            <h3 className="font-display text-2xl text-[#0A1628] leading-tight mb-2 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
+            
+            {/* Interactive hint */}
+            <span className="text-[9px] text-[#C8961A]/75 font-bold mb-3 block leading-none antialiased">
+              ✨ Tap to inspect wholesale details
             </span>
+
+            <div className="flex flex-col gap-3 mt-auto">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+                  Bulk Inquiry Required
+                </span>
+              </div>
+              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                <a 
+                  href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${product.name}.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <MessageSquare size={12} />
+                  Enquire
+                </a>
+                <a 
+                  href="tel:+254792021795"
+                  className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <Phone size={12} />
+                  Call
+                </a>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <a 
-              href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${product.name}.`}
-              target="_blank"
-              onClick={(e) => e.stopPropagation()}
-              rel="noopener noreferrer"
-              className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+        </>
+      ) : (
+        <div className="flex flex-col md:flex-row gap-6 w-full text-left h-full">
+          {/* Left Column: Visual Area */}
+          <div className="w-full md:w-5/12 bg-white flex flex-col border-b md:border-b-0 md:border-r border-slate-100 shrink-0 pb-4 md:pb-0 md:pr-4">
+            <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-slate-50 rounded-2xl flex items-center justify-center p-2 mb-4">
+              {product.imageUrl ? (
+                <img 
+                  src={product.imageUrl} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover rounded-xl" 
+                />
+              ) : (
+                <Package size={50} className="text-[#C8961A]/20" />
+              )}
+              {product.badge && (
+                <span className="absolute top-3 left-3 bg-[#C8102E] text-white text-[9.5px] font-black px-2.5 py-1 rounded-full tracking-widest uppercase shadow-md z-10">{product.badge}</span>
+              )}
+            </div>
+            <div>
+              <div className="text-[10px] text-[#C8961A] font-black tracking-widest uppercase mb-1">{product.category}</div>
+              <h3 className="font-display text-2xl text-[#0A1628] leading-tight line-clamp-2">{product.name}</h3>
+            </div>
+          </div>
+
+          {/* Right Column: Specifications & Forms */}
+          <div className="w-full md:w-7/12 flex flex-col justify-between relative bg-white min-h-0">
+            {/* Close / Collapse button */}
+            <button 
+              onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
+              className="absolute right-0 top-0 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#C8102E] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
+              title="Close specification details"
             >
-              <MessageSquare size={12} />
-              Enquire
-            </a>
-            <a 
-              href="tel:+254792021795"
-              onClick={(e) => e.stopPropagation()}
-              className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
-            >
-              <Phone size={12} />
-              Call
-            </a>
+              <X size={15} />
+            </button>
+
+            <div className="pr-6 pt-1">
+              <span className="inline-block bg-slate-50 border border-slate-100 text-slate-500 text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-wider mb-4">
+                Bulk Supply Specifications
+              </span>
+              
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Description</h4>
+                  <p className="text-[12px] text-slate-600 leading-relaxed font-bold">
+                    {product.description || "Premium bespoke uniform textile engineered for superior lifespan under heavy-duty institutional service. Perfect colors, fade-resistant fabrics."}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
+                    <span className="font-extrabold text-[#0E121C] text-[11px]">50 Units</span>
+                  </div>
+                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Lead Time</span>
+                    <span className="font-extrabold text-[#C8961A] text-[11px]">7 - 14 Days</span>
+                  </div>
+                </div>
+
+                {product.tags && product.tags.length > 0 && (
+                  <div>
+                    <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Fabric Properties</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {product.tags.map((t: string, idx: number) => (
+                        <span key={idx} className="bg-slate-50 border border-slate-200 text-[#C8961A] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
+                          #{t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <a 
+                  href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${product.name}.`}
+                  target="_blank"
+                  onClick={(e) => e.stopPropagation()}
+                  rel="noopener noreferrer"
+                  className="bg-[#25D366] hover:bg-[#128C7E] text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
+                >
+                  <MessageSquare size={13} />
+                  Enquire WhatsApp
+                </a>
+                <a 
+                  href="tel:+254792021795"
+                  onClick={(e) => e.stopPropagation()}
+                  className="bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
+                >
+                  <Phone size={13} />
+                  Call Now
+                </a>
+              </div>
+              <button 
+                onClick={(e) => { e.stopPropagation(); onPreview(); }}
+                className="w-full text-[#C8961A] hover:text-[#C8102E] text-[9px] font-black uppercase tracking-widest text-center mt-1 block"
+              >
+                🔍 Click to open detailed inquiry/quote builder
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </motion.div>
   );
 }
