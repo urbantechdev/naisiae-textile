@@ -69,7 +69,7 @@ export function CatalogSection({
             {activeTab === 'all' ? 'Top Flash Deals' : activeTab}
           </h2>
           
-          <div className="mt-8">
+          <div className="mt-8 hidden lg:block">
             <div className="flex items-center gap-6 overflow-x-auto pb-4 hide-scrollbar">
               {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
                 const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
@@ -107,7 +107,7 @@ export function CatalogSection({
           </div>
 
           {activeTab === 'School Uniforms' && uniformSubCategories.length > 0 && (
-            <div className="mt-4">
+            <div className="mt-4 hidden lg:block">
               <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
                 <button
                   onClick={() => setActiveSubCategory(null)}
@@ -144,7 +144,7 @@ export function CatalogSection({
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4 mb-10 items-start lg:items-center justify-between w-full border-t border-slate-100 pt-6">
+      <div className="hidden lg:flex flex-col lg:flex-row gap-4 mb-10 items-start lg:items-center justify-between w-full border-t border-slate-100 pt-6">
         <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
           <button 
             onClick={() => setActiveTag(null)}

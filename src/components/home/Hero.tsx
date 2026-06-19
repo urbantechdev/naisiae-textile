@@ -81,7 +81,7 @@ export function Hero({
   const showVideo = !isMobile && videoUrl && !videoErrorSlides[currentSlide] && !isNonEmbeddableUrl(videoUrl);
   
   return (
-    <section id="hero" className="relative min-h-screen lg:h-screen lg:min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0E121C] py-12 lg:py-0">
+    <section id="hero" className="relative min-h-[70vh] lg:h-screen lg:min-h-[750px] flex items-center justify-center overflow-hidden bg-[#0E121C] py-8 lg:py-0">
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Mobile-only gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#0E121C] from-[40%] via-[#0E121C]/95 via-[45%] to-transparent to-[75%] z-10 lg:hidden"></div>
@@ -220,7 +220,7 @@ export function Hero({
         </svg>
       </div>
 
-      <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-24 sm:pt-36 pb-24 lg:py-0 gap-8 lg:gap-10">
+      <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-16 sm:pt-24 pb-16 lg:py-0 gap-8 lg:gap-10">
         <div className="max-w-xl lg:max-w-[750px] w-full flex flex-col gap-6 lg:gap-8 order-1 lg:order-1">
           {/* Desktop Search on top of the sliding text of the left column */}
           <div className="hidden lg:block w-full lg:max-w-[480px] group relative z-40 mb-2">

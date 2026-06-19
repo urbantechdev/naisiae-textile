@@ -54,14 +54,14 @@ export function WholesaleDeals({
   return (
     <section id="wholesale-deals" className="py-20 bg-white border-b border-slate-100">
       <div className="max-w-[1440px] mx-auto px-8">
-        <div className="flex justify-between items-end mb-12">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
           <div>
-            <div className="flex items-center gap-2.5 text-[#00C4CC] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-              <div className="w-7 h-0.5 bg-[#00C4CC]"></div> Bulk Pricing Available
+            <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
+              <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
             </div>
             <h2 className="font-display text-5xl tracking-tight leading-none text-[#0E121C]">Wholesale Deals</h2>
           </div>
-          <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#7D2AE8] hover:text-[#FF4F5A] transition-colors border-b-2 border-transparent hover:border-[#FF4F5A] pb-1 flex items-center gap-2">
+          <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#C8102E] hover:text-[#C8961A] transition-colors border-b-2 border-transparent hover:border-[#C8961A] pb-1 flex items-center gap-2">
             View All Wholesale Items <ChevronRight size={14} />
           </Link>
         </div>
@@ -73,14 +73,14 @@ export function WholesaleDeals({
               const isExpanded = expandedProductId === product.id;
               return (
                 <motion.div 
-                  key={product.id}
-                  layout
-                  whileHover={isExpanded ? undefined : { y: -6 }}
-                  className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex ${
-                    isExpanded 
-                      ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#00C4CC]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
-                      : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#00C4CC]/30 w-full"
-                  }`}
+                   key={product.id}
+                   layout
+                   whileHover={isExpanded ? undefined : { y: -6 }}
+                   className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex ${
+                     isExpanded 
+                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
+                       : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30 w-full"
+                   }`}
                 >
                   {!isExpanded ? (
                     <>
@@ -94,16 +94,16 @@ export function WholesaleDeals({
                             referrerPolicy="no-referrer" 
                           />
                         ) : (
-                          <Package size={40} className="text-[#00C4CC]/20" />
+                          <Package size={40} className="text-[#C8961A]/20" />
                         )}
-                        <span className="absolute top-2 left-2 bg-[#00C4CC] text-white text-[7px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
+                        <span className="absolute top-2 left-2 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white text-[7px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
                       </div>
                       <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={() => handleProductInteraction(product)}>
                         <div>
                           <h3 className="font-bold text-[12px] sm:text-[13px] mb-1 sm:mb-2 leading-tight line-clamp-2 min-h-[1.5rem] sm:line-clamp-1 text-[#0E121C]">{product.name}</h3>
                           
                           {/* Interactive hint */}
-                          <span className="text-[8px] sm:text-[9px] text-[#00C4CC] font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
+                          <span className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
                             <span>✨</span> Tap to inspect details
                           </span>
                         </div>
@@ -111,7 +111,7 @@ export function WholesaleDeals({
                         <div className="flex flex-row sm:flex-col gap-2 mt-auto pt-2">
                           <button 
                             onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
+                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#C8961A] text-white hover:bg-[#B08214] rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
                           >
                             <MessageSquare size={11} />
                             Enquire
@@ -119,7 +119,7 @@ export function WholesaleDeals({
                           <a 
                             href="tel:+254792021795"
                             onClick={(e) => e.stopPropagation()}
-                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 text-center"
+                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#C8102E] hover:bg-[#AF0B23] text-white rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 text-center"
                           >
                             <Phone size={11} />
                             Call Now
@@ -141,18 +141,18 @@ export function WholesaleDeals({
                               referrerPolicy="no-referrer" 
                             />
                           ) : (
-                            <Package size={50} className="text-[#00C4CC]/20" />
+                            <Package size={50} className="text-[#C8961A]/20" />
                           )}
-                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">Wholesale</span>
+                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">Wholesale</span>
                         </div>
                         <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
                           <div>
-                            <div className="text-[9px] text-[#00C4CC] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                            <div className="text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
                             <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
                           </div>
                           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Wholesale Spec</span>
-                            <span className="text-base font-black text-[#00C4CC]">{product.price.toLocaleString()}/-</span>
+                            <span className="text-base font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
                           </div>
                         </div>
                       </div>
@@ -185,7 +185,7 @@ export function WholesaleDeals({
                               </div>
                               <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
                                 <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Industry Fit</span>
-                                <span className="font-extrabold text-[#00C4CC] text-[11px]">Hospitality / School</span>
+                                <span className="font-extrabold text-[#C8961A] text-[11px]">Hospitality / School</span>
                               </div>
                             </div>
 
@@ -194,7 +194,7 @@ export function WholesaleDeals({
                                 <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Fabric Properties</h4>
                                 <div className="flex flex-wrap gap-1.5">
                                   {product.tags.map((t: string, idx: number) => (
-                                    <span key={idx} className="bg-slate-100 border border-slate-200 text-[#00C4CC] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
+                                    <span key={idx} className="bg-slate-100 border border-slate-200 text-[#C8102E] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
                                       #{t}
                                     </span>
                                   ))}
@@ -208,7 +208,7 @@ export function WholesaleDeals({
                           <div className="grid grid-cols-2 gap-2">
                             <button 
                               onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                              className="bg-[#00C4CC] hover:bg-[#008F94] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                              className="bg-[#C8961A] hover:bg-[#B08214] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                             >
                               <MessageSquare size={13} />
                               Enquire
@@ -216,7 +216,7 @@ export function WholesaleDeals({
                             <a 
                               href="tel:+254792021795"
                               onClick={(e) => e.stopPropagation()}
-                              className="bg-[#FF4F5A] hover:bg-[#E03B46] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 text-center shadow-sm"
+                              className="bg-[#C8102E] hover:bg-[#AF0B23] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 text-center shadow-sm"
                             >
                               <Phone size={13} />
                               Call Now
@@ -224,7 +224,7 @@ export function WholesaleDeals({
                           </div>
                           <button 
                             onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                            className="w-full text-[#00C4CC] hover:text-[#FF4F5A] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
+                            className="w-full text-[#C8961A] hover:text-[#C8102E] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
                           >
                             🔍 Open full-screen overlay modal
                           </button>
@@ -242,7 +242,7 @@ export function WholesaleDeals({
            {wholesaleProducts.length > 6 && (
              <button 
               onClick={() => setShowAllWholesale(!showAllWholesale)}
-              className="px-10 py-4 bg-slate-100 hover:bg-[#7D2AE8] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
+              className="px-10 py-4 bg-slate-100 hover:bg-[#C8102E] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
              >
                {showAllWholesale ? 'Show Less' : 'View More Wholesale Items'} 
                <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />
