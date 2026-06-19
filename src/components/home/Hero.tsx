@@ -354,9 +354,71 @@ export function Hero({
               </span>
             </button>
           </div>
+
+          {/* Mobile Product Highlights Row */}
+          {shuffledProducts.length > 0 && (
+            <div className="lg:hidden w-full mt-6 bg-[#0E121C]/65 border border-white/10 rounded-3xl p-4 shadow-xl backdrop-blur-xl relative text-left overflow-hidden">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-[10px] font-black uppercase tracking-[2px] text-[#C8961A]">
+                  ⚡ SPOTLIGHT PICKS
+                </span>
+                <button 
+                  onClick={reshuffle}
+                  className="text-[9px] font-bold text-white/50 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg transition-all uppercase tracking-wider"
+                >
+                  Reshuffle
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {shuffledProducts.slice(0, 2).map((p, idx) => {
+                  const discount = (p.oldPrice && p.price && p.oldPrice > p.price)
+                    ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100)
+                    : 0;
+                  return (
+                    <button
+                      key={`highlight-mobile-${p.id}`}
+                      onClick={() => setSelectedQuickViewProduct(p)}
+                      className="bg-white/5 active:bg-white/10 hover:bg-white/10 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2.5 flex flex-col text-left transition-all relative overflow-hidden"
+                    >
+                      <div className="w-full aspect-[4/3] bg-white rounded-xl overflow-hidden mb-2 relative shrink-0">
+                        {p.imageUrl ? (
+                          <img 
+                            src={p.imageUrl} 
+                            className="w-full h-full object-cover object-top" 
+                            alt={p.name}
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100 font-bold text-xs">
+                            🧥
+                          </div>
+                        )}
+                        {discount > 0 && (
+                          <div className="absolute top-1.5 left-1.5 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider z-10 shadow-md">
+                            -{discount}% OFF
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0 w-full px-1">
+                        <p className="text-[11px] font-bold text-white truncate leading-tight mb-1">{p.name}</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-black text-[#C8961A] font-sans">
+                            {p.price ? `Ksh ${p.price.toLocaleString()}/-` : 'Bulk Price'}
+                          </p>
+                          <span className="text-[7px] font-bold uppercase text-white/40 bg-white/5 px-1 py-0.5 rounded leading-none shrink-0 border border-white/5">
+                            ⭐ 4.9
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex max-w-xl lg:max-w-[450px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28 transform lg:translate-x-8">
+        <div className="hidden lg:flex max-w-xl lg:max-w-[450px] w-full flex-col items-center justify-center lg:items-end order-2 lg:order-2 mt-8 lg:mt-0 pb-16 lg:pb-28 transform lg:translate-x-8">
           {/* Spotlight Picks Block */}
           {shuffledProducts.length > 0 && (
             <div className="w-full lg:max-w-[450px] mt-6 bg-[#0E121C]/65 border border-white/10 rounded-[2.5rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative text-left backdrop-blur-xl overflow-hidden group/spotlight">
@@ -383,7 +445,7 @@ export function Hero({
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 relative z-10">
+              <div className="flex sm:grid flex-nowrap sm:grid-cols-3 overflow-x-auto sm:overflow-x-visible gap-3 pb-3 sm:pb-0 snap-x snap-mandatory scrollbar-none relative z-10 w-full">
                 {shuffledProducts.map((p, idx) => {
                   // Determine offer/promo badge content gracefully
                   const discount = (p.oldPrice && p.price && p.oldPrice > p.price)
@@ -402,11 +464,11 @@ export function Hero({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: idx * 0.1 }}
                       onClick={() => setSelectedQuickViewProduct(p)}
-                      className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2.5 flex flex-col items-start text-left transition-all hover:-translate-y-1.5 duration-300 active:scale-95 group/card shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_24px_rgba(200,150,26,0.18)] relative overflow-hidden shrink-0"
+                      className="bg-white/5 hover:bg-white/10 active:bg-white/15 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2 sm:p-2.5 flex flex-col items-start text-left transition-all hover:translate-y-0 sm:hover:-translate-y-1.5 duration-300 active:scale-95 group/card shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_24px_rgba(200,150,26,0.18)] relative overflow-hidden shrink-0 w-[130px] sm:w-auto snap-start"
                     >
                       {/* Premium interactive right edge faded grey stripe */}
                       <div className="absolute top-0 right-0 bottom-0 w-[3px] bg-white/10 opacity-30 group-hover/card:opacity-60 transition-all duration-300 z-20 rounded-r-2xl" />
-                      <div className="w-full aspect-[4/5] bg-white rounded-xl overflow-hidden mb-3 relative border border-white/10 shrink-0">
+                      <div className="w-full aspect-[4/5] bg-white rounded-xl overflow-hidden mb-2 sm:mb-3 relative border border-white/10 shrink-0">
                         {p.imageUrl ? (
                           <img 
                             src={p.imageUrl} 
@@ -434,11 +496,11 @@ export function Hero({
                       </div>
                       <div className="min-w-0 w-full px-1">
                         <p className="text-[10px] font-black text-white truncate leading-tight group-hover/card:text-[#C8961A] transition-colors">{p.name}</p>
-                        <div className="flex items-center justify-between mt-1.5">
-                          <p className="text-[9.5px] font-black text-[#C8961A] tracking-wide font-sans">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 sm:mt-1.5 gap-1 sm:gap-0 min-w-0">
+                          <p className="text-[9.5px] font-black text-[#C8961A] tracking-wide font-sans truncate w-full sm:w-auto">
                             {p.price ? `Ksh ${p.price.toLocaleString()}/-` : 'Bulk Price'}
                           </p>
-                          <span className="text-[6.5px] font-bold uppercase text-white/50 tracking-[1px] bg-white/5 px-1 py-0.5 rounded leading-none shrink-0 border border-white/5 group-hover/card:border-[#C8961A]/20 group-hover/card:text-[#C8961A] transition-all">
+                          <span className="text-[6.5px] font-bold uppercase text-white/50 tracking-[1px] bg-white/5 px-1 py-0.5 rounded leading-none shrink-0 border border-white/5 group-hover/card:border-[#C8961A]/20 group-hover/card:text-[#C8961A] transition-all self-start sm:self-auto">
                             ⭐ 4.9
                           </span>
                         </div>

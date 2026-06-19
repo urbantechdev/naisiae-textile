@@ -185,7 +185,7 @@ export function CatalogSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
         {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => {
           const isExpanded = expandedProductId === product.id;
           return (
@@ -193,15 +193,15 @@ export function CatalogSection({
               key={product.id}
               layout
               whileHover={isExpanded ? undefined : { y: -6 }}
-              className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-300 ${
+              className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex ${
                 isExpanded 
-                  ? "col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
-                  : "border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30"
+                  ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
+                  : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30 w-full"
               }`}
             >
               {!isExpanded ? (
                 <>
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={(e) => handleProductInteraction(product, e)}>
+                  <div className="relative aspect-square sm:aspect-[4/3] w-[120px] sm:w-full overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={(e) => handleProductInteraction(product, e)}>
                     {product.imageUrl ? (
                       <img 
                         src={product.imageUrl} 
@@ -215,7 +215,7 @@ export function CatalogSection({
                       <Package size={40} className="text-[#C8961A]/20" />
                     )}
                     {product.badge && (
-                      <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase shadow-sm">{product.badge}</span>
+                      <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[7px] sm:text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-sm">{product.badge}</span>
                     )}
                     <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
                       <button 
@@ -228,43 +228,45 @@ export function CatalogSection({
                       </button>
                     </div>
                   </div>
-                  <div className="p-3 sm:p-4 cursor-pointer flex flex-col flex-grow" onClick={(e) => handleProductInteraction(product, e)}>
-                    <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-                    <h3 className="font-bold text-[13px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-1">{product.name}</h3>
-                    
-                    {/* Interactive hint */}
-                    <span className="text-[9px] text-slate-400 font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-2">
-                      <span>✨</span> Tap to inspect details
-                    </span>
+                  <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={(e) => handleProductInteraction(product, e)}>
+                    <div>
+                      <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-0.5 sm:mb-1">{product.category}</div>
+                      <h3 className="font-bold text-[12px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-2 min-h-[1.5rem] sm:line-clamp-1">{product.name}</h3>
+                      
+                      {/* Interactive hint */}
+                      <span className="text-[8px] sm:text-[9px] text-slate-400 font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
+                        <span>✨</span> Tap to inspect details
+                      </span>
+                    </div>
 
-                    <div className="mt-auto pt-3">
+                    <div className="pt-2 sm:pt-3">
                       {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-row sm:flex-col gap-2">
                           <button 
                             onClick={(e) => { e.stopPropagation(); handleProductInteraction(product, e); }}
-                            className="w-full bg-[#C8961A] hover:bg-[#B08214] text-white py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 sm:w-full bg-[#C8961A] hover:bg-[#B08214] text-white py-1.5 sm:py-2 rounded-lg font-bold text-[8.5px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5"
                           >
-                            <MessageSquare size={12} />
+                            <MessageSquare size={11} />
                             Enquire
                           </button>
                           <a 
                             href="tel:+254792021795"
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-[#C8102E]/10 hover:bg-[#C8102E]/20 text-[#C8102E] py-2 rounded-lg font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2 text-center"
+                            className="flex-1 sm:w-full bg-[#C8102E]/10 hover:bg-[#C8102E]/20 text-[#C8102E] py-1.5 sm:py-2 rounded-lg font-bold text-[8.5px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5 text-center"
                           >
-                            <Phone size={12} />
+                            <Phone size={11} />
                             Call Now
                           </a>
                         </div>
                       ) : (
                         <>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[15px] sm:text-lg font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
+                          <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                            <span className="text-[13px] sm:text-lg font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
                           </div>
-                          <div className="flex gap-1.5">
+                          <div className="flex gap-2">
                             <button 
                               onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                              className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-colors text-center shadow-sm"
+                              className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-1.5 sm:py-2 rounded-lg font-extrabold text-[8px] sm:text-[9.5px] uppercase tracking-wider transition-colors text-center shadow-sm"
                               title="Add unit to shopping cart"
                             >
                               Add 🛒
@@ -282,7 +284,7 @@ export function CatalogSection({
                                 addToCart(cartItem); 
                                 navigate('/checkout');
                               }}
-                              className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2 rounded-lg font-extrabold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center shadow-sm"
+                              className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-1.5 sm:py-2 rounded-lg font-extrabold text-[8px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center shadow-sm"
                               title="Secure instant checkout"
                             >
                               Buy Now ⚡

@@ -413,29 +413,29 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
   return (
     <motion.div 
       layout
-      className={`group relative flex flex-col justify-between bg-white border rounded-[32px] p-5 transition-all duration-300 ${
+      className={`group relative flex ${
         isExpanded 
-          ? "col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70 border-transparent" 
-          : "border-[#E4E8EF] hover:shadow-xl hover:border-[#C8961A]/20"
+          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70 border-transparent p-5" 
+          : "flex-row md:flex-col border-[#E4E8EF] hover:shadow-xl hover:border-[#C8961A]/20 bg-white border rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
       }`}
     >
       {!isExpanded ? (
         <>
           <div 
             onClick={handleClick}
-            className="aspect-[4/3] bg-[#F1F5F9] rounded-[24px] overflow-hidden relative mb-6 cursor-pointer flex items-center justify-center p-2"
+            className="aspect-square md:aspect-[4/3] bg-[#F1F5F9] rounded-[18px] md:rounded-[24px] overflow-hidden relative mb-0 md:mb-6 cursor-pointer flex items-center justify-center p-2 shrink-0 w-[115px] md:w-full border-r md:border-r-0 md:border-b border-slate-100"
           >
             {product.imageUrl ? (
               <img 
                 src={product.imageUrl} 
                 alt={product.name}
-                className="w-full h-full object-cover rounded-[20px] transition-all duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover rounded-[14px] md:rounded-[20px] transition-all duration-700 group-hover:scale-105"
               />
             ) : (
-              <Package size={64} className="text-slate-200" />
+              <Package size={48} className="text-slate-200" />
             )}
             
-            <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[24px]" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[18px] md:rounded-[24px]" onClick={(e) => e.stopPropagation()}>
               <button 
                 onClick={(e) => { e.stopPropagation(); addToCart(product); }}
                 className="w-12 h-12 rounded-2xl bg-white text-[#0A1628] flex items-center justify-center hover:bg-[#C8102E] hover:text-white transition-all shadow-xl hover:-translate-y-1"
@@ -453,27 +453,29 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
             </div>
 
             {product.badge && (
-              <span className="absolute top-4 left-4 bg-[#C8102E] text-white text-[8px] font-black px-3 py-1 rounded-full tracking-[2px] uppercase shadow-lg">
+              <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-[#C8102E] text-white text-[7px] md:text-[8px] font-black px-1.5 py-0.5 md:px-3 md:py-1 rounded-full tracking-[1.5px] md:tracking-[2px] uppercase shadow-lg">
                 {product.badge}
               </span>
             )}
           </div>
 
-          <div className="px-2 flex flex-col flex-1 cursor-pointer" onClick={handleClick}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[9px] font-black text-[#C8961A] uppercase tracking-[3px]">{product.category}</span>
-              <div className="h-[1px] flex-1 bg-slate-100"></div>
-              <Package size={12} className="text-slate-300" />
+          <div className="pl-3 md:px-2 flex flex-col justify-between flex-1 min-w-0 cursor-pointer" onClick={handleClick}>
+            <div>
+              <div className="flex items-center gap-2 mb-1 md:mb-2">
+                <span className="text-[8px] md:text-[9px] font-black text-[#C8961A] uppercase tracking-[1.5px] md:tracking-[3px]">{product.category}</span>
+                <div className="h-[1px] flex-1 bg-slate-100 hidden md:block"></div>
+                <Package size={12} className="text-slate-300 hidden md:block" />
+              </div>
+              <h3 className="font-display text-sm md:text-2xl text-[#0A1628] leading-tight mb-1 md:mb-2 group-hover:text-[#C8102E] transition-colors line-clamp-2 md:line-clamp-1">{product.name}</h3>
+              
+              {/* Interactive hint */}
+              <span className="text-[8px] md:text-[9px] text-[#C8961A]/75 font-bold mb-2 block leading-none antialiased">
+                ✨ Tap to inspect wholesale details
+              </span>
             </div>
-            <h3 className="font-display text-2xl text-[#0A1628] leading-tight mb-2 group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
-            
-            {/* Interactive hint */}
-            <span className="text-[9px] text-[#C8961A]/75 font-bold mb-3 block leading-none antialiased">
-              ✨ Tap to inspect wholesale details
-            </span>
 
-            <div className="flex flex-col gap-3 mt-auto">
-              <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 mt-auto">
+              <div className="flex items-center justify-between hidden md:flex">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
                   Bulk Inquiry Required
                 </span>
@@ -483,14 +485,14 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                   href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${product.name}.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+                  className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-1.5 md:py-2.5 rounded-lg md:rounded-xl font-black text-[8px] md:text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <MessageSquare size={12} />
                   Enquire
                 </a>
                 <a 
                   href="tel:+254792021795"
-                  className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+                  className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white py-1.5 md:py-2.5 rounded-lg md:rounded-xl font-black text-[8px] md:text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <Phone size={12} />
                   Call

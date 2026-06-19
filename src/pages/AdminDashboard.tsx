@@ -174,6 +174,42 @@ export default function AdminDashboard() {
   
   const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
 
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  const [dynamicListHeight, setDynamicListHeight] = useState(600);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const calculateHeight = () => {
+      if (listContainerRef.current) {
+        const rect = listContainerRef.current.getBoundingClientRect();
+        const bottomNavTop = window.innerHeight - 80;
+        const availableHeight = bottomNavTop - rect.top - 16;
+        const listHeightValue = Math.max(200, availableHeight - 48);
+        setDynamicListHeight(listHeightValue);
+      }
+    };
+
+    calculateHeight();
+    const timer = setTimeout(calculateHeight, 150);
+
+    window.addEventListener('resize', calculateHeight);
+    return () => {
+      window.removeEventListener('resize', calculateHeight);
+      clearTimeout(timer);
+    };
+  }, [isMobile, activeView, productSearch, productCategoryFilter, productStatusFilter, productMinPrice, productMaxPrice]);
+
   useEffect(() => {
     if (!isSuperAdmin && activeView !== 'products') {
       setActiveView('products');
@@ -1612,8 +1648,12 @@ export default function AdminDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto w-full relative bg-[#F1F5F9] pb-24 lg:pb-8">
-        <div className="p-4 lg:p-10">
+      <main className={`flex-1 w-full relative bg-[#F1F5F9] pb-20 lg:pb-8 ${
+        activeView === 'products' ? 'h-[calc(100vh-4rem)] lg:h-auto overflow-hidden flex flex-col' : 'overflow-y-auto'
+      }`}>
+        <div className={`p-4 lg:p-10 ${
+          activeView === 'products' ? 'h-full flex flex-col min-h-0 pb-2 md:pb-10' : ''
+        }`}>
           <AnimatePresence mode="wait">
             {activeView === 'overview' && (
               <motion.div 
@@ -1624,7 +1664,7 @@ export default function AdminDashboard() {
                 className="space-y-8"
               >
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                   <StatCard label="Total Site Views" value={stats.totalViews.toLocaleString()} trend={0} icon={<Eye className="text-blue-600" />} />
                   <StatCard 
                     label="Quote Requests" 
@@ -1739,7 +1779,7 @@ export default function AdminDashboard() {
                       <p className="text-xs text-gray-400">Based on wishlist additions and interactions</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     {products.slice(0, 4).map((product, idx) => (
                       <div 
                         key={product.id} 
@@ -1783,9 +1823,10 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
+                className="h-full flex flex-col min-h-0"
               >
-                <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
-                  <div className="p-6 border-b border-[#E2E8F0]">
+                <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden h-full flex flex-col min-h-0">
+                  <div className="p-4 md:p-6 border-b border-[#E2E8F0] shrink-0">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                       <div>
                         <h3 className="font-bold text-[#1E293B]">Inventory Management</h3>
@@ -1906,93 +1947,95 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-2xl border border-[#E2E8F0] overflow-hidden shadow-sm min-w-[800px]">
-                    <div className="flex bg-[#F8FAFC] border-b border-[#E2E8F0] font-black text-[10px] uppercase tracking-wider text-[#64748B]">
-                      <div className="flex-1 px-6 py-4">Product</div>
-                      <div className="w-[180px] px-6 py-4">Category</div>
-                      <div className="w-[150px] px-6 py-4">Base Price</div>
-                      <div className="w-[120px] px-6 py-4">Status</div>
-                      <div className="w-[100px] px-6 py-4 text-right">Actions</div>
-                    </div>
-                    
-                    <div className="h-[600px]">
-                      <VirtualList
-                        style={{ height: 600, width: '100%' }}
-                        rowCount={filteredProducts.length}
-                        rowHeight={80}
-                        rowProps={{}}
-                        rowComponent={({ index, style }) => {
-                          const item = filteredProducts[index];
-                          if (!item) return null;
-                          return (
-                            <div style={style} className="flex border-b border-[#F1F5F9] hover:bg-slate-50/50 transition-colors group items-center">
-                              <div className="flex-1 px-6 py-4 flex items-center gap-3 overflow-hidden">
-                                <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-xl overflow-hidden shrink-0 border border-slate-200">
-                                  {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" alt={item.name} /> : '🧥'}
+                  <div ref={listContainerRef} className="overflow-x-auto w-full custom-scrollbar rounded-2xl border border-[#E2E8F0] flex-1 min-h-0">
+                    <div className="bg-white overflow-hidden shadow-sm min-w-[800px]">
+                      <div className="flex bg-[#F8FAFC] border-b border-[#E2E8F0] font-black text-[10px] uppercase tracking-wider text-[#64748B]">
+                        <div className="flex-1 px-6 py-4">Product</div>
+                        <div className="w-[180px] px-6 py-4">Category</div>
+                        <div className="w-[150px] px-6 py-4">Base Price</div>
+                        <div className="w-[120px] px-6 py-4">Status</div>
+                        <div className="w-[100px] px-6 py-4 text-right">Actions</div>
+                      </div>
+                      
+                      <div style={{ height: isMobile ? dynamicListHeight : 600 }} className="w-full">
+                        <VirtualList
+                          style={{ height: isMobile ? dynamicListHeight : 600, width: '100%' }}
+                          rowCount={filteredProducts.length}
+                          rowHeight={80}
+                          rowProps={{}}
+                          rowComponent={({ index, style }) => {
+                            const item = filteredProducts[index];
+                            if (!item) return null;
+                            return (
+                              <div style={style} className="flex border-b border-[#F1F5F9] hover:bg-slate-50/50 transition-colors group items-center">
+                                <div className="flex-1 px-6 py-4 flex items-center gap-3 overflow-hidden">
+                                  <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-xl overflow-hidden shrink-0 border border-slate-200">
+                                    {item.imageUrl ? <img src={item.imageUrl} className="w-full h-full object-contain p-0.5 bg-white" alt={item.name} /> : '🧥'}
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-bold text-[#1E293B] truncate">{item.name}</p>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                      {(item.tags || []).slice(0, 3).map((tag: string) => (
+                                        <span key={tag} className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border transition-colors ${
+                                          tag.toLowerCase() === 'wholesale' 
+                                          ? 'bg-[#0A1628] text-[#C8961A] border-[#C8961A]/30' 
+                                          : 'bg-slate-100 text-slate-500 border-slate-200'
+                                        }`}>
+                                          {tag}
+                                        </span>
+                                      ))}
+                                      {(item.tags || []).length > 3 && (
+                                        <span className="text-[8px] font-black text-slate-400">
+                                          +{(item.tags || []).length - 3}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-bold text-[#1E293B] truncate">{item.name}</p>
-                                  <div className="flex flex-wrap gap-1 mt-1">
-                                    {(item.tags || []).slice(0, 3).map((tag: string) => (
-                                      <span key={tag} className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border transition-colors ${
-                                        tag.toLowerCase() === 'wholesale' 
-                                        ? 'bg-[#0A1628] text-[#C8961A] border-[#C8961A]/30' 
-                                        : 'bg-slate-100 text-slate-500 border-slate-200'
-                                      }`}>
-                                        {tag}
-                                      </span>
-                                    ))}
-                                    {(item.tags || []).length > 3 && (
-                                      <span className="text-[8px] font-black text-slate-400">
-                                        +{(item.tags || []).length - 3}
-                                      </span>
+                                
+                                <div className="w-[180px] px-6 py-4 shrink-0">
+                                  <span className="bg-[#F1F5F9] text-[#1E293B] px-2.5 py-1 rounded-full text-[10px] font-bold border border-[#E2E8F0] shadow-sm truncate block text-center">
+                                    {item.category}
+                                  </span>
+                                </div>
+                                
+                                <div className="w-[150px] px-6 py-4 shrink-0">
+                                  <div className="font-extrabold text-sm text-[#0A1628]">
+                                    {item.price.toLocaleString()}/-
+                                    {item.oldPrice > 0 && <span className="block text-[10px] text-gray-400 line-through font-normal">{item.oldPrice.toLocaleString()}/-</span>}
+                                  </div>
+                                </div>
+                                
+                                <div className="w-[120px] px-6 py-4 shrink-0">
+                                  <div className={`flex items-center gap-1.5 text-[10px] font-bold ${item.active ? 'text-green-600' : 'text-gray-400'}`}>
+                                    <div className={`w-1.5 h-1.5 rounded-full ${item.active ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-300'}`}></div>
+                                    {item.active ? 'Active' : 'Draft'}
+                                  </div>
+                                </div>
+                                
+                                <div className="w-[100px] px-6 py-4 text-right shrink-0">
+                                  <div className="flex items-center justify-end gap-2">
+                                    <button 
+                                      onClick={() => { setEditingItem(item); setIsModalOpen(true); }}
+                                      className="p-1.5 text-[#64748B] hover:text-[#1E293B] hover:bg-white rounded-lg border border-transparent hover:border-[#E2E8F0] transition-all"
+                                    >
+                                      <Edit2 size={16} />
+                                    </button>
+                                    {isSuperAdmin && (
+                                      <button 
+                                        onClick={() => handleDeleteProduct(item.id)}
+                                        className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                      >
+                                        <Trash2 size={16} />
+                                      </button>
                                     )}
                                   </div>
                                 </div>
                               </div>
-                              
-                              <div className="w-[180px] px-6 py-4 shrink-0">
-                                <span className="bg-[#F1F5F9] text-[#1E293B] px-2.5 py-1 rounded-full text-[10px] font-bold border border-[#E2E8F0] shadow-sm truncate block text-center">
-                                  {item.category}
-                                </span>
-                              </div>
-                              
-                              <div className="w-[150px] px-6 py-4 shrink-0">
-                                <div className="font-extrabold text-sm text-[#0A1628]">
-                                  {item.price.toLocaleString()}/-
-                                  {item.oldPrice > 0 && <span className="block text-[10px] text-gray-400 line-through font-normal">{item.oldPrice.toLocaleString()}/-</span>}
-                                </div>
-                              </div>
-                              
-                              <div className="w-[120px] px-6 py-4 shrink-0">
-                                <div className={`flex items-center gap-1.5 text-[10px] font-bold ${item.active ? 'text-green-600' : 'text-gray-400'}`}>
-                                  <div className={`w-1.5 h-1.5 rounded-full ${item.active ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-gray-300'}`}></div>
-                                  {item.active ? 'Active' : 'Draft'}
-                                </div>
-                              </div>
-                              
-                              <div className="w-[100px] px-6 py-4 text-right shrink-0">
-                                <div className="flex items-center justify-end gap-2">
-                                  <button 
-                                    onClick={() => { setEditingItem(item); setIsModalOpen(true); }}
-                                    className="p-1.5 text-[#64748B] hover:text-[#1E293B] hover:bg-white rounded-lg border border-transparent hover:border-[#E2E8F0] transition-all"
-                                  >
-                                    <Edit2 size={16} />
-                                  </button>
-                                  {isSuperAdmin && (
-                                    <button 
-                                      onClick={() => handleDeleteProduct(item.id)}
-                                      className="p-1.5 text-[#64748B] hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                    >
-                                      <Trash2 size={16} />
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }}
-                      />
+                            );
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -4401,10 +4444,10 @@ function StatCard({ label, value, trend, icon, onClick }: any) {
   return (
     <div 
       onClick={onClick}
-      className={`bg-white p-6 rounded-2xl shadow-sm border border-[#E2E8F0] relative overflow-hidden group hover:shadow-xl transition-all duration-500 ${onClick ? 'cursor-pointer hover:-translate-y-1' : ''}`}
+      className={`bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-[#E2E8F0] relative overflow-hidden group hover:shadow-xl transition-all duration-500 ${onClick ? 'cursor-pointer hover:-translate-y-1' : ''}`}
     >
-      <div className="flex justify-between items-start mb-4 relative z-10">
-        <div className="w-12 h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center shadow-inner border border-gray-50 group-hover:scale-110 transition-transform">
+      <div className="flex justify-between items-start mb-3 md:mb-4 relative z-10">
+        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#F8FAFC] flex items-center justify-center shadow-inner border border-gray-50 group-hover:scale-110 transition-transform">
           {icon}
         </div>
         <div className={`flex items-center gap-1 text-xs font-black ${trend >= 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -4413,8 +4456,8 @@ function StatCard({ label, value, trend, icon, onClick }: any) {
         </div>
       </div>
       <div className="relative z-10">
-        <p className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1">{label}</p>
-        <h4 className="text-2xl font-black text-[#1E293B]">{value}</h4>
+        <p className="text-[10px] font-black text-[#64748B] uppercase tracking-widest mb-1 truncate">{label}</p>
+        <h4 className="text-xl md:text-2xl font-black text-[#1E293B] truncate">{value}</h4>
       </div>
       <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#F8FAFC]/50 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
     </div>

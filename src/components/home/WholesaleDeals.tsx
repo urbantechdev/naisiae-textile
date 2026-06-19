@@ -63,7 +63,7 @@ export function WholesaleDeals({
           </Link>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
           {wholesaleProducts
             .slice(0, showAllWholesale ? undefined : 6)
             .map(product => {
@@ -73,15 +73,15 @@ export function WholesaleDeals({
                   key={product.id}
                   layout
                   whileHover={isExpanded ? undefined : { y: -6 }}
-                  className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-300 ${
+                  className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex ${
                     isExpanded 
-                      ? "col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#00C4CC]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
-                      : "border-[#E4E8EF] hover:shadow-2xl hover:border-[#00C4CC]/30"
+                      ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#00C4CC]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
+                      : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#00C4CC]/30 w-full"
                   }`}
                 >
                   {!isExpanded ? (
                     <>
-                      <div className="relative aspect-[4/3] overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2" onClick={() => handleProductInteraction(product)}>
+                      <div className="relative aspect-square sm:aspect-[4/3] w-[120px] sm:w-full overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={() => handleProductInteraction(product)}>
                         {product.imageUrl ? (
                           <img 
                             src={product.imageUrl} 
@@ -93,30 +93,32 @@ export function WholesaleDeals({
                         ) : (
                           <Package size={40} className="text-[#00C4CC]/20" />
                         )}
-                        <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FF4F5A] to-[#7D2AE8] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
+                        <span className="absolute top-2 left-2 bg-[#00C4CC] text-white text-[7px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
                       </div>
-                      <div className="p-4 cursor-pointer flex flex-col flex-grow" onClick={() => handleProductInteraction(product)}>
-                        <h3 className="font-bold text-[13px] mb-2 leading-tight line-clamp-1 text-[#0E121C]">{product.name}</h3>
-                        
-                        {/* Interactive hint */}
-                        <span className="text-[9px] text-[#00C4CC] font-bold mb-3 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-2">
-                          <span>✨</span> Tap to inspect details
-                        </span>
+                      <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={() => handleProductInteraction(product)}>
+                        <div>
+                          <h3 className="font-bold text-[12px] sm:text-[13px] mb-1 sm:mb-2 leading-tight line-clamp-2 min-h-[1.5rem] sm:line-clamp-1 text-[#0E121C]">{product.name}</h3>
+                          
+                          {/* Interactive hint */}
+                          <span className="text-[8px] sm:text-[9px] text-[#00C4CC] font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
+                            <span>✨</span> Tap to inspect details
+                          </span>
+                        </div>
 
-                        <div className="flex flex-col gap-2 mt-auto">
+                        <div className="flex flex-row sm:flex-col gap-2 mt-auto pt-2">
                           <button 
                             onClick={(e) => { e.stopPropagation(); setSelectedQuickViewProduct(product); }}
-                            className="w-full py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#00C4CC] text-white hover:bg-[#008F94] rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
                           >
-                            <MessageSquare size={12} />
+                            <MessageSquare size={11} />
                             Enquire
                           </button>
                           <a 
                             href="tel:+254792021795"
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
+                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#FF4F5A] hover:bg-[#E03B46] text-white rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 text-center"
                           >
-                            <Phone size={12} />
+                            <Phone size={11} />
                             Call Now
                           </a>
                         </div>
