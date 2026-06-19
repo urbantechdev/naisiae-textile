@@ -10,7 +10,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && request.auth.token.email == 'naisiaetext@gmail.com';
+      return isSignedIn() && (request.auth.token.email in ['naisiaetext@gmail.com', 'Kirigommk@gmail.com', 'Kgeokom@gmail.com', 'naisiaetextile@gmail.com']);
     }
 
     function isValidInvite(data) {

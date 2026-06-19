@@ -17,7 +17,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return emailVerified() && request.auth.token.email == 'naisiaetext@gmail.com';
+      return emailVerified() && (request.auth.token.email in ['naisiaetext@gmail.com', 'Kirigommk@gmail.com', 'Kgeokom@gmail.com', 'naisiaetextile@gmail.com']);
     }
 
     function isOwner(userId) {

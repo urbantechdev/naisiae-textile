@@ -127,7 +127,13 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [activeView, setActiveView] = useState(() => {
     const userEmail = auth.currentUser?.email || '';
-    return userEmail === 'naisiaetext@gmail.com' ? 'overview' : 'products';
+    const adminEmails = [
+      'naisiaetext@gmail.com',
+      'Kirigommk@gmail.com',
+      'Kgeokom@gmail.com',
+      'naisiaetextile@gmail.com'
+    ];
+    return adminEmails.includes(userEmail) ? 'overview' : 'products';
   });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -172,7 +178,12 @@ export default function AdminDashboard() {
   const [isImporting, setIsImporting] = useState(false);
   const [selectedQuoteIds, setSelectedQuoteIds] = useState<string[]>([]);
   
-  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
+  const isSuperAdmin = auth.currentUser?.email ? [
+    'naisiaetext@gmail.com',
+    'Kirigommk@gmail.com',
+    'Kgeokom@gmail.com',
+    'naisiaetextile@gmail.com'
+  ].includes(auth.currentUser.email) : false;
 
   const listContainerRef = useRef<HTMLDivElement>(null);
   const [dynamicListHeight, setDynamicListHeight] = useState(600);
@@ -4178,7 +4189,12 @@ function AdminSidebar({
   handleLogout,
   siteLogo
 }: any) {
-  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
+  const isSuperAdmin = auth.currentUser?.email ? [
+    'naisiaetext@gmail.com',
+    'Kirigommk@gmail.com',
+    'Kgeokom@gmail.com',
+    'naisiaetextile@gmail.com'
+  ].includes(auth.currentUser.email) : false;
   const navItems = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Inventory', icon: Package, badge: badges.lowStockProductsCount },
@@ -4296,7 +4312,12 @@ function AdminSidebar({
 }
 
 function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct }: any) {
-  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
+  const isSuperAdmin = auth.currentUser?.email ? [
+    'naisiaetext@gmail.com',
+    'Kirigommk@gmail.com',
+    'Kgeokom@gmail.com',
+    'naisiaetextile@gmail.com'
+  ].includes(auth.currentUser.email) : false;
   
   // Calculate unread active chats from customers dynamically
   const activeChatCount = chats ? chats.filter((c: any) => c.lastSender !== 'admin').length : 0;
@@ -4518,7 +4539,12 @@ function SortableImage({ url, index, onRemove, disabled }: any) {
 }
 
 function ProductForm({ initialData, onSubmit, setToast, productCategories }: any) {
-  const isSuperAdmin = auth.currentUser?.email === 'naisiaetext@gmail.com';
+  const isSuperAdmin = auth.currentUser?.email ? [
+    'naisiaetext@gmail.com',
+    'Kirigommk@gmail.com',
+    'Kgeokom@gmail.com',
+    'naisiaetextile@gmail.com'
+  ].includes(auth.currentUser.email) : false;
   const disableNonPriceFields = !!initialData && !isSuperAdmin;
 
   const [loading, setLoading] = useState(false);

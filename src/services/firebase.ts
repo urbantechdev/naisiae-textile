@@ -13,7 +13,7 @@ if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey === "REPL
     // Optionally alert the user or show a fallback UI message in the DOM if we are at the very entry point
     document.addEventListener('DOMContentLoaded', () => {
       const root = document.getElementById('root');
-      if (root && root.innerHTML.includes('Loading')) {
+      if (root && root.innerHTML.includes('Uhuru Market')) {
         root.innerHTML = `
           <div style="min-height: 100vh; background: #0A1628; color: white; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; font-family: sans-serif;">
             <div>
