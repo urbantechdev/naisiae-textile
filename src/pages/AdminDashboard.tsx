@@ -5792,7 +5792,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
   );
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden flex-1">
+    <form onSubmit={handleSubmit} className="flex flex-col min-h-0 overflow-hidden flex-1">
       {/* Mode Selector Toggle */}
       <div className="px-6 pt-3 flex items-center justify-between border-b border-slate-100 bg-white z-20 shrink-0">
         <div className="flex gap-4">
