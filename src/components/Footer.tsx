@@ -91,12 +91,13 @@ export function Footer() {
             className="hover:text-[#C8102E] transition-all duration-300 flex items-center gap-3 group border-l border-white/10 pl-6 ml-6 hidden md:flex opacity-100"
           >
             <span className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Developed by</span>
-            <img 
-              src="https://i.pinimg.com/736x/db/1d/a7/db1da77cd40c393aa9193e28d40ebffa.jpg" 
-              alt="Urban Technology Developers" 
-              className="h-6 w-auto object-contain rounded-sm brightness-110 contrast-110"
-              referrerPolicy="no-referrer"
-            />
+            <div className="flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
+              <svg className="h-4 w-auto fill-none stroke-[#C8961A]" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+              <span className="font-mono text-[9px] font-black tracking-[2px] text-white/90">URBAN<span className="text-[#C8961A]">TECH</span></span>
+            </div>
           </a>
           {/* Mobile version */}
           <a 
@@ -106,12 +107,13 @@ export function Footer() {
             className="md:hidden transition-all mt-4 flex flex-col items-center gap-2 opacity-100"
           >
             <span className="text-[8px] uppercase tracking-widest font-black text-[#C8961A]">Developed by </span>
-            <img 
-              src="https://i.pinimg.com/736x/db/1d/a7/db1da77cd40c393aa9193e28d40ebffa.jpg" 
-              alt="Urban Technology Developers" 
-              className="h-5 w-auto object-contain rounded-sm brightness-110 contrast-110"
-              referrerPolicy="no-referrer"
-            />
+            <div className="flex items-center gap-1.5 opacity-80">
+              <svg className="h-3.5 w-auto fill-none stroke-[#C8961A]" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+              <span className="font-mono text-[8px] font-black tracking-[2px] text-white/90">URBAN<span className="text-[#C8961A]">TECH</span></span>
+            </div>
           </a>
         </div>
         <div className="flex flex-col items-center md:items-end gap-3 order-1 md:order-2">
