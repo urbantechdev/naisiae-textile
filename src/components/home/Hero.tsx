@@ -168,7 +168,7 @@ export function Hero({
                 </div>
               ) : (
               <img 
-                src={heroImages[currentSlide]?.url ? heroImages[currentSlide].url : "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1280&auto=format&fit=crop"}
+                src={heroImages[currentSlide]?.url ? heroImages[currentSlide].url : "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fm=webp&q=60&w=1280"}
                 className="w-full h-full object-cover object-left md:object-center"
                 alt={heroImages[currentSlide]?.title || 'Hero'}
                 loading="eager"
