@@ -300,7 +300,7 @@ export function Hero({
                 className="space-y-4 lg:space-y-8"
               >
                 <div className="space-y-4 lg:space-y-8">
-                    <motion.h1 
+                    <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
@@ -325,7 +325,7 @@ export function Hero({
                           className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1.5 bg-gradient-to-r from-[#C8102E] via-[#C8961A] to-transparent origin-left"
                         />
                       </span>
-                    </motion.h1>
+                    </motion.div>
 
                   <motion.p 
                     initial={{ opacity: 0 }}

@@ -9,21 +9,23 @@ import { useEffect, useState, lazy, Suspense } from 'react';
 import { auth, db } from './services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
-// Direct static page imports for elite performance (hitting 90+ Score by removing chunk waterfalls)
+// Direct static import of HomePage for instant initial paint
 import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
-import WholesalePage from './pages/WholesalePage';
-import ContactPage from './pages/ContactPage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsPage from './pages/TermsPage';
-import ShippingPage from './pages/ShippingPage';
-import ReturnsPage from './pages/ReturnsPage';
-import ServicesPage from './pages/ServicesPage';
-import CategoriesPage from './pages/CategoriesPage';
-import CheckoutPage from './pages/CheckoutPage';
-import BlogPage from './pages/BlogPage';
-import FAQPage from './pages/FAQPage';
-import CareersPage from './pages/CareersPage';
+
+// Route-Based Lazy Loading (React.lazy()) to optimize initial bundle size on mobile
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const WholesalePage = lazy(() => import('./pages/WholesalePage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const ShippingPage = lazy(() => import('./pages/ShippingPage'));
+const ReturnsPage = lazy(() => import('./pages/ReturnsPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const FAQPage = lazy(() => import('./pages/FAQPage'));
+const CareersPage = lazy(() => import('./pages/CareersPage'));
 
 // Code-split heavy pages to optimize initial bundle payload and improve Core Web Vitals
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
