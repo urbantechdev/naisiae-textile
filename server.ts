@@ -85,7 +85,7 @@ async function startServer() {
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         contents: chatMessages,
         config: {
           systemInstruction,
@@ -128,7 +128,7 @@ Provide a suggested price that is slightly more competitive (slightly lower but 
 Return the response in JSON format.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -177,7 +177,7 @@ Return the response in JSON format.`;
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         contents: {
           parts: [
             {
@@ -230,7 +230,7 @@ Return the response in JSON format.`;
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         contents: `Create a professional, SEO-optimized marketing description for a product named "${name}" in the category "${category}". Tags: ${(tags || []).join(', ')}. Keep it concise but persuasive.`,
       });
 
@@ -254,7 +254,7 @@ Return the response in JSON format.`;
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         contents: `Generate realistic product details for the Kenyan uniform market: ${name} (Category: ${category}). 
         Provide a persuasive description highlighting durability, Kenyan market price suggestion in KSH, subCategory, and relevant tags.
         Prices should reflect Uhuru Market/Nairobi Industrial Area competitiveness.`,
@@ -293,7 +293,7 @@ Return the response in JSON format.`;
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.5-flash",
         contents: `Analyze these products for categorization consistency and name optimization: ${JSON.stringify(products.map(p => ({ n: p.name, c: p.category, sc: p.subCategory })))}`,
         config: {
           responseMimeType: "application/json",

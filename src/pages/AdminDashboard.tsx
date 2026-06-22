@@ -4587,6 +4587,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
   const [urlInput, setUrlInput] = useState('');
 
   const [useWizard, setUseWizard] = useState(true);
+  const [collapseWizardGuide, setCollapseWizardGuide] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
@@ -5109,16 +5110,18 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
   );
 
   const renderVisualAssets = () => (
-    <div className="space-y-6 animate-in fade-in duration-305">
-      <div className="bg-gradient-to-r from-[#0C1523] to-[#1D325E] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#0C1523]/10">
-        <div className="bg-white/10 p-2.5 rounded-2xl shrink-0">
-          <Camera className="text-[#C8961A]" size={20} />
+    <div className={`${collapseWizardGuide ? 'space-y-3' : 'space-y-6'} animate-in fade-in duration-305`}>
+      {!collapseWizardGuide && (
+        <div className="bg-gradient-to-r from-[#0C1523] to-[#1D325E] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#0C1523]/10">
+          <div className="bg-white/10 p-2.5 rounded-2xl shrink-0">
+            <Camera className="text-[#C8961A]" size={20} />
+          </div>
+          <div>
+            <h4 className="text-xs font-black uppercase tracking-wider">Product Gallery & Media</h4>
+            <p className="text-[10px] text-slate-300 font-medium mt-0.5">Upload gallery photos or import image links. The first asset will become the primary listing cover.</p>
+          </div>
         </div>
-        <div>
-          <h4 className="text-xs font-black uppercase tracking-wider">Product Gallery & Media</h4>
-          <p className="text-[10px] text-slate-300 font-medium mt-0.5">Upload gallery photos or import image links. The first asset will become the primary listing cover.</p>
-        </div>
-      </div>
+      )}
 
       <div 
         className={`p-6 rounded-3xl border-2 transition-all duration-300 relative group/dropzone ${
@@ -5791,50 +5794,113 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
   return (
     <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden flex-1">
       {/* Mode Selector Toggle */}
-      <div className="px-6 pt-3 flex gap-4 border-b border-slate-100 bg-white z-20 shrink-0">
-        <button
-          type="button"
-          onClick={() => setUseWizard(true)}
-          className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-slate-600'}`}
-        >
-          ✨ Interactive Wizard
-          {useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
-        </button>
-        <button
-          type="button"
-          onClick={() => setUseWizard(false)}
-          className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${!useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-[#0A1628]'}`}
-        >
-          📋 Classic Full Form
-          {!useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
-        </button>
+      <div className="px-6 pt-3 flex items-center justify-between border-b border-slate-100 bg-white z-20 shrink-0">
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => setUseWizard(true)}
+            className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            ✨ Interactive Wizard
+            {useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseWizard(false)}
+            className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${!useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-[#0A1628]'}`}
+          >
+            📋 Classic Full Form
+            {!useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
+          </button>
+        </div>
+        
+        {useWizard && (
+          <div className="pb-3">
+            <button
+              type="button"
+              onClick={() => setCollapseWizardGuide(prev => !prev)}
+              className="flex items-center gap-1 text-[9px] font-black uppercase text-slate-500 hover:text-[#C8102E] transition-all bg-slate-50 hover:bg-slate-100 px-2 py-1 rounded-lg border border-slate-205"
+            >
+              {collapseWizardGuide ? "📖 Expand Help" : "🧘 Collapse/Compact"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Step Progress Bar */}
       {useWizard && (
-        <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 sticky top-0 z-20 shrink-0">
-          <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-500 tracking-wider mb-2">
-            <span className="text-[#0A1628]">{steps[activeStep].title}</span>
-            <span className="text-[#C8102E]">Step {activeStep + 1} of {steps.length}</span>
+        collapseWizardGuide ? (
+          <div className="bg-slate-50 border-b border-slate-100 px-4 py-1.5 sticky top-0 z-20 shrink-0 flex items-center justify-between gap-3">
+            <span className="text-[9px] font-black uppercase text-[#0A1628] truncate">
+              {activeStep + 1}. {steps[activeStep].title}
+            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="flex gap-1">
+                {steps.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveStep(idx)}
+                    className={`w-3.5 h-1.5 rounded-full transition-all duration-300 ${
+                      idx === activeStep 
+                        ? 'bg-[#C8102E] scale-y-110' 
+                        : idx < activeStep 
+                          ? 'bg-[#0A1628]/60 hover:bg-[#0A1628]' 
+                          : 'bg-slate-205 hover:bg-slate-300'
+                    }`}
+                    title={`Jump to Step ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <span className="text-[9px] font-black text-[#C8102E] shrink-0">{activeStep + 1}/{steps.length}</span>
+            </div>
           </div>
-          <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-            <div 
-              className="bg-[#C8102E] h-full transition-all duration-300"
-              style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
-            />
+        ) : (
+          <div className="bg-slate-55 border-b border-slate-100 px-6 py-4 sticky top-0 z-20 shrink-0">
+            <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-500 tracking-wider mb-2">
+              <span className="text-[#0A1628]">{steps[activeStep].title}</span>
+              <span className="text-[#C8102E]">Step {activeStep + 1} of {steps.length}</span>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {steps.map((step, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveStep(idx)}
+                  className="group text-left focus:outline-none"
+                >
+                  <div className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx === activeStep 
+                      ? 'bg-[#C8102E]' 
+                      : idx < activeStep 
+                        ? 'bg-[#0A1628]/70 group-hover:bg-[#0A1628]' 
+                        : 'bg-slate-200 group-hover:bg-slate-300'
+                  }`} />
+                  <span className={`hidden md:block text-[8.5px] font-black uppercase tracking-tight mt-1 transition-all ${
+                    idx === activeStep 
+                      ? 'text-[#C8102E]' 
+                      : idx < activeStep 
+                        ? 'text-[#0A1628]/70' 
+                        : 'text-slate-400'
+                  }`}>
+                    {step.title}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )
       )}
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar pb-10">
+      <div className={`flex-1 overflow-y-auto custom-scrollbar ${collapseWizardGuide ? 'p-3 md:p-4 space-y-3.5 pb-6' : 'p-6 space-y-6 pb-10'}`}>
         {/* Image Gallery Section */}
         {(!useWizard || activeStep === 1) && renderVisualAssets()}
 
 
       {/* STEP 0: Identity, description and AI assist */}
       {(!useWizard || activeStep === 0) && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          {useWizard && (
+        <div className={collapseWizardGuide ? "space-y-3.5 animate-in fade-in duration-300" : "space-y-6 animate-in fade-in duration-300"}>
+          {useWizard && !collapseWizardGuide && (
             <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
               <Sparkles className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
               <div>
@@ -5971,8 +6037,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
 
       {/* STEP 2: Value & Logistics */}
       {(!useWizard || activeStep === 2) && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          {useWizard && (
+        <div className={collapseWizardGuide ? "space-y-3.5 animate-in fade-in duration-300" : "space-y-6 animate-in fade-in duration-300"}>
+          {useWizard && !collapseWizardGuide && (
             <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
               <Coins className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
               <div>
@@ -6111,7 +6177,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
       )}
 
       {(!useWizard || activeStep === 3) && (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className={collapseWizardGuide ? "space-y-3.5 animate-in fade-in duration-300" : "space-y-6 animate-in fade-in duration-300"}>
           <div className="space-y-1.5 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
             <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Tags & Organization</label>
             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 mb-2">Helpful for grouping products (e.g., Seasonal, Stock Status)</p>
@@ -6238,34 +6304,60 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
       )}
     </div>
 
-      <div className="shrink-0 p-4 md:p-6 bg-white border-t border-slate-100 z-20 flex flex-col gap-2">
-        {useWizard && (
-          <div className="grid grid-cols-2 gap-3 mb-1">
-            <button
-              type="button"
-              disabled={activeStep === 0}
-              onClick={() => setActiveStep((prev: number) => prev - 1)}
-              className="h-11 bg-slate-50 hover:bg-slate-100 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-50 disabled:cursor-not-allowed rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 border border-slate-200"
-            >
-              ← Back
-            </button>
-            <button
-              type="button"
-              disabled={activeStep === steps.length - 1}
-              onClick={() => setActiveStep((prev: number) => prev + 1)}
-              className="h-11 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:scale-[1.01] text-white disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-md shadow-red-500/10"
-            >
-              Next Step →
-            </button>
-          </div>
+      <div className="shrink-0 p-4 bg-white border-t border-slate-105 z-20 flex flex-col gap-2 pb-safe">
+        {useWizard ? (
+          activeStep === steps.length - 1 ? (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                disabled={activeStep === 0}
+                onClick={() => setActiveStep((prev: number) => prev - 1)}
+                className="h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 disabled:cursor-not-allowed rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-slate-200"
+              >
+                ← Back
+              </button>
+              <button 
+                disabled={loading || uploading}
+                type="submit" 
+                className="h-12 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-[#1C3560]/10"
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <Save size={16} /> Save Product
+                  </>
+                )}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                disabled={activeStep === 0}
+                onClick={() => setActiveStep((prev: number) => prev - 1)}
+                className="h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 disabled:cursor-not-allowed rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-slate-200"
+              >
+                ← Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveStep((prev: number) => prev + 1)}
+                className="h-12 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:scale-[1.01] text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-red-500/10"
+              >
+                Next Step →
+              </button>
+            </div>
+          )
+        ) : (
+          <button 
+            disabled={loading || uploading}
+            type="submit" 
+            className="w-full h-12 md:h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl md:rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
+          >
+            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
+          </button>
         )}
-        <button 
-          disabled={loading || uploading}
-          type="submit" 
-          className="w-full h-12 md:h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl md:rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
-        >
-          {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
-        </button>
       </div>
 
       {/* URL Import Modal */}
