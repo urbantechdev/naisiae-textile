@@ -665,7 +665,7 @@ Return the response in JSON format.`;
 
       let title = "UHURU MARKET UNIFORMS & Institutional Apparel | Naisiae Textiles Nairobi";
       let description = "Official Uhuru Market Uniforms by Naisiae Textiles. Premium school, corporate & medical uniform manufacturing in Nairobi, Kenya at direct factory rates.";
-      let imageUrl = "https://naisiaetextiles.com/og-image.jpg";
+      let imageUrl = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&h=630&q=80";
       let type = "website";
 
       // 1. Pre-fetch Site Settings
@@ -722,35 +722,50 @@ Return the response in JSON format.`;
         description = siteSettings.sharingDescription || description;
         imageUrl = siteSettings.sharingImage || siteSettings.siteLogo || imageUrl;
       } else if (requestPath === '/products') {
-        title = "Uniform Catalog | Uhuru Market Uniforms Nairobi";
-        description = "Full industrial catalog of custom-tailored Uhuru Market Uniforms. Premium garments for primary, secondary schools and institutions.";
+        title = "Our Uniform Products | UHURU MARKET UNIFORMS";
+        description = "Browse our full catalog of custom-tailored garments. High-quality primary & secondary school uniforms, games kits, and specialized corporate wear.";
       } else if (requestPath === '/categories') {
-        title = "Clothing Categories | Uhuru Market Uniforms";
-        description = "Industrial categories: Education, Hospitality, Medical, and Corporate branding in Uhuru Market, Nairobi.";
+        title = "Uniform Categories & Options | UHURU MARKET UNIFORMS";
+        description = "Explore our uniform manufacturing categories including Education, Hospitality, Medical, Security, and Corporate branding solutions in Nairobi.";
       } else if (requestPath === '/services') {
-        title = "Manufacturing Services | Uhuru Market Uniforms";
-        description = "Bulk textile production, industrial embroidery and custom branding services at Uhuru Market, Nairobi.";
+        title = "Bulk Manufacturing & Branding Services | UHURU MARKET UNIFORMS";
+        description = "From heavy-duty industrial stitching to custom embroidery and screen printing. Discover our mass-scale textile production capabilities.";
       } else if (requestPath === '/portfolio') {
-        title = "Our Projects | Uhuru Market Uniforms Portfolio";
-        description = "Successful mass-scale uniform deliveries to top institutions by Uhuru Market Uniforms.";
+        title = "Our Work & Past Projects | UHURU MARKET UNIFORMS";
+        description = "See examples of bulk uniform orders we have successfully delivered across Kenya. Check out our design quality and finished tailoring work.";
       } else if (requestPath === '/contact') {
-        title = "Contact Us | Uhuru Market Uniforms Support";
-        description = "Order Uhuru Market Uniforms. Call +254792021795 or visit our production floor in Nairobi.";
+        title = "Contact Us & Visit Workshop | UHURU MARKET UNIFORMS";
+        description = "Get a custom apparel supply quote today. Visit us at Uhuru Market Along Jogoo Road, Nairobi, or call us directly at +254792021795.";
       } else if (requestPath === '/about') {
-        title = "About Uhuru Market Uniforms | Naisiae Textiles";
-        description = "The leading institutional uniform manufacturer at Uhuru Market Nairobi. Precision, quality, and heritage.";
+        title = "Our Story & Manufacturing Heritage | UHURU MARKET UNIFORMS";
+        description = "Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & community-driven production at Uhuru Market, Nairobi.";
       } else if (requestPath === '/wholesale') {
-        title = "Wholesale & Tenders | Uhuru Market Uniforms";
-        description = "Specialized bulk pricing for schools and hospitals. Direct factory-rates from Uhuru Market.";
+        title = "Institutional Bulk Orders & Wholesale Request | UHURU MARKET UNIFORMS";
+        description = "Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands across East Africa. Min. 50 units.";
+      } else if (requestPath === '/checkout') {
+        title = "Review Bulk Sourcing & Checkout | UHURU MARKET UNIFORMS";
+        description = "Step-by-step verification of your wholesale inquiries, customizable branding preferences, and secure client profile syncing.";
+      } else if (requestPath === '/privacy') {
+        title = "Privacy Policy | UHURU MARKET UNIFORMS";
+        description = "We respect and safeguard our clients' organizational and personal details under Kenyan data protection regulations.";
+      } else if (requestPath === '/terms') {
+        title = "Terms of Service & Manufacturing Contracts | UHURU MARKET UNIFORMS";
+        description = "Understand bulk order production terms, factory SLA timelines, quality inspection standards, and contract invoicing procedures.";
+      } else if (requestPath === '/shipping') {
+        title = "Shipping, Nationwide Logistics & Pickup | UHURU MARKET UNIFORMS";
+        description = "Find shipping estimates, prompt direct courier networks, and convenient self-pickup instructions at Uhuru Market, Jogoo Road-Nairobi.";
+      } else if (requestPath === '/returns') {
+        title = "Returns Policy & Quality Guarantee | UHURU MARKET UNIFORMS";
+        description = "Read our terms for size corrections, fitting alterations, and manufacturing defect policies under our comprehensive quality assurance program.";
       } else if (requestPath === '/blog' || requestPath === '/blog/') {
-        title = "Industry Guides & Sourcing Logbook | Uhuru Market Uniforms";
+        title = "Industry Guides & Sourcing Logbook | UHURU MARKET UNIFORMS";
         description = "Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and direct-factory school uniform procurement in Kenya.";
       } else if (requestPath === '/faq' || requestPath === '/faq/') {
-        title = "FAQ & Help Desk | Uhuru Market Uniforms Nairobi";
-        description = "Find responses to bulk minimum order volumes, customizable fabric selections, and Tender bids matching Uhuru Market Nairobi specifications.";
+        title = "Frequently Asked Questions & Support | UHURU MARKET UNIFORMS";
+        description = "Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and tender queries for Uhuru Market Uniforms.";
       } else if (requestPath === '/careers' || requestPath === '/careers/') {
-        title = "Staff Careers & Opportunities | Uhuru Market Uniforms";
-        description = "Join our production team in Nairobi. Examine open straight sew machine operators, cutters, and quality check inspectors vacancies.";
+        title = "Careers & Tailoring Opportunities | UHURU MARKET UNIFORMS";
+        description = "Join our production team in Nairobi. Inspect open sewing, embroidery machine operations, and quality inspection roles at Naisiae Textiles.";
       } else if (requestPath.startsWith('/admin')) {
         title = "Admin Core | Uhuru Market Uniforms Management";
         description = "Management gateway for Naisiae Sync Protocols.";
@@ -1040,6 +1055,9 @@ Return the response in JSON format.`;
         <meta property="og:url" content="${canonicalUrl}" />
         <meta property="og:type" content="${type}" />
         <meta property="og:image" content="${imageUrl}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/jpeg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="${title}" />
         <meta name="twitter:description" content="${description}" />

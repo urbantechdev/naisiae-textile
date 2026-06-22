@@ -2,77 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://naisiaetextiles.com/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-06-22</lastmod>
   </url>
   <url>
     <loc>https://naisiaetextiles.com/about/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://naisiaetextiles.com/services/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://naisiaetextiles.com/products/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://naisiaetextiles.com/categories/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://naisiaetextiles.com/portfolio/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-05-15</lastmod>
   </url>
   <url>
     <loc>https://naisiaetextiles.com/wholesale/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-06-10</lastmod>
   </url>
   <url>
-    <loc>https://naisiaetextiles.com/contact/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://naisiaetextiles.com/portfolio/</loc>
+    <lastmod>2026-06-18</lastmod>
   </url>
+
+  <url>
+    <loc>https://naisiaetextiles.com/categories/school-uniforms/</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://naisiaetextiles.com/categories/corporate-apparel/</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://naisiaetextiles.com/categories/institutional-branding/</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+
+  <url>
+    <loc>https://naisiaetextiles.com/products/uhuru-market-primary-school-uniforms/</loc>
+    <lastmod>2026-06-22</lastmod>
+  </url>
+  <url>
+    <loc>https://naisiaetextiles.com/products/heavy-duty-industrial-aprons/</loc>
+    <lastmod>2026-06-12</lastmod>
+  </url>
+
   <url>
     <loc>https://naisiaetextiles.com/faq/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-06-01</lastmod>
   </url>
   <url>
     <loc>https://naisiaetextiles.com/blog/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-06-21</lastmod>
   </url>
   <url>
-    <loc>https://naisiaetextiles.com/careers/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://naisiaetextiles.com/contact/</loc>
+    <lastmod>2026-04-01</lastmod>
   </url>
+
   <url>
     <loc>https://naisiaetextiles.com/privacy/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-01-01</lastmod>
   </url>
   <url>
     <loc>https://naisiaetextiles.com/terms/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-01-01</lastmod>
   </url>
   <url>
     <loc>https://naisiaetextiles.com/shipping/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-05-01</lastmod>
   </url>
   <url>
     <loc>https://naisiaetextiles.com/returns/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-05-01</lastmod>
   </url>
 </urlset>
