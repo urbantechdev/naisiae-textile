@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { toWebPUrl } from '../utils/image';
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -19,6 +20,9 @@ export function LazyImage({
   const [isLoaded, setIsLoaded] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
+
+  const optimizedSrc = toWebPUrl(src);
+
 
   useEffect(() => {
     if (!window.IntersectionObserver) {
@@ -70,7 +74,7 @@ export function LazyImage({
       
       {shouldLoad && (
         <img
-          src={src}
+          src={optimizedSrc}
           alt={alt}
           onLoad={() => setIsLoaded(true)}
           className={`w-full h-full transition-all duration-[800ms] ease-out ${
