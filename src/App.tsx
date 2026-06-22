@@ -36,12 +36,13 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { InactivityHandler } from './components/InactivityHandler';
 import { CartProvider, useCart } from './context/CartContext';
-import { CartModal } from './components/CartModal';
-import { WishlistModal } from './components/WishlistModal';
-import { QuoteModal } from './components/QuoteModal';
-import { CatalogueModal } from './components/CatalogueModal';
-import { FloatingChat } from './components/FloatingChat';
-import { GlobalToast } from './components/GlobalToast';
+
+const CartModal = lazy(() => import('./components/CartModal').then(module => ({ default: module.CartModal })));
+const WishlistModal = lazy(() => import('./components/WishlistModal').then(module => ({ default: module.WishlistModal })));
+const QuoteModal = lazy(() => import('./components/QuoteModal').then(module => ({ default: module.QuoteModal })));
+const CatalogueModal = lazy(() => import('./components/CatalogueModal').then(module => ({ default: module.CatalogueModal })));
+const FloatingChat = lazy(() => import('./components/FloatingChat').then(module => ({ default: module.FloatingChat })));
+const GlobalToast = lazy(() => import('./components/GlobalToast').then(module => ({ default: module.GlobalToast })));
 
 // Dynamic SEO Engine to enforce branding permanently across all routes
 function DynamicSEOEngine() {
@@ -426,13 +427,13 @@ function AppContent({ isAdmin, loading }: any) {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+        <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
+        <QuoteModal />
+        <CatalogueModal />
+        <FloatingChat />
+        <GlobalToast />
       </Suspense>
-      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
-      <QuoteModal />
-      <CatalogueModal />
-      <FloatingChat />
-      <GlobalToast />
     </InactivityHandler>
   );
 }

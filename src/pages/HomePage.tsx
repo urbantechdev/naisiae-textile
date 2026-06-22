@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import { 
   Search, 
   ShoppingBag, 
@@ -34,10 +34,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Hero } from '../components/home/Hero';
-import { Specialties } from '../components/home/Specialties';
-import { WholesaleDeals } from '../components/home/WholesaleDeals';
-import { CatalogSection } from '../components/home/CatalogSection';
-import { InstitutionalWholesale } from '../components/home/InstitutionalWholesale';
+const Specialties = lazy(() => import('../components/home/Specialties').then(m => ({ default: m.Specialties })));
+const WholesaleDeals = lazy(() => import('../components/home/WholesaleDeals').then(m => ({ default: m.WholesaleDeals })));
+const CatalogSection = lazy(() => import('../components/home/CatalogSection').then(m => ({ default: m.CatalogSection })));
+const InstitutionalWholesale = lazy(() => import('../components/home/InstitutionalWholesale').then(m => ({ default: m.InstitutionalWholesale })));
 import { ProductScrollNavigator } from '../components/ProductScrollNavigator';
 import { PullToRefresh } from '../components/PullToRefresh';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
@@ -541,49 +541,57 @@ export default function HomePage() {
       </div>
 
       <div id="specialties">
-        <Specialties 
-          categories={categories}
-          setActiveTab={setActiveTab}
-        />
+        <Suspense fallback={<div className="h-48 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
+          <Specialties 
+            categories={categories}
+            setActiveTab={setActiveTab}
+          />
+        </Suspense>
       </div>
 
       <div id="wholesale">
-        <WholesaleDeals 
-          products={shuffledProducts.length > 0 ? shuffledProducts : products}
-          showAllWholesale={showAllWholesale}
-          setShowAllWholesale={setShowAllWholesale}
-          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
-          onProductTap={() => setIsReshufflingPaused(true)}
-        />
+        <Suspense fallback={<div className="h-96 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
+          <WholesaleDeals 
+            products={shuffledProducts.length > 0 ? shuffledProducts : products}
+            showAllWholesale={showAllWholesale}
+            setShowAllWholesale={setShowAllWholesale}
+            setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+            onProductTap={() => setIsReshufflingPaused(true)}
+          />
+        </Suspense>
       </div>
 
       <div id="catalog">
-        <CatalogSection 
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          activeTag={activeTag}
-          setActiveTag={setActiveTag}
-          activeSubCategory={activeSubCategory}
-          setActiveSubCategory={setActiveSubCategory}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          allTags={allTags}
-          uniformSubCategories={uniformSubCategories}
-          displayProducts={displayProducts}
-          showAllFeatured={showAllFeatured}
-          setShowAllFeatured={setShowAllFeatured}
-          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
-          toggleWishlist={toggleWishlist}
-          addToCart={addToCart}
-          wishlist={wishlist}
-          onProductTap={() => setIsReshufflingPaused(true)}
-        />
+        <Suspense fallback={<div className="h-96 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
+          <CatalogSection 
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            activeTag={activeTag}
+            setActiveTag={setActiveTag}
+            activeSubCategory={activeSubCategory}
+            setActiveSubCategory={setActiveSubCategory}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            allTags={allTags}
+            uniformSubCategories={uniformSubCategories}
+            displayProducts={displayProducts}
+            showAllFeatured={showAllFeatured}
+            setShowAllFeatured={setShowAllFeatured}
+            setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+            toggleWishlist={toggleWishlist}
+            addToCart={addToCart}
+            wishlist={wishlist}
+            onProductTap={() => setIsReshufflingPaused(true)}
+          />
+        </Suspense>
       </div>
 
       <div id="institutional">
-        <InstitutionalWholesale 
-          setIsQuoteModalOpen={setIsQuoteModalOpen}
-        />
+        <Suspense fallback={<div className="h-48 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
+          <InstitutionalWholesale 
+            setIsQuoteModalOpen={setIsQuoteModalOpen}
+          />
+        </Suspense>
       </div>
 
       <Footer />
