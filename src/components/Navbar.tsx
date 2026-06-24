@@ -15,7 +15,8 @@ import {
   Zap,
   Filter,
   Home,
-  MessageSquare
+  MessageSquare,
+  Scissors
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
@@ -382,6 +383,7 @@ export function Navbar({
     { name: 'Products', id: 'products', link: '/products' },
     { name: 'Services', id: 'services', link: '/services' },
     { name: 'Portfolio', id: 'portfolio', link: '/portfolio' },
+    { name: 'Textiles', id: 'fabric-gallery', link: '/fabric-gallery' },
     { name: 'Categories', id: 'categories', link: '/categories' }
   ];
 
@@ -637,6 +639,7 @@ export function Navbar({
                   { name: 'Products', link: '/products', icon: <Package size={18} /> },
                   { name: 'Services', link: '/services', icon: <Zap size={18} /> },
                   { name: 'Portfolio', link: '/portfolio', icon: <ChevronRight size={18} /> },
+                  { name: 'Textiles', link: '/fabric-gallery', icon: <Scissors size={18} /> },
                   { name: 'Enquire', onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
                 ].map((item, idx) => (
                   <button 

@@ -15,6 +15,7 @@ const segmentToTitle: SegmentMap = {
   'portfolio': 'Sourcing Portfolio',
   'wholesale': 'Bulk Tenders',
   'contact': 'Production Office',
+  'fabric-gallery': 'Textile Gallery',
   'faq': 'Help & FAQs',
   'blog': 'Logbook & Textiles Guide',
   'careers': 'Careers & Tailoring',

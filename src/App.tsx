@@ -26,6 +26,7 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const CareersPage = lazy(() => import('./pages/CareersPage'));
+const FabricGalleryPage = lazy(() => import('./pages/FabricGalleryPage'));
 
 // Code-split heavy pages to optimize initial bundle payload and improve Core Web Vitals
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
@@ -99,6 +100,9 @@ function DynamicSEOEngine() {
       } else if (path === '/careers' || path.startsWith('/careers')) {
         title = "Careers & Tailoring Opportunities | UHURU MARKET UNIFORMS";
         description = "Join our production team in Nairobi. Inspect open sewing, embroidery machine operations, and quality inspection roles at Naisiae Textiles.";
+      } else if (path === '/fabric-gallery') {
+        title = "Interactive Textile & Fabric Gallery | UHURU MARKET UNIFORMS";
+        description = "Browse and filter our premium school uniform and corporate apparel textile samples. Inspect weave density, blends, and material specs with microscopic macro zoom.";
       }
 
       // Force apply changes securely to the DOM
@@ -419,6 +423,7 @@ function AppContent({ isAdmin, loading }: any) {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/careers" element={<CareersPage />} />
+          <Route path="/fabric-gallery" element={<FabricGalleryPage />} />
           
           <Route path="/login" element={<LoginPage />} />
           <Route 
