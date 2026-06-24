@@ -5,6 +5,32 @@ import { auth, db, handleFirestoreError, OperationType } from '../services/fireb
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
 
+const checkmarkVariants: any = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeInOut",
+      delay: 0.2
+    }
+  }
+};
+
+const scaleInVariants: any = {
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 25
+    }
+  }
+};
+
 export function QuoteModal() {
   const { isQuoteModalOpen, setIsQuoteModalOpen, quoteProduct, setQuoteProduct } = useCart();
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -68,168 +94,205 @@ export function QuoteModal() {
               <button type="button" onClick={handleClose} className="text-slate-400 p-2 hover:text-[#C8102E] transition-colors"><X size={20} /></button>
             </div>
 
-            <form 
-              onSubmit={async (e) => { 
-                e.preventDefault();
-                try {
-                  await addDoc(collection(db, 'quotes'), { 
-                    name: quoteForm.name,
-                    email: quoteForm.email,
-                    phone: quoteForm.phone,
-                    service: quoteForm.service,
-                    details: quoteForm.details,
-                    customLogoUrl: quoteForm.customLogoUrl || null,
-                    customLogoName: quoteForm.customLogoName || null,
-                    status: 'pending', 
-                    createdAt: serverTimestamp(), 
-                    uid: auth.currentUser?.uid || 'guest' 
-                  });
-                  setOrderSuccess(true);
-                  setTimeout(() => { 
-                    setOrderSuccess(false); 
-                    handleClose();
-                    setQuoteForm({ 
-                      name: '', 
-                      email: '', 
-                      phone: '', 
-                      service: 'School Uniforms', 
-                      details: '',
-                      customLogoUrl: '',
-                      customLogoName: ''
-                    });
-                  }, 2000);
-                } catch (err) {
-                  handleFirestoreError(err, OperationType.WRITE, 'quotes');
-                }
-              }}
-              className="p-6 space-y-4 overflow-y-auto"
-            >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Full Name</label>
-                  <input 
-                    required 
-                    placeholder="e.g. John Doe"
-                    value={quoteForm.name} 
-                    onChange={e => setQuoteForm({...quoteForm, name: e.target.value})} 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold" 
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Phone Number</label>
-                  <input 
-                    required 
-                    placeholder="+254..."
-                    value={quoteForm.phone} 
-                    onChange={e => setQuoteForm({...quoteForm, phone: e.target.value})} 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold" 
-                  />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Email Address</label>
-                <input 
-                  required 
-                  type="email" 
-                  placeholder="name@example.com"
-                  value={quoteForm.email} 
-                  onChange={e => setQuoteForm({...quoteForm, email: e.target.value})} 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold" 
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Service Type</label>
-                <select 
-                  value={quoteForm.service} 
-                  onChange={e => setQuoteForm({...quoteForm, service: e.target.value})} 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold"
-                >
-                  <option>School Uniforms</option>
-                  <option>Corporate Branding</option>
-                  <option>Custom Knitwear</option>
-                  <option>Screen Printing</option>
-                  <option>General Enquiry</option>
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Request Details</label>
-                <textarea 
-                  rows={4} 
-                  value={quoteForm.details} 
-                  onChange={e => setQuoteForm({...quoteForm, details: e.target.value})} 
-                  placeholder="Tell us what you need in detail..." 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] resize-none transition-all font-semibold" 
-                />
-              </div>
-
-              {/* Optional Company / School Logo Upload */}
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Attach Your Logo (Optional)</label>
-                
-                {!quoteForm.customLogoUrl ? (
-                  <label className="border-2 border-dashed border-slate-200 hover:border-[#C8102E]/40 bg-[#F8FAFC] rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white group">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            if (event.target?.result) {
-                              setQuoteForm({
-                                ...quoteForm,
-                                customLogoUrl: event.target.result as string,
-                                customLogoName: file.name
-                              });
-                            }
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                    />
-                    <ImageIcon size={22} className="text-slate-300 group-hover:text-[#C8102E]/60 transition-colors mb-1.5" />
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Image File</span>
-                    <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">PNG, JPG, SVG up to 5MB</span>
-                  </label>
-                ) : (
-                  <div className="flex items-center justify-between p-3 bg-[#F8FAFC] border border-slate-200 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-white border border-slate-150 p-0.5 overflow-hidden flex items-center justify-center shrink-0">
-                        <img src={quoteForm.customLogoUrl} className="max-w-full max-h-full object-contain" alt="Selected branding logo" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black text-slate-700 truncate max-w-[170px] uppercase select-none">{quoteForm.customLogoName}</p>
-                        <p className="text-[8px] font-bold text-green-500 uppercase tracking-widest">Attached</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setQuoteForm({
-                          ...quoteForm,
-                          customLogoUrl: '',
-                          customLogoName: ''
-                        });
-                      }}
-                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                      title="Clear Image"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                )}
-              </div>
-              
-              <button 
-                type="submit"
-                disabled={orderSuccess}
-                className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all shadow-xl shadow-black/10 disabled:bg-green-600 active:scale-[0.98] cursor-pointer"
+            {orderSuccess ? (
+              <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={scaleInVariants}
+                className="p-12 flex flex-col items-center justify-center text-center space-y-6 flex-1 min-h-[350px]"
               >
-                {orderSuccess ? 'Message Sent Successfully!' : 'Send Request'}
-              </button>
-            </form>
+                <div className="relative flex items-center justify-center">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center text-green-500 border border-green-200 z-10"
+                  >
+                    <svg className="w-10 h-10 stroke-current" viewBox="0 0 24 24" fill="none" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                      <motion.path 
+                        d="M20 6L9 17L4 12" 
+                        variants={checkmarkVariants}
+                      />
+                    </svg>
+                  </motion.div>
+                  <motion.div 
+                    animate={{ scale: [1, 1.45], opacity: [0.4, 0] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute inset-0 w-20 h-20 rounded-full border border-green-400 pointer-events-none"
+                  />
+                </div>
+                <div className="space-y-2 max-w-sm">
+                  <h3 className="font-display text-2xl text-[#0A1628] tracking-wide">Request Received</h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                    Our sales team has received your details. A representative will contact you shortly.
+                  </p>
+                </div>
+                <div className="w-12 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              </motion.div>
+            ) : (
+              <form 
+                onSubmit={async (e) => { 
+                  e.preventDefault();
+                  try {
+                    await addDoc(collection(db, 'quotes'), { 
+                      name: quoteForm.name,
+                      email: quoteForm.email,
+                      phone: quoteForm.phone,
+                      service: quoteForm.service,
+                      details: quoteForm.details,
+                      customLogoUrl: quoteForm.customLogoUrl || null,
+                      customLogoName: quoteForm.customLogoName || null,
+                      status: 'pending', 
+                      createdAt: serverTimestamp(), 
+                      uid: auth.currentUser?.uid || 'guest' 
+                    });
+                    setOrderSuccess(true);
+                    setTimeout(() => { 
+                      setOrderSuccess(false); 
+                      handleClose();
+                      setQuoteForm({ 
+                        name: '', 
+                        email: '', 
+                        phone: '', 
+                        service: 'School Uniforms', 
+                        details: '',
+                        customLogoUrl: '',
+                        customLogoName: ''
+                      });
+                    }, 2000);
+                  } catch (err) {
+                    handleFirestoreError(err, OperationType.WRITE, 'quotes');
+                  }
+                }}
+                className="p-6 space-y-4 overflow-y-auto"
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Full Name</label>
+                    <input 
+                      required 
+                      placeholder="e.g. John Doe"
+                      value={quoteForm.name} 
+                      onChange={e => setQuoteForm({...quoteForm, name: e.target.value})} 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold" 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Phone Number</label>
+                    <input 
+                      required 
+                      placeholder="+254..."
+                      value={quoteForm.phone} 
+                      onChange={e => setQuoteForm({...quoteForm, phone: e.target.value})} 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold" 
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Email Address</label>
+                  <input 
+                    required 
+                    type="email" 
+                    placeholder="name@example.com"
+                    value={quoteForm.email} 
+                    onChange={e => setQuoteForm({...quoteForm, email: e.target.value})} 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold" 
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Service Type</label>
+                  <select 
+                    value={quoteForm.service} 
+                    onChange={e => setQuoteForm({...quoteForm, service: e.target.value})} 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none focus:border-[#C8102E] transition-all font-semibold"
+                  >
+                    <option>School Uniforms</option>
+                    <option>Corporate Branding</option>
+                    <option>Custom Knitwear</option>
+                    <option>Screen Printing</option>
+                    <option>General Enquiry</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Request Details</label>
+                  <textarea 
+                    rows={4} 
+                    value={quoteForm.details} 
+                    onChange={e => setQuoteForm({...quoteForm, details: e.target.value})} 
+                    placeholder="Tell us what you need in detail..." 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[#C8102E] resize-none transition-all font-semibold" 
+                  />
+                </div>
+
+                {/* Optional Company / School Logo Upload */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-slate-500 ml-1">Attach Your Logo (Optional)</label>
+                  
+                  {!quoteForm.customLogoUrl ? (
+                    <label className="border-2 border-dashed border-slate-200 hover:border-[#C8102E]/40 bg-[#F8FAFC] rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-white group">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              if (event.target?.result) {
+                                setQuoteForm({
+                                  ...quoteForm,
+                                  customLogoUrl: event.target.result as string,
+                                  customLogoName: file.name
+                                });
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <ImageIcon size={22} className="text-slate-300 group-hover:text-[#C8102E]/60 transition-colors mb-1.5" />
+                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Select Image File</span>
+                      <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">PNG, JPG, SVG up to 5MB</span>
+                    </label>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-[#F8FAFC] border border-slate-200 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-white border border-slate-150 p-0.5 overflow-hidden flex items-center justify-center shrink-0">
+                          <img src={quoteForm.customLogoUrl} className="max-w-full max-h-full object-contain" alt="Selected branding logo" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-black text-slate-700 truncate max-w-[170px] uppercase select-none">{quoteForm.customLogoName}</p>
+                          <p className="text-[8px] font-bold text-green-500 uppercase tracking-widest">Attached</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuoteForm({
+                            ...quoteForm,
+                            customLogoUrl: '',
+                            customLogoName: ''
+                          });
+                        }}
+                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                        title="Clear Image"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                <button 
+                  type="submit"
+                  disabled={orderSuccess}
+                  className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all shadow-xl shadow-black/10 disabled:bg-green-600 active:scale-[0.98] cursor-pointer"
+                >
+                  {orderSuccess ? 'Message Sent Successfully!' : 'Send Request'}
+                </button>
+              </form>
+            )}
           </motion.div>
         </motion.div>
       )}

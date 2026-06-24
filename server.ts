@@ -332,11 +332,29 @@ Return the response in JSON format.`;
     const targetUrl = req.query.url as string;
     if (!targetUrl) return res.status(400).json({ error: "Missing URL" });
 
+    // Server-side instant bypass for Google Drive links
+    if (targetUrl.includes('drive.google.com')) {
+      let imageId = '';
+      const fileDMatch = targetUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileDMatch && fileDMatch[1]) {
+        imageId = fileDMatch[1];
+      } else {
+        try {
+          const urlObj = new URL(targetUrl);
+          const idParam = urlObj.searchParams.get('id');
+          if (idParam) imageId = idParam;
+        } catch {}
+      }
+      if (imageId) {
+        return res.json({ resolvedUrl: `https://lh3.googleusercontent.com/d/${imageId}` });
+      }
+    }
+
     try {
-      // Follow redirects to get the real page
+      // Follow redirects to get the real page using a standard web browser User-Agent
       const response = await fetch(targetUrl, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         },
         redirect: 'follow'
       });

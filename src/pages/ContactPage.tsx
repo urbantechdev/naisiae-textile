@@ -9,6 +9,32 @@ import { db, handleFirestoreError, OperationType } from '../services/firebase';
 
 import { useCart } from '../context/CartContext';
 
+const checkmarkVariants: any = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeInOut",
+      delay: 0.2
+    }
+  }
+};
+
+const scaleInVariants: any = {
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 25
+    }
+  }
+};
+
 export default function ContactPage() {
   const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
   const [siteSettings, setSiteSettings] = useState<any>(null);
@@ -103,6 +129,48 @@ export default function ContactPage() {
             >
               <h2 className="font-display text-4xl text-[#0A1628] tracking-widest mb-10">Send a direct line</h2>
               
+            {submitStatus?.type === 'success' ? (
+              <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={scaleInVariants}
+                className="py-16 px-6 flex flex-col items-center justify-center text-center space-y-8"
+              >
+                <div className="relative flex items-center justify-center">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className="w-24 h-24 rounded-full bg-green-50 flex items-center justify-center text-green-500 border border-green-200 z-10 shadow-lg shadow-green-100"
+                  >
+                    <svg className="w-12 h-12 stroke-current" viewBox="0 0 24 24" fill="none" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                      <motion.path 
+                        d="M20 6L9 17L4 12" 
+                        variants={checkmarkVariants}
+                      />
+                    </svg>
+                  </motion.div>
+                  <motion.div 
+                    animate={{ scale: [1, 1.5], opacity: [0.4, 0] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute inset-0 w-24 h-24 rounded-full border-2 border-green-400 pointer-events-none"
+                  />
+                </div>
+                <div className="space-y-3 max-w-md">
+                  <h3 className="font-display text-3xl text-[#0A1628] tracking-wide">Message Transmitted</h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-[2px] leading-relaxed">
+                    Thank you! Your message was delivered successfully. Our customer support desk and team at Jogoo Rd will review your inquiry within 24 hours.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSubmitStatus(null)}
+                  className="px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all active:scale-95 border border-slate-200"
+                >
+                  Send Another Message
+                </button>
+              </motion.div>
+            ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-2">
@@ -154,7 +222,7 @@ export default function ContactPage() {
                 </div>
 
                 {submitStatus && (
-                  <div className={`p-4 rounded-2xl text-xs font-bold uppercase tracking-[2px] ${submitStatus.type === 'success' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                  <div className="p-4 rounded-2xl text-xs font-bold uppercase tracking-[2px] bg-red-50 text-red-600 border border-red-100">
                     {submitStatus.message}
                   </div>
                 )}
@@ -167,6 +235,7 @@ export default function ContactPage() {
                   {isSubmitting ? 'Transmitting...' : 'Send Message'} <Send size={18} />
                 </button>
               </form>
+            )}
             </motion.div>
 
             {/* Contact Info & Details */}

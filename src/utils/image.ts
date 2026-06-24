@@ -35,26 +35,40 @@ export function toWebPUrl(url: string | undefined): string {
     }
   }
 
-  // 2. Pinterest Optimization
-  // Formats: https://i.pinimg.com/1200x/...jpg -> https://i.pinimg.com/webp85/1200x/...webp
-  // Originals: https://i.pinimg.com/originals/...png -> https://i.pinimg.com/webp85/originals/...webp
-  if (trimmed.includes('pinimg.com')) {
-    let converted = trimmed;
-    
-    // Replace file extension with .webp
-    const extRegex = /\.(jpe?g|png|gif|bmp)(\?.*)?$/i;
-    if (extRegex.test(converted)) {
-      converted = converted.replace(extRegex, '.webp$2');
-    }
-    
-    // Ensure Pinterest's high-efficiency WebP edge CDN route "/webp85" is injected
-    if (!converted.includes('/webp85/')) {
-      converted = converted.replace(/i\.pinimg\.com\/(originals|\d+x)/g, 'i.pinimg.com/webp85/$1');
-    }
-    return converted;
+  // 2. Pinterest bypass (Returning original pinimg/pinterest URLs to avoid 403/404 CDN mismatch errors)
+  if (trimmed.includes('pinimg.com') || trimmed.includes('pinterest.com')) {
+    return trimmed;
   }
 
-  // 3. Keep local resources, data URIs, or unoptimized CDNs as is
+  // 3. Google Drive URL Resolution
+  // Automatically transforms non-embeddable sharing URLs to high-performance direct CDN routes:
+  // e.g. https://drive.google.com/file/d/IMAGE_ID/view -> https://lh3.googleusercontent.com/d/IMAGE_ID
+  if (trimmed.includes('drive.google.com')) {
+    try {
+      let imageId = '';
+      
+      // Pattern 1: /file/d/IMAGE_ID/
+      const fileDMatch = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileDMatch && fileDMatch[1]) {
+        imageId = fileDMatch[1];
+      } else {
+        // Pattern 2: id=IMAGE_ID query parameter
+        const urlObj = new URL(trimmed);
+        const idParam = urlObj.searchParams.get('id');
+        if (idParam) {
+          imageId = idParam;
+        }
+      }
+
+      if (imageId) {
+        return `https://lh3.googleusercontent.com/d/${imageId}`;
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  // 4. Keep local resources, data URIs, or unoptimized CDNs as is
   return trimmed;
 }
 
