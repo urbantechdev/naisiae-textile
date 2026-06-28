@@ -432,7 +432,7 @@ export default function ProductsPage() {
             <div className="space-y-3 pb-2">
               <div className="flex justify-between items-center">
                 <h4 className="text-[10px] font-black uppercase tracking-[3px] text-slate-400">Max Price Limit</h4>
-                <span className="font-mono text-xs font-extrabold text-[#C8961A]">{priceRange.toLocaleString()}/-</span>
+                <span className="font-mono text-xs font-extrabold text-[#C8961A]">{formatPrice(priceRange)}</span>
               </div>
               <input 
                 type="range"

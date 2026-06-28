@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Package, ChevronRight, Plus, Phone, MessageSquare, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLocalization } from '../../context/LocalizationContext';
 
 interface WholesaleDealsProps {
   products: any[];
@@ -18,6 +19,7 @@ export function WholesaleDeals({
   setSelectedQuickViewProduct,
   onProductTap
 }: WholesaleDealsProps) {
+  const { formatPrice } = useLocalization();
   const wholesaleProducts = products.filter(p => 
     p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')
   );
@@ -152,7 +154,7 @@ export function WholesaleDeals({
                           </div>
                           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Wholesale Spec</span>
-                            <span className="text-base font-black text-[#C8102E]">{product.price.toLocaleString()}/-</span>
+                            <span className="text-base font-black text-[#C8102E]">{formatPrice(product.price)}</span>
                           </div>
                         </div>
                       </div>

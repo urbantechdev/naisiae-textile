@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { appExperience } from '../utils/haptics';
+import { useLocalization } from '../context/LocalizationContext';
 
 // Nairobi / Kenya High School Standard Colorways
 const HIGH_SCHOOL_COLORS = [
@@ -107,6 +108,7 @@ const FABRICS = [
 
 export default function UniformSimulatorPage() {
   const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, addToCart, setToast, setIsQuoteModalOpen } = useCart();
+  const { formatPrice } = useLocalization();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Simulation parameters
@@ -1104,19 +1106,19 @@ export default function UniformSimulatorPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-black/40 rounded-2xl border border-white/5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
               <div>
                 <p className="text-[7.5px] font-black text-slate-500 mb-0.5">Retail Value</p>
-                <p className="text-white line-through font-mono text-sm">KSH {pricingData.grossCost}</p>
+                <p className="text-white line-through font-mono text-sm">{formatPrice(pricingData.grossCost)}</p>
               </div>
               <div>
                 <p className="text-[7.5px] font-black text-slate-500 mb-0.5">Applied Discount</p>
                 <p className="text-emerald-400 font-black text-sm">{pricingData.discountPercent}% OFF</p>
               </div>
               <div>
-                <p className="text-[7.5px] font-black text-slate-500 mb-0.5">KES Net / Kit</p>
-                <p className="text-white font-mono text-sm font-black">KSH {pricingData.netCost}</p>
+                <p className="text-[7.5px] font-black text-slate-500 mb-0.5">Net / Kit</p>
+                <p className="text-white font-mono text-sm font-black">{formatPrice(pricingData.netCost)}</p>
               </div>
               <div>
                 <p className="text-[7.5px] font-black text-[#C8961A] mb-0.5">Total Saved</p>
-                <p className="text-[#C8961A] font-mono text-sm font-black">KSH {pricingData.saving.toLocaleString()}</p>
+                <p className="text-[#C8961A] font-mono text-sm font-black">{formatPrice(pricingData.saving)}</p>
               </div>
             </div>
 
@@ -1124,7 +1126,7 @@ export default function UniformSimulatorPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4 border-t border-white/10">
               <div>
                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-[2px]">Projected Project Volume</span>
-                <p className="text-2xl font-mono text-white font-black mt-1">KSH {pricingData.totalCost.toLocaleString()}</p>
+                <p className="text-2xl font-mono text-white font-black mt-1">{formatPrice(pricingData.totalCost)}</p>
               </div>
 
               <div className="flex gap-3">

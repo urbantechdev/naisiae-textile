@@ -280,7 +280,7 @@ export function Hero({
                         <p className="text-sm font-black text-[#0E121C] uppercase tracking-wider mb-1">{product.name}</p>
                         <div className="flex items-center gap-3">
                           <span className="text-[10px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded">{product.category}</span>
-                          <span className="text-xs font-bold text-slate-400">{product.price.toLocaleString()}/-</span>
+                          <span className="text-xs font-bold text-slate-400">{formatPrice(product.price)}</span>
                         </div>
                       </div>
                       <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A]/80 group-hover/search:translate-x-1 transition-all" size={20} />

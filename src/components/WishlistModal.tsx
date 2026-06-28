@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useLocalization } from '../context/LocalizationContext';
 
 interface WishlistModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
     addToCart,
     setIsCartOpen 
   } = useCart();
+  const { formatPrice } = useLocalization();
   const navigate = useNavigate();
 
   const handleMoveToCart = (item: any) => {
@@ -132,7 +134,7 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
 
                           <div className="flex items-center justify-between mt-3">
                             <span className="text-xs font-black text-[#0A1628] tabular-nums">
-                              {item.price.toLocaleString()}/-
+                              {formatPrice(item.price)}
                             </span>
                             
                             <button 

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useLocalization } from '../../context/LocalizationContext';
 
 interface CatalogSectionProps {
   activeTab: string;
@@ -45,6 +46,7 @@ export function CatalogSection({
   onProductTap
 }: CatalogSectionProps) {
   const navigate = useNavigate();
+  const { formatPrice, t } = useLocalization();
   const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
 
   const handleProductInteraction = (product: any, e: React.MouseEvent) => {
@@ -264,7 +266,7 @@ export function CatalogSection({
                       ) : (
                         <>
                           <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-                            <span className="text-[13px] sm:text-lg font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
+                            <span className="text-[13px] sm:text-lg font-black text-[#C8961A]">{formatPrice(product.price)}</span>
                           </div>
                           <div className="flex gap-2">
                             <button 
@@ -336,7 +338,7 @@ export function CatalogSection({
                       </div>
                       <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Base Cost</span>
-                        <span className="text-base font-black text-[#C8961A]">{product.price.toLocaleString()}/-</span>
+                        <span className="text-base font-black text-[#C8961A]">{formatPrice(product.price)}</span>
                       </div>
                     </div>
                   </div>

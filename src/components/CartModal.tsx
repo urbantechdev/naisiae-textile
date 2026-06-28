@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck, ShieldCheck, Tag, Ticket } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLocalization } from '../context/LocalizationContext';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
     cartTotal 
   } = useCart();
   const navigate = useNavigate();
+  const { formatPrice } = useLocalization();
   const [promoInput, setPromoInput] = useState('');
   const [promoError, setPromoError] = useState('');
 
@@ -95,7 +97,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                       <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">
                         {remainingForFreeShipping === 0 
                           ? 'You qualify for Free Shipping!' 
-                          : `Add ${remainingForFreeShipping.toLocaleString()}/- for Free Shipping`}
+                          : `Add ${formatPrice(remainingForFreeShipping)} for Free Shipping`}
                       </span>
                     </div>
                     <span className="text-[10px] font-black text-slate-400">{Math.round(progressToFreeShipping)}%</span>
@@ -169,7 +171,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                                 </span>
                               ))}
                               <span className="text-[8px] font-black uppercase tracking-wider text-slate-400">
-                                Unit: {item.price.toLocaleString()}/-
+                                Unit: {formatPrice(item.price)}
                               </span>
                             </div>
 
@@ -214,7 +216,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                             </div>
                             
                             <span className="text-xs font-black text-[#0A1628] tabular-nums">
-                              {(item.price * item.quantity).toLocaleString()}/-
+                              {formatPrice(item.price * item.quantity)}
                             </span>
                           </div>
                         </div>
@@ -290,13 +292,13 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-slate-400">
                       <span className="text-[10px] font-black uppercase tracking-widest">Merchandise Subtotal</span>
-                      <span className="text-sm font-bold tabular-nums">{cartSubtotal.toLocaleString()}/-</span>
+                      <span className="text-sm font-bold tabular-nums">{formatPrice(cartSubtotal)}</span>
                     </div>
                     
                     {discountAmount > 0 && (
                       <div className="flex items-center justify-between text-green-600">
                         <span className="text-[10px] font-black uppercase tracking-widest">Limited Promo Discount</span>
-                        <span className="text-sm font-bold tabular-nums">-{discountAmount.toLocaleString()}/-</span>
+                        <span className="text-sm font-bold tabular-nums">-{formatPrice(discountAmount)}</span>
                       </div>
                     )}
 
@@ -308,7 +310,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-black text-[#0A1628] uppercase tracking-[2px]">Total Payable</span>
                       <span className="text-2xl font-black text-[#0A1628] tracking-tight tabular-nums">
-                        {cartTotal.toLocaleString()}/-
+                        {formatPrice(cartTotal)}
                       </span>
                     </div>
                   </div>

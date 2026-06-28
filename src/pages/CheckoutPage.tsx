@@ -29,6 +29,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { useLocalization } from '../context/LocalizationContext';
 
 export default function CheckoutPage() {
   const { 
@@ -44,6 +45,7 @@ export default function CheckoutPage() {
     setIsWishlistOpen,
     setIsQuoteModalOpen
   } = useCart();
+  const { formatPrice } = useLocalization();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -735,7 +737,7 @@ export default function CheckoutPage() {
                           }`}
                         >
                           <span className="block text-[8px] uppercase tracking-wider text-slate-400 mb-0.5">50% Booking Deposit</span>
-                          <span className="text-xs font-black text-slate-800">Ksh {Math.round(cartTotal * 0.5).toLocaleString()}/-</span>
+                          <span className="text-xs font-black text-slate-800">{formatPrice(Math.round(cartTotal * 0.5))}</span>
                         </button>
                         <button
                           type="button"
@@ -747,7 +749,7 @@ export default function CheckoutPage() {
                           }`}
                         >
                           <span className="block text-[8px] uppercase tracking-wider text-slate-400 mb-0.5 font-bold">100% Full Payment</span>
-                          <span className="text-xs font-black text-slate-800">Ksh {cartTotal.toLocaleString()}/-</span>
+                          <span className="text-xs font-black text-slate-800">{formatPrice(cartTotal)}</span>
                         </button>
                       </div>
 
@@ -762,21 +764,21 @@ export default function CheckoutPage() {
                           <hr className="border-white/10 my-2" />
                           <div className="flex justify-between text-white/70">
                             <span>Subtotal:</span>
-                            <span>Ksh {cartSubtotal.toLocaleString()}/-</span>
+                            <span>{formatPrice(cartSubtotal)}</span>
                           </div>
                           {discountAmount > 0 && (
                             <div className="flex justify-between text-emerald-400">
                               <span>Promo code discount ({appliedPromo?.code}):</span>
-                              <span>- Ksh {discountAmount.toLocaleString()}/-</span>
+                              <span>-{formatPrice(discountAmount)}</span>
                             </div>
                           )}
                           <div className="border-t border-white/5 pt-1.5 flex justify-between items-center text-sm font-black">
                             <span className="text-amber-400 text-xs tracking-wider uppercase">⚡ Commitment Remittance:</span>
-                            <span className="text-emerald-400">Ksh {(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/-</span>
+                            <span className="text-emerald-400">{formatPrice(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}</span>
                           </div>
                           <div className="text-[9px] text-white/40 pt-1 border-t border-dashed border-white/10 flex justify-between">
                             <span>Remaining balance due on delivery:</span>
-                            <span>Ksh {(mpesaPaymentOption === 'deposit' ? (cartTotal - Math.round(cartTotal * 0.5)) : 0).toLocaleString()}/-</span>
+                            <span>{formatPrice(mpesaPaymentOption === 'deposit' ? (cartTotal - Math.round(cartTotal * 0.5)) : 0)}</span>
                           </div>
                         </div>
                       </div>
@@ -819,7 +821,7 @@ export default function CheckoutPage() {
                         <div className="pt-2.5 border-t border-slate-150 flex items-center justify-between flex-wrap gap-2">
                           <div>
                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Accurate Sourcing Remittance</p>
-                            <p className="text-sm font-black text-green-600">Ksh {((mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)).toLocaleString()}/-</p>
+                            <p className="text-sm font-black text-green-600">{formatPrice(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}</p>
                           </div>
                           <button
                             type="button"
@@ -966,10 +968,10 @@ export default function CheckoutPage() {
                       <h4 className="text-[11px] font-black uppercase tracking-wider truncate mb-1">{item.name}</h4>
                       <div className="flex items-center justify-between">
                         <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest whitespace-nowrap">
-                          {item.quantity} Units {item.price > 0 && `× ${item.price.toLocaleString()}/-`}
+                          {item.quantity} Units {item.price > 0 && `× ${formatPrice(item.price)}`}
                         </span>
                         <span className="text-xs font-black text-[#C8961A] tabular-nums">
-                          {item.price > 0 ? `${(item.price * item.quantity).toLocaleString()}/-` : 'Price on Inquiry'}
+                          {item.price > 0 ? formatPrice(item.price * item.quantity) : 'Price on Inquiry'}
                         </span>
                       </div>
                       {item.priceType === 'wholesale' && (
@@ -1012,12 +1014,12 @@ export default function CheckoutPage() {
               <div className="space-y-4 pt-6 border-t border-white/10">
                 <div className="flex justify-between text-white/40 font-black text-[10px] uppercase tracking-widest">
                   <span>Gross Merchandise Value</span>
-                  <span className="text-white">{cartSubtotal.toLocaleString()}/-</span>
+                  <span className="text-white">{formatPrice(cartSubtotal)}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-green-400 font-black text-[10px] uppercase tracking-widest">
                     <span>Applied Bulk Discount</span>
-                    <span>-{discountAmount.toLocaleString()}/-</span>
+                    <span>-{formatPrice(discountAmount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-white/40 font-black text-[10px] uppercase tracking-widest">
@@ -1027,7 +1029,7 @@ export default function CheckoutPage() {
                 <div className="pt-4 border-t border-white/10 flex justify-between items-end">
                   <div>
                     <p className="text-[10px] font-black text-white/30 uppercase tracking-[3px] mb-1">Total Valuation</p>
-                    <p className="text-3xl font-black tracking-tighter text-white tabular-nums">{cartTotal.toLocaleString()}/-</p>
+                    <p className="text-3xl font-black tracking-tighter text-white tabular-nums">{formatPrice(cartTotal)}</p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-1.5 text-[8px] font-black text-[#C8961A] uppercase tracking-[2px] bg-[#C8961A]/10 px-3 py-1.5 rounded-lg border border-[#C8961A]/20">

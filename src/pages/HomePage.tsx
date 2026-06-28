@@ -176,7 +176,7 @@ export default function HomePage() {
     const shareUrl = `${window.location.host === 'localhost:3000' ? 'http://localhost:3000' : 'https://' + window.location.host}/product/${product.id}`;
     const shareData = {
       title: `${product.name} | Uhuru Market Uniforms`,
-      text: `Check out ${product.name} - ${product.description || 'Quality textile solutions from Uhuru Market, Nairobi.'}\nPrice: ${product.price?.toLocaleString()}/-`,
+      text: `Check out ${product.name} - ${product.description || 'Quality textile solutions from Uhuru Market, Nairobi.'}\nPrice: ${formatPrice(product.price)}`,
       url: shareUrl,
     };
 
@@ -777,7 +777,7 @@ export default function HomePage() {
                   </div>
                   {compareList.map((item, idx) => (
                     <div key={`${item.id}-price-${idx}`} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#C8102E]">
-                      {item.price.toLocaleString()}/-
+                      {formatPrice(item.price)}
                     </div>
                   ))}
 
