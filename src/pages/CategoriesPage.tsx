@@ -3,16 +3,16 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { motion } from 'motion/react';
-import { ChevronRight, ShoppingBag, Heart, Menu } from 'lucide-react';
+import { ChevronRight, ShoppingBag, Heart, Menu, Sparkles } from 'lucide-react';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { getCategoryPlaceholder } from '../utils/image';
 
 import { useCart } from '../context/CartContext';
 
 export default function CategoriesPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [majorCategories, setMajorCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +43,7 @@ export default function CategoriesPage() {
             id: explicit?.id || name.toLowerCase().replace(/\s+/g, '-'),
             title: name,
             subtitle: explicit?.subtitle || `${data.count} Products Available`,
-            image: explicit?.image || data.image || "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80",
+            image: explicit?.image || getCategoryPlaceholder(name),
             description: explicit?.description || `Explore our high-quality ${name.toLowerCase()} range tailored for institutional needs.`,
             link: `/?tab=${encodeURIComponent(name)}#shop`
           };
@@ -52,10 +52,56 @@ export default function CategoriesPage() {
         if (synthCats.length > 0) {
           setMajorCategories(synthCats);
         } else {
-          // Final fallback
+          // Final fallback with complete, professional sector categories using custom placeholder images
           setMajorCategories([
-            { id: 'school', title: 'School Uniforms', subtitle: 'Primary, Secondary & College', image: 'https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80', description: 'Comprehensive uniform kits engineered for daily school use.', link: '/?tab=School Uniforms#shop' },
-            { id: 'corporate', title: 'Corporate Wear', subtitle: 'Professional Identity', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80', description: 'Polished apparel for office environments and corporate teams.', link: '/?tab=Corporate Wear#shop' }
+            { 
+              id: 'school', 
+              title: 'School Uniforms', 
+              subtitle: 'Primary, Secondary & College', 
+              image: getCategoryPlaceholder('School Uniforms'), 
+              description: 'Comprehensive schoolwear engineered for Nairobi’s learning institutions, including durable sweaters, shirts, blouses, trousers, and skirts.', 
+              link: '/?tab=School Uniforms#shop' 
+            },
+            { 
+              id: 'corporate', 
+              title: 'Corporate Wear', 
+              subtitle: 'Professional Team Identity', 
+              image: getCategoryPlaceholder('Corporate Wear'), 
+              description: 'Polished suits, elegant blazers, branded shirts, and formal wear crafted to strengthen company and institutional brands.', 
+              link: '/?tab=Corporate Wear#shop' 
+            },
+            { 
+              id: 'healthcare', 
+              title: 'Healthcare & Medical', 
+              subtitle: 'Hospitals & Specialized Clinics', 
+              image: getCategoryPlaceholder('Healthcare'), 
+              description: 'Antimicrobial scrub suits, sterile doctor lab coats, protective gowns, and patient apparel optimized for extreme hygiene standards.', 
+              link: '/?tab=Healthcare#shop' 
+            },
+            { 
+              id: 'hospitality', 
+              title: 'Hospitality & Culinary', 
+              subtitle: 'Premium Catering & Hotel Staff', 
+              image: getCategoryPlaceholder('Hospitality'), 
+              description: 'Breathable chef jackets, multi-pocket aprons, hotel server vests, and reception uniforms for world-class dining operations.', 
+              link: '/?tab=Hospitality#shop' 
+            },
+            { 
+              id: 'industrial', 
+              title: 'Industrial Workwear', 
+              subtitle: 'Safety & Heavy Duty Workwear', 
+              image: getCategoryPlaceholder('Industrial'), 
+              description: 'Rugged dustcoats, reflective safety jackets, heavy-duty boiler suits, and high-visibility workwear compliant with workplace standards.', 
+              link: '/?tab=Industrial#shop' 
+            },
+            { 
+              id: 'sports', 
+              title: 'Sports Kits', 
+              subtitle: 'Athletics & Institutional Teams', 
+              image: getCategoryPlaceholder('Sports Kits'), 
+              description: 'Performance soccer jerseys, breathable sports shorts, dynamic warm-up tracksuits, and customized team activewear.', 
+              link: '/?tab=Sports Kits#shop' 
+            }
           ]);
         }
       } catch (error) {
@@ -113,6 +159,30 @@ export default function CategoriesPage() {
                     </div>
                 </motion.div>
             ))}
+        </div>
+
+        {/* Uniform Simulator CTA banner */}
+        <div className="max-w-[1440px] mx-auto mt-24 bg-gradient-to-r from-[#0E121C] to-[#1C2A3E] rounded-[3.5rem] p-12 md:p-16 text-white relative overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(200,150,26,0.1),transparent)] pointer-events-none" />
+          <div className="space-y-6 max-w-2xl relative z-10">
+            <span className="text-[10px] font-black text-[#C8961A] uppercase tracking-[4px] bg-[#C8961A]/10 px-4 py-2 rounded-full inline-block">
+              3D Virtual Tailoring
+            </span>
+            <h2 className="font-display text-4xl md:text-6xl italic leading-none">
+              Interactive <span className="text-white/0 stroke-text" style={{ WebkitTextStroke: '1.5px #FFFFFF' }}>School Uniform</span> Simulator
+            </h2>
+            <p className="text-slate-400 text-sm font-semibold leading-relaxed">
+              Skip the guesswork. Customize sweaters, shirts, blazers, trim patterns, and school tie stripes with our state-of-the-art interactive designer and get instant volume tender quotes for your school or institution.
+            </p>
+          </div>
+          <div className="shrink-0 relative z-10">
+            <button 
+              onClick={() => window.location.href = '/uniform-simulator'}
+              className="bg-[#C8102E] hover:bg-white text-white hover:text-[#0A1628] px-10 py-5 rounded-3xl font-black text-xs uppercase tracking-[3px] transition-all shadow-2xl shadow-[#C8102E]/25 flex items-center gap-3 group/sim"
+            >
+              Launch Simulator <Sparkles size={16} className="group-hover/sim:rotate-12 transition-transform" />
+            </button>
+          </div>
         </div>
       </section>
 

@@ -10,9 +10,8 @@ import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
 
 export default function ServicesPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [services, setServices] = useState<any[]>([]);
 
   useEffect(() => {

@@ -11,9 +11,8 @@ import { LazyImage } from '../components/LazyImage';
 import { useCart } from '../context/CartContext';
 
 export default function PortfolioPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
 

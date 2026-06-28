@@ -37,14 +37,14 @@ export default function WholesalePage() {
     toggleWishlist: toggleWishlistGlobal, 
     isInWishlist,
     isWishlistOpen,
-    setIsWishlistOpen
+    setIsWishlistOpen,
+    setIsQuoteModalOpen
   } = useCart();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [inquiryQty, setInquiryQty] = useState(50);
   const [customizationDetails, setCustomizationDetails] = useState('');

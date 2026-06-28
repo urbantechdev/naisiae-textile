@@ -34,6 +34,7 @@ import { collection, onSnapshot, query, where, limit } from 'firebase/firestore'
 import { db } from '../services/firebase';
 import { LazyImage } from '../components/LazyImage';
 import { useCart } from '../context/CartContext';
+import { useLocalization } from '../context/LocalizationContext';
 
 export default function ProductsPage() {
   const { 
@@ -46,6 +47,7 @@ export default function ProductsPage() {
     toggleWishlist,
     isInWishlist
   } = useCart();
+  const { formatPrice } = useLocalization();
   const navigate = useNavigate();
   
   // State
@@ -442,7 +444,7 @@ export default function ProductsPage() {
               />
               <div className="flex justify-between text-[9px] font-mono text-slate-400">
                 <span>0/-</span>
-                <span>Ksh {maxProductPrice.toLocaleString()} limit</span>
+                <span>{formatPrice(maxProductPrice)} limit</span>
               </div>
             </div>
 
@@ -671,11 +673,11 @@ export default function ProductsPage() {
                             ) : (
                               <>
                                 <span className="text-lg font-black text-[#0A1628] font-mono">
-                                  Ksh {p.price?.toLocaleString() || '1,800'}/-
+                                  {formatPrice(p.price || 1800)}
                                 </span>
                                 {p.oldPrice && (
                                   <span className="text-xs text-slate-400 line-through font-mono">
-                                    Ksh {p.oldPrice?.toLocaleString()}/-
+                                    {formatPrice(p.oldPrice)}
                                   </span>
                                 )}
                               </>
@@ -941,9 +943,9 @@ export default function ProductsPage() {
                 {/* Pricing summary & Quick Action Area */}
                 <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase block">Calculated Value (Ksh)</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">Calculated Value</span>
                     <span className="text-2xl font-black text-[#0A1628] font-mono">
-                      Ksh {computedProductPrice.toLocaleString()}/-
+                      {formatPrice(computedProductPrice)}
                     </span>
                   </div>
 

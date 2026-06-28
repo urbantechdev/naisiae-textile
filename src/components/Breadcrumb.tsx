@@ -16,6 +16,7 @@ const segmentToTitle: SegmentMap = {
   'wholesale': 'Bulk Tenders',
   'contact': 'Production Office',
   'fabric-gallery': 'Textile Gallery',
+  'uniform-simulator': 'Uniform Simulator',
   'faq': 'Help & FAQs',
   'blog': 'Logbook & Textiles Guide',
   'careers': 'Careers & Tailoring',

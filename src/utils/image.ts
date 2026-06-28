@@ -195,3 +195,50 @@ export function initImageOptimizer(): void {
   }
 }
 
+/**
+ * Map of professional category placeholder icons to standardize visual identity.
+ */
+const CATEGORY_PLACEHOLDERS: Record<string, string> = {
+  'school uniforms': '/src/assets/images/category_school_1782334810884.jpg',
+  'school': '/src/assets/images/category_school_1782334810884.jpg',
+  'college wear': '/src/assets/images/category_school_1782334810884.jpg',
+  'college': '/src/assets/images/category_school_1782334810884.jpg',
+  'corporate wear': '/src/assets/images/category_corporate_1782334824455.jpg',
+  'corporate': '/src/assets/images/category_corporate_1782334824455.jpg',
+  'healthcare': '/src/assets/images/category_medical_1782334767056.jpg',
+  'medical': '/src/assets/images/category_medical_1782334767056.jpg',
+  'hospitality': '/src/assets/images/category_hospitality_1782334781502.jpg',
+  'industrial': '/src/assets/images/category_industrial_1782334796806.jpg',
+  'security': '/src/assets/images/category_industrial_1782334796806.jpg',
+  'workwear': '/src/assets/images/category_industrial_1782334796806.jpg',
+  'sports kits': '/src/assets/images/category_sports_1782334837561.jpg',
+  'sports': '/src/assets/images/category_sports_1782334837561.jpg',
+  'branding & print': '/src/assets/images/category_sports_1782334837561.jpg'
+};
+
+export function getCategoryPlaceholder(categoryName: string | undefined): string {
+  if (!categoryName) return 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80';
+  const cleanKey = categoryName.toLowerCase().trim();
+  
+  // Look for exact or partial matches
+  for (const [key, path] of Object.entries(CATEGORY_PLACEHOLDERS)) {
+    if (cleanKey.includes(key) || key.includes(cleanKey)) {
+      return path;
+    }
+  }
+
+  // General fallbacks if nothing matches
+  if (cleanKey.includes('med') || cleanKey.includes('health') || cleanKey.includes('clinic')) {
+    return CATEGORY_PLACEHOLDERS['healthcare'];
+  }
+  if (cleanKey.includes('food') || cleanKey.includes('chef') || cleanKey.includes('restaurant') || cleanKey.includes('hotel')) {
+    return CATEGORY_PLACEHOLDERS['hospitality'];
+  }
+  if (cleanKey.includes('factory') || cleanKey.includes('engine') || cleanKey.includes('construction') || cleanKey.includes('safety')) {
+    return CATEGORY_PLACEHOLDERS['industrial'];
+  }
+
+  return 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80';
+}
+
+

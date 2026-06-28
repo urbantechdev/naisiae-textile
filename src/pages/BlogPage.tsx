@@ -93,9 +93,8 @@ August, December, and January are peak school-entry months when every tailoring 
 ];
 
 export default function BlogPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const [posts, setPosts] = useState<BlogPost[]>(DEFAULT_POSTS);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);

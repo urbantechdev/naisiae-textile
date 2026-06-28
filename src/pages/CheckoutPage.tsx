@@ -41,7 +41,8 @@ export default function CheckoutPage() {
     appliedPromo,
     clearCart,
     wishlist,
-    setIsWishlistOpen
+    setIsWishlistOpen,
+    setIsQuoteModalOpen
   } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -155,7 +156,6 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [verificationStep, setVerificationStep] = useState(0);
   const [isVerifyingMpesa, setIsVerifyingMpesa] = useState(false);
   const [verificationLogs, setVerificationLogs] = useState<string[]>([]);

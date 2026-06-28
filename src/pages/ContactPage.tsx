@@ -36,11 +36,10 @@ const scaleInVariants: any = {
 };
 
 export default function ContactPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',

@@ -16,7 +16,11 @@ import {
   Filter,
   Home,
   MessageSquare,
-  Scissors
+  Scissors,
+  Sliders,
+  Globe,
+  Check,
+  ChevronDown
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
@@ -25,6 +29,7 @@ import { db } from '../services/firebase';
 import { useCart } from '../context/CartContext';
 import { SEED_URLS } from '../constants/seedData';
 import { appExperience } from '../utils/haptics';
+import { useLocalization, COUNTRIES } from '../context/LocalizationContext';
 
 const DEFAULT_MEGA_MENUS = [
   { 
@@ -76,6 +81,14 @@ export function Navbar({
   const { cartCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentCountry, currentLanguage, changeCountry, changeLanguage, t, formatPrice } = useLocalization();
+  const [isLocDropdownOpen, setIsLocDropdownOpen] = useState(false);
+
+  const getLocalizedLink = (path: string) => {
+    if (currentCountry.code === 'KE') return path;
+    const prefix = `/${currentCountry.name.toLowerCase().replace(/ /g, '-')}`;
+    return `${prefix}${path === '/' ? '' : path}`;
+  };
 
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
@@ -376,15 +389,13 @@ export function Navbar({
       { name: 'Corporate & Sports Events', items: col2 },
       { name: 'Healthcare & Marketing', items: col3 }
     ];
-  }, [combinedProjects]);
+  }, [combinedProjects, currentLanguage]);
 
   const navItems = [
-    { name: 'Home', id: 'home', link: '/' },
-    { name: 'Products', id: 'products', link: '/products' },
-    { name: 'Services', id: 'services', link: '/services' },
-    { name: 'Portfolio', id: 'portfolio', link: '/portfolio' },
-    { name: 'Textiles', id: 'fabric-gallery', link: '/fabric-gallery' },
-    { name: 'Categories', id: 'categories', link: '/categories' }
+    { name: t('Home'), id: 'home', link: '/' },
+    { name: t('Products'), id: 'products', link: '/products' },
+    { name: t('Services'), id: 'services', link: '/services' },
+    { name: t('Textiles'), id: 'fabric-gallery', link: '/fabric-gallery' }
   ];
 
   return (
@@ -459,14 +470,15 @@ export function Navbar({
           {/* Centered Navigation */}
           <nav className="hidden xl:flex items-center gap-12 flex-1 justify-center h-full self-stretch">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.link;
+              const localizedLink = getLocalizedLink(item.link);
+              const isActive = location.pathname === item.link || location.pathname === localizedLink;
               return (
                 <div 
                   key={item.id} 
                   className="relative h-full flex items-center"
                 >
                   <Link 
-                    to={item.link} 
+                    to={localizedLink} 
                     className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-550 relative group py-2 px-1 ${
                       isScrolled ? 'text-white/70' : 'text-white'
                     } hover:text-[#C8961A]`}
@@ -483,6 +495,80 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
+             {/* Localization Selector Dropdown */}
+             <div className="relative font-sans shrink-0">
+               <button 
+                 onClick={() => setIsLocDropdownOpen(!isLocDropdownOpen)}
+                 className="flex items-center gap-2 px-2.5 py-1.5 md:px-3.5 md:py-2.5 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl text-white hover:bg-white/10 hover:border-[#C8961A]/30 transition-all text-[9px] font-black uppercase tracking-wider shadow-md"
+               >
+                 <span className="text-sm leading-none">{currentCountry.flag}</span>
+                 <span className="hidden md:inline-block text-[9px] font-black tracking-widest text-slate-300">{currentCountry.currency}</span>
+                 <ChevronDown size={11} className="text-[#C8961A]" />
+               </button>
+               <AnimatePresence>
+                 {isLocDropdownOpen && (
+                   <>
+                     <div className="fixed inset-0 z-40" onClick={() => setIsLocDropdownOpen(false)} />
+                     <motion.div 
+                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                       animate={{ opacity: 1, y: 0, scale: 1 }}
+                       exit={{ opacity: 0, y: 5, scale: 0.95 }}
+                       className="absolute right-0 mt-3 w-56 bg-[#0E121C] border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-4 z-50 overflow-hidden"
+                     >
+                       <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-[#C8102E] to-[#C8961A]" />
+                       <div className="text-[8px] font-black text-white/30 tracking-[1.5px] uppercase mb-2">
+                         {t('Select Country')}
+                       </div>
+                       <div className="space-y-1 mb-4 max-h-[180px] overflow-y-auto scrollbar-thin">
+                         {COUNTRIES.map((c) => (
+                           <button
+                             key={c.code}
+                             onClick={() => {
+                               changeCountry(c.code);
+                               setIsLocDropdownOpen(false);
+                             }}
+                             className={`w-full flex items-center justify-between p-2 rounded-xl transition-all ${
+                               currentCountry.code === c.code 
+                                 ? 'bg-[#C8961A]/10 border border-[#C8961A]/30 text-white' 
+                                 : 'hover:bg-white/5 text-white/70 hover:text-white border border-transparent'
+                             }`}
+                           >
+                             <div className="flex items-center gap-2.5">
+                               <span className="text-sm leading-none">{c.flag}</span>
+                               <span className="text-[10px] font-bold tracking-wide uppercase">{c.name} ({c.currency})</span>
+                             </div>
+                             {currentCountry.code === c.code && <Check size={11} className="text-[#C8961A]" />}
+                           </button>
+                         ))}
+                       </div>
+
+                       <div className="text-[8px] font-black text-white/30 tracking-[1.5px] uppercase mb-2">
+                         {t('Select Language')}
+                       </div>
+                       <div className="grid grid-cols-2 gap-1.5">
+                         {currentCountry.languages.map((l) => (
+                           <button
+                             key={l.code}
+                             onClick={() => {
+                               changeLanguage(l.code);
+                               setIsLocDropdownOpen(false);
+                             }}
+                             className={`py-1.5 rounded-lg text-[9px] font-black text-center transition-all border ${
+                               currentLanguage === l.code 
+                                 ? 'bg-[#C8961A] text-white border-[#C8961A] shadow-md' 
+                                 : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/5'
+                             }`}
+                           >
+                             {l.label}
+                           </button>
+                         ))}
+                       </div>
+                     </motion.div>
+                   </>
+                 )}
+               </AnimatePresence>
+             </div>
+
              <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
                <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/50 hover:text-[#FF4F5A] transition-colors relative group">
                  <Heart size={18} className={wishlistCount > 0 ? "fill-[#FF4F5A] text-[#FF4F5A]" : "group-hover:scale-110 transition-transform md:w-5 md:h-5"} />
@@ -635,12 +721,11 @@ export function Navbar({
               {/* Navigation Links */}
               <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
                 {[
-                  { name: 'Home', link: '/', icon: <ShoppingBag size={18} /> },
-                  { name: 'Products', link: '/products', icon: <Package size={18} /> },
-                  { name: 'Services', link: '/services', icon: <Zap size={18} /> },
-                  { name: 'Portfolio', link: '/portfolio', icon: <ChevronRight size={18} /> },
-                  { name: 'Textiles', link: '/fabric-gallery', icon: <Scissors size={18} /> },
-                  { name: 'Enquire', onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
+                  { name: t('Home'), link: '/', icon: <ShoppingBag size={18} /> },
+                  { name: t('Products'), link: '/products', icon: <Package size={18} /> },
+                  { name: t('Services'), link: '/services', icon: <Zap size={18} /> },
+                  { name: t('Textiles'), link: '/fabric-gallery', icon: <Scissors size={18} /> },
+                  { name: t('Enquire'), onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
                 ].map((item, idx) => (
                   <button 
                     key={`${item.name}-${idx}`}
@@ -788,7 +873,7 @@ export function Navbar({
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-black text-white truncate group-hover:text-[#C8961A] transition-colors uppercase tracking-wide leading-snug">{p.name}</p>
                             <p className="text-[10px] text-[#C8961A] font-black tracking-widest mt-1">
-                              {p.price ? `Ksh ${p.price.toLocaleString()}/-` : 'Bulk Price'}
+                              {p.price ? formatPrice(p.price) : 'Bulk Price'}
                             </p>
                             
                             <div className="flex items-center gap-2 mt-2">

@@ -56,9 +56,8 @@ const DEFAULT_FAQS: FAQItem[] = [
 ];
 
 export default function FAQPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const [faqs, setFaqs] = useState<FAQItem[]>(DEFAULT_FAQS);
   const [openId, setOpenId] = useState<string | null>('moq');

@@ -43,6 +43,15 @@ import { PullToRefresh } from '../components/PullToRefresh';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
+import { useLocalization } from '../context/LocalizationContext';
+import { getCategoryPlaceholder } from '../utils/image';
+
+const DEFAULT_HOME_CATEGORIES = [
+  { id: 'school', title: 'School Uniforms', subtitle: 'Primary & Secondary', image: '/src/assets/images/category_school_1782334810884.jpg' },
+  { id: 'corporate', title: 'Corporate Wear', subtitle: 'Office & Blazers', image: '/src/assets/images/category_corporate_1782334824455.jpg' },
+  { id: 'healthcare', title: 'Healthcare', subtitle: 'Scrubs & Lab Coats', image: '/src/assets/images/category_medical_1782334767056.jpg' },
+  { id: 'hospitality', title: 'Hospitality', subtitle: 'Catering & Vests', image: '/src/assets/images/category_hospitality_1782334781502.jpg' }
+];
 
 export default function HomePage() {
   const { 
@@ -63,6 +72,7 @@ export default function HomePage() {
     promotions,
     setToast
   } = useCart();
+  const { formatPrice } = useLocalization();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
@@ -543,7 +553,7 @@ export default function HomePage() {
       <div id="specialties">
         <Suspense fallback={<div className="h-48 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
           <Specialties 
-            categories={categories}
+            categories={categories.length > 0 ? categories.map(c => ({ ...c, image: c.image || getCategoryPlaceholder(c.title || c.name) })) : DEFAULT_HOME_CATEGORIES}
             setActiveTab={setActiveTab}
           />
         </Suspense>
@@ -992,9 +1002,9 @@ export default function HomePage() {
                             <span className="text-xl lg:text-2xl font-black bg-gradient-to-r from-[#C2102E] to-[#C8961A] bg-clip-text text-transparent uppercase tracking-tight">Price on Inquiry</span>
                           ) : (
                             <>
-                              <span className="text-2xl lg:text-3xl font-black text-[#0e121c] tracking-tight">Ksh {selectedQuickViewProduct.price.toLocaleString()}/-</span>
+                              <span className="text-2xl lg:text-3xl font-black text-[#0e121c] tracking-tight">{formatPrice(selectedQuickViewProduct.price)}</span>
                               {selectedQuickViewProduct.oldPrice && (
-                                <span className="text-xs lg:text-sm text-slate-400 line-through decoration-slate-300">Ksh {selectedQuickViewProduct.oldPrice.toLocaleString()}/-</span>
+                                <span className="text-xs lg:text-sm text-slate-400 line-through decoration-slate-300">{formatPrice(selectedQuickViewProduct.oldPrice)}</span>
                               )}
                             </>
                           )}
@@ -1544,10 +1554,10 @@ export default function HomePage() {
                           <div className="relative flex items-center justify-center gap-2">
                             <span>Buy Now ⚡</span>
                             <span className="bg-white/15 text-white text-[9px] px-1.5 py-0.5 rounded border border-white/10 font-mono tracking-tight shrink-0">
-                              Ksh {(( (selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
+                              {formatPrice((selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
                                 const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
                                 return sum + (variant?.price || 0);
-                              }, 0)) * inquiryUnits )).toLocaleString()}/-
+                              }, 0)) * inquiryUnits)}
                             </span>
                           </div>
                         </button>

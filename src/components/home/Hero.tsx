@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Search, ChevronRight, Scissors, RefreshCw, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useLocalization } from '../../context/LocalizationContext';
 
 interface HeroProps {
   siteSettings: any;
@@ -38,6 +39,7 @@ export function Hero({
   setIsReshufflingPaused
 }: HeroProps) {
   const { setIsCatalogueModalOpen } = useCart();
+  const { formatPrice } = useLocalization();
   const heroImages = siteSettings?.heroImages || [];
   const [videoErrorSlides, setVideoErrorSlides] = React.useState<Record<number, boolean>>({});
   const [isMobile, setIsMobile] = React.useState(false);
@@ -425,7 +427,7 @@ export function Hero({
                         <p className="text-[11px] font-bold text-white truncate leading-tight mb-1">{p.name}</p>
                         <div className="flex items-center justify-between">
                           <p className="text-[10px] font-black text-[#C8961A] font-sans">
-                            {p.price ? `Ksh ${p.price.toLocaleString()}/-` : 'Bulk Price'}
+                            {p.price ? formatPrice(p.price) : 'Bulk Price'}
                           </p>
                           <span className="text-[7px] font-bold uppercase text-white/40 bg-white/5 px-1 py-0.5 rounded leading-none shrink-0 border border-white/5">
                             ⭐ 4.9

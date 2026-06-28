@@ -11,11 +11,10 @@ import { db } from '../services/firebase';
 import { useCart } from '../context/CartContext';
 
 export default function AboutPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {

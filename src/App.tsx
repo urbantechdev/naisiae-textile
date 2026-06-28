@@ -27,6 +27,7 @@ const BlogPage = lazy(() => import('./pages/BlogPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const CareersPage = lazy(() => import('./pages/CareersPage'));
 const FabricGalleryPage = lazy(() => import('./pages/FabricGalleryPage'));
+const UniformSimulatorPage = lazy(() => import('./pages/UniformSimulatorPage'));
 
 // Code-split heavy pages to optimize initial bundle payload and improve Core Web Vitals
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
@@ -37,6 +38,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { InactivityHandler } from './components/InactivityHandler';
 import { CartProvider, useCart } from './context/CartContext';
+import { LocalizationProvider, useLocalization } from './context/LocalizationContext';
 
 const CartModal = lazy(() => import('./components/CartModal').then(module => ({ default: module.CartModal })));
 const WishlistModal = lazy(() => import('./components/WishlistModal').then(module => ({ default: module.WishlistModal })));
@@ -48,61 +50,78 @@ const GlobalToast = lazy(() => import('./components/GlobalToast').then(module =>
 // Dynamic SEO Engine to enforce branding permanently across all routes
 function DynamicSEOEngine() {
   const location = useLocation();
+  const { currentCountry } = useLocalization();
 
   useEffect(() => {
     const updateSEO = () => {
       const path = location.pathname;
-      let title = "UHURU MARKET UNIFORMS & Institutional Apparel | Naisiae Textiles Nairobi";
-      let description = "Official Uhuru Market Uniforms by Naisiae Textiles. Premium school, corporate & medical uniform manufacturing in Nairobi, Kenya at direct factory rates.";
+      const countrySuffix = currentCountry.code === 'KE' ? '' : ` in ${currentCountry.name}`;
+      
+      let title = `UHURU MARKET UNIFORMS & Institutional Apparel${countrySuffix} | Naisiae Textiles`;
+      let description = `Official Uhuru Market Uniforms by Naisiae Textiles${countrySuffix}. Premium school, corporate & medical uniform manufacturing at direct factory rates.`;
 
-      if (path === '/products') {
-        title = "Our Uniform Products | UHURU MARKET UNIFORMS";
-        description = "Browse our full catalog of custom-tailored garments. High-quality primary & secondary school uniforms, games kits, and specialized corporate wear.";
-      } else if (path === '/categories') {
-        title = "Uniform Categories & Options | UHURU MARKET UNIFORMS";
-        description = "Explore our uniform manufacturing categories including Education, Hospitality, Medical, Security, and Corporate branding solutions in Nairobi.";
-      } else if (path === '/services') {
-        title = "Bulk Manufacturing & Branding Services | UHURU MARKET UNIFORMS";
-        description = "From heavy-duty industrial stitching to custom embroidery and screen printing. Discover our mass-scale textile production capabilities.";
-      } else if (path === '/portfolio') {
-        title = "Our Work & Past Projects | UHURU MARKET UNIFORMS";
-        description = "See examples of bulk uniform orders we have successfully delivered across Kenya. Check out our design quality and finished tailoring work.";
-      } else if (path === '/contact') {
-        title = "Contact Us & Visit Workshop | UHURU MARKET UNIFORMS";
-        description = "Get a custom apparel supply quote today. Visit us at Uhuru Market Along Jogoo Road, Nairobi, or call us directly at +254792021795.";
-      } else if (path === '/about') {
-        title = "Our Story & Manufacturing Heritage | UHURU MARKET UNIFORMS";
-        description = "Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & community-driven production at Uhuru Market, Nairobi.";
-      } else if (path === '/wholesale') {
-        title = "Institutional Bulk Orders & Wholesale Request | UHURU MARKET UNIFORMS";
-        description = "Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands across East Africa. Min. 50 units.";
-      } else if (path === '/checkout') {
-        title = "Review Bulk Sourcing & Checkout | UHURU MARKET UNIFORMS";
-        description = "Step-by-step verification of your wholesale inquiries, customizable branding preferences, and secure client profile syncing.";
-      } else if (path === '/privacy') {
-        title = "Privacy Policy | UHURU MARKET UNIFORMS";
-        description = "We respect and safeguard our clients' organizational and personal details under Kenyan data protection regulations.";
-      } else if (path === '/terms') {
-        title = "Terms of Service & Manufacturing Contracts | UHURU MARKET UNIFORMS";
-        description = "Understand bulk order production terms, factory SLA timelines, quality inspection standards, and contract invoicing procedures.";
-      } else if (path === '/shipping') {
-        title = "Shipping, Nationwide Logistics & Pickup | UHURU MARKET UNIFORMS";
-        description = "Find shipping estimates, prompt direct courier networks, and convenient self-pickup instructions at Uhuru Market, Jogoo Road-Nairobi.";
-      } else if (path === '/returns') {
-        title = "Returns Policy & Quality Guarantee | UHURU MARKET UNIFORMS";
-        description = "Read our terms for size corrections, fitting alterations, and manufacturing defect policies under our comprehensive quality assurance program.";
-      } else if (path === '/blog' || path.startsWith('/blog')) {
-        title = "Industry Guides & Sourcing Logbook | UHURU MARKET UNIFORMS";
-        description = "Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and direct-factory school uniform procurement in Kenya.";
-      } else if (path === '/faq' || path.startsWith('/faq')) {
-        title = "Frequently Asked Questions & Support | UHURU MARKET UNIFORMS";
-        description = "Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and tender queries for Uhuru Market Uniforms.";
-      } else if (path === '/careers' || path.startsWith('/careers')) {
-        title = "Careers & Tailoring Opportunities | UHURU MARKET UNIFORMS";
-        description = "Join our production team in Nairobi. Inspect open sewing, embroidery machine operations, and quality inspection roles at Naisiae Textiles.";
-      } else if (path === '/fabric-gallery') {
-        title = "Interactive Textile & Fabric Gallery | UHURU MARKET UNIFORMS";
-        description = "Browse and filter our premium school uniform and corporate apparel textile samples. Inspect weave density, blends, and material specs with microscopic macro zoom.";
+      // Adapt description based on country to maximize regional textile SEO searches
+      if (currentCountry.code === 'TZ') {
+        description = "Sare za shule na mavazi ya viwandani nchini Tanzania kutoka Naisiae Textiles. Sweta na magwanda ya ubora wa juu kwa bei ya jumla Dar es Salaam.";
+      } else if (currentCountry.code === 'CD') {
+        description = "Naisiae Textiles, votre partenaire de confiance pour les uniformes scolaires, vêtements de travail et blouses médicales en RDC (Kinshasa) au meilleur prix.";
+      } else if (currentCountry.code === 'ET') {
+        description = "ናይሲያ ጨርቃጨርቅ (Naisiae Textiles) በኢትዮጵያ ውስጥ ከፍተኛ ጥራት ያላቸውን የትምህርት ቤት ዩኒፎርሞች፣ የህክምና እና የኮርፖሬት አልባሳትን በጅምላ ዋጋ ያቀርባል።";
+      } else if (currentCountry.code === 'UG') {
+        description = "Premium school uniforms and corporate apparel in Uganda by Naisiae Textiles. High-density embroidery and durable fabrics at wholesale rates in Kampala.";
+      }
+
+      if (path.includes('/products')) {
+        title = `Our Uniform Products${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Browse our full catalog of custom-tailored garments${countrySuffix}. High-quality school uniforms, corporate wear, and specialized protective gear.`;
+      } else if (path.includes('/categories')) {
+        title = `Uniform Categories & Options${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Explore our uniform manufacturing categories${countrySuffix} including Education, Hospitality, Medical, Security, and Corporate branding.`;
+      } else if (path.includes('/services')) {
+        title = `Bulk Manufacturing & Branding Services${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `From heavy-duty industrial stitching to custom embroidery and screen printing${countrySuffix}. Discover our mass-scale production.`;
+      } else if (path.includes('/portfolio')) {
+        title = `Our Work & Delivered Projects${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `See examples of bulk uniform orders we have successfully delivered across East Africa${countrySuffix}. Inspect our design quality.`;
+      } else if (path.includes('/contact')) {
+        title = `Contact Us & Visit Workshop${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Get a custom apparel supply quote. Contact our local support at ${currentCountry.phone} or visit our localized service center.`;
+      } else if (path.includes('/about')) {
+        title = `Our Story & Manufacturing Heritage${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & regional community-driven production${countrySuffix}.`;
+      } else if (path.includes('/wholesale')) {
+        title = `Institutional Bulk Orders & Wholesale Request${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countrySuffix}.`;
+      } else if (path.includes('/checkout')) {
+        title = `Review Bulk Sourcing & Checkout${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Verify your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countrySuffix}.`;
+      } else if (path.includes('/privacy')) {
+        title = `Privacy Policy${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `We safeguard our clients' organizational and personal details under local data protection regulations${countrySuffix}.`;
+      } else if (path.includes('/terms')) {
+        title = `Terms of Service & Manufacturing Contracts${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Understand bulk order production terms, factory SLA timelines, and contract invoicing procedures${countrySuffix}.`;
+      } else if (path.includes('/shipping')) {
+        title = `Shipping, Nationwide Logistics & Pickup${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}.`;
+      } else if (path.includes('/returns')) {
+        title = `Returns Policy & Quality Guarantee${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies${countrySuffix}.`;
+      } else if (path.includes('/blog')) {
+        title = `Industry Guides & Sourcing Logbook${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and factory procurement${countrySuffix}.`;
+      } else if (path.includes('/faq')) {
+        title = `Frequently Asked Questions${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and regional supply queries${countrySuffix}.`;
+      } else if (path.includes('/careers')) {
+        title = `Careers & Tailoring Opportunities${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countrySuffix}.`;
+      } else if (path.includes('/fabric-gallery')) {
+        title = `Interactive Textile & Fabric Gallery${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Browse and filter our premium school uniform and corporate apparel textile samples${countrySuffix}. Inspect material specs.`;
+      } else if (path.includes('/uniform-simulator')) {
+        title = `Interactive 3D School Uniform Simulator${countrySuffix} | UHURU MARKET UNIFORMS`;
+        description = `Configure sweaters, shirts, blazers, and ties in standard institutional colorways${countrySuffix}. Preview custom combinations.`;
       }
 
       // Force apply changes securely to the DOM
@@ -111,6 +130,15 @@ function DynamicSEOEngine() {
       if (metaDescription) {
         metaDescription.setAttribute("content", description);
       }
+
+      // Set meta keywords dynamically for regional textile searches
+      let metaKeywords = document.querySelector('meta[name="keywords"]');
+      if (!metaKeywords) {
+        metaKeywords = document.createElement('meta');
+        metaKeywords.setAttribute('name', 'keywords');
+        document.head.appendChild(metaKeywords);
+      }
+      metaKeywords.setAttribute('content', currentCountry.keywords);
 
       // Dynamic robots meta policy to prevent indexing checkout, login, or admin pathways
       let robots = document.querySelector('meta[name="robots"]');
@@ -180,7 +208,7 @@ function DynamicSEOEngine() {
         "isPartOf": {
           "@type": "WebSite",
           "@id": "https://naisiaetextiles.com/#website",
-          "name": "Uhuru Market Uniforms (Naisiae Textiles)",
+          "name": `Uhuru Market Uniforms (Naisiae Textiles ${currentCountry.name})`,
           "url": "https://naisiaetextiles.com/"
         }
       };
@@ -218,135 +246,23 @@ function DynamicSEOEngine() {
       };
       schemasList.push(breadcrumbSchema);
 
-      // 3. Service Schema for /services
-      if (path === '/services' || path === '/services/') {
-        const serviceSchema = {
-          "@context": "https://schema.org",
-          "@type": "Service",
-          "name": "Uniform Manufacturing & Industrial Branding",
-          "serviceType": "Apparel Sourcing",
-          "provider": {
-            "@type": "LocalBusiness",
-            "name": "Uhuru Market Uniforms (Naisiae Textiles)",
-            "image": "https://naisiaetextiles.com/favicon.png",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Uhuru Market, Jogoo Road",
-              "addressLocality": "Nairobi",
-              "addressCountry": "KE"
-            },
-            "telephone": "+254792021795"
-          },
-          "areaServed": "Kenya",
-          "description": "Premium industrial embroidery, high-speed custom stitching, and pattern grading for schools, healthcare centers, and security agencies."
-        };
-        schemasList.push(serviceSchema);
-      }
-
-      // 4. BlogPosting Schema for /blog posts
-      if (path === '/blog' || path.startsWith('/blog')) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const postParam = urlParams.get('post');
-        const blogTitle = postParam ? `${postParam.replace(/-/g, ' ').toUpperCase()} | Uniform Blog` : title;
-        
-        const blogSchema = {
-          "@context": "https://schema.org",
-          "@type": "BlogPosting",
-          "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": canonicalUrl
-          },
-          "headline": blogTitle,
-          "description": description,
-          "image": "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=600&auto=format&fit=crop",
-          "author": {
-            "@type": "Organization",
-            "name": "Naisiae Textiles Development Team"
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "Uhuru Market Uniforms (Naisiae Textiles)",
-            "logo": {
-              "@type": "ImageObject",
-              "url": "https://naisiaetextiles.com/logo.png"
-            }
-          },
-          "datePublished": "2026-06-07T00:00:00Z"
-        };
-        schemasList.push(blogSchema);
-      }
-
-      // 5. FAQPage Schema for /faq
-      if (path === '/faq' || path === '/faq/') {
-        const faqSchema = {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "What is your Minimum Order Quantity (MOQ) for bulk orders?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Our standard minimum order quantity for custom institutional uniforms, hospital scrubs, and corporate wear is 50 units. This allows us to offer direct-factory rates."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Where is Naisiae Textiles located within Uhuru Market?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "We are proudly located at the heart of Uhuru Market along Jogoo Road, Nairobi, Kenya. Visitors are welcome for fittings."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Do you offer custom school embroidery?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes, we specialize in high-density computerized embroidery and active sportswear screen printing."
-              }
-            }
-          ]
-        };
-        schemasList.push(faqSchema);
-      }
-
-      // 6. JobPosting Schema for /careers
-      if (path === '/careers' || path === '/careers/') {
-        const jobSchema = {
-          "@context": "https://schema.org",
-          "@type": "JobPosting",
-          "title": "Industrial Tailoring Specialist (Lead Cutter)",
-          "description": "Draft master patterns, optimize heavy fabric cutting blocks, and supervise assembly lines at Uhuru Market production floor.",
-          "datePosted": "2026-06-07",
-          "hiringOrganization": {
-            "@type": "Organization",
-            "name": "Naisiae Textiles",
-            "sameAs": "https://naisiaetextiles.com/"
-          },
-          "jobLocation": {
-            "@type": "Place",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Uhuru Market, Jogoo Road",
-              "addressLocality": "Nairobi",
-              "addressCountry": "KE"
-            }
-          },
-          "baseSalary": {
-            "@type": "MonetaryAmount",
-            "currency": "KES",
-            "value": {
-              "@type": "QuantitativeValue",
-              "minValue": 35000,
-              "maxValue": 45000,
-              "unitText": "MONTH"
-            }
-          },
-          "employmentType": "FULL_TIME"
-        };
-        schemasList.push(jobSchema);
-      }
+      // 3. LocalBusiness Schema localized per country
+      const businessSchema = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": `Uhuru Market Uniforms (Naisiae Textiles ${currentCountry.name})`,
+        "image": "https://naisiaetextiles.com/logo.png",
+        "telephone": currentCountry.phone,
+        "email": currentCountry.email,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": currentCountry.address,
+          "addressLocality": currentCountry.city,
+          "addressCountry": currentCountry.code
+        },
+        "priceRange": "$$"
+      };
+      schemasList.push(businessSchema);
 
       const newScript = document.createElement('script');
       newScript.id = schemaScriptId;
@@ -356,7 +272,7 @@ function DynamicSEOEngine() {
     };
 
     updateSEO();
-  }, [location.pathname]);
+  }, [location.pathname, currentCountry]);
 
   return null;
 }
@@ -389,10 +305,12 @@ export default function App() {
   return (
     <ErrorBoundary>
       <Router>
-        <CartProvider>
-          <DynamicSEOEngine />
-          <AppContent isAdmin={isAdmin} loading={loading} />
-        </CartProvider>
+        <LocalizationProvider>
+          <CartProvider>
+            <DynamicSEOEngine />
+            <AppContent isAdmin={isAdmin} loading={loading} />
+          </CartProvider>
+        </LocalizationProvider>
       </Router>
     </ErrorBoundary>
   );
@@ -405,6 +323,7 @@ function AppContent({ isAdmin, loading }: any) {
     <InactivityHandler>
       <Suspense fallback={null}>
         <Routes>
+          {/* Base routes without prefix (defaults to Kenya or previous user selection) */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/wholesale" element={<WholesalePage />} />
@@ -424,6 +343,33 @@ function AppContent({ isAdmin, loading }: any) {
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/fabric-gallery" element={<FabricGalleryPage />} />
+          <Route path="/uniform-simulator" element={<UniformSimulatorPage />} />
+          
+          {/* Country-prefixed routes for Kenya, Tanzania, DRC, Uganda, and Ethiopia */}
+          {['ke', 'kenya', 'tz', 'tanzania', 'cd', 'drc', 'congo', 'ug', 'uganda', 'et', 'ethiopia'].map((prefix) => (
+            <Route key={prefix} path={`/${prefix}`}>
+              <Route index element={<HomePage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="wholesale" element={<WholesalePage />} />
+              <Route path="contact" element={<ContactPage />} />
+              <Route path="privacy" element={<PrivacyPage />} />
+              <Route path="terms" element={<TermsPage />} />
+              <Route path="shipping" element={<ShippingPage />} />
+              <Route path="returns" element={<ReturnsPage />} />
+              
+              <Route path="services" element={<ServicesPage />} />
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="portfolio" element={<PortfolioPage />} />
+              <Route path="categories" element={<CategoriesPage />} />
+              <Route path="checkout" element={<CheckoutPage />} />
+              
+              <Route path="blog" element={<BlogPage />} />
+              <Route path="faq" element={<FAQPage />} />
+              <Route path="careers" element={<CareersPage />} />
+              <Route path="fabric-gallery" element={<FabricGalleryPage />} />
+              <Route path="uniform-simulator" element={<UniformSimulatorPage />} />
+            </Route>
+          ))}
           
           <Route path="/login" element={<LoginPage />} />
           <Route 

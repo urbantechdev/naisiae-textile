@@ -8,21 +8,22 @@ export function Footer() {
 
   return (
     <footer className="bg-[#0E121C] text-white/40 pt-20 pb-32 md:pb-20 px-6 border-t border-white/5">
-      <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16 px-4">
+      <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16 px-4">
+        {/* Column 1: Brand Info */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center gap-3 mb-6">
             <div className="overflow-hidden shrink-0">
               {siteSettings?.siteLogo ? (
                 <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae Textile'} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-12 h-12 flex items-center justify-center font-black text-xs text-white bg-gradient-to-tr from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] rounded-xl relative shadow-lg overflow-hidden select-none lowercase font-[Comfortaa]">canva</div>
+                <div className="w-12 h-12 flex items-center justify-center font-black text-xs text-white bg-gradient-to-tr from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-xl relative shadow-lg overflow-hidden select-none lowercase font-sans">nt</div>
               )}
             </div>
             <div className="leading-tight text-left">
-              <div className="font-display text-2xl tracking-tight text-white uppercase font-black bg-gradient-to-r from-[#00C4CC] via-[#7D2AE8] to-[#FF4F5A] bg-clip-text text-transparent">
+              <div className="font-display text-2xl tracking-tight text-white uppercase font-black bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent">
                 {siteSettings?.siteName || 'Naisiae'}
               </div>
-              <div className="text-[10px] tracking-[2px] text-[#00C4CC] uppercase font-bold">
+              <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold">
                 Naisiae Textiles, Nairobi
               </div>
             </div>
@@ -31,42 +32,62 @@ export function Footer() {
             Established at the heart of Nairobi, <strong>Uhuru Market Uniforms</strong> by Naisiae Textiles is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
           </p>
           <div className="text-[10px] text-white/20 italic max-w-xs">
-            Serving schools across Kenya from our specialized workshop at Uhuru Market stalls.
+            Serving schools across East & Central Africa from our specialized workshop at Uhuru Market.
           </div>
         </div>
-        <div className="text-center md:text-left hidden md:block">
-          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Company</h4>
-          <ul className="space-y-4 text-sm font-bold">
-            <li><Link to="/about" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">About Us</Link></li>
-            <li><Link to="/contact" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Contact Us</Link></li>
-            <li><Link to="/portfolio" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Our Portfolio</Link></li>
-            <li><Link to="/services" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Services</Link></li>
-          </ul>
-        </div>
-        <div className="text-center md:text-left hidden md:block">
-           <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Support</h4>
-           <ul className="space-y-4 text-sm font-bold">
-            <li><Link to="/terms" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Terms & Conditions</Link></li>
-            <li><Link to="/privacy" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Privacy Policy</Link></li>
-            <li><Link to="/shipping" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Shipping Policy</Link></li>
-            <li><Link to="/returns" className="hover:text-[#00C4CC] transition-colors flex items-center justify-center md:justify-start gap-3">Returns & Refunds</Link></li>
-          </ul>
-        </div>
+
+        {/* Column 2: Company Links */}
         <div className="text-center md:text-left">
-          <h4 className="font-display text-xl tracking-[2px] text-white border-b-2 border-[#00C4CC] pb-1.5 mb-6 inline-block md:block">Contact</h4>
+          <h4 className="font-display text-base tracking-[2px] uppercase text-white border-b-2 border-[#C8961A] pb-1.5 mb-6 inline-block md:block">Company</h4>
+          <ul className="space-y-4 text-sm font-bold">
+            <li><Link to="/about" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">About Us</Link></li>
+            <li><Link to="/services" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Services</Link></li>
+            <li><Link to="/portfolio" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Our Portfolio</Link></li>
+            <li><Link to="/careers" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Careers</Link></li>
+            <li><Link to="/contact" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Contact Us</Link></li>
+          </ul>
+        </div>
+
+        {/* Column 3: Solutions & Tools */}
+        <div className="text-center md:text-left">
+           <h4 className="font-display text-base tracking-[2px] uppercase text-white border-b-2 border-[#C8961A] pb-1.5 mb-6 inline-block md:block">Explore</h4>
+           <ul className="space-y-4 text-sm font-bold">
+            <li><Link to="/uniform-simulator" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Uniform Simulator</Link></li>
+            <li><Link to="/categories" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Product Categories</Link></li>
+            <li><Link to="/fabric-gallery" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Fabric Gallery</Link></li>
+            <li><Link to="/wholesale" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Wholesale Supply</Link></li>
+            <li><Link to="/faq" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Help & FAQ</Link></li>
+          </ul>
+        </div>
+
+        {/* Column 4: Regional Hubs (SEO optimized for targets) */}
+        <div className="text-center md:text-left">
+           <h4 className="font-display text-base tracking-[2px] uppercase text-white border-b-2 border-[#C8961A] pb-1.5 mb-6 inline-block md:block">Regional Hubs</h4>
+           <ul className="space-y-4 text-sm font-bold">
+            <li><Link to="/" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇰🇪</span> Kenya (Nairobi HQ)</Link></li>
+            <li><Link to="/tanzania" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇹🇿</span> Tanzania Hub</Link></li>
+            <li><Link to="/drc" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇨🇩</span> DR Congo Hub</Link></li>
+            <li><Link to="/uganda" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇺🇬</span> Uganda Hub</Link></li>
+            <li><Link to="/ethiopia" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇪🇹</span> Ethiopia Hub</Link></li>
+          </ul>
+        </div>
+
+        {/* Column 5: Contact Info */}
+        <div className="text-center md:text-left">
+          <h4 className="font-display text-base tracking-[2px] uppercase text-white border-b-2 border-[#C8961A] pb-1.5 mb-6 inline-block md:block">Contact</h4>
           <div className="space-y-6 flex flex-col items-center md:items-start">
             <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00C4CC] group-hover:bg-[#00C4CC] group-hover:text-black transition-all"><Phone size={20} /></div>
+              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A] group-hover:bg-[#C8961A] group-hover:text-black transition-all"><Phone size={18} /></div>
               <div className="text-left">
-                <div className="text-[10px] font-black uppercase text-white/30 tracking-widest">Phone</div>
+                <div className="text-[9px] font-black uppercase text-white/30 tracking-widest">Phone</div>
                 <div className="text-white font-bold text-sm">{siteSettings?.contactPhone || '+254 792 021 795'}</div>
               </div>
             </div>
             <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#00C4CC] group-hover:bg-[#00C4CC] group-hover:text-black transition-all"><Mail size={20} /></div>
+              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#C8961A] group-hover:bg-[#C8961A] group-hover:text-black transition-all"><Mail size={18} /></div>
               <div className="text-left">
-               <div className="text-[10px] font-black uppercase text-white/30 tracking-widest">Email</div>
-               <div className="text-white font-bold text-sm truncate max-w-[200px]">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</div>
+               <div className="text-[9px] font-black uppercase text-white/30 tracking-widest">Email</div>
+               <div className="text-white font-bold text-sm truncate max-w-[150px]">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</div>
               </div>
             </div>
           </div>
@@ -78,7 +99,7 @@ export function Footer() {
             <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
             <Link 
               to="/admin" 
-              className="inline-flex items-center justify-center ml-1.5 p-1 rounded-md text-white/5 hover:text-[#00C4CC] hover:bg-white/[0.03] transition-all duration-300 hover:scale-[1.15] active:scale-90 group cursor-pointer" 
+              className="inline-flex items-center justify-center ml-1.5 p-1 rounded-md text-white/5 hover:text-[#C8961A] hover:bg-white/[0.03] transition-all duration-300 hover:scale-[1.15] active:scale-90 group cursor-pointer" 
               title="Secure Console"
             >
               <Fingerprint size={12} className="transition-transform duration-500 group-hover:rotate-45" />

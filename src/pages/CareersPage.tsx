@@ -70,9 +70,8 @@ const CAREER_VACANCIES: JobVacancy[] = [
 ];
 
 export default function CareersPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, isCartOpen, isWishlistOpen, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const [selectedJob, setSelectedJob] = useState<JobVacancy | null>(CAREER_VACANCIES[0]);
   const [appSubmitted, setAppSubmitted] = useState(false);

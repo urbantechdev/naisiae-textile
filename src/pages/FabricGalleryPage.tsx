@@ -206,9 +206,8 @@ const FABRIC_SAMPLES: FabricSample[] = [
 ];
 
 export default function FabricGalleryPage() {
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, addToCart, setToast } = useCart();
+  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen, addToCart, setToast, setIsQuoteModalOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   // Filter States
   const [activeFilter, setActiveFilter] = useState('all');
