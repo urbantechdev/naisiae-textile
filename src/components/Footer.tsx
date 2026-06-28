@@ -64,11 +64,36 @@ export function Footer() {
         <div className="text-center md:text-left">
            <h4 className="font-display text-base tracking-[2px] uppercase text-white border-b-2 border-[#C8961A] pb-1.5 mb-6 inline-block md:block">Regional Hubs</h4>
            <ul className="space-y-4 text-sm font-bold">
-            <li><Link to="/" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇰🇪</span> Kenya (Nairobi HQ)</Link></li>
-            <li><Link to="/tanzania" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇹🇿</span> Tanzania Hub</Link></li>
-            <li><Link to="/drc" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇨🇩</span> DR Congo Hub</Link></li>
-            <li><Link to="/uganda" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇺🇬</span> Uganda Hub</Link></li>
-            <li><Link to="/ethiopia" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2"><span>🇪🇹</span> Ethiopia Hub</Link></li>
+            <li>
+              <Link to="/" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
+                <img src="https://flagcdn.com/w40/ke.png" alt="Kenya Flag" className="w-5 h-3.5 object-cover rounded-sm border border-white/10 group-hover:border-[#C8961A]/30 transition-colors shrink-0" referrerPolicy="no-referrer" />
+                <span>Kenya (Nairobi HQ)</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/tanzania" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
+                <img src="https://flagcdn.com/w40/tz.png" alt="Tanzania Flag" className="w-5 h-3.5 object-cover rounded-sm border border-white/10 group-hover:border-[#C8961A]/30 transition-colors shrink-0" referrerPolicy="no-referrer" />
+                <span>Tanzania Hub</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/drc" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
+                <img src="https://flagcdn.com/w40/cd.png" alt="DR Congo Flag" className="w-5 h-3.5 object-cover rounded-sm border border-white/10 group-hover:border-[#C8961A]/30 transition-colors shrink-0" referrerPolicy="no-referrer" />
+                <span>DR Congo Hub</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/uganda" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
+                <img src="https://flagcdn.com/w40/ug.png" alt="Uganda Flag" className="w-5 h-3.5 object-cover rounded-sm border border-white/10 group-hover:border-[#C8961A]/30 transition-colors shrink-0" referrerPolicy="no-referrer" />
+                <span>Uganda Hub</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/ethiopia" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
+                <img src="https://flagcdn.com/w40/et.png" alt="Ethiopia Flag" className="w-5 h-3.5 object-cover rounded-sm border border-white/10 group-hover:border-[#C8961A]/30 transition-colors shrink-0" referrerPolicy="no-referrer" />
+                <span>Ethiopia Hub</span>
+              </Link>
+            </li>
           </ul>
         </div>
 

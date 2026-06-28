@@ -578,10 +578,12 @@ Return the response in JSON format.`;
     res.header('Content-Type', 'application/xml');
     
     let blogsList: any[] = [];
+    let productsList: any[] = [];
+    let projectId = "";
+    let databaseId = "(default)";
+
     try {
       const configPath = path.join(process.cwd(), "firebase-applet-config.json");
-      let projectId = "";
-      let databaseId = "(default)";
 
       if (fs.existsSync(configPath)) {
         const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
@@ -593,15 +595,32 @@ Return the response in JSON format.`;
       }
 
       if (projectId) {
-        const blogsUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/blogs`;
-        const bResp = await fetch(blogsUrl);
-        const bData = await bResp.json();
-        if (bData.documents) {
-          blogsList = bData.documents;
+        // Fetch blogs
+        try {
+          const blogsUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/blogs`;
+          const bResp = await fetch(blogsUrl);
+          const bData = await bResp.json();
+          if (bData.documents) {
+            blogsList = bData.documents;
+          }
+        } catch (err) {
+          console.warn("Could not query blogs for dynamic sitemap endpoint:", err);
+        }
+
+        // Fetch products
+        try {
+          const productsUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/products`;
+          const pResp = await fetch(productsUrl);
+          const pData = await pResp.json();
+          if (pData.documents) {
+            productsList = pData.documents;
+          }
+        } catch (err) {
+          console.warn("Could not query products for dynamic sitemap endpoint:", err);
         }
       }
     } catch (e) {
-      console.warn("Could not query blogs for sitemap live generation:");
+      console.warn("Could not retrieve firestore config for sitemap:");
     }
 
     const staticPages = [
@@ -619,33 +638,73 @@ Return the response in JSON format.`;
       'privacy',
       'terms',
       'shipping',
-      'returns'
+      'returns',
+      'fabric-gallery',
+      'uniform-simulator'
+    ];
+
+    const countries = [
+      { prefix: '', isDefault: true },
+      { prefix: 'tanzania', isDefault: false },
+      { prefix: 'dr-congo', isDefault: false },
+      { prefix: 'uganda', isDefault: false },
+      { prefix: 'ethiopia', isDefault: false }
     ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    // Static Pages with trailing slashes
-    staticPages.forEach((page) => {
-      const slash = page === '' ? '' : '/';
-      xml += `  <url>\n`;
-      xml += `    <loc>https://naisiaetextiles.com/${page}${slash}</loc>\n`;
-      xml += `    <changefreq>weekly</changefreq>\n`;
-      xml += `    <priority>${page === '' ? '1.0' : '0.8'}</priority>\n`;
-      xml += `  </url>\n`;
+    // 1. Static Pages with country prefixing and trailing slashes
+    countries.forEach(({ prefix }) => {
+      const countryPart = prefix ? `/${prefix}` : '';
+      staticPages.forEach((page) => {
+        const pagePart = page ? `/${page}` : '';
+        let loc = '';
+        if (!countryPart && !pagePart) {
+          loc = 'https://naisiaetextiles.com/';
+        } else {
+          loc = `https://naisiaetextiles.com${countryPart}${pagePart}/`;
+        }
+        xml += `  <url>\n`;
+        xml += `    <loc>${loc}</loc>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
+        xml += `    <priority>${page === '' ? '1.0' : '0.8'}</priority>\n`;
+        xml += `  </url>\n`;
+      });
     });
 
-    // Dynamic blog posts with trailing slashes
-    blogsList.forEach((doc: any) => {
-      try {
-        const fields = doc.fields;
-        const slug = fields.slug?.stringValue || doc.name.split('/').pop();
-        xml += `  <url>\n`;
-        xml += `    <loc>https://naisiaetextiles.com/blog/?post=${slug}</loc>\n`;
-        xml += `    <changefreq>weekly</changefreq>\n`;
-        xml += `    <priority>0.7</priority>\n`;
-        xml += `  </url>\n`;
-      } catch (err) {}
+    // 2. Dynamic products with country prefixing and trailing slashes
+    countries.forEach(({ prefix }) => {
+      const countryPart = prefix ? `/${prefix}` : '';
+      productsList.forEach((doc: any) => {
+        try {
+          const id = doc.name.split('/').pop();
+          if (!id) return;
+          const loc = `https://naisiaetextiles.com${countryPart}/product/${id}/`;
+          xml += `  <url>\n`;
+          xml += `    <loc>${loc}</loc>\n`;
+          xml += `    <changefreq>weekly</changefreq>\n`;
+          xml += `    <priority>0.9</priority>\n`;
+          xml += `  </url>\n`;
+        } catch (err) {}
+      });
+    });
+
+    // 3. Dynamic blog posts with country prefixing
+    countries.forEach(({ prefix }) => {
+      const countryPart = prefix ? `/${prefix}` : '';
+      blogsList.forEach((doc: any) => {
+        try {
+          const fields = doc.fields;
+          const slug = fields.slug?.stringValue || doc.name.split('/').pop();
+          const loc = `https://naisiaetextiles.com${countryPart}/blog/?post=${slug}`;
+          xml += `  <url>\n`;
+          xml += `    <loc>${loc}</loc>\n`;
+          xml += `    <changefreq>weekly</changefreq>\n`;
+          xml += `    <priority>0.7</priority>\n`;
+          xml += `  </url>\n`;
+        } catch (err) {}
+      });
     });
 
     xml += `</urlset>`;

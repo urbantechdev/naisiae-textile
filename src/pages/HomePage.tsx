@@ -30,7 +30,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Hero } from '../components/home/Hero';
@@ -72,7 +72,8 @@ export default function HomePage() {
     promotions,
     setToast
   } = useCart();
-  const { formatPrice } = useLocalization();
+  const { currentCountry, formatPrice } = useLocalization();
+  const { productId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
@@ -129,6 +130,23 @@ export default function HomePage() {
   const [shuffledProducts, setShuffledProducts] = useState<any[]>([]);
   const [isReshufflingPaused, setIsReshufflingPaused] = useState(false);
   const [selectedQuickViewProduct, setSelectedQuickViewProduct] = useState<any>(null);
+
+  useEffect(() => {
+    if (productId && products.length > 0) {
+      const match = products.find(p => p.id === productId);
+      if (match) {
+        setSelectedQuickViewProduct(match);
+      }
+    }
+  }, [productId, products]);
+
+  const handleCloseQuickView = (dontRedirect = false) => {
+    setSelectedQuickViewProduct(null);
+    if (productId && !dontRedirect) {
+      const prefix = currentCountry.code === 'KE' ? '' : `/${currentCountry.name.toLowerCase().replace(/ /g, '-')}`;
+      navigate(prefix || '/');
+    }
+  };
 
   useEffect(() => {
     if (products.length > 0) {
@@ -427,7 +445,7 @@ export default function HomePage() {
   useEffect(() => {
     if (siteSettings) {
       const siteName = siteSettings.siteName || 'Uhuru Market Uniforms';
-      const tagline = siteSettings.siteTagline || 'Naisiae Textiles Nairobi';
+      const tagline = siteSettings.siteTagline || 'Naisiae Textiles';
       const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Premium school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&h=630&q=80';
 
@@ -847,7 +865,7 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setSelectedQuickViewProduct(null)}
+              onClick={() => handleCloseQuickView()}
               className="absolute inset-0 bg-slate-950/80 backdrop-blur-xl"
             ></motion.div>
             
@@ -863,7 +881,7 @@ export default function HomePage() {
 
               {/* Close Button */}
               <button 
-                onClick={() => setSelectedQuickViewProduct(null)}
+                onClick={() => handleCloseQuickView()}
                 className="absolute top-4 right-4 lg:top-6 lg:right-6 z-[60] w-12 h-12 bg-white/95 border border-slate-200/80 hover:border-slate-300 rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-lg hover:scale-105 active:scale-95"
                 aria-label="Close"
               >
@@ -1510,7 +1528,7 @@ export default function HomePage() {
                             };
                             
                             addToCart(cartItem, inquiryUnits);
-                            setSelectedQuickViewProduct(null);
+                            handleCloseQuickView();
                             setIsCartOpen(true);
                           }}
                           className="flex-1 bg-[#0E121C] hover:bg-slate-800 border border-[#0E121C] text-white h-11 lg:h-11 rounded-xl font-extrabold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] cursor-pointer"
@@ -1543,7 +1561,7 @@ export default function HomePage() {
                             };
                             
                             addToCart(cartItem, inquiryUnits);
-                            setSelectedQuickViewProduct(null);
+                            handleCloseQuickView(true);
                             navigate('/checkout');
                           }}
                           className="relative overflow-hidden flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center shadow-md active:scale-[0.98] group cursor-pointer"
