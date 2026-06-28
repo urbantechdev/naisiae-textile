@@ -622,6 +622,157 @@ export default function HomePage() {
         </Suspense>
       </div>
 
+      {/* Sourcing & SEO Authority Hub */}
+      <section className="bg-slate-50 border-t border-slate-200 py-20 px-6 lg:px-12" id="seo-authority">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-xs font-bold tracking-widest text-[#C8102E] uppercase bg-red-50 px-3 py-1 rounded-full border border-red-100 font-sans">
+              East Africa's Ultimate Sourcing Hub
+            </span>
+            <h2 className="text-3xl md:text-4xl font-sans font-medium tracking-tight text-[#0A1628] mt-4 mb-6">
+              Uhuru Market Uniform Sourcing & Manufacturing Authority
+            </h2>
+            <p className="text-slate-600 font-sans leading-relaxed text-sm md:text-base">
+              Naisiae Textiles is the standard-setting garment factory based in the heart of Jogoo Road. Discover why leading institutions rank us as the premier partner for bulk apparel supply.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Card 1: Uhuru Market Uniforms */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-[#C8102E] mb-6 group-hover:scale-105 transition-transform">
+                  <MapPin size={24} />
+                </div>
+                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                  Uhuru Market Uniforms Hub
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
+                  Operating directly from Uhuru Market along Jogoo Road, Nairobi, we are the authentic epicentre of custom-tailored institutional apparel in Kenya, offering live material validation and transparent local production.
+                </p>
+              </div>
+              <div className="text-xs font-mono text-slate-400">#UhuruMarketUniforms</div>
+            </div>
+
+            {/* Card 2: School Uniform Supplier */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-[#C8961A] mb-6 group-hover:scale-105 transition-transform">
+                  <Package size={24} />
+                </div>
+                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                  Premier School Uniform Supplier
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
+                  We supply over 250+ primary and secondary institutions across East Africa with durable garments, including high-grade acrylic sweaters, combed cotton shirts, and tailored blazers built to withstand active daily wear.
+                </p>
+              </div>
+              <div className="text-xs font-mono text-slate-400">#SchoolUniformSupplier</div>
+            </div>
+
+            {/* Card 3: School Uniform Manufacturer */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-105 transition-transform">
+                  <Scissors size={24} />
+                </div>
+                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                  Direct School Uniform Manufacturer
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
+                  By cutting, sewing, and applying computer-aided embroidery in-house, we are a direct manufacturer. This ensures flawless quality inspections, standardized colorways, and robust fabric grades (like anti-pilling materials).
+                </p>
+              </div>
+              <div className="text-xs font-mono text-slate-400">#SchoolUniformManufacturer</div>
+            </div>
+
+            {/* Card 4: Best Uniform Shop */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6 group-hover:scale-105 transition-transform">
+                  <Star size={24} />
+                </div>
+                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                  Best Uniform Shop Experience
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
+                  We combine digital procurement and factory-direct service. Use our online interactive uniform simulator, 3D custom configurer, and simple wholesale quotation system to get a premium purchasing experience.
+                </p>
+              </div>
+              <div className="text-xs font-mono text-slate-400">#BestUniformShop</div>
+            </div>
+
+            {/* Card 5: Cheap or Affordable Uniforms */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-105 transition-transform">
+                  <ShieldCheck size={24} />
+                </div>
+                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                  Cheap & Affordable Uniform Solutions
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
+                  Get premium quality at budget-friendly rates. By bypassing brokers, our affordable uniform pricing model guarantees premium textiles at highly competitive rates, giving parents and institutions the best value for money.
+                </p>
+              </div>
+              <div className="text-xs font-mono text-slate-400">#AffordableUniforms</div>
+            </div>
+
+            {/* Card 6: Wholesale Price Uniform */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-105 transition-transform">
+                  <CheckCircle2 size={24} />
+                </div>
+                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                  Wholesale Price Uniform Supply
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
+                  We offer massive bulk volume contracts with highly competitive tiered pricing models. Save significantly on institutional contracts for schools, corporations, healthcare teams, and security details.
+                </p>
+              </div>
+              <div className="text-xs font-mono text-slate-400">#WholesalePriceUniforms</div>
+            </div>
+          </div>
+          
+          {/* FAQ Accordion block specifically matching search variations */}
+          <div className="mt-16 bg-white rounded-3xl p-8 md:p-12 border border-slate-100 shadow-sm">
+            <h3 className="text-2xl font-sans font-medium text-[#0A1628] mb-8 text-center">
+              Frequently Asked Questions (Sourcing FAQ)
+            </h3>
+            
+            <div className="space-y-6 max-w-4xl mx-auto">
+              <div className="border-b border-slate-100 pb-6">
+                <h4 className="text-base font-semibold text-[#0A1628] mb-2 font-sans">
+                  Where is the best uniform shop for bulk school uniform procurement in Nairobi?
+                </h4>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans">
+                  Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi. We supply durable, high-grade garments at standard wholesale prices.
+                </p>
+              </div>
+              
+              <div className="border-b border-slate-100 pb-6">
+                <h4 className="text-base font-semibold text-[#0A1628] mb-2 font-sans">
+                  How can you guarantee cheap or affordable uniform rates without compromising material quality?
+                </h4>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans">
+                  As a direct-factory school uniform manufucturer, we buy raw textiles in high volumes and stitch on-site. This completely eliminates middleman markups, ensuring we deliver wholesale price uniform deals with top-tier material specs.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="text-base font-semibold text-[#0A1628] mb-2 font-sans">
+                  Do you serve as a wholesale price uniform partner outside of Nairobi?
+                </h4>
+                <p className="text-slate-500 text-sm leading-relaxed font-sans">
+                  Yes! We ship across the entire East African region, including major hubs in Tanzania, Uganda, DR Congo, and Ethiopia. Simply request a bulk catalog and customize your badges or brand stitching via our online platform.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Footer />
 
       {/* Comparison Drawer */}

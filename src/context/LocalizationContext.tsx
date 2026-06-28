@@ -35,7 +35,7 @@ export const COUNTRIES: CountryConfig[] = [
     email: 'sales.ke@naisiaetextiles.com',
     city: 'Nairobi',
     address: 'Uhuru Market, Jogoo Road, Nairobi, Kenya',
-    keywords: 'Naisiae textiles, school uniforms Nairobi, Uhuru Market uniforms, institutional apparel Kenya, high-grade school sweaters, custom blazers, medical scrubs Kenya, security uniforms, wholesale textile factory Nairobi'
+    keywords: 'Naisiae textiles, school uniforms Nairobi, Uhuru Market uniforms, institutional apparel Kenya, high-grade school sweaters, custom blazers, medical scrubs Kenya, security uniforms, wholesale textile factory Nairobi, school uniform, school uniform supplier, school uniform manufacturer, school uniform manufucturer, best uniform shop, cheap uniform, affordable uniform, wholesale price uniform'
   },
   {
     code: 'TZ',
