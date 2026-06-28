@@ -130,6 +130,16 @@
       .skeleton-header-box {
         min-height: 180px;
       }
+      /* Hide Google Translate toolbar, banners and tooltips */
+      iframe.goog-te-banner-frame, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame {
+        display: none !important;
+      }
+      body {
+        top: 0px !important;
+      }
+      .skiptranslate {
+        display: none !important;
+      }
     </style>
   </head>
   <body class="bg-[#0A1628]">
@@ -164,6 +174,20 @@
       </main>
     </div>
     
+    <div id="google_translate_element" style="display:none"></div>
+    <script type="text/javascript">
+      window.googleTranslateElementInit = function() {
+        if (window.google && window.google.translate) {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,sw,fr,am',
+            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+          }, 'google_translate_element');
+        }
+      }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

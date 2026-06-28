@@ -181,7 +181,9 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
   }, [location.pathname]);
 
   const [currentCountry, setCurrentCountry] = useState<CountryConfig>(initialCountry);
-  const [currentLanguage, setCurrentLanguage] = useState<string>(initialCountry.defaultLanguage);
+  const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
+    return localStorage.getItem('naisiae_language') || initialCountry.defaultLanguage;
+  });
 
   // Keep in sync with pathname changes (browser back button, manual typing, links)
   useEffect(() => {
@@ -195,20 +197,46 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
       );
       if (matched && matched.code !== currentCountry.code) {
         setCurrentCountry(matched);
-        setCurrentLanguage(matched.defaultLanguage);
+        const nextLang = localStorage.getItem('naisiae_language') || matched.defaultLanguage;
+        setCurrentLanguage(nextLang);
       }
     } else if (currentCountry.code !== 'KE') {
       // If we are at root level without country prefix, set back to Kenya context
       setCurrentCountry(COUNTRIES[0]);
-      setCurrentLanguage(COUNTRIES[0].defaultLanguage);
+      const nextLang = localStorage.getItem('naisiae_language') || COUNTRIES[0].defaultLanguage;
+      setCurrentLanguage(nextLang);
     }
   }, [location.pathname]);
+
+  // Synchronize Google Translate cookie on mount or when language state is updated
+  useEffect(() => {
+    const savedLang = localStorage.getItem('naisiae_language') || currentLanguage;
+    const cookieValue = `/en/${savedLang}`;
+    
+    const hasCorrectCookie = document.cookie.split(';').some(item => item.trim().startsWith('googtrans=') && item.includes(cookieValue));
+    if (!hasCorrectCookie) {
+      // Clear previous cookies first
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = `googtrans=${cookieValue}; path=/;`;
+      document.cookie = `googtrans=${cookieValue}; path=/; domain=.${window.location.hostname};`;
+      document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname};`;
+    }
+  }, [currentLanguage]);
 
   const changeCountry = (countryCode: string) => {
     appExperience.triggerFeedback('tap');
     const targetCountry = COUNTRIES.find(c => c.code === countryCode) || COUNTRIES[0];
-    setCurrentCountry(targetCountry);
-    setCurrentLanguage(targetCountry.defaultLanguage);
+    
+    // Set default language of the new country if not already set, or respect current choice if available in country's list
+    const hasCurrentLangInTarget = targetCountry.languages.some(l => l.code === currentLanguage);
+    const nextLang = hasCurrentLangInTarget ? currentLanguage : targetCountry.defaultLanguage;
+    
+    localStorage.setItem('naisiae_language', nextLang);
+    const cookieValue = `/en/${nextLang}`;
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = `googtrans=${cookieValue}; path=/;`;
+    document.cookie = `googtrans=${cookieValue}; path=/; domain=.${window.location.hostname};`;
+    document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname};`;
 
     // Update path to preserve routing context & local SEO
     const path = location.pathname;
@@ -227,16 +255,26 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
       remainingPath = segments.join('/');
     }
 
-    // Standardize routing: Kenya is the default and uses non-prefixed paths,
-    // other countries prefix with their lowercase name or code (use code for cleaner URLs)
     const newPrefix = targetCountry.code === 'KE' ? '' : `/${targetCountry.name.toLowerCase().replace(/ /g, '-')}`;
     const newPath = `${newPrefix}/${remainingPath}`.replace(/\/+/g, '/');
-    navigate(newPath || '/');
+    
+    // Use full page load so Google Translate updates completely with the new country context
+    window.location.href = newPath || '/';
   };
 
   const changeLanguage = (langCode: string) => {
     appExperience.triggerFeedback('tap');
+    localStorage.setItem('naisiae_language', langCode);
     setCurrentLanguage(langCode);
+
+    const cookieValue = `/en/${langCode}`;
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = `googtrans=${cookieValue}; path=/;`;
+    document.cookie = `googtrans=${cookieValue}; path=/; domain=.${window.location.hostname};`;
+    document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname};`;
+
+    // Force a smooth page refresh so Google Translate renders the new language
+    window.location.reload();
   };
 
   const t = (key: string): string => {

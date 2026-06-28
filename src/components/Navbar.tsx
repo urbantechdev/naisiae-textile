@@ -740,7 +740,7 @@ export function Navbar({
                     }`}
                   >
                     {item.link ? (
-                      <Link to={item.link} className="flex items-center gap-4 w-full">
+                      <Link to={getLocalizedLink(item.link)} className="flex items-center gap-4 w-full">
                         <span className={`${item.highlight ? 'text-white' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
                         <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
                       </Link>
