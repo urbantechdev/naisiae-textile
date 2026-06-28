@@ -55,10 +55,11 @@ function DynamicSEOEngine() {
   useEffect(() => {
     const updateSEO = () => {
       const path = location.pathname;
-      const countrySuffix = currentCountry.code === 'KE' ? '' : ` in ${currentCountry.name}`;
+      const countrySuffix = currentCountry.code === 'KE' ? ' - Nairobi, DRC, TZ, UG, ETH' : ` in ${currentCountry.name}`;
+      const countryDescriptionSuffix = currentCountry.code === 'KE' ? ', In Nairobi, DRC, TZ, UG, ETH' : ` in ${currentCountry.name}`;
       
       let title = `UHURU MARKET UNIFORMS & Institutional Apparel${countrySuffix} | Naisiae Textiles`;
-      let description = `Official Uhuru Market Uniforms by Naisiae Textiles${countrySuffix}. Premium school, corporate & medical uniform manufacturing at direct factory rates.`;
+      let description = `Official Uhuru Market Uniforms by Naisiae Textiles. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
 
       // Adapt description based on country to maximize regional textile SEO searches
       if (currentCountry.code === 'TZ') {
@@ -73,55 +74,55 @@ function DynamicSEOEngine() {
 
       if (path.includes('/products')) {
         title = `Our Uniform Products${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Browse our full catalog of custom-tailored garments${countrySuffix}. High-quality school uniforms, corporate wear, and specialized protective gear.`;
+        description = `Browse our full catalog of custom-tailored garments${countryDescriptionSuffix}. High-quality school uniforms, corporate wear, and specialized protective gear.`;
       } else if (path.includes('/categories')) {
         title = `Uniform Categories & Options${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Explore our uniform manufacturing categories${countrySuffix} including Education, Hospitality, Medical, Security, and Corporate branding.`;
+        description = `Explore our uniform manufacturing categories${countryDescriptionSuffix} including Education, Hospitality, Medical, Security, and Corporate branding.`;
       } else if (path.includes('/services')) {
         title = `Bulk Manufacturing & Branding Services${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `From heavy-duty industrial stitching to custom embroidery and screen printing${countrySuffix}. Discover our mass-scale production.`;
+        description = `From heavy-duty industrial stitching to custom embroidery and screen printing${countryDescriptionSuffix}. Discover our mass-scale production.`;
       } else if (path.includes('/portfolio')) {
         title = `Our Work & Delivered Projects${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `See examples of bulk uniform orders we have successfully delivered across East Africa${countrySuffix}. Inspect our design quality.`;
+        description = `See examples of bulk uniform orders we have successfully delivered across East Africa${countryDescriptionSuffix}. Inspect our design quality.`;
       } else if (path.includes('/contact')) {
         title = `Contact Us & Visit Workshop${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Get a custom apparel supply quote. Contact our local support at ${currentCountry.phone} or visit our localized service center.`;
+        description = `Get a custom apparel supply quote. Contact our local support at ${currentCountry.phone} or visit our localized service center${countryDescriptionSuffix}.`;
       } else if (path.includes('/about')) {
         title = `Our Story & Manufacturing Heritage${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & regional community-driven production${countrySuffix}.`;
+        description = `Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & regional community-driven production${countryDescriptionSuffix}.`;
       } else if (path.includes('/wholesale')) {
         title = `Institutional Bulk Orders & Wholesale Request${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countrySuffix}.`;
+        description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countryDescriptionSuffix}.`;
       } else if (path.includes('/checkout')) {
         title = `Review Bulk Sourcing & Checkout${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Verify your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countrySuffix}.`;
+        description = `Verify your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countryDescriptionSuffix}.`;
       } else if (path.includes('/privacy')) {
         title = `Privacy Policy${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `We safeguard our clients' organizational and personal details under local data protection regulations${countrySuffix}.`;
+        description = `We safeguard our clients' organizational and personal details under local data protection regulations${countryDescriptionSuffix}.`;
       } else if (path.includes('/terms')) {
         title = `Terms of Service & Manufacturing Contracts${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Understand bulk order production terms, factory SLA timelines, and contract invoicing procedures${countrySuffix}.`;
+        description = `Understand bulk order production terms, factory SLA timelines, and contract invoicing procedures${countryDescriptionSuffix}.`;
       } else if (path.includes('/shipping')) {
         title = `Shipping, Nationwide Logistics & Pickup${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}.`;
+        description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}${countryDescriptionSuffix === `, In Nairobi, DRC, TZ, UG, ETH` ? countryDescriptionSuffix : ''}.`;
       } else if (path.includes('/returns')) {
         title = `Returns Policy & Quality Guarantee${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies${countrySuffix}.`;
+        description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies${countryDescriptionSuffix}.`;
       } else if (path.includes('/blog')) {
         title = `Industry Guides & Sourcing Logbook${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and factory procurement${countrySuffix}.`;
+        description = `Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and factory procurement${countryDescriptionSuffix}.`;
       } else if (path.includes('/faq')) {
         title = `Frequently Asked Questions${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and regional supply queries${countrySuffix}.`;
+        description = `Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and regional supply queries${countryDescriptionSuffix}.`;
       } else if (path.includes('/careers')) {
         title = `Careers & Tailoring Opportunities${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countrySuffix}.`;
+        description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countryDescriptionSuffix}.`;
       } else if (path.includes('/fabric-gallery')) {
         title = `Interactive Textile & Fabric Gallery${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Browse and filter our premium school uniform and corporate apparel textile samples${countrySuffix}. Inspect material specs.`;
+        description = `Browse and filter our premium school uniform and corporate apparel textile samples${countryDescriptionSuffix}. Inspect material specs.`;
       } else if (path.includes('/uniform-simulator')) {
         title = `Interactive 3D School Uniform Simulator${countrySuffix} | UHURU MARKET UNIFORMS`;
-        description = `Configure sweaters, shirts, blazers, and ties in standard institutional colorways${countrySuffix}. Preview custom combinations.`;
+        description = `Configure sweaters, shirts, blazers, and ties in standard institutional colorways${countryDescriptionSuffix}. Preview custom combinations.`;
       }
 
       // Force apply changes securely to the DOM
