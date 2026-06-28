@@ -49,6 +49,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { appExperience } from '../utils/haptics';
 import { ContentManager } from '../components/admin/ContentManager';
 import ChatSettings from '../components/admin/ChatSettings';
 import ChatWorkspace from '../components/admin/ChatWorkspace';
@@ -3839,6 +3840,7 @@ export default function AdminDashboard() {
                 initialData={editingItem} 
                 setToast={setToast}
                 productCategories={productCategories}
+                isMobile={isMobile}
                 onSubmit={async (data) => {
                   try {
                     if (editingItem) {
@@ -4538,7 +4540,7 @@ function SortableImage({ url, index, onRemove, disabled }: any) {
   );
 }
 
-function ProductForm({ initialData, onSubmit, setToast, productCategories }: any) {
+function ProductForm({ initialData, onSubmit, setToast, productCategories, isMobile }: any) {
   const isSuperAdmin = auth.currentUser?.email ? [
     'naisiaetext@gmail.com',
     'Kirigommk@gmail.com',
@@ -5840,7 +5842,11 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => setActiveStep(idx)}
+                    onClick={() => {
+                      setActiveStep(idx);
+                      appExperience.triggerHaptic('light');
+                      appExperience.playSound('tap');
+                    }}
                     className={`w-3.5 h-1.5 rounded-full transition-all duration-300 ${
                       idx === activeStep 
                         ? 'bg-[#C8102E] scale-y-110' 
@@ -5866,7 +5872,11 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setActiveStep(idx)}
+                  onClick={() => {
+                    setActiveStep(idx);
+                    appExperience.triggerHaptic('light');
+                    appExperience.playSound('tap');
+                  }}
                   className="group text-left focus:outline-none"
                 >
                   <div className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -6311,7 +6321,11 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
               <button
                 type="button"
                 disabled={activeStep === 0}
-                onClick={() => setActiveStep((prev: number) => prev - 1)}
+                onClick={() => {
+                  setActiveStep((prev: number) => prev - 1);
+                  appExperience.triggerHaptic('light');
+                  appExperience.playSound('pop');
+                }}
                 className="h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 disabled:cursor-not-allowed rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-slate-200"
               >
                 ← Back
@@ -6319,6 +6333,10 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
               <button 
                 disabled={loading || uploading}
                 type="submit" 
+                onClick={() => {
+                  appExperience.triggerHaptic('success');
+                  appExperience.playSound('success');
+                }}
                 className="h-12 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-[#1C3560]/10"
               >
                 {loading ? (
@@ -6335,14 +6353,22 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
               <button
                 type="button"
                 disabled={activeStep === 0}
-                onClick={() => setActiveStep((prev: number) => prev - 1)}
+                onClick={() => {
+                  setActiveStep((prev: number) => prev - 1);
+                  appExperience.triggerHaptic('light');
+                  appExperience.playSound('pop');
+                }}
                 className="h-12 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 disabled:cursor-not-allowed rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-slate-200"
               >
                 ← Back
               </button>
               <button
                 type="button"
-                onClick={() => setActiveStep((prev: number) => prev + 1)}
+                onClick={() => {
+                  setActiveStep((prev: number) => prev + 1);
+                  appExperience.triggerHaptic('medium');
+                  appExperience.playSound('tap');
+                }}
                 className="h-12 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:scale-[1.01] text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-red-500/10"
               >
                 Next Step →
@@ -6353,6 +6379,10 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories }: any
           <button 
             disabled={loading || uploading}
             type="submit" 
+            onClick={() => {
+              appExperience.triggerHaptic('success');
+              appExperience.playSound('success');
+            }}
             className="w-full h-12 md:h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl md:rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
           >
             {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}

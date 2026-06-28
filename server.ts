@@ -740,15 +740,52 @@ Return the response in JSON format.`;
         return next();
       }
 
-      let title = "UHURU MARKET UNIFORMS & Institutional Apparel | Naisiae Textiles Nairobi";
-      let description = "Official Uhuru Market Uniforms by Naisiae Textiles. Premium school, corporate & medical uniform manufacturing in Nairobi, Kenya at direct factory rates.";
+      // Localized routing parameters mapping
+      const countriesList = [
+        { key: 'ke', name: 'Kenya', code: 'KE', phone: '+254792021795', currency: 'KES' },
+        { key: 'kenya', name: 'Kenya', code: 'KE', phone: '+254792021795', currency: 'KES' },
+        { key: 'tz', name: 'Tanzania', code: 'TZ', phone: '+255792021795', currency: 'TZS' },
+        { key: 'tanzania', name: 'Tanzania', code: 'TZ', phone: '+255792021795', currency: 'TZS' },
+        { key: 'cd', name: 'Democratic Republic of Congo', code: 'CD', phone: '+243792021795', currency: 'USD' },
+        { key: 'drc', name: 'Democratic Republic of Congo', code: 'CD', phone: '+243792021795', currency: 'USD' },
+        { key: 'congo', name: 'Democratic Republic of Congo', code: 'CD', phone: '+243792021795', currency: 'USD' },
+        { key: 'ug', name: 'Uganda', code: 'UG', phone: '+256792021795', currency: 'UGX' },
+        { key: 'uganda', name: 'Uganda', code: 'UG', phone: '+256792021795', currency: 'UGX' },
+        { key: 'et', name: 'Ethiopia', code: 'ET', phone: '+251792021795', currency: 'ETB' },
+        { key: 'ethiopia', name: 'Ethiopia', code: 'ET', phone: '+251792021795', currency: 'ETB' }
+      ];
+
+      let matchedCountry = countriesList[0]; // Default to Kenya
+      let relativePath = requestPath;
+
+      // Extract country prefix from path segments
+      const pathSegments = requestPath.split('/').filter(Boolean);
+      if (pathSegments.length > 0) {
+        const possiblePrefix = pathSegments[0].toLowerCase();
+        const found = countriesList.find(c => c.key === possiblePrefix);
+        if (found) {
+          matchedCountry = found;
+          relativePath = '/' + pathSegments.slice(1).join('/');
+        }
+      }
+
+      // Normalize relativePath trailing slashes
+      if (relativePath.endsWith('/') && relativePath !== '/') {
+        relativePath = relativePath.slice(0, -1);
+      }
+
+      const countrySuffix = matchedCountry.code === 'KE' ? ' - Nairobi, DRC, TZ, UG, ETH' : ` in ${matchedCountry.name}`;
+      const countryDescriptionSuffix = matchedCountry.code === 'KE' ? ', In Nairobi, DRC, TZ, UG, ETH' : ` in ${matchedCountry.name}`;
+
+      let title = `Uhuru Market Uniforms${countrySuffix} | Naisiae Textiles`;
+      let description = `Official Uhuru Market Uniforms by Naisiae Textiles. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
       let imageUrl = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&h=630&q=80";
       let type = "website";
 
       // 1. Pre-fetch Site Settings
       let siteSettings = {
         siteName: "Uhuru Market Uniforms",
-        siteTagline: "Naisiae Textiles Nairobi",
+        siteTagline: "Naisiae Textiles",
         siteLogo: "",
         sharingImage: "",
         sharingTitle: "",
@@ -763,7 +800,7 @@ Return the response in JSON format.`;
         if (settingsData.fields) {
           siteSettings = {
             siteName: settingsData.fields.siteName?.stringValue || "Uhuru Market Uniforms",
-            siteTagline: settingsData.fields.siteTagline?.stringValue || "Naisiae Textiles Nairobi",
+            siteTagline: settingsData.fields.siteTagline?.stringValue || "Naisiae Textiles",
             siteLogo: settingsData.fields.siteLogo?.stringValue || "",
             sharingImage: settingsData.fields.sharingImage?.stringValue || "",
             sharingTitle: settingsData.fields.sharingTitle?.stringValue || "",
@@ -774,8 +811,8 @@ Return the response in JSON format.`;
 
       // 2. Specific Route Logic
       let productInfo: any = null;
-      if (requestPath.startsWith('/product/')) {
-        const productId = requestPath.split('/')[2];
+      if (relativePath.startsWith('/product/')) {
+        const productId = relativePath.split('/')[2];
         if (productId) {
           try {
             const productUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents/products/${productId}`;
@@ -785,66 +822,66 @@ Return the response in JSON format.`;
               productInfo = pData.fields;
               const name = pData.fields.name?.stringValue || "Uniform";
               const pPrice = pData.fields.price?.doubleValue || pData.fields.price?.integerValue || 0;
-              title = `${name} | Uhuru Market Uniforms Shop`;
+              title = `${name}${countrySuffix} | Uhuru Market Uniforms Shop`;
               description = pData.fields.description?.stringValue || description;
               imageUrl = pData.fields.imageUrl?.stringValue || imageUrl;
               type = "product";
               // Add keywords to title
-              if (pPrice > 0) title = `${name} (${pPrice.toLocaleString()}/-) | Uhuru Market Uniforms Kenya`;
+              if (pPrice > 0) title = `${name} (${pPrice.toLocaleString()}/-)${countrySuffix} | Uhuru Market Uniforms`;
             }
           } catch (e) {}
         }
-      } else if (requestPath === '/') {
-        title = siteSettings.sharingTitle || `${siteSettings.siteName} | ${siteSettings.siteTagline}`;
+      } else if (relativePath === '/' || relativePath === '') {
+        title = siteSettings.sharingTitle || `Uhuru Market Uniforms${countrySuffix} | Naisiae Textiles`;
         description = siteSettings.sharingDescription || description;
         imageUrl = siteSettings.sharingImage || siteSettings.siteLogo || imageUrl;
-      } else if (requestPath === '/products') {
-        title = "Our Uniform Products | UHURU MARKET UNIFORMS";
-        description = "Browse our full catalog of custom-tailored garments. High-quality primary & secondary school uniforms, games kits, and specialized corporate wear.";
-      } else if (requestPath === '/categories') {
-        title = "Uniform Categories & Options | UHURU MARKET UNIFORMS";
-        description = "Explore our uniform manufacturing categories including Education, Hospitality, Medical, Security, and Corporate branding solutions in Nairobi.";
-      } else if (requestPath === '/services') {
-        title = "Bulk Manufacturing & Branding Services | UHURU MARKET UNIFORMS";
-        description = "From heavy-duty industrial stitching to custom embroidery and screen printing. Discover our mass-scale textile production capabilities.";
-      } else if (requestPath === '/portfolio') {
-        title = "Our Work & Past Projects | UHURU MARKET UNIFORMS";
-        description = "See examples of bulk uniform orders we have successfully delivered across Kenya. Check out our design quality and finished tailoring work.";
-      } else if (requestPath === '/contact') {
-        title = "Contact Us & Visit Workshop | UHURU MARKET UNIFORMS";
-        description = "Get a custom apparel supply quote today. Visit us at Uhuru Market Along Jogoo Road, Nairobi, or call us directly at +254792021795.";
-      } else if (requestPath === '/about') {
-        title = "Our Story & Manufacturing Heritage | UHURU MARKET UNIFORMS";
-        description = "Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & community-driven production at Uhuru Market, Nairobi.";
-      } else if (requestPath === '/wholesale') {
-        title = "Institutional Bulk Orders & Wholesale Request | UHURU MARKET UNIFORMS";
-        description = "Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands across East Africa. Min. 50 units.";
-      } else if (requestPath === '/checkout') {
-        title = "Review Bulk Sourcing & Checkout | UHURU MARKET UNIFORMS";
-        description = "Step-by-step verification of your wholesale inquiries, customizable branding preferences, and secure client profile syncing.";
-      } else if (requestPath === '/privacy') {
-        title = "Privacy Policy | UHURU MARKET UNIFORMS";
-        description = "We respect and safeguard our clients' organizational and personal details under Kenyan data protection regulations.";
-      } else if (requestPath === '/terms') {
-        title = "Terms of Service & Manufacturing Contracts | UHURU MARKET UNIFORMS";
-        description = "Understand bulk order production terms, factory SLA timelines, quality inspection standards, and contract invoicing procedures.";
-      } else if (requestPath === '/shipping') {
-        title = "Shipping, Nationwide Logistics & Pickup | UHURU MARKET UNIFORMS";
-        description = "Find shipping estimates, prompt direct courier networks, and convenient self-pickup instructions at Uhuru Market, Jogoo Road-Nairobi.";
-      } else if (requestPath === '/returns') {
-        title = "Returns Policy & Quality Guarantee | UHURU MARKET UNIFORMS";
-        description = "Read our terms for size corrections, fitting alterations, and manufacturing defect policies under our comprehensive quality assurance program.";
-      } else if (requestPath === '/blog' || requestPath === '/blog/') {
-        title = "Industry Guides & Sourcing Logbook | UHURU MARKET UNIFORMS";
-        description = "Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and direct-factory school uniform procurement in Kenya.";
-      } else if (requestPath === '/faq' || requestPath === '/faq/') {
-        title = "Frequently Asked Questions & Support | UHURU MARKET UNIFORMS";
-        description = "Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and tender queries for Uhuru Market Uniforms.";
-      } else if (requestPath === '/careers' || requestPath === '/careers/') {
-        title = "Careers & Tailoring Opportunities | UHURU MARKET UNIFORMS";
-        description = "Join our production team in Nairobi. Inspect open sewing, embroidery machine operations, and quality inspection roles at Naisiae Textiles.";
-      } else if (requestPath.startsWith('/admin')) {
-        title = "Admin Core | Uhuru Market Uniforms Management";
+      } else if (relativePath === '/products') {
+        title = `Uhuru Market Uniforms | Our Uniform Products${countrySuffix}`;
+        description = `Browse our full catalog of custom-tailored garments${countryDescriptionSuffix}. High-quality primary & secondary school uniforms, games kits, and specialized corporate wear.`;
+      } else if (relativePath === '/categories') {
+        title = `Uhuru Market Uniforms | Uniform Categories & Options${countrySuffix}`;
+        description = `Explore our uniform manufacturing categories${countryDescriptionSuffix} including Education, Hospitality, Medical, Security, and Corporate branding solutions.`;
+      } else if (relativePath === '/services') {
+        title = `Uhuru Market Uniforms | Bulk Manufacturing & Branding Services${countrySuffix}`;
+        description = `From heavy-duty industrial stitching to custom embroidery and screen printing${countryDescriptionSuffix}. Discover our mass-scale textile production capabilities.`;
+      } else if (relativePath === '/portfolio') {
+        title = `Uhuru Market Uniforms | Our Work & Past Projects${countrySuffix}`;
+        description = `See examples of bulk uniform orders we have successfully delivered${countryDescriptionSuffix}. Check out our design quality and finished tailoring work.`;
+      } else if (relativePath === '/contact') {
+        title = `Uhuru Market Uniforms | Contact Us & Visit Workshop${countrySuffix}`;
+        description = `Get a custom apparel supply quote today. Visit us at Uhuru Market Along Jogoo Road, Nairobi, or call us directly at ${matchedCountry.phone}.`;
+      } else if (relativePath === '/about') {
+        title = `Uhuru Market Uniforms | Our Story & Manufacturing Heritage${countrySuffix}`;
+        description = `Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & community-driven production${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/wholesale') {
+        title = `Uhuru Market Uniforms | Institutional Bulk Orders & Wholesale Request${countrySuffix}`;
+        description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countryDescriptionSuffix}. Min. 50 units.`;
+      } else if (relativePath === '/checkout') {
+        title = `Uhuru Market Uniforms | Review Bulk Sourcing & Checkout${countrySuffix}`;
+        description = `Step-by-step verification of your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/privacy') {
+        title = `Uhuru Market Uniforms | Privacy Policy${countrySuffix}`;
+        description = `We respect and safeguard our clients' organizational and personal details under data protection regulations${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/terms') {
+        title = `Uhuru Market Uniforms | Terms of Service & Manufacturing Contracts${countrySuffix}`;
+        description = `Understand bulk order production terms, factory SLA timelines, quality inspection standards, and contract invoicing procedures${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/shipping') {
+        title = `Uhuru Market Uniforms | Shipping, Nationwide Logistics & Pickup${countrySuffix}`;
+        description = `Find shipping estimates, prompt direct courier networks, and convenient self-pickup instructions${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/returns') {
+        title = `Uhuru Market Uniforms | Returns Policy & Quality Guarantee${countrySuffix}`;
+        description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies under our comprehensive quality assurance program${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/blog' || relativePath === '/blog/') {
+        title = `Uhuru Market Uniforms | Industry Guides & Sourcing Logbook${countrySuffix}`;
+        description = `Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and direct-factory school uniform procurement${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/faq' || relativePath === '/faq/') {
+        title = `Uhuru Market Uniforms | Frequently Asked Questions & Support${countrySuffix}`;
+        description = `Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and regional supply queries${countryDescriptionSuffix}.`;
+      } else if (relativePath === '/careers' || relativePath === '/careers/') {
+        title = `Uhuru Market Uniforms | Careers & Tailoring Opportunities${countrySuffix}`;
+        description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countryDescriptionSuffix}.`;
+      } else if (relativePath.startsWith('/admin')) {
+        title = `Admin Core${countrySuffix} | Uhuru Market Uniforms Management`;
         description = "Management gateway for Naisiae Sync Protocols.";
       }
 
@@ -1112,14 +1149,14 @@ Return the response in JSON format.`;
       const jsonLdScript = `<script type="application/ld+json">${JSON.stringify(schemasList.length === 1 ? schemasList[0] : schemasList)}</script>`;
       const canonicalTag = `<link rel="canonical" href="${canonicalUrl}" />`;
       
-      // We use a more careful replacement strategy:
-      // Remove standard tags first if they exist
+      // We use a clean and complete replacement strategy to avoid duplicate headers or metadata.
+      // Remove any previously declared meta elements and social cards in index.html template first
       html = html.replace(/<title>.*?<\/title>/, "");
       html = html.replace(/<meta name="description".*?\/>/, "");
       html = html.replace(/<link rel="canonical".*?\/>/, "");
-      html = html.replace(/<meta property="og:title".*?\/>/g, "");
-      html = html.replace(/<meta property="og:description".*?\/>/g, "");
-      html = html.replace(/<meta property="og:image".*?\/>/g, "");
+      html = html.replace(/<meta property="og:.*?\/>/g, "");
+      html = html.replace(/<meta name="twitter:.*?\/>/g, "");
+      html = html.replace(/<meta property="twitter:.*?\/>/g, "");
       
       const combinedMeta = `
         <title>${title}</title>
@@ -1140,10 +1177,8 @@ Return the response in JSON format.`;
         <meta name="twitter:description" content="${description}" />
         <meta name="twitter:image" content="${imageUrl}" />
         <meta name="author" content="Naisiae Textiles" />
-        <meta name="geo.region" content="KE-110" />
-        <meta name="geo.placename" content="Nairobi" />
-        <meta name="geo.position" content="-1.286389;36.817222" />
-        <meta name="ICBM" content="-1.286389, 36.817222" />
+        <meta name="geo.region" content="${matchedCountry.code === 'KE' ? 'KE-110' : matchedCountry.code}" />
+        <meta name="geo.placename" content="${matchedCountry.code === 'KE' ? 'Nairobi' : matchedCountry.name}" />
         ${preloadTags}
         ${injectSettings}
         ${jsonLdScript}
@@ -1173,23 +1208,23 @@ Return the response in JSON format.`;
       const renderFooter = `
         <footer style="padding: 40px 20px; background: #0E121C; color: rgba(255,255,255,0.5); border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; text-align: center; line-height: 1.6; font-family: sans-serif;">
           <div style="max-width: 1200px; margin: 0 auto;">
-            <p style="font-weight: bold; color: #fff; margin-bottom: 5px;">Uhuru Market Uniforms (Naisiae Textiles)</p>
-            <p>Physical Address: Uhuru Market along Jogoo Road, Nairobi, Kenya</p>
-            <p>Sourcing Desk Phone: +254 792 021 795 | Email: naisiaetext@gmail.com</p>
-            <p style="margin-top: 15px;">&copy; 2026 Naisiae Textiles. All rights reserved. High-fidelity Prerendering Delivery.</p>
+            <p style="font-weight: bold; color: #fff; margin-bottom: 5px;">Uhuru Market Uniforms (Naisiae Textiles) - ${matchedCountry.name} Hub</p>
+            <p>Physical Address: Uhuru Market along Jogoo Road, Nairobi, Kenya (Regional Shipping to ${matchedCountry.name})</p>
+            <p>Sourcing Desk Phone: ${matchedCountry.phone} | Email: naisiaetext@gmail.com</p>
+            <p style="margin-top: 15px;">&copy; 2026 Naisiae Textiles. All rights reserved. High-fidelity Regionalized Prerendering.</p>
           </div>
         </footer>
       `;
 
       let mainContent = "";
 
-      if (requestPath === '/' || requestPath === '') {
+      if (relativePath === '/' || relativePath === '') {
         mainContent = `
           <main style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; font-family: sans-serif; color: #fff; text-align: left;">
             <section style="margin-bottom: 60px;">
               <h1 style="font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 20px;">UHURU MARKET UNIFORMS & Institutional Apparel</h1>
               <p style="font-size: 18px; color: rgba(255,255,255,0.7); line-height: 1.6; max-width: 800px; margin-bottom: 30px;">
-                Official Uhuru Market Uniforms by Naisiae Textiles. The premier bulk uniform manufacturer along Jogoo Road, Nairobi. Bypassing middle-men to supply high-performance school uniforms, computerized embroidery, screen-printed games kits, medical hospital scrubs, and workwear jackets at factory rates.
+                Official Uhuru Market Uniforms by Naisiae Textiles. The premier bulk uniform manufacturer along Jogoo Road, Nairobi. Bypassing middle-men to supply high-performance school uniforms, computerized embroidery, screen-printed games kits, medical hospital scrubs, and workwear jackets at factory rates in ${matchedCountry.name}.
               </p>
               <div style="display: flex; gap: 15px;">
                 <a href="/products/" style="background: #C8102E; color: #fff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">Browse Catalog</a>
@@ -1200,7 +1235,7 @@ Return the response in JSON format.`;
             <section style="margin-bottom: 60px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
               <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 20px;">
                 <h2 style="font-size: 20px; color: #C8961A; margin-bottom: 10px;">Primary & Secondary Uniforms</h2>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5;">Made with heavy-duty fibers, pre-shrunk, fade-resistant. Tailored for active daily classroom and playground wear.</p>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5;">Made with heavy-duty fibers, pre-shrunk, fade-resistant. Tailored for active daily classroom and playground wear, distributed across ${matchedCountry.name}.</p>
               </div>
               <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 20px;">
                 <h2 style="font-size: 20px; color: #C8961A; margin-bottom: 10px;">Industrial Embroidery</h2>
@@ -1208,16 +1243,16 @@ Return the response in JSON format.`;
               </div>
               <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 20px;">
                 <h2 style="font-size: 20px; color: #C8961A; margin-bottom: 10px;">Direct Sourcing & Tenders</h2>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5;">Direct procurement desk supplying school boards and public organizations with tender-grade materials across Kenya.</p>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5;">Direct procurement desk supplying school boards and public organizations with tender-grade materials across ${matchedCountry.name}.</p>
               </div>
             </section>
           </main>
         `;
-      } else if (requestPath === '/products' || requestPath === '/products/') {
+      } else if (relativePath === '/products' || relativePath === '/products/') {
         mainContent = `
           <main style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; color: #fff; font-family: sans-serif;">
-            <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">Our Uniform Catalog</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Direct-factory institutional uniforms tailored at Naisiae Textiles workshop inside Uhuru Market Nairobi.</p>
+            <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">Our Uniform Catalog for ${matchedCountry.name}</h1>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Direct-factory institutional uniforms tailored at Naisiae Textiles workshop with direct supply to ${matchedCountry.name}.</p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px;">
               <article style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
                 <h3>Standard Primary School Shirt</h3>
@@ -1234,10 +1269,10 @@ Return the response in JSON format.`;
             </div>
           </main>
         `;
-      } else if (requestPath === '/services' || requestPath === '/services/') {
+      } else if (relativePath === '/services' || relativePath === '/services/') {
         mainContent = `
           <main style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; color: #fff; font-family: sans-serif;">
-            <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">Industrial Branding & Sourcing Services</h1>
+            <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">Industrial Branding & Sourcing Services in ${matchedCountry.name}</h1>
             <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Professional apparel services on massive scales with extreme speed.</p>
             <ul>
               <li><strong>Bulk Sourcing & Manufacturing:</strong> Sourcing high-tensile threads, buttons and raw textures directly.</li>
@@ -1246,11 +1281,11 @@ Return the response in JSON format.`;
             </ul>
           </main>
         `;
-      } else if (requestPath === '/faq' || requestPath === '/faq/') {
+      } else if (relativePath === '/faq' || relativePath === '/faq/') {
         mainContent = `
           <main style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; color: #fff; font-family: sans-serif;">
             <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 15px;">Frequently Asked Questions</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Answers on MOQs, clothing specs, and delivery channels.</p>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Answers on MOQs, clothing specs, and delivery channels to ${matchedCountry.name}.</p>
             <div>
               <div style="margin-bottom: 25px;">
                 <h3 style="color: #C8961A;">What is the Minimum Order Quantity (MOQ)?</h3>
@@ -1258,23 +1293,23 @@ Return the response in JSON format.`;
               </div>
               <div style="margin-bottom: 25px;">
                 <h3 style="color: #C8961A;">Where are you located?</h3>
-                <p>Uhuru Market along Jogoo Road, Nairobi, Kenya.</p>
+                <p>Uhuru Market along Jogoo Road, Nairobi, Kenya (Supporting shipping to ${matchedCountry.name}).</p>
               </div>
             </div>
           </main>
         `;
-      } else if (requestPath === '/blog' || requestPath.startsWith('/blog')) {
+      } else if (relativePath === '/blog' || relativePath.startsWith('/blog')) {
         mainContent = `
           <main style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; color: #fff; font-family: sans-serif;">
             <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 15px;">Naisiae Logbook & Sourcing Guides</h1>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Expert insights on school apparel planning and uniform fabrics in Nairobi.</p>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 40px;">Expert insights on school apparel planning and uniform fabrics in ${matchedCountry.name}.</p>
             <div>
               <h3>How to Choose High Performance School Fabric Blends</h3>
               <p>Polyester and cotton blending details and wear longevity parameters.</p>
             </div>
           </main>
         `;
-      } else if (requestPath === '/careers' || requestPath === '/careers/') {
+      } else if (relativePath === '/careers' || relativePath === '/careers/') {
         mainContent = `
           <main style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; color: #fff; font-family: sans-serif;">
             <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 15px;">Tailoring Careers at Naisiae Textiles</h1>
@@ -1297,7 +1332,8 @@ Return the response in JSON format.`;
         ${renderFooter}
       `;
 
-      html = html.replace(/<div id="root"><\/div>/, `<div id="root">${prerenderedContent}</div>`);
+      // Match the PRERENDER comment tags inside #root in index.html for a 100% accurate replacement
+      html = html.replace(/<!--PRERENDER_START-->[\s\S]*?<!--PRERENDER_END-->/, prerenderedContent);
       
       // Dev transformations - CRITICAL for React mounting in dev
       if (process.env.NODE_ENV !== "production" && app.get('vite')) {

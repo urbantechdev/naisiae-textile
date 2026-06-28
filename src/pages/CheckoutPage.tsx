@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { appExperience } from '../utils/haptics';
 import { 
   ShoppingBag, 
   ChevronRight, 
@@ -26,6 +27,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { CheckoutMobileWizard } from '../components/CheckoutMobileWizard';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
@@ -49,6 +51,18 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [activeCheckoutStep, setActiveCheckoutStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: auth.currentUser?.displayName || '',
     email: auth.currentUser?.email || '',
@@ -72,6 +86,8 @@ export default function CheckoutPage() {
 
   const handleSmsPaste = (text: string) => {
     setPastedSms(text);
+    appExperience.triggerHaptic('light');
+    appExperience.playSound('tap');
     // Find standard 10 letter code. Standard M-Pesa is usually uppercase alphanumeric of 10 characters
     const mpesaRegex = /\b([A-Z0-9]{10})\b/i;
     const match = text.match(mpesaRegex);
@@ -79,6 +95,8 @@ export default function CheckoutPage() {
       const parsedCode = match[1].toUpperCase();
       setMpesaRefCode(parsedCode);
       setSmsExtractionSuccess(true);
+      appExperience.triggerHaptic('success');
+      appExperience.playSound('success');
       setTimeout(() => setSmsExtractionSuccess(false), 3000);
     }
   };
@@ -86,12 +104,16 @@ export default function CheckoutPage() {
   const handleCopyNumber = () => {
     navigator.clipboard.writeText('0792021795');
     setCopiedNumber(true);
+    appExperience.triggerHaptic('success');
+    appExperience.playSound('success');
     setTimeout(() => setCopiedNumber(false), 2000);
   };
 
   const handleCopyAmount = (amount: number) => {
     navigator.clipboard.writeText(amount.toString());
     setCopiedAmount(true);
+    appExperience.triggerHaptic('success');
+    appExperience.playSound('success');
     setTimeout(() => setCopiedAmount(false), 2000);
   };
 
@@ -184,6 +206,25 @@ export default function CheckoutPage() {
       }
     }
     
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateStep = (step: number) => {
+    const newErrors: Record<string, string> = {};
+    if (step === 0) {
+      if (!formData.name.trim()) newErrors.name = 'Name is required';
+      if (!formData.email.trim()) newErrors.email = 'Email is required';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
+      if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    } else if (step === 1 && checkoutMethod === 'mpesa') {
+      const code = mpesaRefCode.trim().toUpperCase();
+      if (!code) {
+        newErrors.mpesaRefCode = 'M-Pesa transaction code is required';
+      } else if (!/^[A-Z0-9]{10}$/.test(code)) {
+        newErrors.mpesaRefCode = 'M-Pesa transaction code must be exactly 10 alphanumeric characters';
+      }
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -495,7 +536,44 @@ export default function CheckoutPage() {
       />
       <Breadcrumb />
       
-      <div className="pt-32 lg:pt-44 pb-24 px-6 max-w-[1440px] mx-auto">
+      {isMobile ? (
+        <CheckoutMobileWizard
+          cart={cart}
+          updateQuantity={updateQuantity}
+          removeFromCart={removeFromCart}
+          cartSubtotal={cartSubtotal}
+          cartTotal={cartTotal}
+          discountAmount={discountAmount}
+          appliedPromo={appliedPromo}
+          formatPrice={formatPrice}
+          formData={formData}
+          setFormData={setFormData}
+          checkoutMethod={checkoutMethod}
+          setCheckoutMethod={setCheckoutMethod}
+          mpesaPaymentOption={mpesaPaymentOption}
+          setMpesaPaymentOption={setMpesaPaymentOption}
+          mpesaRefCode={mpesaRefCode}
+          setMpesaRefCode={setMpesaRefCode}
+          pastedSms={pastedSms}
+          handleSmsPaste={handleSmsPaste}
+          handleCopyNumber={handleCopyNumber}
+          handleCopyAmount={handleCopyAmount}
+          copiedNumber={copiedNumber}
+          copiedAmount={copiedAmount}
+          smsExtractionSuccess={smsExtractionSuccess}
+          loading={loading}
+          errors={errors}
+          validateStep={validateStep}
+          handleSubmit={handleSubmit}
+          activeCheckoutStep={activeCheckoutStep}
+          setActiveCheckoutStep={setActiveCheckoutStep}
+          currentUser={currentUser}
+          handleGoogleSignIn={handleGoogleSignIn}
+          handleSignOut={handleSignOut}
+          authLoading={authLoading}
+        />
+      ) : (
+        <div className="pt-32 lg:pt-44 pb-24 px-6 max-w-[1440px] mx-auto">
         <div className="flex items-center gap-4 mb-12">
           <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#C8102E] transition-all shadow-sm">
             <ArrowLeft size={20} />
@@ -1041,7 +1119,8 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
       
       <Footer />
     </div>

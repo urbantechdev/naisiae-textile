@@ -73,55 +73,55 @@ function DynamicSEOEngine() {
       }
 
       if (path.includes('/products')) {
-        title = `Our Uniform Products${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Our Uniform Products${countrySuffix}`;
         description = `Browse our full catalog of custom-tailored garments${countryDescriptionSuffix}. High-quality school uniforms, corporate wear, and specialized protective gear.`;
       } else if (path.includes('/categories')) {
-        title = `Uniform Categories & Options${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Uniform Categories & Options${countrySuffix}`;
         description = `Explore our uniform manufacturing categories${countryDescriptionSuffix} including Education, Hospitality, Medical, Security, and Corporate branding.`;
       } else if (path.includes('/services')) {
-        title = `Bulk Manufacturing & Branding Services${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Bulk Manufacturing & Branding Services${countrySuffix}`;
         description = `From heavy-duty industrial stitching to custom embroidery and screen printing${countryDescriptionSuffix}. Discover our mass-scale production.`;
       } else if (path.includes('/portfolio')) {
-        title = `Our Work & Delivered Projects${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Our Work & Delivered Projects${countrySuffix}`;
         description = `See examples of bulk uniform orders we have successfully delivered across East Africa${countryDescriptionSuffix}. Inspect our design quality.`;
       } else if (path.includes('/contact')) {
-        title = `Contact Us & Visit Workshop${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Contact Us & Visit Workshop${countrySuffix}`;
         description = `Get a custom apparel supply quote. Contact our local support at ${currentCountry.phone} or visit our localized service center${countryDescriptionSuffix}.`;
       } else if (path.includes('/about')) {
-        title = `Our Story & Manufacturing Heritage${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Our Story & Manufacturing Heritage${countrySuffix}`;
         description = `Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & regional community-driven production${countryDescriptionSuffix}.`;
       } else if (path.includes('/wholesale')) {
-        title = `Institutional Bulk Orders & Wholesale Request${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Institutional Bulk Orders & Wholesale Request${countrySuffix}`;
         description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countryDescriptionSuffix}.`;
       } else if (path.includes('/checkout')) {
-        title = `Review Bulk Sourcing & Checkout${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Review Bulk Sourcing & Checkout${countrySuffix}`;
         description = `Verify your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countryDescriptionSuffix}.`;
       } else if (path.includes('/privacy')) {
-        title = `Privacy Policy${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Privacy Policy${countrySuffix}`;
         description = `We safeguard our clients' organizational and personal details under local data protection regulations${countryDescriptionSuffix}.`;
       } else if (path.includes('/terms')) {
-        title = `Terms of Service & Manufacturing Contracts${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Terms of Service & Manufacturing Contracts${countrySuffix}`;
         description = `Understand bulk order production terms, factory SLA timelines, and contract invoicing procedures${countryDescriptionSuffix}.`;
       } else if (path.includes('/shipping')) {
-        title = `Shipping, Nationwide Logistics & Pickup${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Shipping, Nationwide Logistics & Pickup${countrySuffix}`;
         description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}${countryDescriptionSuffix === `, In Nairobi, DRC, TZ, UG, ETH` ? countryDescriptionSuffix : ''}.`;
       } else if (path.includes('/returns')) {
-        title = `Returns Policy & Quality Guarantee${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Returns Policy & Quality Guarantee${countrySuffix}`;
         description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies${countryDescriptionSuffix}.`;
       } else if (path.includes('/blog')) {
-        title = `Industry Guides & Sourcing Logbook${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Industry Guides & Sourcing Logbook${countrySuffix}`;
         description = `Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and factory procurement${countryDescriptionSuffix}.`;
       } else if (path.includes('/faq')) {
-        title = `Frequently Asked Questions${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Frequently Asked Questions${countrySuffix}`;
         description = `Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and regional supply queries${countryDescriptionSuffix}.`;
       } else if (path.includes('/careers')) {
-        title = `Careers & Tailoring Opportunities${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Careers & Tailoring Opportunities${countrySuffix}`;
         description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countryDescriptionSuffix}.`;
       } else if (path.includes('/fabric-gallery')) {
-        title = `Interactive Textile & Fabric Gallery${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Interactive Textile & Fabric Gallery${countrySuffix}`;
         description = `Browse and filter our premium school uniform and corporate apparel textile samples${countryDescriptionSuffix}. Inspect material specs.`;
       } else if (path.includes('/uniform-simulator')) {
-        title = `Interactive 3D School Uniform Simulator${countrySuffix} | Uhuru Market Uniforms`;
+        title = `Uhuru Market Uniforms | Interactive 3D School Uniform Simulator${countrySuffix}`;
         description = `Configure sweaters, shirts, blazers, and ties in standard institutional colorways${countryDescriptionSuffix}. Preview custom combinations.`;
       }
 
@@ -270,6 +270,44 @@ function DynamicSEOEngine() {
       newScript.type = 'application/ld+json';
       newScript.innerHTML = JSON.stringify(schemasList.length === 1 ? schemasList[0] : schemasList);
       document.head.appendChild(newScript);
+
+      // Clean prefix and dynamically inject localized hreflang alternates in page head
+      let cleanSubpath = path;
+      const prefixes = ['tanzania', 'dr-congo', 'uganda', 'ethiopia'];
+      for (const prefix of prefixes) {
+        if (cleanSubpath.startsWith(`/${prefix}/`)) {
+          cleanSubpath = cleanSubpath.slice(prefix.length + 1);
+          break;
+        } else if (cleanSubpath === `/${prefix}`) {
+          cleanSubpath = '/';
+          break;
+        }
+      }
+      
+      if (!cleanSubpath.endsWith('/')) {
+        cleanSubpath += '/';
+      }
+
+      // Clear out any old dynamic hreflang links to prevent duplication
+      document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+
+      const alternates = [
+        { hreflang: 'en-KE', url: `https://naisiaetextiles.com${cleanSubpath}` },
+        { hreflang: 'sw-TZ', url: `https://naisiaetextiles.com/tanzania${cleanSubpath}` },
+        { hreflang: 'fr-CD', url: `https://naisiaetextiles.com/dr-congo${cleanSubpath}` },
+        { hreflang: 'en-UG', url: `https://naisiaetextiles.com/uganda${cleanSubpath}` },
+        { hreflang: 'am-ET', url: `https://naisiaetextiles.com/ethiopia${cleanSubpath}` },
+        { hreflang: 'x-default', url: `https://naisiaetextiles.com${cleanSubpath}` }
+      ];
+
+      alternates.forEach(alt => {
+        const link = document.createElement('link');
+        link.setAttribute('rel', 'alternate');
+        link.setAttribute('hreflang', alt.hreflang);
+        const cleanUrl = alt.url.replace(/([^:]\/)\/+/g, "$1");
+        link.setAttribute('href', cleanUrl);
+        document.head.appendChild(link);
+      });
     };
 
     updateSEO();

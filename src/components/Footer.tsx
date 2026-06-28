@@ -77,7 +77,7 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/drc" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
+              <Link to="/dr-congo" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
                 <img src="https://flagcdn.com/w40/cd.png" alt="DR Congo Flag" className="w-5 h-3.5 object-cover rounded-sm border border-white/10 group-hover:border-[#C8961A]/30 transition-colors shrink-0" referrerPolicy="no-referrer" />
                 <span>DR Congo Hub</span>
               </Link>
