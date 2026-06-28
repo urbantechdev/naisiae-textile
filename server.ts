@@ -1153,15 +1153,23 @@ Return the response in JSON format.`;
       // Remove any previously declared meta elements and social cards in index.html template first
       html = html.replace(/<title>.*?<\/title>/, "");
       html = html.replace(/<meta name="description".*?\/>/, "");
+      html = html.replace(/<meta name="keywords".*?\/>/, "");
+      html = html.replace(/<meta name="robots".*?\/>/, "");
       html = html.replace(/<link rel="canonical".*?\/>/, "");
       html = html.replace(/<meta property="og:.*?\/>/g, "");
       html = html.replace(/<meta name="twitter:.*?\/>/g, "");
       html = html.replace(/<meta property="twitter:.*?\/>/g, "");
       
+      const isPrivatePath = relativePath === '/checkout' || relativePath === '/login' || relativePath.startsWith('/admin');
+      const robotsDirective = isPrivatePath 
+        ? 'noindex, nofollow, noarchive' 
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
       const combinedMeta = `
         <title>${title}</title>
         <meta name="description" content="${description}" />
         <meta name="keywords" content="Uhuru Market Uniforms, School Uniforms Nairobi, Naisiae Textiles, Industrial Uniforms Kenya, Hospital Scrubs Nairobi, Corporate Wear Kenya, Uhuru Market Textile hub, Best school uniforms Nairobi" />
+        <meta name="robots" content="${robotsDirective}" />
         ${canonicalTag}
         <meta property="og:title" content="${title}" />
         <meta property="og:description" content="${description}" />
