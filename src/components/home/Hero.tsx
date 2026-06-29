@@ -361,7 +361,7 @@ export function Hero({
 
           <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
             <Link
-              to="/products"
+              to="/product"
               className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#C8102E] text-white rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.2)] flex items-center justify-center lg:min-w-[220px]"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>

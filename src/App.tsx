@@ -73,7 +73,7 @@ function DynamicSEOEngine() {
         description = "Premium school uniforms and corporate apparel in Uganda by Naisiae Textiles. High-density embroidery and durable fabrics at wholesale rates in Kampala.";
       }
 
-      if (path.includes('/products')) {
+      if (path.includes('/products') || path.includes('/product')) {
         title = `Uhuru Market Uniforms | Our Uniform Products${countrySuffix}`;
         description = `Browse our full catalog of custom-tailored garments${countryDescriptionSuffix}. High-quality school uniforms, corporate wear, and specialized protective gear.`;
       } else if (path.includes('/categories')) {
@@ -97,7 +97,7 @@ function DynamicSEOEngine() {
       } else if (path.includes('/checkout')) {
         title = `Uhuru Market Uniforms | Review Bulk Sourcing & Checkout${countrySuffix}`;
         description = `Verify your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countryDescriptionSuffix}.`;
-      } else if (path.includes('/privacy')) {
+      } else if (path.includes('/privacy') || path.includes('/policy')) {
         title = `Uhuru Market Uniforms | Privacy Policy${countrySuffix}`;
         description = `We safeguard our clients' organizational and personal details under local data protection regulations${countryDescriptionSuffix}.`;
       } else if (path.includes('/terms')) {
@@ -118,7 +118,7 @@ function DynamicSEOEngine() {
       } else if (path.includes('/careers')) {
         title = `Uhuru Market Uniforms | Careers & Tailoring Opportunities${countrySuffix}`;
         description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countryDescriptionSuffix}.`;
-      } else if (path.includes('/fabric-gallery')) {
+      } else if (path.includes('/fabric-gallery') || path.includes('/textiles')) {
         title = `Uhuru Market Uniforms | Interactive Textile & Fabric Gallery${countrySuffix}`;
         description = `Browse and filter our premium school uniform and corporate apparel textile samples${countryDescriptionSuffix}. Inspect material specs.`;
       } else if (path.includes('/uniform-simulator')) {
@@ -385,17 +385,20 @@ function AppContent({ isAdmin, loading }: any) {
           <Routes>
             {/* Base routes without prefix (defaults to Kenya or previous user selection) */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/product/:productId" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/wholesale" element={<WholesalePage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/policy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/shipping" element={<ShippingPage />} />
             <Route path="/returns" element={<ReturnsPage />} />
             
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/products" element={<ProductsPage />} />
+            <Route path="/product" element={<ProductsPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
@@ -404,23 +407,27 @@ function AppContent({ isAdmin, loading }: any) {
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/careers" element={<CareersPage />} />
             <Route path="/fabric-gallery" element={<FabricGalleryPage />} />
+            <Route path="/textiles" element={<FabricGalleryPage />} />
             <Route path="/uniform-simulator" element={<UniformSimulatorPage />} />
             
             {/* Country-prefixed routes for Kenya, Tanzania, DRC, Uganda, and Ethiopia */}
             {['ke', 'kenya', 'tz', 'tanzania', 'cd', 'drc', 'congo', 'ug', 'uganda', 'et', 'ethiopia'].map((prefix) => (
               <Route key={prefix} path={`/${prefix}`}>
                 <Route index element={<HomePage />} />
+                <Route path="home" element={<HomePage />} />
                 <Route path="product/:productId" element={<HomePage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="wholesale" element={<WholesalePage />} />
                 <Route path="contact" element={<ContactPage />} />
                 <Route path="privacy" element={<PrivacyPage />} />
+                <Route path="policy" element={<PrivacyPage />} />
                 <Route path="terms" element={<TermsPage />} />
                 <Route path="shipping" element={<ShippingPage />} />
                 <Route path="returns" element={<ReturnsPage />} />
                 
                 <Route path="services" element={<ServicesPage />} />
                 <Route path="products" element={<ProductsPage />} />
+                <Route path="product" element={<ProductsPage />} />
                 <Route path="portfolio" element={<PortfolioPage />} />
                 <Route path="categories" element={<CategoriesPage />} />
                 <Route path="checkout" element={<CheckoutPage />} />
@@ -429,6 +436,7 @@ function AppContent({ isAdmin, loading }: any) {
                 <Route path="faq" element={<FAQPage />} />
                 <Route path="careers" element={<CareersPage />} />
                 <Route path="fabric-gallery" element={<FabricGalleryPage />} />
+                <Route path="textiles" element={<FabricGalleryPage />} />
                 <Route path="uniform-simulator" element={<UniformSimulatorPage />} />
               </Route>
             ))}

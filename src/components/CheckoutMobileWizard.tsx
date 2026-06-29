@@ -56,6 +56,13 @@ interface CheckoutMobileWizardProps {
   handleGoogleSignIn: () => void;
   handleSignOut: () => void;
   authLoading: boolean;
+  deliveryMethod: 'pickup' | 'nairobi' | 'other';
+  setDeliveryMethod: (method: 'pickup' | 'nairobi' | 'other') => void;
+  stkPushState: 'idle' | 'sending' | 'pending_pin' | 'verifying' | 'completed';
+  stkCountdown: number;
+  stkPhoneNumber: string;
+  setStkPhoneNumber: (phone: string) => void;
+  handleInitiateStkPush: () => Promise<void>;
 }
 
 export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
@@ -90,6 +97,13 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
   handleGoogleSignIn,
   handleSignOut,
   authLoading,
+  deliveryMethod,
+  setDeliveryMethod,
+  stkPushState,
+  stkCountdown,
+  stkPhoneNumber,
+  setStkPhoneNumber,
+  handleInitiateStkPush,
 }) => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-32 pt-20 px-4">
@@ -266,6 +280,80 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#C8102E] outline-none resize-none transition-all"
                     />
                   </div>
+
+                  {/* Delivery Mode Selection Card */}
+                  <div className="pt-3 border-t border-slate-100 space-y-3">
+                    <label className="text-[9px] font-black uppercase text-[#0A1628] tracking-[1px] block">
+                      🚚 Sourcing Delivery Option
+                    </label>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDeliveryMethod('pickup');
+                          appExperience.triggerHaptic('light');
+                          appExperience.playSound('tap');
+                        }}
+                        className={`p-3.5 rounded-2xl border text-left transition-all relative ${
+                          deliveryMethod === 'pickup'
+                            ? 'bg-amber-500/5 border-[#C8961A] text-[#0A1628]'
+                            : 'bg-white border-slate-200 text-slate-500'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[11px] font-black uppercase tracking-wider">Self Pick-up</span>
+                          <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Ksh 0.00</span>
+                        </div>
+                        <p className="text-[8.5px] text-slate-400 font-semibold leading-normal">
+                          Collect directly from our Uhuru Market, Nairobi factory stall.
+                        </p>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDeliveryMethod('nairobi');
+                          appExperience.triggerHaptic('light');
+                          appExperience.playSound('tap');
+                        }}
+                        className={`p-3.5 rounded-2xl border text-left transition-all relative ${
+                          deliveryMethod === 'nairobi'
+                            ? 'bg-green-500/5 border-green-500 text-[#0A1628]'
+                            : 'bg-white border-slate-200 text-slate-500'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[11px] font-black uppercase tracking-wider">Nairobi Courier</span>
+                          <span className="text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-200">Ksh 300.00</span>
+                        </div>
+                        <p className="text-[8.5px] text-slate-400 font-semibold leading-normal">
+                          Express delivery to your doorstep within Nairobi county.
+                        </p>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDeliveryMethod('other');
+                          appExperience.triggerHaptic('light');
+                          appExperience.playSound('tap');
+                        }}
+                        className={`p-3.5 rounded-2xl border text-left transition-all relative ${
+                          deliveryMethod === 'other'
+                            ? 'bg-blue-500/5 border-blue-500 text-[#0A1628]'
+                            : 'bg-white border-slate-200 text-slate-500'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[11px] font-black uppercase tracking-wider">Other Regions / Export</span>
+                          <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">TBD</span>
+                        </div>
+                        <p className="text-[8.5px] text-slate-400 font-semibold leading-normal">
+                          Countrywide parcel or international export shipping. Quote on WhatsApp.
+                        </p>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -372,74 +460,104 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                         </span>
                       </div>
                     </div>
-
-                    {/* Target instructions card */}
-                    <div className="bg-[#111827] text-white p-4.5 rounded-2xl space-y-4">
+                                       {/* Premium Safaricom STK Push module */}
+                    <div className="bg-slate-900 text-white p-5 rounded-2xl space-y-4 shadow-xl relative overflow-hidden border border-emerald-500/20">
+                      <div className="absolute top-0 right-0 bg-[#3BB348] text-white text-[7px] font-black px-2 py-0.5 rounded-bl uppercase tracking-wider">
+                        STK Push Active
+                      </div>
+                      
                       <div>
-                        <span className="text-[8px] font-black text-[#C8961A] tracking-wider uppercase block mb-0.5">Safaricom Send Money</span>
-                        <span className="text-[9.5px] text-slate-300 font-semibold leading-normal block">
-                          Send money to Naisiae Textiles mobile lead:
-                        </span>
+                        <span className="text-[8px] font-black text-[#C8961A] tracking-[2px] uppercase block mb-1">Safaricom Lipa na M-Pesa</span>
+                        <h4 className="text-xs font-black text-white uppercase tracking-wide">M-Pesa Express STK Push</h4>
+                        <p className="text-[9px] text-slate-300 font-semibold leading-normal mt-1">
+                          Our automated gateway will trigger an instant PIN prompt on your Safaricom mobile line.
+                        </p>
                       </div>
 
-                      <div className="bg-white/5 p-3 rounded-xl flex items-center justify-between border border-white/5">
-                        <div>
-                          <span className="text-[7.5px] text-white/30 uppercase tracking-widest block">Recipient Name</span>
-                          <span className="text-[11px] font-black uppercase text-white block">Michael Kirigo</span>
+                      {stkPushState === 'idle' && (
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">M-Pesa Mobile Number</label>
+                            <input 
+                              type="tel"
+                              value={stkPhoneNumber}
+                              onChange={(e) => setStkPhoneNumber(e.target.value)}
+                              placeholder="e.g. 0712345678"
+                              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white outline-none focus:border-green-400"
+                            />
+                          </div>
+                          
+                          <button
+                            type="button"
+                            onClick={handleInitiateStkPush}
+                            className="w-full py-3.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 active:scale-[0.98] transition-all rounded-xl text-xs font-black uppercase tracking-wider text-white shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            <span>Send STK Push Prompt 📲</span>
+                          </button>
                         </div>
-                        <span className="text-[10px] text-emerald-400 font-mono font-black tracking-wider bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">0792021795</span>
-                      </div>
+                      )}
 
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={handleCopyNumber}
-                          className="py-2.5 bg-white/5 hover:bg-white/10 active:scale-95 border border-white/5 rounded-xl text-[9px] font-black uppercase tracking-wider text-slate-200 transition-all flex items-center justify-center gap-1.5"
-                        >
-                          <Copy size={10} /> {copiedNumber ? "Copied!" : "Copy Mobile"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyAmount(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}
-                          className="py-2.5 bg-white/5 hover:bg-white/10 active:scale-95 border border-white/5 rounded-xl text-[9px] font-black uppercase tracking-wider text-slate-200 transition-all flex items-center justify-center gap-1.5"
-                        >
-                          <Copy size={10} /> {copiedAmount ? "Copied!" : "Copy Amount"}
-                        </button>
-                      </div>
-                    </div>
+                      {stkPushState === 'sending' && (
+                        <div className="py-4 flex flex-col items-center justify-center text-center space-y-2">
+                          <div className="w-8 h-8 border-2 border-[#3BB348] border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest animate-pulse">Initiating secure handshake...</p>
+                          <p className="text-[8px] text-slate-400">Requesting M-Pesa STK API payload for {stkPhoneNumber}</p>
+                        </div>
+                      )}
 
-                    {/* SMS Parsing Area */}
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between items-center">
-                        <label className="text-[9px] font-black uppercase text-slate-400">Pasted Safaricom SMS</label>
-                        <span className="text-[8px] font-extrabold text-[#C8961A] uppercase tracking-wider">AI Auto-Extract</span>
-                      </div>
-                      <textarea
-                        rows={2}
-                        value={pastedSms}
-                        onChange={(e) => handleSmsPaste(e.target.value)}
-                        placeholder="Paste full M-Pesa transaction SMS here..."
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[10.5px] focus:bg-white focus:border-[#C8102E] outline-none font-mono resize-none"
-                      />
-                      {smsExtractionSuccess && (
-                        <div className="p-2 bg-green-50 border border-green-100 rounded-xl text-green-700 text-[10px] font-bold flex items-center gap-2">
-                          <Check size={12} className="shrink-0" /> Code Extracted: <strong className="font-mono text-green-950">{mpesaRefCode}</strong>
+                      {stkPushState === 'pending_pin' && (
+                        <div className="py-4 flex flex-col items-center justify-center text-center space-y-2.5">
+                          <div className="relative w-12 h-12 flex items-center justify-center">
+                            <div className="absolute inset-0 border-2 border-slate-700 rounded-full"></div>
+                            <div className="absolute inset-0 border-2 border-t-[#3BB348] rounded-full animate-spin"></div>
+                            <span className="text-xs font-black font-mono text-[#C8961A]">{stkCountdown}s</span>
+                          </div>
+                          <p className="text-[10px] font-black text-amber-400 uppercase tracking-wider">PIN Prompt sent to {stkPhoneNumber}</p>
+                          <p className="text-[9px] text-slate-300 leading-normal max-w-[220px]">
+                            Check your Safaricom screen, enter your M-Pesa PIN, and press OK to authorize transaction.
+                          </p>
+                        </div>
+                      )}
+
+                      {stkPushState === 'verifying' && (
+                        <div className="py-4 flex flex-col items-center justify-center text-center space-y-2">
+                          <div className="w-8 h-8 border-2 border-[#C8961A] border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest animate-pulse">Verifying M-Pesa Receipt...</p>
+                          <p className="text-[8px] text-slate-400">Querying Safaricom payment logs for confirmation code...</p>
+                        </div>
+                      )}
+
+                      {stkPushState === 'completed' && (
+                        <div className="py-3 px-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-1.5">
+                          <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase">
+                            <span>🟢 STK Payment Secured!</span>
+                          </div>
+                          <p className="text-[9px] text-slate-300">
+                            The transaction was successfully processed by Safaricom. Your generated receipt reference is logged:
+                          </p>
+                          <div className="font-mono bg-white/5 border border-white/10 rounded px-2.5 py-1.5 text-center text-xs font-black tracking-widest text-emerald-400 uppercase">
+                            {mpesaRefCode}
+                          </div>
                         </div>
                       )}
                     </div>
 
-                    {/* Input for trans code */}
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-black uppercase text-slate-400 block">M-Pesa Transaction Code</label>
-                      <input
-                        type="text"
-                        value={mpesaRefCode}
-                        onChange={(e) => setMpesaRefCode(e.target.value.toUpperCase())}
-                        placeholder="e.g. SFX1ABCD44"
-                        maxLength={10}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-mono font-black tracking-widest focus:bg-white focus:border-[#C8102E] outline-none"
-                      />
-                      {errors.mpesaRefCode && <p className="text-red-500 text-[10px] font-bold mt-0.5">{errors.mpesaRefCode}</p>}
+                    {/* Manual Override Option */}
+                    <div className="pt-2 border-t border-dashed border-slate-200">
+                      <div className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 space-y-2">
+                        <p className="text-[8.5px] font-bold text-slate-500 leading-normal">
+                          💡 Experiencing delays? You can also manually paste a Safaricom text confirmation or transaction reference below:
+                        </p>
+                        
+                        <input
+                          type="text"
+                          value={mpesaRefCode}
+                          onChange={(e) => setMpesaRefCode(e.target.value.toUpperCase())}
+                          placeholder="Or enter Code manually (e.g. SAB4F9G1D4)"
+                          maxLength={10}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono font-black tracking-wider outline-none focus:border-green-500 text-center uppercase"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}

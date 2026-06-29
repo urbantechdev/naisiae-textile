@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalization } from '../../context/LocalizationContext';
+import { LazyImage } from '../LazyImage';
 
 interface CatalogSectionProps {
   activeTab: string;
@@ -48,6 +49,16 @@ export function CatalogSection({
   const navigate = useNavigate();
   const { formatPrice, t } = useLocalization();
   const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
+  const [isBgRemoverActive, setIsBgRemoverActive] = React.useState(() => {
+    return localStorage.getItem('auto_bg_remover') !== 'false';
+  });
+
+  const toggleBgRemover = () => {
+    const newVal = !isBgRemoverActive;
+    setIsBgRemoverActive(newVal);
+    localStorage.setItem('auto_bg_remover', String(newVal));
+    window.dispatchEvent(new Event('autoBgRemoverChanged'));
+  };
 
   const handleProductInteraction = (product: any, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -138,12 +149,27 @@ export function CatalogSection({
             </div>
           )}
         </div>
-        <button 
-          onClick={() => window.location.href = '/products'}
-          className="text-[#0E121C] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto shrink-0 mb-2"
-        >
-          View All Products →
-        </button>
+        <div className="flex flex-wrap items-center gap-4 self-start lg:self-auto shrink-0 mb-2">
+          <button
+            onClick={toggleBgRemover}
+            className={`whitespace-nowrap px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border shadow-sm ${
+              isBgRemoverActive 
+                ? 'bg-gradient-to-r from-[#C2102E]/5 to-[#C8961A]/5 text-[#C8961A] border-[#C8961A]/40' 
+                : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
+            }`}
+            title="Toggle background removal for catalog visuals"
+          >
+            <span className={`w-2.5 h-2.5 rounded-full ${isBgRemoverActive ? 'bg-[#C8961A] animate-pulse' : 'bg-slate-300'}`}></span>
+            ✨ Auto Bg Remover
+          </button>
+          
+          <button 
+            onClick={() => window.location.href = '/product'}
+            className="text-[#0E121C] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto shrink-0"
+          >
+            View All Products →
+          </button>
+        </div>
       </div>
 
       <div className="hidden lg:flex flex-col lg:flex-row gap-4 mb-10 items-start lg:items-center justify-between w-full border-t border-slate-100 pt-6">
@@ -206,15 +232,13 @@ export function CatalogSection({
             >
               {!isExpanded ? (
                 <>
-                  <div className="relative aspect-square sm:aspect-[4/3] w-[120px] sm:w-full overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={(e) => handleProductInteraction(product, e)}>
+                  <div className="relative aspect-square sm:aspect-[4/3] w-[120px] sm:w-full overflow-hidden bg-transparent cursor-pointer flex items-center justify-center p-2 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={(e) => handleProductInteraction(product, e)}>
                     {product.imageUrl ? (
-                      <img 
+                      <LazyImage 
                         src={product.imageUrl} 
                         alt={product.name} 
                         className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
-                        loading="lazy" 
-                        decoding="async" 
-                        referrerPolicy="no-referrer" 
+                        wrapperClassName="w-full h-full"
                       />
                     ) : (
                       <Package size={40} className="text-[#C8961A]/20" />
@@ -244,59 +268,49 @@ export function CatalogSection({
                       </span>
                     </div>
 
-                    <div className="pt-2 sm:pt-3">
-                      {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
-                        <div className="flex flex-row sm:flex-col gap-2">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleProductInteraction(product, e); }}
-                            className="flex-1 sm:w-full bg-[#C8961A] hover:bg-[#B08214] text-white py-1.5 sm:py-2 rounded-lg font-bold text-[8.5px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5"
-                          >
-                            <MessageSquare size={11} />
-                            Enquire
-                          </button>
-                          <a 
-                            href="tel:+254792021795"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-1 sm:w-full bg-[#C8102E]/10 hover:bg-[#C8102E]/20 text-[#C8102E] py-1.5 sm:py-2 rounded-lg font-bold text-[8.5px] sm:text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5 text-center"
-                          >
-                            <Phone size={11} />
-                            Call Now
-                          </a>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-                            <span className="text-[13px] sm:text-lg font-black text-[#C8961A]">{formatPrice(product.price)}</span>
-                          </div>
-                          <div className="flex gap-2">
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                              className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-1.5 sm:py-2 rounded-lg font-extrabold text-[8px] sm:text-[9.5px] uppercase tracking-wider transition-colors text-center shadow-sm"
-                              title="Add unit to shopping cart"
-                            >
-                              Add 🛒
-                            </button>
-                            <button 
-                              onClick={(e) => { 
-                                e.stopPropagation(); 
-                                const cartItem = {
-                                  ...product,
-                                  selectedVariants: {},
-                                  quantity: 1,
-                                  price: product.price,
-                                  priceType: product.priceType || 'fixed'
-                                };
-                                addToCart(cartItem); 
-                                navigate('/checkout');
-                              }}
-                              className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-1.5 sm:py-2 rounded-lg font-extrabold text-[8px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center shadow-sm"
-                              title="Secure instant checkout"
-                            >
-                              Buy Now ⚡
-                            </button>
-                          </div>
-                        </>
-                      )}
+                    <div className="pt-2 sm:pt-3 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between gap-1 mb-0.5">
+                        <span className="text-xs sm:text-sm font-black text-[#C8961A]">
+                          {product.price && product.price > 0 ? formatPrice(product.price) : "Custom Quote"}
+                        </span>
+                      </div>
+                      
+                      <button 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          const cartItem = {
+                            ...product,
+                            selectedVariants: { Size: 'M', Color: 'Navy' },
+                            quantity: 1,
+                            price: product.price || 1800,
+                            priceType: product.priceType || 'fixed'
+                          };
+                          addToCart(cartItem); 
+                          navigate('/checkout');
+                        }}
+                        className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2 rounded-lg font-black text-[9px] sm:text-[10px] uppercase tracking-wider transition-all text-center shadow-sm flex items-center justify-center gap-1 active:scale-95"
+                        title="Secure instant checkout"
+                      >
+                        Buy Now ⚡
+                      </button>
+                      
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleProductInteraction(product, e); }}
+                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-1.5 rounded-lg font-bold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
+                          title="Enquire custom style details"
+                        >
+                          Enquire ✉️
+                        </button>
+                        <a 
+                          href="tel:+254792021795"
+                          onClick={(e) => e.stopPropagation()}
+                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-1.5 rounded-lg font-bold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
+                          title="Call wholesale direct desk"
+                        >
+                          Call Now 📞
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </>
@@ -304,15 +318,13 @@ export function CatalogSection({
                 <div className="flex flex-col md:flex-row h-full">
                   {/* Left Column: Product visual card and price */}
                   <div className="w-full md:w-5/12 bg-white flex flex-col border-b md:border-b-0 md:border-r border-slate-100 shrink-0">
-                    <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-[#FDFAF4] flex items-center justify-center p-2">
+                    <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-transparent flex items-center justify-center p-2">
                       {product.imageUrl ? (
-                        <img 
+                        <LazyImage 
                           src={product.imageUrl} 
                           alt={product.name} 
                           className="w-full h-full object-cover object-top" 
-                          loading="lazy" 
-                          decoding="async" 
-                          referrerPolicy="no-referrer" 
+                          wrapperClassName="w-full h-full"
                         />
                       ) : (
                         <Package size={50} className="text-[#C8961A]/20" />
@@ -380,53 +392,42 @@ export function CatalogSection({
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
-                      {product.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())) ? (
-                        <div className="grid grid-cols-2 gap-2">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                            className="bg-[#C8961A] hover:bg-[#B08214] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-                          >
-                            <MessageSquare size={13} />
-                            Enquire
-                          </button>
-                          <a 
-                            href="tel:+254792021795"
-                            onClick={(e) => e.stopPropagation()}
-                            className="bg-[#C8102E] hover:bg-[#A30D22] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 text-center shadow-sm"
-                          >
-                            <Phone size={13} />
-                            Call Now
-                          </a>
-                        </div>
-                      ) : (
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                            className="flex-1 bg-[#0E121C] hover:bg-slate-800 text-white py-2.5 rounded-xl font-extrabold text-[10px] uppercase tracking-wider transition-colors text-center shadow-sm"
-                            title="Add to cart"
-                          >
-                            Add to Cart 🛒
-                          </button>
-                          <button 
-                            onClick={(e) => { 
-                              e.stopPropagation(); 
-                              const cartItem = {
-                                ...product,
-                                selectedVariants: {},
-                                quantity: 1,
-                                price: product.price,
-                                priceType: product.priceType || 'fixed'
-                              };
-                              addToCart(cartItem); 
-                              navigate('/checkout');
-                            }}
-                            className="flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2.5 rounded-xl font-extrabold text-[10px] uppercase tracking-wider transition-all text-center shadow-sm"
-                            title="Secure checkout"
-                          >
-                            Buy Now ⚡
-                          </button>
-                        </div>
-                      )}
+                      <button 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          const cartItem = {
+                            ...product,
+                            selectedVariants: { Size: 'M', Color: 'Navy' },
+                            quantity: 1,
+                            price: product.price || 1800,
+                            priceType: product.priceType || 'fixed'
+                          };
+                          addToCart(cartItem); 
+                          navigate('/checkout');
+                        }}
+                        className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all text-center shadow-md flex items-center justify-center gap-1.5 active:scale-95"
+                        title="Secure checkout"
+                      >
+                        Buy Now ⚡
+                      </button>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
+                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
+                        >
+                          <MessageSquare size={13} strokeWidth={2.5} />
+                          Enquire ✉️
+                        </button>
+                        <a 
+                          href="tel:+254792021795"
+                          onClick={(e) => e.stopPropagation()}
+                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
+                        >
+                          <Phone size={13} strokeWidth={2.5} />
+                          Call Now 📞
+                        </a>
+                      </div>
                       <button 
                         onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
                         className="w-full text-[#C8961A] hover:text-[#C8102E] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Mail, Fingerprint } from 'lucide-react';
+import { Phone, Mail, Fingerprint, Award, MapPin, Clock, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export function Footer() {
@@ -8,6 +8,60 @@ export function Footer() {
 
   return (
     <footer className="bg-[#0E121C] text-white/40 pt-20 pb-32 md:pb-20 px-6 border-t border-white/5">
+      {/* Verified Manufacturer Trust Banner */}
+      <div className="max-w-[1440px] mx-auto mb-16 border border-white/5 bg-white/[0.02] rounded-3xl p-6 sm:p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#C8961A]/10 border border-[#C8961A]/30 flex items-center justify-center text-[#C8961A] shrink-0">
+            <Award size={30} />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="text-[10px] font-black tracking-[2px] text-[#C8961A] uppercase">Government Audited</span>
+              <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full px-2.5 py-0.5 text-[8px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Verified Manufacturer
+              </span>
+            </div>
+            <h3 className="text-white font-display text-lg md:text-xl font-black tracking-tight mt-1.5">
+              Uhuru Market Textiles Certification
+            </h3>
+            <p className="text-xs text-white/50 leading-relaxed mt-1 max-w-2xl">
+              Naisiae Textiles is officially certified and registered as a premium garment and school uniform manufacturer at Uhuru Market along Jogoo Road, Nairobi. Over 15 years of technical tailoring legacy.
+            </p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 xl:gap-8 w-full xl:w-auto border-t xl:border-t-0 xl:border-l border-white/5 pt-6 xl:pt-0 xl:pl-8 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-[#C8102E] shrink-0">
+              <MapPin size={16} />
+            </div>
+            <div>
+              <div className="text-[8px] font-black text-white/30 uppercase tracking-wider">Production Facility</div>
+              <div className="text-white text-xs font-bold">Uhuru Market, Nairobi</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-[#E94C36] shrink-0">
+              <Clock size={16} />
+            </div>
+            <div>
+              <div className="text-[8px] font-black text-white/30 uppercase tracking-wider">Experience</div>
+              <div className="text-white text-xs font-bold">15+ Years Active Legacy</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
+              <ShieldCheck size={16} />
+            </div>
+            <div>
+              <div className="text-[8px] font-black text-white/30 uppercase tracking-wider">Quality Standard</div>
+              <div className="text-white text-xs font-bold">100% Quality Inspected</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16 px-4">
         {/* Column 1: Brand Info */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
@@ -54,7 +108,7 @@ export function Footer() {
            <ul className="space-y-4 text-sm font-bold">
             <li><Link to="/uniform-simulator" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Uniform Simulator</Link></li>
             <li><Link to="/categories" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Product Categories</Link></li>
-            <li><Link to="/fabric-gallery" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Fabric Gallery</Link></li>
+            <li><Link to="/textiles" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Fabric Gallery</Link></li>
             <li><Link to="/wholesale" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Wholesale Supply</Link></li>
             <li><Link to="/faq" className="hover:text-[#C8961A] transition-colors flex items-center justify-center md:justify-start gap-3">Help & FAQ</Link></li>
           </ul>
@@ -172,7 +226,7 @@ export function Footer() {
             <span className="bg-white/5 text-white/70 px-2 py-0.5 rounded text-[8px] font-mono border border-white/5 font-extrabold shadow-sm select-none">EFT/BANK</span>
           </div>
           <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2">
-            <Link to="/privacy" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Privacy</Link>
+            <Link to="/policy" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Privacy</Link>
             <Link to="/terms" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Terms</Link>
             <Link to="/shipping" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Shipping</Link>
             <Link to="/returns" className="hover:text-white transition-colors font-bold text-[10px] md:text-[10px] uppercase">Returns</Link>

@@ -59,6 +59,17 @@ export default function ProductsPage() {
   const [priceRange, setPriceRange] = useState<number>(10000);
   const [onlyWholesale, setOnlyWholesale] = useState(false);
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [isBgRemoverActive, setIsBgRemoverActive] = useState(() => {
+    return localStorage.getItem('auto_bg_remover') !== 'false';
+  });
+
+  useEffect(() => {
+    const handleToggle = () => {
+      setIsBgRemoverActive(localStorage.getItem('auto_bg_remover') !== 'false');
+    };
+    window.addEventListener('autoBgRemoverChanged', handleToggle);
+    return () => window.removeEventListener('autoBgRemoverChanged', handleToggle);
+  }, []);
 
   // Quick View / Options selector Drawer state
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
@@ -341,6 +352,34 @@ export default function ProductsPage() {
           {/* LEFT SIDEBAR: E-COMMERCE FILTERS PANEL */}
           <aside className="w-full lg:w-[280px] shrink-0 space-y-8 bg-white border border-slate-200/60 p-6 rounded-3xl shadow-sm self-start">
             
+            {/* Auto Background Remover Section */}
+            <div className="p-4 bg-gradient-to-br from-[#FDFAF4] to-slate-50 border border-[#C8961A]/10 rounded-2xl">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-black uppercase tracking-[2.5px] text-slate-800">Visual Style</span>
+                <span className="text-[7.5px] font-black text-[#C8961A] bg-[#C8961A]/10 border border-[#C8961A]/20 px-1.5 py-0.5 rounded uppercase">NEW AI Tool</span>
+              </div>
+              <p className="text-[9.5px] text-slate-500 font-medium mb-3 leading-relaxed">
+                Automatically isolates garments from their background for a clean, premium catalogue look.
+              </p>
+              <button
+                onClick={() => {
+                  const currentVal = localStorage.getItem('auto_bg_remover') !== 'false';
+                  const newVal = !currentVal;
+                  localStorage.setItem('auto_bg_remover', String(newVal));
+                  window.dispatchEvent(new Event('autoBgRemoverChanged'));
+                  setIsBgRemoverActive(newVal);
+                }}
+                className={`w-full py-2.5 px-3 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 border ${
+                  isBgRemoverActive 
+                    ? 'bg-[#C8961A] text-white border-transparent shadow-md hover:bg-[#B08011]' 
+                    : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full ${isBgRemoverActive ? 'bg-white animate-pulse' : 'bg-slate-300'}`}></span>
+                {isBgRemoverActive ? 'Bg Remover: Active' : 'Bg Remover: Disabled'}
+              </button>
+            </div>
+
             {/* Search Box inside filter area */}
             <div className="space-y-2">
               <h4 className="text-[10px] font-black uppercase tracking-[3px] text-slate-400">Search Catalog</h4>
@@ -685,37 +724,33 @@ export default function ProductsPage() {
                           </div>
 
                           {/* Interactive CTAs */}
-                          <div className="grid grid-cols-2 gap-2">
-                            {isWholesaleItem && (!p.price || p.price === 0) ? (
-                              <>
-                                <button 
-                                  onClick={() => {
-                                    setQuoteProduct(p);
-                                    setIsQuoteModalOpen(true);
-                                  }}
-                                  className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-3.5 px-3 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer shadow-sm col-span-2"
-                                >
-                                  <FileText size={12} /> Sourced Quote Request
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button 
-                                  onClick={() => handleOpenQuickView(p)}
-                                  className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-3.5 px-2 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
-                                  title="Add customizations"
-                                >
-                                  Customize 🛠️
-                                </button>
-                                <button 
-                                  onClick={() => handleBuyNow(p)}
-                                  className="bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3.5 px-2 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95 shadow-md"
-                                  title="Instant secure buy checkout"
-                                >
-                                  Buy Now ⚡
-                                </button>
-                              </>
-                            )}
+                          <div className="flex flex-col gap-2">
+                            <button 
+                              onClick={() => handleBuyNow(p)}
+                              className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3.5 px-3 rounded-xl font-black text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
+                              title="Instant secure buy checkout"
+                            >
+                              Buy Now ⚡
+                            </button>
+                            <div className="grid grid-cols-2 gap-2">
+                              <button 
+                                onClick={() => {
+                                  setQuoteProduct(p);
+                                  setIsQuoteModalOpen(true);
+                                }}
+                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-3 px-1.5 rounded-xl font-black text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
+                                title="Request custom bulk quote"
+                              >
+                                Enquire ✉️
+                              </button>
+                              <a 
+                                href="tel:+254792021795"
+                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-3 px-1.5 rounded-xl font-black text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
+                                title="Call wholesale direct desk"
+                              >
+                                Call Now 📞
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>

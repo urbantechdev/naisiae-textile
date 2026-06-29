@@ -30,6 +30,7 @@ import { useCart } from '../context/CartContext';
 import { SEED_URLS } from '../constants/seedData';
 import { appExperience } from '../utils/haptics';
 import { useLocalization, COUNTRIES } from '../context/LocalizationContext';
+import { LazyImage } from './LazyImage';
 
 const DEFAULT_MEGA_MENUS = [
   { 
@@ -83,6 +84,7 @@ export function Navbar({
   const location = useLocation();
   const { currentCountry, currentLanguage, changeCountry, changeLanguage, t, formatPrice } = useLocalization();
   const [isLocDropdownOpen, setIsLocDropdownOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
   const getLocalizedLink = (path: string) => {
     if (currentCountry.code === 'KE') return path;
@@ -391,11 +393,41 @@ export function Navbar({
     ];
   }, [combinedProjects, currentLanguage]);
 
+  const expansiveMegaMenuData = React.useMemo(() => {
+    const schoolProducts: any[] = [];
+    const casualProducts: any[] = [];
+    const serviceProducts: any[] = [];
+
+    products.forEach(p => {
+      const nameLower = (p.name || '').toLowerCase();
+      const catLower = (p.category || '').toLowerCase();
+      const tagsLower = (p.tags || []).map((t: string) => t.toLowerCase());
+
+      const isSchool = catLower.includes('school') || catLower.includes('kmtc') || nameLower.includes('school') || nameLower.includes('blazer') || nameLower.includes('trousers') || nameLower.includes('skirt') || tagsLower.includes('school') || tagsLower.includes('education');
+      
+      const isService = catLower.includes('workwear') || catLower.includes('chef') || catLower.includes('service') || nameLower.includes('scrub') || nameLower.includes('lab coat') || nameLower.includes('medical') || nameLower.includes('apron') || tagsLower.includes('service') || tagsLower.includes('workwear') || tagsLower.includes('corporate') || catLower.includes('corporate');
+
+      if (isSchool) {
+        schoolProducts.push(p);
+      } else if (isService) {
+        serviceProducts.push(p);
+      } else {
+        casualProducts.push(p);
+      }
+    });
+
+    return {
+      school: schoolProducts.slice(0, 6),
+      casual: casualProducts.slice(0, 6),
+      service: serviceProducts.slice(0, 6)
+    };
+  }, [products]);
+
   const navItems = [
-    { name: t('Home'), id: 'home', link: '/' },
-    { name: t('Products'), id: 'products', link: '/products' },
+    { name: t('Home'), id: 'home', link: '/home' },
+    { name: t('Products'), id: 'products', link: '/product' },
     { name: t('Services'), id: 'services', link: '/services' },
-    { name: t('Textiles'), id: 'fabric-gallery', link: '/fabric-gallery' }
+    { name: t('Textiles'), id: 'fabric-gallery', link: '/textiles' }
   ];
 
   return (
@@ -607,16 +639,326 @@ export function Navbar({
             </button>
 
             <button 
-              onClick={() => setIsMenuOpen(true)} 
-              className="xl:hidden p-3 md:p-4 text-white hover:bg-white/10 rounded-xl md:rounded-2xl transition-colors"
+              onClick={() => {
+                setIsMegaMenuOpen(true);
+                appExperience.triggerFeedback('tap');
+              }} 
+              aria-label="Open Expansive Mega Menu"
+              className="p-3 md:p-4 bg-white text-slate-800 hover:bg-slate-50 rounded-xl md:rounded-2xl transition-all border border-slate-200 hover:border-[#C8961A]/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
             >
-              <Menu size={24} className="md:w-7 md:h-7" />
+              <Menu size={24} className="md:w-7 md:h-7 text-[#0E121C]" />
             </button>
           </div>
         </div>
 
 
       </header>
+
+      {/* Expansive Mega Menu Drawer */}
+      <AnimatePresence>
+        {isMegaMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md"
+            onClick={() => setIsMegaMenuOpen(false)}
+          >
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+              className="absolute right-0 top-0 bottom-0 w-full lg:w-[1050px] bg-white border-l border-slate-200 shadow-[0_0_80px_rgba(0,0,0,0.15)] z-[210] flex flex-col overflow-hidden font-sans"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Top Accent Line */}
+              <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] z-20"></div>
+
+              {/* Header */}
+              <div className="p-6 md:p-8 border-b border-slate-100 flex items-center justify-between mt-1 relative z-10">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#C8961A] animate-pulse"></span>
+                    <h3 className="text-xs font-black uppercase tracking-[3px] text-[#C8961A]">Expansive Sourcing Catalog</h3>
+                  </div>
+                  <h2 className="font-display text-xl md:text-2xl font-black text-slate-900 mt-1 uppercase tracking-tight">
+                    Naisiae Textiles Catalog
+                  </h2>
+                </div>
+
+                {/* Navigation Links inside Mega Menu for convenience */}
+                <div className="hidden md:flex items-center gap-6 px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
+                  {navItems.map((item) => (
+                    <Link
+                      key={`mega-nav-${item.id}`}
+                      to={getLocalizedLink(item.link)}
+                      onClick={() => setIsMegaMenuOpen(false)}
+                      className="text-[9px] font-black uppercase tracking-[2px] text-slate-600 hover:text-[#C8961A] transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setIsMegaMenuOpen(false)}
+                  aria-label="Close Mega Menu"
+                  className="p-3 text-slate-500 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 rounded-2xl border border-slate-200/50 transition-all active:scale-95 cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Main Body - Split into Categories Grid */}
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 scrollbar-thin">
+                
+                {/* Search Bar within Mega Menu */}
+                <div className="max-w-2xl mx-auto relative group">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#C8961A] transition-colors" size={16} />
+                  <input
+                    type="text"
+                    placeholder="Search catalog categories and real-time products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#C8961A]/30 focus:border-[#C8961A]/50 focus:bg-white transition-all font-semibold"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Mega Categories Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  
+                  {/* Category 1: School Wear */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🏫</span>
+                        <h4 className="text-[11px] font-black uppercase tracking-[2.5px] text-slate-900">School Wear</h4>
+                      </div>
+                      <span className="text-[7.5px] font-black text-[#C8961A] bg-[#C8961A]/10 border border-[#C8961A]/20 px-2 py-0.5 rounded uppercase tracking-wider">Premium Grade</span>
+                    </div>
+                    <p className="text-[9.5px] text-slate-600 font-semibold leading-relaxed">
+                      Custom institutional sweaters, blazers, trousers, skirts & sportswear.
+                    </p>
+                    
+                    <div className="space-y-3">
+                      {expansiveMegaMenuData.school.length > 0 ? (
+                        (() => {
+                          const filtered = expansiveMegaMenuData.school.filter(p => !searchQuery || p.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+                          if (filtered.length === 0) return <div className="text-center py-4 text-[9px] text-slate-300 uppercase tracking-widest font-bold">No matching school items</div>;
+                          return filtered.map(p => (
+                            <div
+                              key={`mega-school-${p.id}`}
+                              onClick={() => {
+                                if (setSelectedQuickViewProduct) {
+                                  setSelectedQuickViewProduct(p);
+                                } else {
+                                  navigate(`/products?category=${encodeURIComponent(p.category)}`);
+                                }
+                                setIsMegaMenuOpen(false);
+                              }}
+                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
+                            >
+                              <div className="w-20 h-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100 relative shadow-sm">
+                                {p.imageUrl ? (
+                                  <LazyImage src={p.imageUrl} alt={p.name} className="w-full h-full object-cover object-top p-1 group-hover:scale-110 transition-transform duration-500" wrapperClassName="w-full h-full" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                                    <Package size={20} className="text-slate-300" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#C8961A] transition-colors">{p.name}</h5>
+                                <p className="text-[9px] text-[#C8961A] font-black mt-0.5">
+                                  {p.price ? formatPrice(p.price) : 'Sourcing Price'}
+                                </p>
+                              </div>
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#C8961A] group-hover:translate-x-0.5 transition-all" />
+                            </div>
+                          ));
+                        })()
+                      ) : (
+                        <div className="text-center py-4 text-[9px] text-slate-300 uppercase tracking-widest font-bold">No school items</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Category 2: Casual Wear */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">👕</span>
+                        <h4 className="text-[11px] font-black uppercase tracking-[2.5px] text-slate-900">Casual & Sports</h4>
+                      </div>
+                      <span className="text-[7.5px] font-black text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded uppercase tracking-wider">Athleisure</span>
+                    </div>
+                    <p className="text-[9.5px] text-slate-600 font-semibold leading-relaxed">
+                      High-end cotton blends, t-shirts, caps, hoodies & sports uniform kits.
+                    </p>
+
+                    <div className="space-y-3">
+                      {expansiveMegaMenuData.casual.length > 0 ? (
+                        (() => {
+                          const filtered = expansiveMegaMenuData.casual.filter(p => !searchQuery || p.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+                          if (filtered.length === 0) return <div className="text-center py-4 text-[9px] text-slate-300 uppercase tracking-widest font-bold">No matching casual items</div>;
+                          return filtered.map(p => (
+                            <div
+                              key={`mega-casual-${p.id}`}
+                              onClick={() => {
+                                if (setSelectedQuickViewProduct) {
+                                  setSelectedQuickViewProduct(p);
+                                } else {
+                                  navigate(`/products?category=${encodeURIComponent(p.category)}`);
+                                }
+                                setIsMegaMenuOpen(false);
+                              }}
+                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
+                            >
+                              <div className="w-20 h-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100 relative shadow-sm">
+                                {p.imageUrl ? (
+                                  <LazyImage src={p.imageUrl} alt={p.name} className="w-full h-full object-cover object-top p-1 group-hover:scale-110 transition-transform duration-500" wrapperClassName="w-full h-full" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                                    <Package size={20} className="text-slate-300" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#C8961A] transition-colors">{p.name}</h5>
+                                <p className="text-[9px] text-[#C8961A] font-black mt-0.5">
+                                  {p.price ? formatPrice(p.price) : 'Sourcing Price'}
+                                </p>
+                              </div>
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#C8961A] group-hover:translate-x-0.5 transition-all" />
+                            </div>
+                          ));
+                        })()
+                      ) : (
+                        <div className="text-center py-4 text-[9px] text-slate-300 uppercase tracking-widest font-bold">No casual items</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Category 3: Service Wear */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🥼</span>
+                        <h4 className="text-[11px] font-black uppercase tracking-[2.5px] text-slate-900">Service Wear</h4>
+                      </div>
+                      <span className="text-[7.5px] font-black text-green-600 bg-green-50 border border-green-100 px-2 py-0.5 rounded uppercase tracking-wider">Industrial</span>
+                    </div>
+                    <p className="text-[9.5px] text-slate-600 font-semibold leading-relaxed">
+                      Medical scrubs, lab coats, chef jackets, corporate wear & protective suits.
+                    </p>
+
+                    <div className="space-y-3">
+                      {expansiveMegaMenuData.service.length > 0 ? (
+                        (() => {
+                          const filtered = expansiveMegaMenuData.service.filter(p => !searchQuery || p.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+                          if (filtered.length === 0) return <div className="text-center py-4 text-[9px] text-slate-300 uppercase tracking-widest font-bold">No matching service items</div>;
+                          return filtered.map(p => (
+                            <div
+                              key={`mega-service-${p.id}`}
+                              onClick={() => {
+                                if (setSelectedQuickViewProduct) {
+                                  setSelectedQuickViewProduct(p);
+                                } else {
+                                  navigate(`/products?category=${encodeURIComponent(p.category)}`);
+                                }
+                                setIsMegaMenuOpen(false);
+                              }}
+                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
+                            >
+                              <div className="w-20 h-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100 relative shadow-sm">
+                                {p.imageUrl ? (
+                                  <LazyImage src={p.imageUrl} alt={p.name} className="w-full h-full object-cover object-top p-1 group-hover:scale-110 transition-transform duration-500" wrapperClassName="w-full h-full" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                                    <Package size={20} className="text-slate-300" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#C8961A] transition-colors">{p.name}</h5>
+                                <p className="text-[9px] text-[#C8961A] font-black mt-0.5">
+                                  {p.price ? formatPrice(p.price) : 'Sourcing Price'}
+                                </p>
+                              </div>
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#C8961A] group-hover:translate-x-0.5 transition-all" />
+                            </div>
+                          ));
+                        })()
+                      ) : (
+                        <div className="text-center py-4 text-[9px] text-slate-300 uppercase tracking-widest font-bold">No service items</div>
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Mobile Navigation Links inside Mega Menu */}
+                <div className="md:hidden space-y-2 pt-6 border-t border-slate-100">
+                  <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Main Sections</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { name: t('Home'), link: '/home' },
+                      { name: t('Products'), link: '/product' },
+                      { name: t('Services'), link: '/services' },
+                      { name: t('Textiles'), link: '/textiles' }
+                    ].map((item, idx) => (
+                      <Link
+                        key={`mega-mobile-nav-${idx}`}
+                        to={getLocalizedLink(item.link)}
+                        onClick={() => setIsMegaMenuOpen(false)}
+                        className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-center text-xs font-bold text-slate-800 border border-slate-100 transition-all"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Footer Quote CTA */}
+              <div className="mt-auto p-6 md:p-8 bg-slate-50 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  onClick={() => {
+                    setIsMegaMenuOpen(false);
+                    if (setIsQuoteModalOpen) setIsQuoteModalOpen(true);
+                  }}
+                  className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#C8961A] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
+                >
+                  Request Sourcing Quote
+                </button>
+                <a
+                  href={`https://wa.me/${(chatSettings?.whatsapp || '254792021795').replace(/\+/g, '')}?text=${encodeURIComponent(chatSettings?.message || 'Hello! I need assistance.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    setIsMegaMenuOpen(false);
+                    appExperience.triggerFeedback('tap');
+                  }}
+                  className="w-full py-4 text-center text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                >
+                  <MessageSquare size={14} className="text-[#C8961A]" />
+                  Chat Sourcing Desk
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Menu & Search Portal */}
       <AnimatePresence>
@@ -733,10 +1075,10 @@ export function Navbar({
               {/* Navigation Links */}
               <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
                 {[
-                  { name: t('Home'), link: '/', icon: <ShoppingBag size={18} /> },
-                  { name: t('Products'), link: '/products', icon: <Package size={18} /> },
+                  { name: t('Home'), link: '/home', icon: <ShoppingBag size={18} /> },
+                  { name: t('Products'), link: '/product', icon: <Package size={18} /> },
                   { name: t('Services'), link: '/services', icon: <Zap size={18} /> },
-                  { name: t('Textiles'), link: '/fabric-gallery', icon: <Scissors size={18} /> },
+                  { name: t('Textiles'), link: '/textiles', icon: <Scissors size={18} /> },
                   { name: t('Enquire'), onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
                 ].map((item, idx) => (
                   <button 
@@ -944,13 +1286,13 @@ export function Navbar({
         </Link>
 
         <Link 
-          to="/products" 
+          to="/product" 
           onClick={() => appExperience.triggerFeedback('tap')} 
-          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/products') ? 'text-[#C8961A]' : 'text-white/45'}`}
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/product') ? 'text-[#C8961A]' : 'text-white/45'}`}
         >
-          <Package size={20} className={location.pathname.startsWith('/products') ? 'scale-110 drop-shadow-[0_0_6px_rgba(200,150,26,0.5)]' : 'opacity-80'} />
-          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/products') ? 'text-[#C8961A]' : 'text-white/50'}`}>Product</span>
-          {location.pathname.startsWith('/products') && (
+          <Package size={20} className={location.pathname.startsWith('/product') ? 'scale-110 drop-shadow-[0_0_6px_rgba(200,150,26,0.5)]' : 'opacity-80'} />
+          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/product') ? 'text-[#C8961A]' : 'text-white/50'}`}>Product</span>
+          {location.pathname.startsWith('/product') && (
             <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8961A] shadow-[0_0_8px_#C8961A]" />
           )}
         </Link>
