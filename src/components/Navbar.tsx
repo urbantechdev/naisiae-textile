@@ -458,11 +458,15 @@ export function Navbar({
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-display text-xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-none bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
-                  {siteSettings?.siteName || 'Naisiae'}
+                  {siteSettings?.siteName === 'NAISIAE TEXTILES' || siteSettings?.siteName === 'Naisiae' || !siteSettings?.siteName
+                    ? 'Uhuru Market Uniforms'
+                    : siteSettings.siteName}
                 </span>
               </div>
               <span className="text-[8px] md:text-[9.5px] tracking-[2px] text-[#C8961A] uppercase font-black mt-1.5 group-hover:translate-x-1 transition-transform">
-                {siteSettings?.siteTagline || 'Uhuru Market Uniforms'}
+                {siteSettings?.siteTagline === 'Uhuru Market Uniforms' || !siteSettings?.siteTagline
+                  ? 'Naisiae Textiles'
+                  : siteSettings.siteTagline}
               </span>
             </div>
           </Link>
@@ -635,8 +639,16 @@ export function Navbar({
               {/* Header */}
               <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div className="flex flex-col">
-                  <div className="font-display text-xl tracking-[4px] text-white">NAISIAE</div>
-                  <div className="text-[7px] tracking-[3px] text-[#C8961A] font-black uppercase">Textiles Limited</div>
+                  <div className="font-display text-base tracking-[2px] text-white uppercase font-black">
+                    {siteSettings?.siteName === 'NAISIAE TEXTILES' || siteSettings?.siteName === 'Naisiae' || !siteSettings?.siteName
+                      ? 'Uhuru Market Uniforms'
+                      : siteSettings.siteName}
+                  </div>
+                  <div className="text-[8px] tracking-[3px] text-[#C8961A] font-black uppercase mt-1">
+                    {siteSettings?.siteTagline === 'Uhuru Market Uniforms' || !siteSettings?.siteTagline
+                      ? 'Naisiae Textiles'
+                      : siteSettings.siteTagline}
+                  </div>
                 </div>
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
