@@ -444,8 +444,12 @@ export default function HomePage() {
 
   useEffect(() => {
     if (siteSettings) {
-      const siteName = siteSettings.siteName || 'Uhuru Market Uniforms';
-      const tagline = siteSettings.siteTagline || 'Naisiae Textiles';
+      const siteName = siteSettings.siteName === 'NAISIAE TEXTILES' || siteSettings.siteName === 'Naisiae' || siteSettings.siteName === 'Naisiae Textiles Limited' || !siteSettings.siteName
+        ? 'Uhuru Market Uniforms'
+        : siteSettings.siteName;
+      const tagline = siteSettings.siteTagline === 'Uhuru Market Uniforms' || siteSettings.siteTagline === 'School Uniforms & Branding' || !siteSettings.siteTagline
+        ? 'Naisiae Textiles'
+        : siteSettings.siteTagline;
       const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Premium school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&h=630&q=80';
 
@@ -536,7 +540,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
       {/* Screen Reader and Crawler SEO Identifier */}
-      <h1 className="sr-only">Naisiae Textiles is the Premier Manufacturer of Uhuru Market Uniforms, School Uniforms & Corporate Branding Apparel in Nairobi, Kenya</h1>
+      <h1 className="sr-only">Uhuru Market Uniforms | Naisiae Textiles</h1>
       {/* Top Promotion Bar & Navbar */}
       <Navbar 
         wishlistCount={wishlist.length}

@@ -315,11 +315,11 @@ export function Hero({
                           transition={{ duration: 0.8 }}
                           className="block lowercase font-[Comfortaa] lg:mb-2"
                         >
-                          {heroImages[currentSlide]?.title ? heroImages[currentSlide].title.toLowerCase() : (currentSlide === 0 ? "uhuru market" : "crafting")}
+                          {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "uhuru market" : heroImages[currentSlide].title.toLowerCase()}
                         </motion.span>
                       </span>
                       <span className="bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent italic inline-block relative pr-4">
-                        {currentSlide === 0 ? "UNIFORMS" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
+                        {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "UNIFORMS" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
                         <motion.div 
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
@@ -328,14 +328,14 @@ export function Hero({
                         />
                       </span>
                     </motion.div>
-
+ 
                   <motion.p 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
                     className="text-white/70 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                   >
-                    {heroImages[currentSlide]?.subtitle || (currentSlide === 0 ? "Naisiae Textiles: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
+                    {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Naisiae Textiles: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
                 </div>
               </motion.div>
