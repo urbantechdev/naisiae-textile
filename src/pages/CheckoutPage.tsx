@@ -47,7 +47,7 @@ export default function CheckoutPage() {
     setIsWishlistOpen,
     setIsQuoteModalOpen
   } = useCart();
-  const { formatPrice } = useLocalization();
+  const { currentCountry, formatPrice } = useLocalization();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -69,6 +69,9 @@ export default function CheckoutPage() {
     phone: '',
     institution: '',
     details: '',
+    shippingCountry: currentCountry?.code || 'KE',
+    shippingCity: '',
+    shippingAddress: '',
   });
 
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
@@ -196,13 +199,18 @@ export default function CheckoutPage() {
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
     if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+    if (!formData.shippingCountry) newErrors.shippingCountry = 'Shipping country is required';
+    if (!formData.shippingCity.trim()) newErrors.shippingCity = 'City is required';
+    if (!formData.shippingAddress.trim()) newErrors.shippingAddress = 'Delivery address is required';
     
     if (checkoutMethod === 'mpesa') {
       const code = mpesaRefCode.trim().toUpperCase();
       if (!code) {
-        newErrors.mpesaRefCode = 'M-Pesa transaction code is required';
-      } else if (!/^[A-Z0-9]{10}$/.test(code)) {
+        newErrors.mpesaRefCode = 'Payment transaction reference code is required';
+      } else if (formData.shippingCountry === 'KE' && !/^[A-Z0-9]{10}$/.test(code)) {
         newErrors.mpesaRefCode = 'M-Pesa transaction code must be exactly 10 alphanumeric characters';
+      } else if (code.length < 6) {
+        newErrors.mpesaRefCode = 'Transaction reference code must be at least 6 characters';
       }
     }
     
@@ -217,12 +225,17 @@ export default function CheckoutPage() {
       if (!formData.email.trim()) newErrors.email = 'Email is required';
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
       if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+      if (!formData.shippingCountry) newErrors.shippingCountry = 'Shipping country is required';
+      if (!formData.shippingCity.trim()) newErrors.shippingCity = 'City is required';
+      if (!formData.shippingAddress.trim()) newErrors.shippingAddress = 'Delivery address is required';
     } else if (step === 1 && checkoutMethod === 'mpesa') {
       const code = mpesaRefCode.trim().toUpperCase();
       if (!code) {
-        newErrors.mpesaRefCode = 'M-Pesa transaction code is required';
-      } else if (!/^[A-Z0-9]{10}$/.test(code)) {
+        newErrors.mpesaRefCode = 'Payment transaction reference code is required';
+      } else if (formData.shippingCountry === 'KE' && !/^[A-Z0-9]{10}$/.test(code)) {
         newErrors.mpesaRefCode = 'M-Pesa transaction code must be exactly 10 alphanumeric characters';
+      } else if (code.length < 6) {
+        newErrors.mpesaRefCode = 'Transaction reference code must be at least 6 characters';
       }
     }
     setErrors(newErrors);
@@ -244,6 +257,9 @@ export default function CheckoutPage() {
       const quoteDetails = [
         formData.institution ? `[Institution: ${formData.institution}]` : '',
         formData.details ? `[Details: ${formData.details}]` : '',
+        `[Delivery Country: ${formData.shippingCountry}]`,
+        `[Delivery City: ${formData.shippingCity}]`,
+        `[Delivery Address: ${formData.shippingAddress}]`,
         appliedPromo?.code ? `[Promo Code: ${appliedPromo.code}]` : '',
         `[Source: Checkout Page]`,
         mpesaSummaryText
@@ -255,6 +271,9 @@ export default function CheckoutPage() {
         phone: formData.phone,
         service: 'Bulk Apparel Sourcing',
         details: quoteDetails,
+        shippingCountry: formData.shippingCountry,
+        shippingCity: formData.shippingCity,
+        shippingAddress: formData.shippingAddress,
         paymentMethod: checkoutMethod, // 'rfq' | 'mpesa'
         mpesaPaymentOption: checkoutMethod === 'mpesa' ? mpesaPaymentOption : null,
         mpesaAmountPaid: checkoutMethod === 'mpesa' ? (mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal) : 0,
@@ -703,6 +722,79 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* INTERNATIONAL SHIPPING & DELIVERY */}
+                <div className="space-y-4 pt-4 border-t border-slate-150">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xs font-black uppercase tracking-[2px] text-slate-400 ml-1">
+                      International Shipping & Logistics
+                    </h3>
+                    <span className="text-[9px] font-black uppercase tracking-[1.5px] bg-blue-50 text-blue-600 border border-blue-200 px-2.5 py-0.5 rounded-lg flex items-center gap-1">
+                      Export License Active
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-3 items-start">
+                    <span className="text-xl">🌍</span>
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-bold text-slate-700">East African Cross-Border Sourcing</p>
+                      <p className="text-[10px] leading-relaxed text-slate-500">
+                        Naisiae Textiles exports high-grade institutional apparel and bulk uniforms directly to Kenya, Uganda, Tanzania, DRC, and Ethiopia. Delivery rates and clearing processes map directly to regional trade parameters.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
+                        Delivery Country
+                      </label>
+                      <select
+                        required
+                        value={formData.shippingCountry}
+                        onChange={e => setFormData({...formData, shippingCountry: e.target.value})}
+                        className={`w-full bg-slate-50 border ${errors.shippingCountry ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                      >
+                        <option value="KE">🇰🇪 Kenya (KES / Ksh)</option>
+                        <option value="UG">🇺🇬 Uganda (UGX / USh)</option>
+                        <option value="TZ">🇹🇿 Tanzania (TZS / TSh)</option>
+                        <option value="CD">🇨🇩 DR Congo (CDF / FC)</option>
+                        <option value="ET">🇪🇹 Ethiopia (ETB / Br)</option>
+                      </select>
+                      {errors.shippingCountry && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.shippingCountry}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
+                        Delivery City / Town
+                      </label>
+                      <input 
+                        required
+                        type="text" 
+                        value={formData.shippingCity}
+                        onChange={e => setFormData({...formData, shippingCity: e.target.value})}
+                        className={`w-full bg-slate-50 border ${errors.shippingCity ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                        placeholder="e.g. Kampala, Dar es Salaam, Addis Ababa"
+                      />
+                      {errors.shippingCity && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.shippingCity}</p>}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
+                      Full Physical Delivery Address
+                    </label>
+                    <input 
+                      required
+                      type="text" 
+                      value={formData.shippingAddress}
+                      onChange={e => setFormData({...formData, shippingAddress: e.target.value})}
+                      className={`w-full bg-slate-50 border ${errors.shippingAddress ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                      placeholder="e.g. Nakasero Market Area, Plot 12, Kampala, Uganda"
+                    />
+                    {errors.shippingAddress && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.shippingAddress}</p>}
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
                     <MessageSquare size={12} className="text-[#C8961A]" /> Customization & Production Details
@@ -872,34 +964,72 @@ export default function CheckoutPage() {
                       </div>
                       
                       <div className="p-4 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-sm hover:border-slate-300 transition-all">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-1">
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Safaricom Recipient Name</p>
-                            <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-xl">
-                              <span className="text-xs font-black text-slate-800">Michael Kirigo</span>
-                              <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[6.5px] font-black uppercase tracking-wider rounded border border-emerald-200 ml-auto">Verified Clerk</span>
+                        {formData.shippingCountry === 'KE' ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Safaricom Recipient Name</p>
+                              <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-xl">
+                                <span className="text-xs font-black text-slate-800">Michael Kirigo</span>
+                                <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[6.5px] font-black uppercase tracking-wider rounded border border-emerald-200 ml-auto">Verified Clerk</span>
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Direct Phone Number</p>
+                              <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl p-1 px-2 pr-1">
+                                <span className="text-xs font-black text-slate-800 tracking-wider font-mono">0792021795</span>
+                                <button
+                                  type="button"
+                                  onClick={handleCopyNumber}
+                                  className="px-2.5 py-1.5 bg-[#0A1628] hover:bg-[#C8102E] active:scale-95 text-[8.5px] font-black text-white rounded-lg transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer ml-auto"
+                                >
+                                  {copiedNumber ? 'Copied' : 'Copy Num'}
+                                </button>
+                              </div>
                             </div>
                           </div>
-                          <div className="space-y-1">
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Direct Phone Number</p>
-                            <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl p-1 px-2 pr-1">
-                              <span className="text-xs font-black text-slate-800 tracking-wider font-mono">0792021795</span>
-                              <button
-                                type="button"
-                                onClick={handleCopyNumber}
-                                className="px-2.5 py-1.5 bg-[#0A1628] hover:bg-[#C8102E] active:scale-95 text-[8.5px] font-black text-white rounded-lg transition-all uppercase tracking-wider flex items-center gap-1 cursor-pointer ml-auto"
-                              >
-                                {copiedNumber ? 'Copied' : 'Copy Num'}
-                              </button>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Cross-Border Recipient Account</p>
+                              <div className="flex flex-col gap-1 p-2 bg-slate-50 border border-slate-100 rounded-xl text-left">
+                                <span className="text-xs font-black text-slate-800">
+                                  {formData.shippingCountry === 'UG' && 'Naisiae East Africa (MTN/Airtel)'}
+                                  {formData.shippingCountry === 'TZ' && 'Naisiae Textiles TZ (M-Pesa)'}
+                                  {formData.shippingCountry === 'CD' && 'Naisiae Textiles DRC (Orange)'}
+                                  {formData.shippingCountry === 'ET' && 'Naisiae Textiles Ethiopia (Telebirr)'}
+                                </span>
+                                <span className="text-[9px] text-slate-500 font-bold">
+                                  {formData.shippingCountry === 'UG' && 'Merchant Code: 803212'}
+                                  {formData.shippingCountry === 'TZ' && 'Merchant Code: 921200'}
+                                  {formData.shippingCountry === 'CD' && 'Merchant Account: CD-8319'}
+                                  {formData.shippingCountry === 'ET' && 'Merchant Account: 100029312019'}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Export Support Desk</p>
+                              <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl p-2">
+                                <span className="text-xs font-black text-slate-800 tracking-wider font-mono">
+                                  {formData.shippingCountry === 'UG' && '+256 702 987 654'}
+                                  {formData.shippingCountry === 'TZ' && '+255 742 123 456'}
+                                  {formData.shippingCountry === 'CD' && '+243 812 345 678'}
+                                  {formData.shippingCountry === 'ET' && '+251 911 234 567'}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                         
                         {/* Copy Amount Box */}
                         <div className="pt-2.5 border-t border-slate-150 flex items-center justify-between flex-wrap gap-2">
                           <div>
                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Accurate Sourcing Remittance</p>
-                            <p className="text-sm font-black text-green-600">{formatPrice(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}</p>
+                            <p className="text-sm font-black text-green-600">
+                              {formatPrice(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}
+                              <span className="text-[9px] text-slate-400 font-bold ml-1.5">
+                                (Equivalent to Ksh {(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/-)
+                              </span>
+                            </p>
                           </div>
                           <button
                             type="button"
@@ -911,10 +1041,17 @@ export default function CheckoutPage() {
                         </div>
 
                         {/* Attention callout */}
-                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[10px] text-amber-800 font-semibold leading-normal flex gap-2">
-                          <span className="inline-block shrink-0">⚠️</span>
-                          <p>Confirm the Safaricom statement highlights <strong>MICHAEL KIRIGO</strong> before completing your PIN entry to bypass authorization errors.</p>
-                        </div>
+                        {formData.shippingCountry === 'KE' ? (
+                          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[10px] text-amber-800 font-semibold leading-normal flex gap-2">
+                            <span className="inline-block shrink-0">⚠️</span>
+                            <p>Confirm the Safaricom statement highlights <strong>MICHAEL KIRIGO</strong> before completing your PIN entry to bypass authorization errors.</p>
+                          </div>
+                        ) : (
+                          <div className="p-3 bg-blue-50 border border-blue-200 text-[10px] text-blue-800 rounded-xl font-semibold leading-normal flex gap-2">
+                            <span className="inline-block shrink-0">ℹ️</span>
+                            <p>International shipments undergo strict compliance clearing. Our trade desk will verify your regional mobile money remittance reference within 20 minutes of submission.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
 

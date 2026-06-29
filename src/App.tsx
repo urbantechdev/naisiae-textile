@@ -8,6 +8,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { auth, db } from './services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { motion } from 'motion/react';
 
 // Direct static import of HomePage for instant initial paint
 import HomePage from './pages/HomePage';
@@ -355,70 +356,91 @@ export default function App() {
   );
 }
 
+function PageTransition({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  return (
+    <motion.div
+      key={location.pathname}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function AppContent({ isAdmin, loading }: any) {
   const { isCartOpen, setIsCartOpen, isWishlistOpen, setIsWishlistOpen } = useCart();
 
   return (
     <InactivityHandler>
       <Suspense fallback={null}>
-        <Routes>
-          {/* Base routes without prefix (defaults to Kenya or previous user selection) */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/product/:productId" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/wholesale" element={<WholesalePage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/shipping" element={<ShippingPage />} />
-          <Route path="/returns" element={<ReturnsPage />} />
-          
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/careers" element={<CareersPage />} />
-          <Route path="/fabric-gallery" element={<FabricGalleryPage />} />
-          <Route path="/uniform-simulator" element={<UniformSimulatorPage />} />
-          
-          {/* Country-prefixed routes for Kenya, Tanzania, DRC, Uganda, and Ethiopia */}
-          {['ke', 'kenya', 'tz', 'tanzania', 'cd', 'drc', 'congo', 'ug', 'uganda', 'et', 'ethiopia'].map((prefix) => (
-            <Route key={prefix} path={`/${prefix}`}>
-              <Route index element={<HomePage />} />
-              <Route path="product/:productId" element={<HomePage />} />
-              <Route path="about" element={<AboutPage />} />
-              <Route path="wholesale" element={<WholesalePage />} />
-              <Route path="contact" element={<ContactPage />} />
-              <Route path="privacy" element={<PrivacyPage />} />
-              <Route path="terms" element={<TermsPage />} />
-              <Route path="shipping" element={<ShippingPage />} />
-              <Route path="returns" element={<ReturnsPage />} />
-              
-              <Route path="services" element={<ServicesPage />} />
-              <Route path="products" element={<ProductsPage />} />
-              <Route path="portfolio" element={<PortfolioPage />} />
-              <Route path="categories" element={<CategoriesPage />} />
-              <Route path="checkout" element={<CheckoutPage />} />
-              
-              <Route path="blog" element={<BlogPage />} />
-              <Route path="faq" element={<FAQPage />} />
-              <Route path="careers" element={<CareersPage />} />
-              <Route path="fabric-gallery" element={<FabricGalleryPage />} />
-              <Route path="uniform-simulator" element={<UniformSimulatorPage />} />
-            </Route>
-          ))}
-          
-          <Route path="/login" element={<LoginPage />} />
-          <Route 
-            path="/admin/*" 
-            element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />} 
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            {/* Base routes without prefix (defaults to Kenya or previous user selection) */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/product/:productId" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/wholesale" element={<WholesalePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
+            
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/careers" element={<CareersPage />} />
+            <Route path="/fabric-gallery" element={<FabricGalleryPage />} />
+            <Route path="/uniform-simulator" element={<UniformSimulatorPage />} />
+            
+            {/* Country-prefixed routes for Kenya, Tanzania, DRC, Uganda, and Ethiopia */}
+            {['ke', 'kenya', 'tz', 'tanzania', 'cd', 'drc', 'congo', 'ug', 'uganda', 'et', 'ethiopia'].map((prefix) => (
+              <Route key={prefix} path={`/${prefix}`}>
+                <Route index element={<HomePage />} />
+                <Route path="product/:productId" element={<HomePage />} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="wholesale" element={<WholesalePage />} />
+                <Route path="contact" element={<ContactPage />} />
+                <Route path="privacy" element={<PrivacyPage />} />
+                <Route path="terms" element={<TermsPage />} />
+                <Route path="shipping" element={<ShippingPage />} />
+                <Route path="returns" element={<ReturnsPage />} />
+                
+                <Route path="services" element={<ServicesPage />} />
+                <Route path="products" element={<ProductsPage />} />
+                <Route path="portfolio" element={<PortfolioPage />} />
+                <Route path="categories" element={<CategoriesPage />} />
+                <Route path="checkout" element={<CheckoutPage />} />
+                
+                <Route path="blog" element={<BlogPage />} />
+                <Route path="faq" element={<FAQPage />} />
+                <Route path="careers" element={<CareersPage />} />
+                <Route path="fabric-gallery" element={<FabricGalleryPage />} />
+                <Route path="uniform-simulator" element={<UniformSimulatorPage />} />
+              </Route>
+            ))}
+            
+            <Route path="/login" element={<LoginPage />} />
+            <Route 
+              path="/admin/*" 
+              element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" replace />} 
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </PageTransition>
         <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
         <QuoteModal />

@@ -137,6 +137,11 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /staging_products/{id} {
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+
     match /promotions/{id} {
       allow get: if true;
       allow list: if resource.data.active == true || isAdmin();

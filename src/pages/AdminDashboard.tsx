@@ -71,6 +71,7 @@ import {
   limit
 } from 'firebase/firestore';
 import { auth, db, storage, handleFirestoreError, OperationType, isBenignFirestoreError } from '../services/firebase';
+import { syncProductToStaging } from '../services/syncService';
 import { signOut } from 'firebase/auth';
 import { 
   ref, 
@@ -1134,13 +1135,15 @@ export default function AdminDashboard() {
 
     try {
       for (const [idx, item] of samples.entries()) {
-        await addDoc(collection(db, 'products'), {
+        const docRef = await addDoc(collection(db, 'products'), {
           ...item,
           imageUrls: [],
           sortOrder: idx + 1,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
+        // Hook into product lifecycle: onProductCreate
+        await syncProductToStaging('create', docRef.id, { ...item, id: docRef.id });
       }
       setToast({ message: "Sample data seeded successfully!", type: 'success' });
     } catch (err) {
@@ -1169,15 +1172,19 @@ export default function AdminDashboard() {
               ...productData,
               updatedAt: serverTimestamp()
             });
+            // Hook into product lifecycle: onProductUpdate
+            await syncProductToStaging('update', existingProduct.id, { ...productData, id: existingProduct.id });
             updatedCount++;
           } else {
-            await addDoc(collection(db, 'products'), {
+            const docRef = await addDoc(collection(db, 'products'), {
               ...productData,
               imageUrls: productData.imageUrl ? [productData.imageUrl] : [],
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
               sortOrder: products.length + successCount + 1
             });
+            // Hook into product lifecycle: onProductCreate
+            await syncProductToStaging('create', docRef.id, { ...productData, id: docRef.id });
             successCount++;
           }
         } catch (err) {
@@ -1348,6 +1355,8 @@ export default function AdminDashboard() {
     if (confirm('Are you sure you want to delete this product? It will be removed from the public site immediately.')) {
       try {
         await deleteDoc(doc(db, 'products', id));
+        // Hook into product lifecycle event: onProductDelete
+        await syncProductToStaging('delete', id);
       } catch (error) {
         handleFirestoreError(error, OperationType.DELETE, `products/${id}`);
       }
@@ -3845,13 +3854,17 @@ export default function AdminDashboard() {
                   try {
                     if (editingItem) {
                       await updateDoc(doc(db, 'products', editingItem.id), { ...data, updatedAt: serverTimestamp() });
+                      // Hook into product lifecycle event: onProductUpdate
+                      await syncProductToStaging('update', editingItem.id, { ...data, id: editingItem.id });
                     } else {
-                      await addDoc(collection(db, 'products'), { 
+                      const docRef = await addDoc(collection(db, 'products'), { 
                         ...data, 
                         createdAt: serverTimestamp(), 
                         updatedAt: serverTimestamp(),
                         sortOrder: products.length + 1
                       });
+                      // Hook into product lifecycle event: onProductCreate
+                      await syncProductToStaging('create', docRef.id, { ...data, id: docRef.id });
                     }
                     setToast({ message: editingItem ? 'Product updated successfully!' : 'Product added successfully!', type: 'success' });
                     setIsModalOpen(false);

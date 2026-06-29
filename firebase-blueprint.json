@@ -239,9 +239,33 @@
         "sortOrder": { "type": "number" }
       },
       "required": ["title", "category", "description", "imageUrl", "highlights", "sortOrder"]
+    },
+    "staging_product": {
+      "title": "Staging Product",
+      "description": "Product synchronized to the UrbanTechDev staging database layer for search feed syndication.",
+      "type": "object",
+      "properties": {
+        "tenantId": { "type": "string" },
+        "tenantSlug": { "type": "string" },
+        "offerId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "link": { "type": "string" },
+        "imageLink": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "priceString": { "type": "string" },
+        "availability": { "type": "string", "enum": ["in stock", "out of stock"] },
+        "syncedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tenantId", "tenantSlug", "offerId", "title", "link", "imageLink", "price", "currency", "availability"]
     }
   },
   "firestore": {
+    "/staging_products/{docId}": {
+      "schema": "staging_product",
+      "description": "Staging collection for cross-border Google Merchant and Microsoft Ads feed integration."
+    },
     "/settings/{settingId}": {
       "schema": "setting",
       "description": "Store for site-wide configuration."
