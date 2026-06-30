@@ -16,6 +16,8 @@ export interface CountryConfig {
   city: string;
   address: string;
   keywords: string;
+  latitude: number;
+  longitude: number;
 }
 
 export const COUNTRIES: CountryConfig[] = [
@@ -35,7 +37,9 @@ export const COUNTRIES: CountryConfig[] = [
     email: 'sales.ke@naisiaetextiles.com',
     city: 'Nairobi',
     address: 'Uhuru Market, Jogoo Road, Nairobi, Kenya',
-    keywords: 'Naisiae textiles, school uniforms Nairobi, Uhuru Market uniforms, institutional apparel Kenya, high-grade school sweaters, custom blazers, medical scrubs Kenya, security uniforms, wholesale textile factory Nairobi, school uniform, school uniform supplier, school uniform manufacturer, school uniform manufucturer, best uniform shop, cheap uniform, affordable uniform, wholesale price uniform'
+    keywords: 'Naisiae textiles, school uniforms Nairobi, Uhuru Market uniforms, institutional apparel Kenya, high-grade school sweaters, custom blazers, medical scrubs Kenya, security uniforms, wholesale textile factory Nairobi, school uniform, school uniform supplier, school uniform manufacturer, school uniform manufucturer, best uniform shop, cheap uniform, affordable uniform, wholesale price uniform',
+    latitude: -1.2917,
+    longitude: 36.8532
   },
   {
     code: 'TZ',
@@ -53,7 +57,9 @@ export const COUNTRIES: CountryConfig[] = [
     email: 'sales.tz@naisiaetextiles.com',
     city: 'Dar es Salaam',
     address: 'Kariakoo Market Area, Dar es Salaam, Tanzania',
-    keywords: 'vifaa vya nguo Tanzania, sare za shule Dar es Salaam, kiwanda cha nguo Kariakoo, sare za hospitali, sweaters za shule Tanzania, Naisiae textiles Tanzania, sare za kampuni'
+    keywords: 'vifaa vya nguo Tanzania, sare za shule Dar es Salaam, kiwanda cha nguo Kariakoo, sare za hospitali, sweaters za shule Tanzania, Naisiae textiles Tanzania, sare za kampuni',
+    latitude: -6.8183,
+    longitude: 39.2766
   },
   {
     code: 'CD',
@@ -71,7 +77,9 @@ export const COUNTRIES: CountryConfig[] = [
     email: 'sales.cd@naisiaetextiles.com',
     city: 'Kinshasa',
     address: 'Boulevard du 30 Juin, Kinshasa, Gombe, DRC',
-    keywords: 'textile République démocratique du Congo, uniformes scolaires Kinshasa, vêtements d\'entreprise DRC, fabrication d\'uniformes scolaires, blouses médicales Kinshasa, grossiste de vêtements'
+    keywords: 'textile République démocratique du Congo, uniformes scolaires Kinshasa, vêtements d\'entreprise DRC, fabrication d\'uniformes scolaires, blouses médicales Kinshasa, grossiste de vêtements',
+    latitude: -4.3032,
+    longitude: 15.3094
   },
   {
     code: 'UG',
@@ -89,7 +97,9 @@ export const COUNTRIES: CountryConfig[] = [
     email: 'sales.ug@naisiaetextiles.com',
     city: 'Kampala',
     address: 'Nakasero Market District, Kampala, Uganda',
-    keywords: 'school uniforms Kampala, wholesale uniform manufacturing Uganda, custom corporate sweaters Kampala, nurse scrubs Uganda, high-quality institutional apparel, Uganda textiles'
+    keywords: 'school uniforms Kampala, wholesale uniform manufacturing Uganda, custom corporate sweaters Kampala, nurse scrubs Uganda, high-quality institutional apparel, Uganda textiles',
+    latitude: 0.3136,
+    longitude: 32.5786
   },
   {
     code: 'ET',
@@ -107,7 +117,9 @@ export const COUNTRIES: CountryConfig[] = [
     email: 'sales.et@naisiaetextiles.com',
     city: 'Addis Ababa',
     address: 'Merkato District, Addis Ababa, Ethiopia',
-    keywords: 'የአልባሳት ፋብሪካ ኢትዮጵያ, የትምህርት ቤት ዩኒፎርም አዲስ አበባ, የህክምና አልባሳት, የኮርፖሬት ልብሶች, የጨርቃጨርቅ አቅራቢዎች መርካቶ, Naisiae textiles Ethiopia'
+    keywords: 'የአልባሳት ፋብሪካ ኢትዮጵያ, የትምህርት ቤት ዩኒፎርም አዲስ አበባ, የህክምና አልባሳት, የኮርፖሬት ልብሶች, የጨርቃጨርቅ አቅራቢዎች መርካቶ, Naisiae textiles Ethiopia',
+    latitude: 9.0272,
+    longitude: 38.7369
   }
 ];
 

@@ -75,11 +75,7 @@ async function generateSitemap() {
   }
 
   const countries = [
-    { prefix: '', isDefault: true },
-    { prefix: 'tanzania', isDefault: false },
-    { prefix: 'dr-congo', isDefault: false },
-    { prefix: 'uganda', isDefault: false },
-    { prefix: 'ethiopia', isDefault: false }
+    { prefix: '', isDefault: true }
   ];
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
@@ -96,12 +92,58 @@ async function generateSitemap() {
       } else {
         loc = `https://naisiaetextiles.com${countryPart}${pagePart}/`;
       }
+      
+      let priority = '0.50';
+      let changefreq = 'weekly';
+
+      if (page === '') {
+        priority = '1.00';
+        changefreq = 'daily';
+      } else if (['services', 'products'].includes(page)) {
+        priority = '0.90';
+        changefreq = 'weekly';
+      } else if (['categories', 'wholesale', 'fabric-gallery'].includes(page)) {
+        priority = '0.85';
+        changefreq = 'weekly';
+      } else if (['portfolio', 'contact'].includes(page)) {
+        priority = '0.80';
+        changefreq = page === 'contact' ? 'monthly' : 'weekly';
+      } else if (['about', 'blog'].includes(page)) {
+        priority = '0.60';
+        changefreq = page === 'about' ? 'monthly' : 'weekly';
+      } else if (['faq', 'uniform-simulator'].includes(page)) {
+        priority = '0.50';
+        changefreq = 'monthly';
+      } else if (['careers'].includes(page)) {
+        priority = '0.40';
+        changefreq = 'monthly';
+      } else if (['privacy', 'terms', 'shipping', 'returns'].includes(page)) {
+        priority = '0.10';
+        changefreq = 'yearly';
+      }
+
       xml += `  <url>\n`;
       xml += `    <loc>${loc}</loc>\n`;
-      xml += `    <changefreq>weekly</changefreq>\n`;
-      xml += `    <priority>${page === '' ? '1.0' : '0.8'}</priority>\n`;
+      xml += `    <changefreq>${changefreq}</changefreq>\n`;
+      xml += `    <priority>${priority}</priority>\n`;
       xml += `  </url>\n`;
     });
+  });
+
+  // 1b. Add explicit regional entry-points as requested in Choice B
+  const regionalEntryPoints = [
+    { loc: 'https://naisiaetextiles.com/tanzania/', changefreq: 'weekly', priority: '0.75' },
+    { loc: 'https://naisiaetextiles.com/dr-congo/', changefreq: 'weekly', priority: '0.75' },
+    { loc: 'https://naisiaetextiles.com/uganda/', changefreq: 'weekly', priority: '0.75' },
+    { loc: 'https://naisiaetextiles.com/ethiopia/', changefreq: 'weekly', priority: '0.75' }
+  ];
+
+  regionalEntryPoints.forEach(region => {
+    xml += `  <url>\n`;
+    xml += `    <loc>${region.loc}</loc>\n`;
+    xml += `    <changefreq>${region.changefreq}</changefreq>\n`;
+    xml += `    <priority>${region.priority}</priority>\n`;
+    xml += `  </url>\n`;
   });
 
   // 2. Dynamic products with country prefixing and trailing slashes

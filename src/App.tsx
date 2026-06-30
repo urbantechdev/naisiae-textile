@@ -248,7 +248,7 @@ function DynamicSEOEngine() {
       };
       schemasList.push(breadcrumbSchema);
 
-      // 3. LocalBusiness Schema localized per country
+       // 3. LocalBusiness Schema localized per country with precise coordinates & opening hours
       const businessSchema = {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
@@ -262,14 +262,52 @@ function DynamicSEOEngine() {
           "addressLocality": currentCountry.city,
           "addressCountry": currentCountry.code
         },
-        "priceRange": "$$"
+        "priceRange": "$$",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": currentCountry.latitude,
+          "longitude": currentCountry.longitude
+        },
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "08:00",
+          "closes": "18:00"
+        }
       };
       schemasList.push(businessSchema);
+
+      // 4. Explicit Organization Schema (ClothingStore) requested for Entity footprint
+      const organizationSchema = {
+        "@context": "https://schema.org",
+        "@type": "ClothingStore",
+        "name": "Naisiae Textiles",
+        "url": "https://naisiaetextiles.com/",
+        "logo": "https://naisiaetextiles.com/logo.png",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Uhuru Market, Jogoo Road",
+          "addressLocality": "Nairobi",
+          "addressCountry": "KE"
+        },
+        "sameAs": [
+          "https://www.facebook.com/naisiaetextiles",
+          "https://www.instagram.com/nice_naadokila"
+        ]
+      };
+      schemasList.push(organizationSchema);
 
       const newScript = document.createElement('script');
       newScript.id = schemaScriptId;
       newScript.type = 'application/ld+json';
-      newScript.innerHTML = JSON.stringify(schemasList.length === 1 ? schemasList[0] : schemasList);
+      newScript.innerHTML = JSON.stringify(schemasList);
       document.head.appendChild(newScript);
 
       // Clean prefix and dynamically inject localized hreflang alternates in page head
@@ -293,12 +331,11 @@ function DynamicSEOEngine() {
       document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
 
       const alternates = [
-        { hreflang: 'en-KE', url: `https://naisiaetextiles.com${cleanSubpath}` },
-        { hreflang: 'sw-TZ', url: `https://naisiaetextiles.com/tanzania${cleanSubpath}` },
-        { hreflang: 'fr-CD', url: `https://naisiaetextiles.com/dr-congo${cleanSubpath}` },
-        { hreflang: 'en-UG', url: `https://naisiaetextiles.com/uganda${cleanSubpath}` },
-        { hreflang: 'am-ET', url: `https://naisiaetextiles.com/ethiopia${cleanSubpath}` },
-        { hreflang: 'x-default', url: `https://naisiaetextiles.com${cleanSubpath}` }
+        { hreflang: 'x-default', url: `https://naisiaetextiles.com${cleanSubpath}` },
+        { hreflang: 'en-ke', url: `https://naisiaetextiles.com${cleanSubpath}` },
+        { hreflang: 'en-tz', url: `https://naisiaetextiles.com/tanzania${cleanSubpath}` },
+        { hreflang: 'en-ug', url: `https://naisiaetextiles.com/uganda${cleanSubpath}` },
+        { hreflang: 'fr-cd', url: `https://naisiaetextiles.com/dr-congo${cleanSubpath}` }
       ];
 
       alternates.forEach(alt => {
