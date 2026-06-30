@@ -169,6 +169,7 @@ interface LocalizationContextType {
   changeLanguage: (langCode: string) => void;
   t: (key: string) => string;
   formatPrice: (kesAmount: number) => string;
+  setCountryDirectly: (countryCode: string) => void;
 }
 
 const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);
@@ -234,6 +235,11 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
       document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname};`;
     }
   }, [currentLanguage]);
+
+  const setCountryDirectly = (countryCode: string) => {
+    const targetCountry = COUNTRIES.find(c => c.code === countryCode) || COUNTRIES[0];
+    setCurrentCountry(targetCountry);
+  };
 
   const changeCountry = (countryCode: string) => {
     appExperience.triggerFeedback('tap');
@@ -311,7 +317,8 @@ export function LocalizationProvider({ children }: { children: React.ReactNode }
     changeCountry,
     changeLanguage,
     t,
-    formatPrice
+    formatPrice,
+    setCountryDirectly
   }), [currentCountry, currentLanguage]);
 
   return (

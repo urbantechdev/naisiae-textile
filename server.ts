@@ -543,6 +543,19 @@ Return the response in JSON format.`;
   app.get("/merchant-feed.xml", handleMerchantFeed);
   app.get("/google-merchant-feed.xml", handleMerchantFeed);
 
+  // Google Business Review Redirects
+  app.get([
+    '/review', '/reviews', '/google-review', '/g-review',
+    '/:country/review', '/:country/reviews', '/:country/google-review', '/:country/g-review'
+  ], (req, res, next) => {
+    const countryParam = req.params.country;
+    const countries = ['ke', 'kenya', 'tz', 'tanzania', 'ug', 'uganda', 'et', 'ethiopia', 'cd', 'drc', 'congo'];
+    if (countryParam && !countries.includes(countryParam.toLowerCase())) {
+      return next();
+    }
+    res.redirect(302, 'https://g.page/r/CZb3o2nm3vRgEBM/review');
+  });
+
   // Vite middleware for development initialization
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -553,6 +566,11 @@ Return the response in JSON format.`;
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+    // Serve src/assets folder in production to ensure dynamic image paths (/src/assets/images/...) are resolved correctly
+    app.use('/src/assets', express.static(path.join(process.cwd(), 'src/assets'), {
+      maxAge: '30d',
+      etag: true
+    }));
     // Serve static assets with aggressive cache headers and etags for instant reload
     app.use(express.static(distPath, {
       maxAge: '1y',
@@ -644,15 +662,11 @@ Return the response in JSON format.`;
     ];
 
     const countries = [
-      { prefix: '', isDefault: true },
-      { prefix: 'tanzania', isDefault: false },
-      { prefix: 'dr-congo', isDefault: false },
-      { prefix: 'uganda', isDefault: false },
-      { prefix: 'ethiopia', isDefault: false }
+      { prefix: '', isDefault: true }
     ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
 
     // 1. Static Pages with country prefixing and trailing slashes
     countries.forEach(({ prefix }) => {
@@ -665,12 +679,90 @@ Return the response in JSON format.`;
         } else {
           loc = `https://naisiaetextiles.com${countryPart}${pagePart}/`;
         }
+        
+        let priority = '0.50';
+        let changefreq = 'weekly';
+
+        if (page === '') {
+          priority = '1.00';
+          changefreq = 'daily';
+        } else if (['services', 'products'].includes(page)) {
+          priority = '0.90';
+          changefreq = 'weekly';
+        } else if (['categories', 'wholesale', 'fabric-gallery'].includes(page)) {
+          priority = '0.85';
+          changefreq = 'weekly';
+        } else if (['portfolio', 'contact'].includes(page)) {
+          priority = '0.80';
+          changefreq = page === 'contact' ? 'monthly' : 'weekly';
+        } else if (['about', 'blog'].includes(page)) {
+          priority = '0.60';
+          changefreq = page === 'about' ? 'monthly' : 'weekly';
+        } else if (['faq', 'uniform-simulator'].includes(page)) {
+          priority = '0.50';
+          changefreq = 'monthly';
+        } else if (['careers'].includes(page)) {
+          priority = '0.40';
+          changefreq = 'monthly';
+        } else if (['privacy', 'terms', 'shipping', 'returns'].includes(page)) {
+          priority = '0.10';
+          changefreq = 'yearly';
+        }
+
         xml += `  <url>\n`;
         xml += `    <loc>${loc}</loc>\n`;
-        xml += `    <changefreq>weekly</changefreq>\n`;
-        xml += `    <priority>${page === '' ? '1.0' : '0.8'}</priority>\n`;
+        xml += `    <changefreq>${changefreq}</changefreq>\n`;
+        xml += `    <priority>${priority}</priority>\n`;
+        if (page === 'categories') {
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_school_1782334810884.jpg</image:loc>\n`;
+          xml += `      <image:title>School Uniforms - Naisiae Textiles</image:title>\n`;
+          xml += `      <image:caption>Premium high-performance custom-tailored primary and secondary school uniforms manufactured at Uhuru Market, Nairobi, Kenya.</image:caption>\n`;
+          xml += `    </image:image>\n`;
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_corporate_1782334824455.jpg</image:loc>\n`;
+          xml += `      <image:title>Corporate Wear - Naisiae Textiles</image:title>\n`;
+          xml += `      <image:caption>Expertly crafted corporate office wear, executive suits, custom blazers, and staff shirts.</image:caption>\n`;
+          xml += `    </image:image>\n`;
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_medical_1782334767056.jpg</image:loc>\n`;
+          xml += `      <image:title>Healthcare &amp; Medical Scrubs - Naisiae Textiles</image:title>\n`;
+          xml += `      <image:caption>Comfortable and antibacterial medical scrubs, laboratory coats, and hospital uniform supply.</image:caption>\n`;
+          xml += `    </image:image>\n`;
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_hospitality_1782334781502.jpg</image:loc>\n`;
+          xml += `      <image:title>Hospitality &amp; Catering Uniforms - Naisiae Textiles</image:title>\n`;
+          xml += `      <image:caption>Elegant hotel staff wear, chef coats, catering vests, and apron sets.</image:caption>\n`;
+          xml += `    </image:image>\n`;
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_industrial_1782334796806.jpg</image:loc>\n`;
+          xml += `      <image:title>Industrial &amp; Workwear Uniforms - Naisiae Textiles</image:title>\n`;
+          xml += `      <image:caption>Heavy-duty dust coats, industrial overalls, security uniforms, and high-visibility safety clothing.</image:caption>\n`;
+          xml += `    </image:image>\n`;
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_sports_1782334837561.jpg</image:loc>\n`;
+          xml += `      <image:title>Sports Kits &amp; Branded Games Kits - Naisiae Textiles</image:title>\n`;
+          xml += `      <image:caption>Custom-designed sublimation sports jerseys, school physical education kits, and tracksuits.</image:caption>\n`;
+          xml += `    </image:image>\n`;
+        }
         xml += `  </url>\n`;
       });
+    });
+
+    // 1b. Add explicit regional entry-points
+    const regionalEntryPoints = [
+      { loc: 'https://naisiaetextiles.com/tanzania/', changefreq: 'weekly', priority: '0.75' },
+      { loc: 'https://naisiaetextiles.com/dr-congo/', changefreq: 'weekly', priority: '0.75' },
+      { loc: 'https://naisiaetextiles.com/uganda/', changefreq: 'weekly', priority: '0.75' },
+      { loc: 'https://naisiaetextiles.com/ethiopia/', changefreq: 'weekly', priority: '0.75' }
+    ];
+
+    regionalEntryPoints.forEach(region => {
+      xml += `  <url>\n`;
+      xml += `    <loc>${region.loc}</loc>\n`;
+      xml += `    <changefreq>${region.changefreq}</changefreq>\n`;
+      xml += `    <priority>${region.priority}</priority>\n`;
+      xml += `  </url>\n`;
     });
 
     // 2. Dynamic products with country prefixing and trailing slashes

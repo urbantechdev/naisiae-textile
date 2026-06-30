@@ -283,6 +283,35 @@ export default function ContactPage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="bg-emerald-500/[0.02] p-10 rounded-[40px] border border-emerald-500/10"
+              >
+                <div className="flex items-center gap-2.5 mb-4">
+                  <h3 className="font-display text-2xl text-[#0A1628] tracking-widest uppercase">Google Review</h3>
+                  <div className="flex text-amber-500 gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed mb-6 font-semibold">
+                  We are incredibly proud to manufacture school uniforms and custom garments right here in Nairobi. If you love our craft, please leave us a 5-star review on Google!
+                </p>
+                <a 
+                  href="/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#C8961A] hover:bg-[#C8961A]/90 text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8961A]/10 active:scale-95 border border-white/10"
+                >
+                  <span>Leave Google Review</span>
+                  <span>⭐</span>
+                </a>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
                 className="bg-[#F8FAFC] p-10 rounded-[40px] border border-slate-100"
               >

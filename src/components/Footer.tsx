@@ -62,6 +62,42 @@ export function Footer() {
         </div>
       </div>
 
+      {/* Google Business Review CTA Banner */}
+      <div className="max-w-[1440px] mx-auto mb-16 border border-emerald-500/10 bg-emerald-500/[0.02] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+            <span className="text-xl">⭐</span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black tracking-[2px] text-emerald-400 uppercase">Customer Feedback</span>
+              <div className="flex text-amber-400 gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} className="w-3 h-3 fill-current" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+            </div>
+            <h3 className="text-white font-display text-base font-bold tracking-tight mt-1">
+              Pleased with Naisiae Textiles? Leave us a Google Review
+            </h3>
+            <p className="text-xs text-white/50 leading-relaxed max-w-2xl mt-0.5">
+              Your reviews support local manufacturing at Uhuru Market, Nairobi. Please take 30 seconds to support us by leaving a 5-star Google review!
+            </p>
+          </div>
+        </div>
+        <a 
+          href="/review" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-6 py-3 bg-[#C8961A] hover:bg-[#C8961A]/90 text-black font-black text-[11px] uppercase tracking-widest rounded-2xl transition-all active:scale-95 shrink-0 flex items-center gap-2 shadow-lg shadow-[#C8961A]/10 border border-white/10"
+        >
+          <span>Write a Google Review</span>
+          <span>→</span>
+        </a>
+      </div>
+
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16 px-4">
         {/* Column 1: Brand Info */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">

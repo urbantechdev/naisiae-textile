@@ -79,7 +79,7 @@ async function generateSitemap() {
   ];
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
 
   // 1. Static Pages with country prefixing and trailing slashes
   countries.forEach(({ prefix }) => {
@@ -126,6 +126,38 @@ async function generateSitemap() {
       xml += `    <loc>${loc}</loc>\n`;
       xml += `    <changefreq>${changefreq}</changefreq>\n`;
       xml += `    <priority>${priority}</priority>\n`;
+      if (page === 'categories') {
+        xml += `    <image:image>\n`;
+        xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_school_1782334810884.jpg</image:loc>\n`;
+        xml += `      <image:title>School Uniforms - Naisiae Textiles</image:title>\n`;
+        xml += `      <image:caption>Premium high-performance custom-tailored primary and secondary school uniforms manufactured at Uhuru Market, Nairobi, Kenya.</image:caption>\n`;
+        xml += `    </image:image>\n`;
+        xml += `    <image:image>\n`;
+        xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_corporate_1782334824455.jpg</image:loc>\n`;
+        xml += `      <image:title>Corporate Wear - Naisiae Textiles</image:title>\n`;
+        xml += `      <image:caption>Expertly crafted corporate office wear, executive suits, custom blazers, and staff shirts.</image:caption>\n`;
+        xml += `    </image:image>\n`;
+        xml += `    <image:image>\n`;
+        xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_medical_1782334767056.jpg</image:loc>\n`;
+        xml += `      <image:title>Healthcare &amp; Medical Scrubs - Naisiae Textiles</image:title>\n`;
+        xml += `      <image:caption>Comfortable and antibacterial medical scrubs, laboratory coats, and hospital uniform supply.</image:caption>\n`;
+        xml += `    </image:image>\n`;
+        xml += `    <image:image>\n`;
+        xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_hospitality_1782334781502.jpg</image:loc>\n`;
+        xml += `      <image:title>Hospitality &amp; Catering Uniforms - Naisiae Textiles</image:title>\n`;
+        xml += `      <image:caption>Elegant hotel staff wear, chef coats, catering vests, and apron sets.</image:caption>\n`;
+        xml += `    </image:image>\n`;
+        xml += `    <image:image>\n`;
+        xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_industrial_1782334796806.jpg</image:loc>\n`;
+        xml += `      <image:title>Industrial &amp; Workwear Uniforms - Naisiae Textiles</image:title>\n`;
+        xml += `      <image:caption>Heavy-duty dust coats, industrial overalls, security uniforms, and high-visibility safety clothing.</image:caption>\n`;
+        xml += `    </image:image>\n`;
+        xml += `    <image:image>\n`;
+        xml += `      <image:loc>https://naisiaetextiles.com/src/assets/images/category_sports_1782334837561.jpg</image:loc>\n`;
+        xml += `      <image:title>Sports Kits &amp; Branded Games Kits - Naisiae Textiles</image:title>\n`;
+        xml += `      <image:caption>Custom-designed sublimation sports jerseys, school physical education kits, and tracksuits.</image:caption>\n`;
+        xml += `    </image:image>\n`;
+      }
       xml += `  </url>\n`;
     });
   });

@@ -47,7 +47,7 @@ export default function CheckoutPage() {
     setIsWishlistOpen,
     setIsQuoteModalOpen
   } = useCart();
-  const { currentCountry, formatPrice } = useLocalization();
+  const { currentCountry, formatPrice, setCountryDirectly } = useLocalization();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -103,23 +103,33 @@ export default function CheckoutPage() {
     if (deliveryMethod === 'pickup') {
       setFormData(prev => ({
         ...prev,
+        shippingCountry: 'KE',
         shippingCity: 'Nairobi (Uhuru Market)',
         shippingAddress: 'Uhuru Market Factory Stall (Self Pick-up)'
       }));
+      setCountryDirectly('KE');
     } else if (deliveryMethod === 'nairobi') {
       setFormData(prev => ({
         ...prev,
+        shippingCountry: 'KE',
         shippingCity: prev.shippingCity === 'Nairobi (Uhuru Market)' ? 'Nairobi' : prev.shippingCity,
         shippingAddress: prev.shippingAddress === 'Uhuru Market Factory Stall (Self Pick-up)' ? '' : prev.shippingAddress
       }));
+      setCountryDirectly('KE');
     } else {
       setFormData(prev => ({
         ...prev,
+        shippingCountry: prev.shippingCountry === 'KE' ? 'TZ' : prev.shippingCountry,
         shippingCity: prev.shippingCity === 'Nairobi (Uhuru Market)' ? '' : prev.shippingCity,
         shippingAddress: prev.shippingAddress === 'Uhuru Market Factory Stall (Self Pick-up)' ? '' : prev.shippingAddress
       }));
+      // Default to target selection or export default (TZ)
+      setCountryDirectly(formData.shippingCountry !== 'KE' ? formData.shippingCountry : 'TZ');
     }
   }, [deliveryMethod]);
+
+  const deliveryFee = deliveryMethod === 'nairobi' ? 300 : 0;
+  const finalCartTotal = cartTotal + deliveryFee;
 
   const handleInitiateStkPush = async () => {
     const cleanPhone = stkPhoneNumber.trim();
@@ -378,7 +388,7 @@ export default function CheckoutPage() {
     setLoading(true);
     try {
       const mpesaSummaryText = checkoutMethod === 'mpesa' 
-        ? `\n[PAYMENT METHOD: M-PESA SEND MONEY]\n[PAYMENT OPTION: ${mpesaPaymentOption === 'deposit' ? '50% Booking Deposit' : '100% Full Payment'}]\n[AMOUNT SPECIFIED: Ksh ${(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/-]\n[M-PESA TRANSACTION CODE: ${mpesaRefCode.trim().toUpperCase()}]`
+        ? `\n[PAYMENT METHOD: M-PESA SEND MONEY]\n[PAYMENT OPTION: ${mpesaPaymentOption === 'deposit' ? '50% Booking Deposit' : '100% Full Payment'}]\n[AMOUNT SPECIFIED: ${formatPrice(mpesaPaymentOption === 'deposit' ? Math.round(finalCartTotal * 0.5) : finalCartTotal)}]\n[M-PESA TRANSACTION CODE: ${mpesaRefCode.trim().toUpperCase()}]`
         : `\n[PAYMENT METHOD: None - Standard RFQ Inquiry]`;
 
       const quoteDetails = [
@@ -403,7 +413,7 @@ export default function CheckoutPage() {
         shippingAddress: formData.shippingAddress,
         paymentMethod: checkoutMethod, // 'rfq' | 'mpesa'
         mpesaPaymentOption: checkoutMethod === 'mpesa' ? mpesaPaymentOption : null,
-        mpesaAmountPaid: checkoutMethod === 'mpesa' ? (mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal) : 0,
+        mpesaAmountPaid: checkoutMethod === 'mpesa' ? (mpesaPaymentOption === 'deposit' ? Math.round(finalCartTotal * 0.5) : finalCartTotal) : 0,
         mpesaTransactionCode: checkoutMethod === 'mpesa' ? mpesaRefCode.trim().toUpperCase() : null,
         items: cart.map(item => ({
           id: item.id,
@@ -417,7 +427,7 @@ export default function CheckoutPage() {
           customLogoUrl: item.customLogoUrl || null,
           customLogoName: item.customLogoName || null
         })),
-        total: cartTotal,
+        total: finalCartTotal,
         status: 'new',
         uid: auth.currentUser?.uid || 'guest',
         createdAt: serverTimestamp()
@@ -441,7 +451,7 @@ export default function CheckoutPage() {
         setVerificationLogs(prev => [
           ...prev, 
           `[CONFIRMED] Reference match located: Designated account holds entry for code ${mpesaRefCode.trim().toUpperCase()}`,
-          `[VERIFIED] Amount recognized: Ksh ${(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/- matched booking terms.`
+          `[VERIFIED] Amount recognized: ${formatPrice(mpesaPaymentOption === 'deposit' ? Math.round(finalCartTotal * 0.5) : finalCartTotal)} matched booking terms.`
         ]);
         
         await delay(900);
@@ -524,7 +534,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="bg-white/5 p-2.5 rounded-xl border border-white/5">
                       <span className="text-white/40 font-bold uppercase tracking-wider text-[8px] block mb-1">Deposit Amount</span>
-                      <span className="font-black text-green-400 text-[13px] tabular-nums">Ksh {submittedQuoteData.mpesaAmountPaid?.toLocaleString()}/-</span>
+                      <span className="font-black text-green-400 text-[13px] tabular-nums">{formatPrice(submittedQuoteData.mpesaAmountPaid || 0)}</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
@@ -688,7 +698,7 @@ export default function CheckoutPage() {
           updateQuantity={updateQuantity}
           removeFromCart={removeFromCart}
           cartSubtotal={cartSubtotal}
-          cartTotal={cartTotal + (deliveryMethod === 'nairobi' ? 300 : 0)}
+          cartTotal={finalCartTotal}
           discountAmount={discountAmount}
           appliedPromo={appliedPromo}
           formatPrice={formatPrice}
@@ -908,7 +918,7 @@ export default function CheckoutPage() {
                     >
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-2xl">🛵</span>
-                        <span className="text-[10px] font-black text-green-600 bg-green-50 px-2.5 py-1 rounded-lg border border-green-200 uppercase tracking-wider">Ksh 300</span>
+                        <span className="text-[10px] font-black text-green-600 bg-green-50 px-2.5 py-1 rounded-lg border border-green-200 uppercase tracking-wider">{formatPrice(300)}</span>
                       </div>
                       <h4 className="text-[11px] font-black uppercase text-[#0A1628] tracking-wider">Nairobi Courier</h4>
                       <p className="text-[10px] text-slate-400 mt-1 font-semibold leading-relaxed">
@@ -958,9 +968,9 @@ export default function CheckoutPage() {
                       <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-4.5 flex gap-3 items-start">
                         <span className="text-xl">🛵</span>
                         <div className="space-y-1">
-                          <p className="text-[11px] font-black text-[#0A1628] uppercase tracking-wider">Nairobi Doorstep Delivery (Ksh 300.00)</p>
+                          <p className="text-[11px] font-black text-[#0A1628] uppercase tracking-wider">Nairobi Doorstep Delivery ({formatPrice(300)})</p>
                           <p className="text-[10px] leading-relaxed text-slate-500">
-                            A flat delivery fee of 300/- will be added to your order summary. Please provide your Nairobi delivery coordinates below.
+                            A flat delivery fee of {formatPrice(300)} will be added to your order summary. Please provide your Nairobi delivery coordinates below.
                           </p>
                         </div>
                       </div>
@@ -1002,7 +1012,11 @@ export default function CheckoutPage() {
                           <select
                             required
                             value={formData.shippingCountry}
-                            onChange={e => setFormData({...formData, shippingCountry: e.target.value})}
+                            onChange={e => {
+                              const code = e.target.value;
+                              setFormData({...formData, shippingCountry: code});
+                              setCountryDirectly(code);
+                            }}
                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all"
                           >
                             <option value="KE">🇰🇪 Kenya (KES / Ksh)</option>
@@ -1468,12 +1482,14 @@ export default function CheckoutPage() {
                 )}
                 <div className="flex justify-between text-white/40 font-black text-[10px] uppercase tracking-widest">
                   <span>Inland Shipping (Est.)</span>
-                  <span className="text-[#C8961A]">TBD</span>
+                  <span className="text-[#C8961A]">
+                    {deliveryMethod === 'nairobi' ? formatPrice(300) : deliveryMethod === 'pickup' ? 'FREE' : 'TBD'}
+                  </span>
                 </div>
                 <div className="pt-4 border-t border-white/10 flex justify-between items-end">
                   <div>
                     <p className="text-[10px] font-black text-white/30 uppercase tracking-[3px] mb-1">Total Valuation</p>
-                    <p className="text-3xl font-black tracking-tighter text-white tabular-nums">{formatPrice(cartTotal)}</p>
+                    <p className="text-3xl font-black tracking-tighter text-white tabular-nums">{formatPrice(finalCartTotal)}</p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-1.5 text-[8px] font-black text-[#C8961A] uppercase tracking-[2px] bg-[#C8961A]/10 px-3 py-1.5 rounded-lg border border-[#C8961A]/20">
