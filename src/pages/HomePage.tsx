@@ -781,7 +781,7 @@ export default function HomePage() {
 
       {/* Comparison Drawer */}
       <AnimatePresence>
-        {compareList.length > 0 && (
+        {compareList.length > 0 && !isCompareModalOpen && (
           <motion.div 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -830,51 +830,6 @@ export default function HomePage() {
                   <Trash2 size={18} />
                 </button>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Floating Comparison Bar */}
-      <AnimatePresence>
-        {compareList.length > 0 && !isCompareModalOpen && (
-          <motion.div 
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            className="fixed bottom-24 lg:bottom-8 left-1/2 -translate-x-1/2 z-[110] bg-[#0A1628] text-white px-6 py-4 rounded-3xl shadow-2xl border border-white/10 flex items-center gap-8 backdrop-blur-xl w-[95%] sm:w-auto"
-          >
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-4">
-                {compareList.map((item, idx) => (
-                  <div key={`${item.id}-${idx}`} className="w-10 h-10 rounded-full border-2 border-[#0A1628] overflow-hidden bg-white shadow-lg flex items-center justify-center">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} className="w-full h-full object-cover object-top p-0.5 bg-white" alt={item.name} />
-                    ) : (
-                      <Package size={14} className="text-[#0A1628]/20" />
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[2px] leading-tight text-[#C8961A]">{compareList.length} Products</p>
-                <p className="text-[11px] font-bold text-white/60">Selected for comparison</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setCompareList([])}
-                className="text-[10px] font-bold text-white/40 hover:text-red-400 p-2 uppercase tracking-widest transition-colors"
-              >
-                Clear
-              </button>
-              <button 
-                onClick={() => setIsCompareModalOpen(true)}
-                className="bg-[#C8961A] hover:bg-white hover:text-[#0A1628] text-[#0A1628] px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-xl shadow-[#C8961A]/20 active:scale-95"
-              >
-                Compare Now <GitCompare size={14} />
-              </button>
             </div>
           </motion.div>
         )}
