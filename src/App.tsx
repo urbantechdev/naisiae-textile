@@ -59,18 +59,18 @@ function DynamicSEOEngine() {
       const countrySuffix = currentCountry.code === 'KE' ? ' - Nairobi, DRC, TZ, UG, ETH' : ` in ${currentCountry.name}`;
       const countryDescriptionSuffix = currentCountry.code === 'KE' ? ', In Nairobi, DRC, TZ, UG, ETH' : ` in ${currentCountry.name}`;
       
-      let title = `Uhuru Market Uniforms${countrySuffix} | Naisiae Textiles`;
-      let description = `Official Uhuru Market Uniforms by Naisiae Textiles. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
+      let title = `Uhuru Market Uniforms${countrySuffix}`;
+      let description = `Official Uhuru Market Uniforms. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
 
       // Adapt description based on country to maximize regional textile SEO searches
       if (currentCountry.code === 'TZ') {
-        description = "Sare za shule na mavazi ya viwandani nchini Tanzania kutoka Naisiae Textiles. Sweta na magwanda ya ubora wa juu kwa bei ya jumla Dar es Salaam.";
+        description = "Sare za shule na mavazi ya viwandani nchini Tanzania kutoka Uhuru Market Uniforms. Sweta na magwanda ya ubora wa juu kwa bei ya jumla Dar es Salaam.";
       } else if (currentCountry.code === 'CD') {
-        description = "Naisiae Textiles, votre partenaire de confiance pour les uniformes scolaires, vêtements de travail et blouses médicales en RDC (Kinshasa) au meilleur prix.";
+        description = "Uhuru Market Uniforms, votre partenaire de confiance pour les uniformes scolaires, vêtements de travail et blouses médicales en RDC (Kinshasa) au meilleur prix.";
       } else if (currentCountry.code === 'ET') {
-        description = "ናይሲያ ጨርቃጨርቅ (Naisiae Textiles) በኢትዮጵያ ውስጥ ከፍተኛ ጥራት ያላቸውን የትምህርት ቤት ዩኒፎርሞች፣ የህክምና እና የኮርፖሬት አልባሳትን በጅምላ ዋጋ ያቀርባል።";
+        description = "የኡሁሩ ገበያ ዩኒፎርሞች (Uhuru Market Uniforms) በኢትዮጵያ ውስጥ ከፍተኛ ጥራት ያላቸውን የትምህርት ቤት ዩኒፎርሞች፣ የህክምና እና የኮርፖሬት አልባሳትን በጅምላ ዋጋ ያቀርባል።";
       } else if (currentCountry.code === 'UG') {
-        description = "Premium school uniforms and corporate apparel in Uganda by Naisiae Textiles. High-density embroidery and durable fabrics at wholesale rates in Kampala.";
+        description = "Premium school uniforms and corporate apparel in Uganda by Uhuru Market Uniforms. High-density embroidery and durable fabrics at wholesale rates in Kampala.";
       }
 
       if (path.includes('/products') || path.includes('/product')) {
@@ -90,7 +90,7 @@ function DynamicSEOEngine() {
         description = `Get a custom apparel supply quote. Contact our local support at ${currentCountry.phone} or visit our localized service center${countryDescriptionSuffix}.`;
       } else if (path.includes('/about')) {
         title = `Uhuru Market Uniforms | Our Story & Manufacturing Heritage${countrySuffix}`;
-        description = `Learn about Naisiae Textiles' premium uniform craftsmanship, raw material grading & regional community-driven production${countryDescriptionSuffix}.`;
+        description = `Learn about Uhuru Market Uniforms' premium uniform craftsmanship, raw material grading & regional community-driven production${countryDescriptionSuffix}.`;
       } else if (path.includes('/wholesale')) {
         title = `Uhuru Market Uniforms | Institutional Bulk Orders & Wholesale Request${countrySuffix}`;
         description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countryDescriptionSuffix}.`;
@@ -210,7 +210,7 @@ function DynamicSEOEngine() {
         "isPartOf": {
           "@type": "WebSite",
           "@id": "https://naisiaetextiles.com/#website",
-          "name": `Uhuru Market Uniforms (Naisiae Textiles ${currentCountry.name})`,
+          "name": `Uhuru Market Uniforms (${currentCountry.name})`,
           "url": "https://naisiaetextiles.com/"
         }
       };
@@ -248,11 +248,11 @@ function DynamicSEOEngine() {
       };
       schemasList.push(breadcrumbSchema);
 
-       // 3. LocalBusiness Schema localized per country with precise coordinates & opening hours
+      // 3. LocalBusiness Schema localized per country with precise coordinates & opening hours
       const businessSchema = {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
-        "name": `Uhuru Market Uniforms (Naisiae Textiles ${currentCountry.name})`,
+        "name": `Uhuru Market Uniforms (${currentCountry.name})`,
         "image": "https://naisiaetextiles.com/logo.png",
         "telephone": currentCountry.phone,
         "email": currentCountry.email,
@@ -288,7 +288,7 @@ function DynamicSEOEngine() {
       const organizationSchema = {
         "@context": "https://schema.org",
         "@type": "ClothingStore",
-        "name": "Naisiae Textiles",
+        "name": "Uhuru Market Uniforms",
         "url": "https://naisiaetextiles.com/",
         "logo": "https://naisiaetextiles.com/logo.png",
         "address": {
@@ -412,8 +412,27 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
+function ReviewRedirect() {
+  useEffect(() => {
+    window.location.replace("https://g.page/r/CZb3o2nm3vRgEBM/review");
+  }, []);
+  return (
+    <div className="min-h-screen bg-[#0E121C] flex flex-col items-center justify-center text-white p-6 font-sans">
+      <div className="text-center max-w-sm space-y-4">
+        <div className="w-16 h-16 rounded-full bg-[#C8961A]/10 border border-[#C8961A]/30 flex items-center justify-center text-[#C8961A] mx-auto animate-spin">
+          <span className="text-2xl">⭐</span>
+        </div>
+        <h2 className="text-xl font-black uppercase tracking-wider">Redirecting to Google Reviews...</h2>
+        <p className="text-xs text-white/50 leading-relaxed">Please wait while we connect you to our official Google My Business review portal.</p>
+      </div>
+    </div>
+  );
+}
+
 function AppContent({ isAdmin, loading }: any) {
   const { isCartOpen, setIsCartOpen, isWishlistOpen, setIsWishlistOpen } = useCart();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login') || location.pathname.startsWith('/review');
 
   return (
     <InactivityHandler>
@@ -446,6 +465,7 @@ function AppContent({ isAdmin, loading }: any) {
             <Route path="/fabric-gallery" element={<FabricGalleryPage />} />
             <Route path="/textiles" element={<FabricGalleryPage />} />
             <Route path="/uniform-simulator" element={<UniformSimulatorPage />} />
+            <Route path="/review" element={<ReviewRedirect />} />
             
             {/* Country-prefixed routes for Kenya, Tanzania, DRC, Uganda, and Ethiopia */}
             {['ke', 'kenya', 'tz', 'tanzania', 'cd', 'drc', 'congo', 'ug', 'uganda', 'et', 'ethiopia'].map((prefix) => (
@@ -475,6 +495,7 @@ function AppContent({ isAdmin, loading }: any) {
                 <Route path="fabric-gallery" element={<FabricGalleryPage />} />
                 <Route path="textiles" element={<FabricGalleryPage />} />
                 <Route path="uniform-simulator" element={<UniformSimulatorPage />} />
+                <Route path="review" element={<ReviewRedirect />} />
               </Route>
             ))}
             
@@ -492,6 +513,30 @@ function AppContent({ isAdmin, loading }: any) {
         <CatalogueModal />
         <FloatingChat />
         <GlobalToast />
+
+        {!isAdminRoute && (
+          <div className="fixed left-10 bottom-10 z-[90] hidden lg:block">
+            <a 
+              href="https://g.page/r/CZb3o2nm3vRgEBM/review"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 bg-[#0E121C]/95 hover:bg-[#0E121C] text-white p-3.5 rounded-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.55)] active:scale-95 transition-all group cursor-pointer hover:border-[#C8961A]/40"
+            >
+              <div className="w-9 h-9 rounded-xl bg-[#C8961A]/10 border border-[#C8961A]/20 flex items-center justify-center shrink-0">
+                <span className="text-lg">⭐</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[8px] font-black text-[#C8961A] tracking-[1.5px] uppercase">Leave Us A Review</span>
+                </div>
+                <div className="text-white font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                  <span>Google Business</span>
+                  <span className="text-[8px] text-amber-400">★★★★★</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        )}
       </Suspense>
     </InactivityHandler>
   );

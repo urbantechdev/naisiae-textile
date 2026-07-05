@@ -298,7 +298,7 @@ export default function ContactPage() {
                   We are incredibly proud to manufacture school uniforms and custom garments right here in Nairobi. If you love our craft, please leave us a 5-star review on Google!
                 </p>
                 <a 
-                  href="/review"
+                  href="https://g.page/r/CZb3o2nm3vRgEBM/review"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-[#C8961A] hover:bg-[#C8961A]/90 text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8961A]/10 active:scale-95 border border-white/10"

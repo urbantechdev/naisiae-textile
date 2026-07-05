@@ -648,7 +648,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                 <div>
                   <h4 className="text-[10px] font-black text-emerald-900 uppercase tracking-wide">Secure Sourcing Escrow</h4>
                   <p className="text-[9px] text-emerald-700 leading-normal font-medium mt-0.5">
-                    Your sourcing inquiry and payments are escrowed safely under Naisiae Textiles Ltd & Uhuru Market Uniform compliance terms.
+                    Your sourcing inquiry and payments are escrowed safely under Uhuru Market Uniforms compliance terms.
                   </p>
                 </div>
               </div>

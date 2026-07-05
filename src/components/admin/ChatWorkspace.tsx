@@ -299,7 +299,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError }: any) {
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Syncing Real-time</span>
                   </div>
                 </div>
-                <span className="text-[9px] font-black text-slate-200 uppercase tracking-[4px]">Naisiae Textiles Sourcing Protocol v4.0</span>
+                <span className="text-[9px] font-black text-slate-200 uppercase tracking-[4px]">Uhuru Market Uniforms Sourcing Protocol v4.0</span>
               </div>
             </div>
           </>

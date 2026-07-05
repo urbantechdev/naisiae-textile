@@ -20,7 +20,8 @@ import {
   Sliders,
   Globe,
   Check,
-  ChevronDown
+  ChevronDown,
+  Star
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
@@ -211,6 +212,31 @@ export function Navbar({
       unsubMenus();
     };
   }, []);
+
+  const resolvedSiteName = React.useMemo(() => {
+    const rawName = siteSettings?.siteName?.trim();
+    if (!rawName || rawName === 'NAISIAE TEXTILES' || rawName === 'Naisiae') {
+      return 'Uhuru Market Uniforms';
+    }
+    return rawName;
+  }, [siteSettings]);
+
+  const resolvedSiteTagline = React.useMemo(() => {
+    const rawTagline = siteSettings?.siteTagline?.trim();
+    const rawName = siteSettings?.siteName?.trim();
+    const hasNaisiaeInName = rawName?.toLowerCase().includes('naisiae') || resolvedSiteName.toLowerCase().includes('naisiae');
+    
+    if (!rawTagline || rawTagline === 'Uhuru Market Uniforms') {
+      return hasNaisiaeInName ? 'Uhuru Market Uniforms' : 'Naisiae Textiles';
+    }
+    
+    // Prevent name and tagline duplication
+    if (rawTagline.toLowerCase() === resolvedSiteName.toLowerCase()) {
+      return resolvedSiteName.toLowerCase().includes('naisiae') ? 'Uhuru Market Uniforms' : 'Naisiae Textiles';
+    }
+    
+    return rawTagline;
+  }, [siteSettings, resolvedSiteName]);
 
   const searchResults = React.useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -490,15 +516,11 @@ export function Navbar({
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-display text-xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-none bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
-                  {siteSettings?.siteName === 'NAISIAE TEXTILES' || siteSettings?.siteName === 'Naisiae' || !siteSettings?.siteName
-                    ? 'Uhuru Market Uniforms'
-                    : siteSettings.siteName}
+                  {resolvedSiteName}
                 </span>
               </div>
               <span className="text-[8px] md:text-[9.5px] tracking-[2px] text-[#C8961A] uppercase font-black mt-1.5 group-hover:translate-x-1 transition-transform">
-                {siteSettings?.siteTagline === 'Uhuru Market Uniforms' || !siteSettings?.siteTagline
-                  ? 'Naisiae Textiles'
-                  : siteSettings.siteTagline}
+                {resolvedSiteTagline}
               </span>
             </div>
           </Link>
@@ -683,7 +705,7 @@ export function Navbar({
                     <h3 className="text-xs font-black uppercase tracking-[3px] text-[#C8961A]">Expansive Sourcing Catalog</h3>
                   </div>
                   <h2 className="font-display text-xl md:text-2xl font-black text-slate-900 mt-1 uppercase tracking-tight">
-                    Naisiae Textiles Catalog
+                    Uhuru Market Uniforms Catalog
                   </h2>
                 </div>
 
@@ -982,14 +1004,10 @@ export function Navbar({
               <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div className="flex flex-col">
                   <div className="font-display text-base tracking-[2px] text-white uppercase font-black">
-                    {siteSettings?.siteName === 'NAISIAE TEXTILES' || siteSettings?.siteName === 'Naisiae' || !siteSettings?.siteName
-                      ? 'Uhuru Market Uniforms'
-                      : siteSettings.siteName}
+                    {resolvedSiteName}
                   </div>
                   <div className="text-[8px] tracking-[3px] text-[#C8961A] font-black uppercase mt-1">
-                    {siteSettings?.siteTagline === 'Uhuru Market Uniforms' || !siteSettings?.siteTagline
-                      ? 'Naisiae Textiles'
-                      : siteSettings.siteTagline}
+                    {resolvedSiteTagline}
                   </div>
                 </div>
                 <button 
@@ -1079,6 +1097,7 @@ export function Navbar({
                   { name: t('Products'), link: '/product', icon: <Package size={18} /> },
                   { name: t('Services'), link: '/services', icon: <Zap size={18} /> },
                   { name: t('Textiles'), link: '/textiles', icon: <Scissors size={18} /> },
+                  { name: t('Write a Review'), link: '/review', icon: <Star size={18} className="text-amber-400" /> },
                   { name: t('Enquire'), onClick: () => { setIsMenuOpen(false); setIsQuoteModalOpen(true); }, icon: <Plus size={18} />, highlight: true },
                 ].map((item, idx) => (
                   <button 

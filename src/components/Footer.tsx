@@ -26,7 +26,7 @@ export function Footer() {
               Uhuru Market Textiles Certification
             </h3>
             <p className="text-xs text-white/50 leading-relaxed mt-1 max-w-2xl">
-              Naisiae Textiles is officially certified and registered as a premium garment and school uniform manufacturer at Uhuru Market along Jogoo Road, Nairobi. Over 15 years of technical tailoring legacy.
+              Uhuru Market Uniforms is officially certified and registered as a premium garment and school uniform manufacturer at Uhuru Market along Jogoo Road, Nairobi. Over 15 years of technical tailoring legacy.
             </p>
           </div>
         </div>
@@ -80,7 +80,7 @@ export function Footer() {
               </div>
             </div>
             <h3 className="text-white font-display text-base font-bold tracking-tight mt-1">
-              Pleased with Naisiae Textiles? Leave us a Google Review
+              Pleased with Uhuru Market Uniforms? Leave us a Google Review
             </h3>
             <p className="text-xs text-white/50 leading-relaxed max-w-2xl mt-0.5">
               Your reviews support local manufacturing at Uhuru Market, Nairobi. Please take 30 seconds to support us by leaving a 5-star Google review!
@@ -88,7 +88,7 @@ export function Footer() {
           </div>
         </div>
         <a 
-          href="/review" 
+          href="https://g.page/r/CZb3o2nm3vRgEBM/review" 
           target="_blank" 
           rel="noopener noreferrer"
           className="px-6 py-3 bg-[#C8961A] hover:bg-[#C8961A]/90 text-black font-black text-[11px] uppercase tracking-widest rounded-2xl transition-all active:scale-95 shrink-0 flex items-center gap-2 shadow-lg shadow-[#C8961A]/10 border border-white/10"
@@ -104,22 +104,22 @@ export function Footer() {
           <div className="flex items-center gap-3 mb-6">
             <div className="overflow-hidden shrink-0">
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Naisiae Textile'} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+                <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Uhuru Market Uniforms'} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
               ) : (
                 <div className="w-12 h-12 flex items-center justify-center font-black text-xs text-white bg-gradient-to-tr from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-xl relative shadow-lg overflow-hidden select-none lowercase font-sans">nt</div>
               )}
             </div>
             <div className="leading-tight text-left">
               <div className="font-display text-2xl tracking-tight text-white uppercase font-black bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent">
-                {siteSettings?.siteName || 'Naisiae'}
+                {siteSettings?.siteName || 'Uhuru Market Uniforms'}
               </div>
               <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold">
-                Naisiae Textiles, Nairobi
+                Uhuru Market Uniforms, Nairobi
               </div>
             </div>
           </div>
           <p className="text-sm leading-relaxed max-w-sm mb-4">
-            Established at the heart of Nairobi, <strong>Uhuru Market Uniforms</strong> by Naisiae Textiles is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
+            Established at the heart of Nairobi, <strong>Uhuru Market Uniforms</strong> is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
           </p>
           <div className="text-[10px] text-white/20 italic max-w-xs">
             Serving schools across East & Central Africa from our specialized workshop at Uhuru Market.
@@ -211,7 +211,7 @@ export function Footer() {
       <div className="max-w-[1440px] mx-auto px-8 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest gap-6 sm:gap-2">
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 order-2 md:order-1 text-center md:text-left">
           <div className="flex items-center gap-2">
-            <span>© 2026 Naisiae Textiles Limited. All rights reserved.</span>
+            <span>© 2026 Uhuru Market Uniforms. All rights reserved.</span>
             <Link 
               to="/admin" 
               className="inline-flex items-center justify-center ml-1.5 p-1 rounded-md text-white/5 hover:text-[#C8961A] hover:bg-white/[0.03] transition-all duration-300 hover:scale-[1.15] active:scale-90 group cursor-pointer" 

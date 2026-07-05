@@ -87,7 +87,7 @@ export function CatalogueModal() {
     // Generate an authentic PDF-like user prompt download
     const link = document.createElement('a');
     link.href = activePage.imageUrl;
-    link.download = `Naisiae_Textiles_Sourcing_Catalogue_2026.jpg`;
+    link.download = `Uhuru_Market_Uniforms_Sourcing_Catalogue_2026.jpg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -119,7 +119,7 @@ export function CatalogueModal() {
                 </div>
                 <div>
                   <h2 className="font-display text-xl md:text-2xl text-white font-bold leading-none mb-1">Interactive Sourcing Catalogue</h2>
-                  <p className="text-[9px] md:text-[10px] text-[#C8961A] font-black uppercase tracking-[2px]">Naisiae Textiles Limited Sourcing Guide (2026 Edition)</p>
+                  <p className="text-[9px] md:text-[10px] text-[#C8961A] font-black uppercase tracking-[2px]">Uhuru Market Uniforms Sourcing Guide (2026 Edition)</p>
                 </div>
               </div>
               <button 

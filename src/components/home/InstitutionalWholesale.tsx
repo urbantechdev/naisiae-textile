@@ -20,10 +20,10 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
             viewport={{ once: true }}
           >
             <div className="flex items-center gap-3 text-[#C8961A] text-[9px] font-black tracking-[3px] uppercase mb-3">
-              <div className="w-6 h-[1.5px] bg-[#C8961A]"></div> Specialized Wholesale
+              <div className="w-6 h-[1.5px] bg-[#C8961A]"></div> Specialized Sourcing
             </div>
             <h2 className="font-display text-4xl lg:text-5xl text-white leading-[0.9] mb-4">
-              Uhuru Market <br/> <span className="text-[#C8961A]">Wholesale Deals</span>
+              Uhuru Market <br/> <span className="text-[#C8961A]">Bulk Production</span>
             </h2>
             <p className="text-white/60 text-xs lg:text-sm leading-relaxed mb-6 max-w-lg font-medium">
               High-volume Uhuru Market Uniforms production for schools and corporate institutions. The most competitive factory rates in Nairobi, Kenya with guaranteed institutional-grade quality.

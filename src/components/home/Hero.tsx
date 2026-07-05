@@ -335,7 +335,7 @@ export function Hero({
                     transition={{ delay: 0.4 }}
                     className="text-white/70 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                   >
-                    {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Naisiae Textiles: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
+                    {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Uhuru Market Uniforms: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
                 </div>
               </motion.div>
