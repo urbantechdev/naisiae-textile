@@ -4,11 +4,12 @@ Allow: /privacy/
 Allow: /terms/
 Allow: /shipping/
 Allow: /returns/
+Allow: /products/
 Disallow: /admin/
 Disallow: /admin
 Disallow: /checkout/
 Disallow: /checkout
-Disallow: /login/
-Disallow: /login
+Allow: /login/
+Allow: /login
 
 Sitemap: https://naisiaetextiles.com/sitemap.xml
