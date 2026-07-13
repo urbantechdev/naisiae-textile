@@ -467,6 +467,9 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                 <Package size={12} className="text-slate-300 hidden md:block" />
               </div>
               <h3 className="font-display text-sm md:text-2xl text-[#0A1628] leading-tight mb-1 md:mb-2 group-hover:text-[#C8102E] transition-colors line-clamp-2 md:line-clamp-1">{product.name}</h3>
+              <p className="md:hidden text-[10.5px] text-slate-500 line-clamp-2 mt-1 mb-1 font-medium leading-relaxed">
+                {product.description || "Premium bespoke uniform textile engineered for superior lifespan under heavy-duty institutional service."}
+              </p>
               
               {/* Interactive hint */}
               <span className="text-[8px] md:text-[9px] text-[#C8961A]/75 font-bold mb-2 block leading-none antialiased">
