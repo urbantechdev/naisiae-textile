@@ -26,6 +26,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { db, auth, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
+import { useLocalization } from '../context/LocalizationContext';
+import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
 
 export default function WholesalePage() {
   const { 
@@ -40,6 +42,7 @@ export default function WholesalePage() {
     setIsWishlistOpen,
     setIsQuoteModalOpen
   } = useCart();
+  const { currentCountry } = useLocalization();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -237,6 +240,7 @@ export default function WholesalePage() {
       <AnimatePresence>
         {selectedProduct && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8">
+            <GoogleMerchantSchema product={selectedProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -413,7 +417,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
   return (
     <motion.div 
       layout
-      className={`group relative flex ${
+      className={`group relative flex animate-blink-orange ${
         isExpanded 
           ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70 border-transparent p-5" 
           : "flex-row md:flex-col border-[#E4E8EF] hover:shadow-xl hover:border-[#C8961A]/20 bg-white border rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
@@ -423,13 +427,13 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
         <>
           <div 
             onClick={handleClick}
-            className="aspect-square md:aspect-[4/3] bg-[#F1F5F9] rounded-[18px] md:rounded-[24px] overflow-hidden relative mb-0 md:mb-6 cursor-pointer flex items-center justify-center p-2 shrink-0 w-[115px] md:w-full border-r md:border-r-0 md:border-b border-slate-100"
+            className="aspect-[4/5] md:aspect-[4/3] bg-[#F1F5F9] rounded-[18px] md:rounded-[24px] overflow-hidden relative mb-0 md:mb-6 cursor-pointer flex items-center justify-center p-0 shrink-0 w-[130px] md:w-full border-r md:border-r-0 md:border-b border-slate-100"
           >
             {product.imageUrl ? (
               <img 
                 src={product.imageUrl} 
                 alt={product.name}
-                className="w-full h-full object-cover rounded-[14px] md:rounded-[20px] transition-all duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
               />
             ) : (
               <Package size={48} className="text-slate-200" />

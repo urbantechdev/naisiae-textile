@@ -78,7 +78,7 @@ export function WholesaleDeals({
                    key={product.id}
                    layout
                    whileHover={isExpanded ? undefined : { y: -6 }}
-                   className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex ${
+                   className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex animate-blink-orange ${
                      isExpanded 
                        ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
                        : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30 w-full"
@@ -86,7 +86,7 @@ export function WholesaleDeals({
                 >
                   {!isExpanded ? (
                     <>
-                      <div className="relative aspect-square sm:aspect-[4/3] w-[120px] sm:w-full overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-2 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={() => handleProductInteraction(product)}>
+                      <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={() => handleProductInteraction(product)}>
                         {product.imageUrl ? (
                           <img 
                             src={product.imageUrl} 
@@ -103,6 +103,9 @@ export function WholesaleDeals({
                       <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={() => handleProductInteraction(product)}>
                         <div>
                           <h3 className="font-bold text-[12px] sm:text-[13px] mb-1 sm:mb-2 leading-tight line-clamp-2 min-h-[1.5rem] sm:line-clamp-1 text-[#0E121C]">{product.name}</h3>
+                          <p className="sm:hidden text-[10.5px] text-slate-500 line-clamp-2 mt-1 mb-1 font-medium leading-relaxed">
+                            {product.description || "Premium bespoke garment tailored with extra heavy duty double-stitched fabric."}
+                          </p>
                           
                           {/* Interactive hint */}
                           <span className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">

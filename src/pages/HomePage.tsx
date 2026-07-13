@@ -45,6 +45,7 @@ import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTim
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { getCategoryPlaceholder } from '../utils/image';
+import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
 
 const DEFAULT_HOME_CATEGORIES = [
   { id: 'school', title: 'School Uniforms', subtitle: 'Primary & Secondary', image: '/src/assets/images/category_school_1782334810884.jpg' },
@@ -444,7 +445,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (siteSettings) {
-      const siteName = siteSettings.siteName === 'NAISIAE TEXTILES' || siteSettings.siteName === 'Naisiae' || siteSettings.siteName === 'Naisiae Textiles Limited' || !siteSettings.siteName
+      const siteName = siteSettings.siteName === 'NAISIAE TEXTILES' || siteSettings.siteName === 'Naisiae' || siteSettings.siteName === 'Naisiae Textiles' || siteSettings.siteName === 'Naisiae Textile' || siteSettings.siteName === 'Naisiae Textiles Limited' || !siteSettings.siteName
         ? 'Uhuru Market Uniforms'
         : siteSettings.siteName;
       const tagline = siteSettings.siteTagline === 'Uhuru Market Uniforms' || siteSettings.siteTagline === 'School Uniforms & Branding' || !siteSettings.siteTagline
@@ -971,6 +972,7 @@ export default function HomePage() {
       <AnimatePresence>
         {selectedQuickViewProduct && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
+            <GoogleMerchantSchema product={selectedQuickViewProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

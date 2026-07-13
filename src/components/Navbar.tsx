@@ -182,8 +182,8 @@ export function Navbar({
         setSiteSettings(snapshot.data());
       } else {
         setSiteSettings({
-          siteName: 'NAISIAE TEXTILES',
-          siteTagline: 'Uhuru Market Uniforms',
+          siteName: 'Uhuru Market Uniforms',
+          siteTagline: 'Naisiae Textiles',
           siteLogo: null
         });
       }
@@ -213,30 +213,8 @@ export function Navbar({
     };
   }, []);
 
-  const resolvedSiteName = React.useMemo(() => {
-    const rawName = siteSettings?.siteName?.trim();
-    if (!rawName || rawName === 'NAISIAE TEXTILES' || rawName === 'Naisiae') {
-      return 'Uhuru Market Uniforms';
-    }
-    return rawName;
-  }, [siteSettings]);
-
-  const resolvedSiteTagline = React.useMemo(() => {
-    const rawTagline = siteSettings?.siteTagline?.trim();
-    const rawName = siteSettings?.siteName?.trim();
-    const hasNaisiaeInName = rawName?.toLowerCase().includes('naisiae') || resolvedSiteName.toLowerCase().includes('naisiae');
-    
-    if (!rawTagline || rawTagline === 'Uhuru Market Uniforms') {
-      return hasNaisiaeInName ? 'Uhuru Market Uniforms' : 'Naisiae Textiles';
-    }
-    
-    // Prevent name and tagline duplication
-    if (rawTagline.toLowerCase() === resolvedSiteName.toLowerCase()) {
-      return resolvedSiteName.toLowerCase().includes('naisiae') ? 'Uhuru Market Uniforms' : 'Naisiae Textiles';
-    }
-    
-    return rawTagline;
-  }, [siteSettings, resolvedSiteName]);
+  const resolvedSiteName = 'Uhuru Market Uniforms';
+  const resolvedSiteTagline = 'Naisiae Textiles';
 
   const searchResults = React.useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -497,15 +475,15 @@ export function Navbar({
         {/* Signature Branding Top Accent Line */}
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] z-20"></div>
 
-        <div className={`max-w-[1440px] mx-auto px-4 md:px-6 lg:px-20 flex items-center justify-between gap-4 md:gap-12 transition-all duration-700 ${isScrolled ? 'h-20 md:h-24' : 'h-24 md:h-32'}`}>
+        <div className={`max-w-[1440px] mx-auto px-2.5 sm:px-4 md:px-6 lg:px-20 flex items-center justify-between gap-2 md:gap-12 transition-all duration-700 ${isScrolled ? 'h-14 sm:h-20 md:h-24' : 'h-16 sm:h-24 md:h-32'}`}>
           {/* Brand Identity with Canva Gradient Theme */}
-          <Link to="/" className="group flex items-center gap-3 md:gap-4 shrink-0">
-            <div className={`relative transition-all duration-700 ${isScrolled ? 'w-12 h-12 md:w-14 md:h-14' : 'w-16 h-16 md:w-20 md:h-20'}`}>
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#C8102E] to-[#C8961A] blur-[12px] md:blur-[16px] opacity-65 group-hover:opacity-100 transition-opacity rounded-full"></div>
+          <Link to="/" className="group flex items-center gap-2 md:gap-4 shrink-0">
+            <div className={`relative transition-all duration-700 ${isScrolled ? 'w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14' : 'w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20'}`}>
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#C8102E] to-[#C8961A] blur-[8px] md:blur-[16px] opacity-65 group-hover:opacity-100 transition-opacity rounded-full"></div>
               {siteSettings?.siteLogo ? (
                 <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center font-display text-base md:text-xl lg:text-2xl text-white bg-gradient-to-tr from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-2xl relative z-10 shadow-xl overflow-hidden font-black transition-all border border-white/20 group-hover:border-[#C8961A]/50 group-hover:shadow-[0_0_20px_rgba(200,150,26,0.3)]">
+                <div className="w-full h-full flex items-center justify-center font-display text-xs sm:text-base md:text-xl lg:text-2xl text-white bg-gradient-to-tr from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-lg sm:rounded-2xl relative z-10 shadow-xl overflow-hidden font-black transition-all border border-white/20 group-hover:border-[#C8961A]/50 group-hover:shadow-[0_0_20px_rgba(200,150,26,0.3)]">
                   <span className="relative z-10 select-none tracking-tight">NT</span>
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#C8961A_0%,transparent_60%)] opacity-35 mix-blend-overlay"></div>
@@ -514,12 +492,12 @@ export function Navbar({
               )}
             </div>
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-display text-xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-none bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
+              <div className="flex items-center gap-1.5">
+                <span className="font-display text-xs sm:text-xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-none bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
                   {resolvedSiteName}
                 </span>
               </div>
-              <span className="text-[8px] md:text-[9.5px] tracking-[2px] text-[#C8961A] uppercase font-black mt-1.5 group-hover:translate-x-1 transition-transform">
+              <span className="text-[6px] sm:text-[8px] md:text-[9.5px] tracking-[1.5px] sm:tracking-[2px] text-[#C8961A] uppercase font-black mt-0.5 sm:mt-1.5 group-hover:translate-x-1 transition-transform">
                 {resolvedSiteTagline}
               </span>
             </div>
@@ -554,14 +532,14 @@ export function Navbar({
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
              {/* Localization Selector Dropdown */}
-             <div className="relative font-sans shrink-0">
+             <div className="relative font-sans shrink-0 hidden sm:block">
                <button 
                  onClick={() => setIsLocDropdownOpen(!isLocDropdownOpen)}
-                 className="flex items-center gap-2 px-2.5 py-1.5 md:px-3.5 md:py-2.5 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl text-white hover:bg-white/10 hover:border-[#C8961A]/30 transition-all text-[9px] font-black uppercase tracking-wider shadow-md"
+                 className="flex items-center gap-1.5 px-1.5 py-1 sm:px-2.5 sm:py-1.5 md:px-3.5 md:py-2.5 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl md:rounded-2xl text-white hover:bg-white/10 hover:border-[#C8961A]/30 transition-all text-[8px] sm:text-[9px] font-black uppercase tracking-wider shadow-md"
                >
-                 <span className="text-sm leading-none">{currentCountry.flag}</span>
+                 <span className="text-xs sm:text-sm leading-none">{currentCountry.flag}</span>
                  <span className="hidden md:inline-block text-[9px] font-black tracking-widest text-slate-300">{currentCountry.currency}</span>
-                 <ChevronDown size={11} className="text-[#C8961A]" />
+                 <ChevronDown size={10} className="text-[#C8961A]" />
                </button>
                <AnimatePresence>
                  {isLocDropdownOpen && (
@@ -643,11 +621,11 @@ export function Navbar({
             <button 
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Cart"
-              className="group relative p-3 md:p-4 bg-[#C8961A] text-white hover:bg-[#B08011] hover:shadow-[0_0_20px_rgba(200,150,26,0.4)] transition-all duration-550 rounded-xl md:rounded-2xl shadow-xl active:scale-90"
+              className="group relative p-2 md:p-4 bg-[#C8961A] text-white hover:bg-[#B08011] hover:shadow-[0_0_20px_rgba(200,150,26,0.4)] transition-all duration-550 rounded-lg md:rounded-2xl shadow-xl active:scale-90"
             >
-              <ShoppingBag size={20} className="relative z-10 md:w-5.5 md:h-5.5" />
+              <ShoppingBag size={16} className="relative z-10 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-5 h-5 md:w-6 md:h-6 bg-[#FF4F5A] text-white text-[9px] md:text-[10px] font-black flex items-center justify-center rounded-full border-[2px] md:border-[3px] border-[#0E121C] shadow-lg animate-pulse">
+                <span className="absolute -top-1.5 -right-1.5 md:-top-3 md:-right-3 w-4 h-4 md:w-6 md:h-6 bg-[#FF4F5A] text-white text-[8px] md:text-[10px] font-black flex items-center justify-center rounded-full border-[1.5px] md:border-[3px] border-[#0E121C] shadow-lg animate-pulse">
                   {cartCount}
                 </span>
               )}
@@ -666,9 +644,9 @@ export function Navbar({
                 appExperience.triggerFeedback('tap');
               }} 
               aria-label="Open Expansive Mega Menu"
-              className="p-3 md:p-4 bg-white text-slate-800 hover:bg-slate-50 rounded-xl md:rounded-2xl transition-all border border-slate-200 hover:border-[#C8961A]/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
+              className="p-2 md:p-4 bg-white text-slate-800 hover:bg-slate-50 rounded-lg md:rounded-2xl transition-all border border-slate-200 hover:border-[#C8961A]/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
             >
-              <Menu size={24} className="md:w-7 md:h-7 text-[#0E121C]" />
+              <Menu size={18} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#0E121C]" />
             </button>
           </div>
         </div>
@@ -929,24 +907,89 @@ export function Navbar({
                 </div>
 
                 {/* Mobile Navigation Links inside Mega Menu */}
-                <div className="md:hidden space-y-2 pt-6 border-t border-slate-100">
-                  <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Main Sections</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { name: t('Home'), link: '/home' },
-                      { name: t('Products'), link: '/product' },
-                      { name: t('Services'), link: '/services' },
-                      { name: t('Textiles'), link: '/textiles' }
-                    ].map((item, idx) => (
-                      <Link
-                        key={`mega-mobile-nav-${idx}`}
-                        to={getLocalizedLink(item.link)}
-                        onClick={() => setIsMegaMenuOpen(false)}
-                        className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-center text-xs font-bold text-slate-800 border border-slate-100 transition-all"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
+                <div className="md:hidden space-y-4 pt-6 border-t border-slate-100">
+                  <div>
+                    <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Main Sections</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { name: t('Home'), link: '/home' },
+                        { name: t('Products'), link: '/product' },
+                        { name: t('Services'), link: '/services' },
+                        { name: t('Textiles'), link: '/textiles' }
+                      ].map((item, idx) => (
+                        <Link
+                          key={`mega-mobile-nav-${idx}`}
+                          to={getLocalizedLink(item.link)}
+                          onClick={() => setIsMegaMenuOpen(false)}
+                          className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-center text-xs font-bold text-slate-800 border border-slate-100 transition-all"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mobile Country/Language Selector inside Mega Menu */}
+                  <div className="space-y-3 pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase">
+                      <span>🌐</span>
+                      <span>Country & Region</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      {COUNTRIES.map((c) => {
+                        const isSelected = currentCountry.code === c.code;
+                        return (
+                          <button
+                            key={`mobile-country-${c.code}`}
+                            onClick={() => {
+                              changeCountry(c.code);
+                              appExperience.triggerFeedback('tap');
+                            }}
+                            className={`flex items-center justify-between p-3 rounded-xl transition-all border text-left ${
+                              isSelected
+                                ? 'bg-[#C8961A]/10 border-[#C8961A] text-[#0A1628]'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-150'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg leading-none">{c.flag}</span>
+                              <div className="flex flex-col">
+                                <span className="text-[9px] font-black uppercase tracking-wide leading-tight">{c.name}</span>
+                                <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.currency}</span>
+                              </div>
+                            </div>
+                            {isSelected && <Check size={12} className="text-[#C8961A] shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Mobile Language Selector */}
+                    <div className="pt-2">
+                      <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Preferred Language</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {currentCountry.languages.map((l) => {
+                          const isSelected = currentLanguage === l.code;
+                          return (
+                            <button
+                              key={`mobile-lang-${l.code}`}
+                              onClick={() => {
+                                changeLanguage(l.code);
+                                appExperience.triggerFeedback('tap');
+                              }}
+                              className={`py-2 px-3 rounded-xl text-[9px] font-black tracking-wider uppercase text-center transition-all border ${
+                                isSelected
+                                  ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-md'
+                                  : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-150'
+                              }`}
+                            >
+                              {l.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
 

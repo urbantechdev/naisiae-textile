@@ -270,5 +270,20 @@ body {
   animation: blink-maroon 2.5s infinite ease-in-out;
 }
 
+@keyframes blink-orange {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1), 0 0 4px rgba(249, 115, 22, 0.15);
+    border-color: rgba(249, 115, 22, 0.2);
+  }
+  50% {
+    box-shadow: 0 10px 25px rgba(249, 115, 22, 0.45), 0 0 20px rgba(249, 115, 22, 0.35);
+    border-color: rgba(249, 115, 22, 0.65);
+  }
+}
+
+.animate-blink-orange {
+  animation: blink-orange 2.5s infinite ease-in-out;
+}
+
 
 

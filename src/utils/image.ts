@@ -2,8 +2,16 @@
  * Optimizes image URLs by converting them to modern WebP format
  * with dynamic server-side parameters where supported (e.g., Unsplash, Pinterest, etc.)
  */
-export function toWebPUrl(url: string | undefined): string {
+export function toWebPUrl(url: any): string {
   if (!url) return '';
+
+  if (typeof url !== 'string') {
+    if (typeof url === 'object') {
+      if ('default' in url && url.default) return toWebPUrl(url.default);
+      if ('src' in url && url.src) return toWebPUrl(url.src);
+    }
+    return String(url);
+  }
 
   const trimmed = url.trim();
 
@@ -94,7 +102,7 @@ export function initImageOptimizer(): void {
         get() {
           return originalGet.call(this);
         },
-        set(val: string) {
+        set(val: any) {
           const optimized = toWebPUrl(val);
           originalSet.call(this, optimized);
         },
@@ -113,8 +121,8 @@ export function initImageOptimizer(): void {
         get() {
           return originalGet.call(this);
         },
-        set(val: string) {
-          if (val) {
+        set(val: any) {
+          if (val && typeof val === 'string') {
             const optimized = val.split(',').map(part => {
               const trimmed = part.trim();
               const spaceIndex = trimmed.indexOf(' ');
@@ -147,7 +155,7 @@ export function initImageOptimizer(): void {
           get() {
             return originalGet.call(this);
           },
-          set(val: string) {
+          set(val: any) {
             const optimized = toWebPUrl(val);
             originalSet.call(this, optimized);
           },
@@ -166,8 +174,8 @@ export function initImageOptimizer(): void {
           get() {
             return originalGet.call(this);
           },
-          set(val: string) {
-            if (val) {
+          set(val: any) {
+            if (val && typeof val === 'string') {
               const optimized = val.split(',').map(part => {
                 const trimmed = part.trim();
                 const spaceIndex = trimmed.indexOf(' ');

@@ -111,10 +111,10 @@ export function Footer() {
             </div>
             <div className="leading-tight text-left">
               <div className="font-display text-2xl tracking-tight text-white uppercase font-black bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent">
-                {siteSettings?.siteName || 'Uhuru Market Uniforms'}
+                Uhuru Market Uniforms
               </div>
               <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold">
-                Uhuru Market Uniforms, Nairobi
+                Naisiae Textiles
               </div>
             </div>
           </div>

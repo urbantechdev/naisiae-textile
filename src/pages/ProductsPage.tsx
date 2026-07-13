@@ -35,6 +35,7 @@ import { db } from '../services/firebase';
 import { LazyImage } from '../components/LazyImage';
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
+import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
 
 export default function ProductsPage() {
   const { 
@@ -47,7 +48,7 @@ export default function ProductsPage() {
     toggleWishlist,
     isInWishlist
   } = useCart();
-  const { formatPrice } = useLocalization();
+  const { formatPrice, currentCountry } = useLocalization();
   const navigate = useNavigate();
   
   // State
@@ -612,7 +613,7 @@ export default function ProductsPage() {
                 </button>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {sortedAndFilteredProducts.map((p, index) => {
                   const isWholesaleItem = p.priceType === 'wholesale' || p.tags?.some((t: string) => 
                     ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())
@@ -625,21 +626,21 @@ export default function ProductsPage() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: Math.min(index * 0.05, 0.4) }}
-                      className="group bg-white rounded-3xl border border-slate-200/50 hover:border-slate-300 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative"
+                      className="group bg-white rounded-2xl sm:rounded-3xl border border-slate-200/50 hover:border-slate-300 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative animate-blink-orange"
                     >
                       {/* Badge Display */}
-                      <div className="absolute top-4 left-4 z-20 flex flex-col gap-1.5 items-start">
+                      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 flex flex-col gap-1 sm:gap-1.5 items-start">
                         {isWholesaleItem ? (
-                          <span className="bg-emerald-600 text-white text-[8px] font-black uppercase tracking-[1.5px] px-2.5 py-1 rounded-md shadow-sm">
+                          <span className="bg-emerald-600 text-white text-[7px] sm:text-[8px] font-black uppercase tracking-[1px] sm:tracking-[1.5px] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-md shadow-sm">
                             Wholesale Scale
                           </span>
                         ) : p.price && p.price > 0 ? (
-                          <span className="bg-[#0A1628] text-white text-[8px] font-black uppercase tracking-[1.5px] px-2.5 py-1 rounded-md shadow-sm">
+                          <span className="bg-[#0A1628] text-white text-[7px] sm:text-[8px] font-black uppercase tracking-[1px] sm:tracking-[1.5px] px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-md shadow-sm">
                             Retail Ready
                           </span>
                         ) : null}
                         {p.tags?.includes('bestseller') && (
-                          <span className="bg-[#C8961A] text-white text-[7px] font-black uppercase tracking-[1.5px] px-2 py-0.5 rounded shadow-sm">
+                          <span className="bg-[#C8961A] text-white text-[6px] sm:text-[7px] font-black uppercase tracking-[1px] sm:tracking-[1.5px] px-1.5 py-0.5 rounded shadow-sm">
                             Best Seller 🔥
                           </span>
                         )}
@@ -651,7 +652,7 @@ export default function ProductsPage() {
                           e.stopPropagation();
                           toggleWishlist(p);
                         }}
-                        className={`absolute top-4 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                        className={`absolute top-2 right-2 sm:top-4 sm:right-4 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all ${
                           isItemInWishlist 
                             ? 'bg-rose-50 text-rose-600 border border-rose-100' 
                             : 'bg-white/80 select-backdrop-blur border border-slate-100 text-slate-400 hover:text-rose-500'
@@ -681,41 +682,41 @@ export default function ProductsPage() {
                       </div>
 
                       {/* Details Area */}
-                      <div className="p-5 flex flex-col flex-grow justify-between bg-white">
+                      <div className="p-3 sm:p-5 flex flex-col flex-grow justify-between bg-white">
                         <div>
-                          <div className="flex items-center justify-between gap-2 mb-1.5">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-[#C8961A] font-mono">
+                          <div className="flex items-center justify-between gap-1 sm:gap-2 mb-1 sm:mb-1.5">
+                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-[#C8961A] font-mono">
                               {p.category}
                             </span>
                           </div>
                           
                           <h3 
                             onClick={() => handleOpenQuickView(p)}
-                            className="font-bold text-sm text-[#0A1628] hover:text-[#C8102E] transition-colors line-clamp-1 mb-2 hover:cursor-pointer"
+                            className="font-bold text-xs sm:text-sm text-[#0A1628] hover:text-[#C8102E] transition-colors line-clamp-1 mb-1 sm:mb-2 hover:cursor-pointer"
                           >
                             {p.name}
                           </h3>
                           
-                          <p className="text-slate-400 text-xs line-clamp-2 mb-4 font-medium leading-relaxed">
+                          <p className="hidden xs:line-clamp-2 sm:line-clamp-2 text-slate-400 text-[10px] sm:text-xs mb-3 sm:mb-4 font-medium leading-relaxed">
                             {p.description || "Premium institutional garment tailored with extra heavy duty double-stitched cotton blend."}
                           </p>
                         </div>
 
                         <div>
                           {/* Retail / Wholesale Pricing */}
-                          <div className="flex items-baseline gap-2 mb-5">
+                          <div className="flex items-baseline gap-1 sm:gap-2 mb-3 sm:mb-5">
                             {isWholesaleItem && (!p.price || p.price === 0) ? (
                               <div>
-                                <span className="text-base font-black text-slate-700">Custom Quote Req</span>
-                                <span className="text-[9px] block text-emerald-600 font-extrabold uppercase tracking-wide">Direct wholesale pricing</span>
+                                <span className="text-xs sm:text-base font-black text-slate-700">Custom Quote Req</span>
+                                <span className="text-[7.5px] sm:text-[9px] block text-emerald-600 font-extrabold uppercase tracking-wide">Direct wholesale pricing</span>
                               </div>
                             ) : (
                               <>
-                                <span className="text-lg font-black text-[#0A1628] font-mono">
+                                <span className="text-sm sm:text-lg font-black text-[#0A1628] font-mono">
                                   {formatPrice(p.price || 1800)}
                                 </span>
                                 {p.oldPrice && (
-                                  <span className="text-xs text-slate-400 line-through font-mono">
+                                  <span className="text-[10px] sm:text-xs text-slate-400 line-through font-mono">
                                     {formatPrice(p.oldPrice)}
                                   </span>
                                 )}
@@ -724,28 +725,28 @@ export default function ProductsPage() {
                           </div>
 
                           {/* Interactive CTAs */}
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-1.5 sm:gap-2">
                             <button 
                               onClick={() => handleBuyNow(p)}
-                              className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3.5 px-3 rounded-xl font-black text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
+                              className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-2 sm:py-3.5 px-2 sm:px-3 rounded-lg sm:rounded-xl font-black text-[8px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 sm:gap-1.5 active:scale-95 shadow-md"
                               title="Instant secure buy checkout"
                             >
                               Buy Now ⚡
                             </button>
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                               <button 
                                 onClick={() => {
                                   setQuoteProduct(p);
                                   setIsQuoteModalOpen(true);
                                 }}
-                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-3 px-1.5 rounded-xl font-black text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
+                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-1.5 sm:py-3 px-1 sm:px-1.5 rounded-lg sm:rounded-xl font-black text-[7.5px] sm:text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-0.5 sm:gap-1 active:scale-95"
                                 title="Request custom bulk quote"
                               >
                                 Enquire ✉️
                               </button>
                               <a 
                                 href="tel:+254792021795"
-                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-3 px-1.5 rounded-xl font-black text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
+                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-1.5 sm:py-3 px-1 sm:px-1.5 rounded-lg sm:rounded-xl font-black text-[7.5px] sm:text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-0.5 sm:gap-1 active:scale-95"
                                 title="Call wholesale direct desk"
                               >
                                 Call Now 📞
@@ -786,6 +787,7 @@ export default function ProductsPage() {
       <AnimatePresence>
         {selectedProduct && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <GoogleMerchantSchema product={selectedProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

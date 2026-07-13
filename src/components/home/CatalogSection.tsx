@@ -224,7 +224,7 @@ export function CatalogSection({
               key={product.id}
               layout
               whileHover={isExpanded ? undefined : { y: -6 }}
-              className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex ${
+              className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex animate-blink-orange ${
                 isExpanded 
                   ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
                   : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30 w-full"
@@ -232,7 +232,7 @@ export function CatalogSection({
             >
               {!isExpanded ? (
                 <>
-                  <div className="relative aspect-square sm:aspect-[4/3] w-[120px] sm:w-full overflow-hidden bg-transparent cursor-pointer flex items-center justify-center p-2 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={(e) => handleProductInteraction(product, e)}>
+                  <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-transparent cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={(e) => handleProductInteraction(product, e)}>
                     {product.imageUrl ? (
                       <LazyImage 
                         src={product.imageUrl} 

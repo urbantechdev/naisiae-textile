@@ -110,7 +110,8 @@ export function FloatingChat() {
         lastUpdate: serverTimestamp(),
         unreadCount: 0,
         status: 'active',
-        userType: 'guest'
+        userType: 'guest',
+        lastSender: 'user'
       }, { merge: true });
 
       await addDoc(collection(db, 'chats', sessionId, 'messages'), {

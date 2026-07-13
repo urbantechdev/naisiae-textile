@@ -27,7 +27,7 @@ import {
 import { db } from '../../services/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 
-export default function ChatWorkspace({ setToast, handleFirestoreError }: any) {
+export default function ChatWorkspace({ setToast, handleFirestoreError, defaultSelectedChatId, setDefaultSelectedChatId }: any) {
   const [chats, setChats] = useState<any[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -36,6 +36,16 @@ export default function ChatWorkspace({ setToast, handleFirestoreError }: any) {
   const [isSending, setIsSending] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Focus on default selected chat if provided
+  useEffect(() => {
+    if (defaultSelectedChatId) {
+      setSelectedChatId(defaultSelectedChatId);
+      if (setDefaultSelectedChatId) {
+        setDefaultSelectedChatId(null);
+      }
+    }
+  }, [defaultSelectedChatId, setDefaultSelectedChatId]);
 
   // Sync Chats List
   useEffect(() => {
@@ -85,7 +95,8 @@ export default function ChatWorkspace({ setToast, handleFirestoreError }: any) {
       await updateDoc(doc(db, 'chats', selectedChatId), {
         lastMessage: reply,
         lastUpdate: serverTimestamp(),
-        status: 'responded'
+        status: 'responded',
+        lastSender: 'admin'
       });
 
       setReply('');

@@ -45,7 +45,9 @@ import {
   Phone,
   Link as LinkIcon,
   ShieldCheck,
-  Coins
+  Coins,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
@@ -123,6 +125,99 @@ import {
   generateProductDataFromText
 } from '../services/geminiService';
 import { BrainCircuit } from 'lucide-react';
+
+class PhoneRinger {
+  private audioCtx: AudioContext | null = null;
+  private isRinging: boolean = false;
+  private ringInterval: any = null;
+
+  start() {
+    if (this.isRinging) return;
+    this.isRinging = true;
+
+    try {
+      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+      this.audioCtx = new AudioCtxClass();
+    } catch (e) {
+      console.error("Web Audio API not supported", e);
+      return;
+    }
+
+    const playRing = () => {
+      if (!this.audioCtx) return;
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const now = this.audioCtx.currentTime;
+
+      const osc1 = this.audioCtx.createOscillator();
+      const osc2 = this.audioCtx.createOscillator();
+      const gainNode = this.audioCtx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(853, now);
+
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(960, now);
+
+      const lfo = this.audioCtx.createOscillator();
+      lfo.frequency.setValueAtTime(16, now); // 16 Hz warble
+
+      const lfoFreqGain = this.audioCtx.createGain();
+      lfoFreqGain.gain.setValueAtTime(30, now); // 30Hz deviation
+
+      lfo.connect(lfoFreqGain);
+      lfoFreqGain.connect(osc1.frequency);
+      lfoFreqGain.connect(osc2.frequency);
+
+      gainNode.gain.setValueAtTime(0, now);
+
+      const playSegment = (startOffset: number, duration: number) => {
+        if (!this.audioCtx) return;
+        const sTime = now + startOffset;
+        const eTime = sTime + duration;
+
+        gainNode.gain.setValueAtTime(0, sTime);
+        gainNode.gain.linearRampToValueAtTime(0.25, sTime + 0.05);
+        gainNode.gain.setValueAtTime(0.25, eTime - 0.05);
+        gainNode.gain.linearRampToValueAtTime(0, eTime);
+      };
+
+      playSegment(0, 0.7);
+      playSegment(1.0, 0.7);
+
+      osc1.connect(gainNode);
+      osc2.connect(gainNode);
+      gainNode.connect(this.audioCtx.destination);
+
+      lfo.start(now);
+      osc1.start(now);
+      osc2.start(now);
+
+      lfo.stop(now + 2.0);
+      osc1.stop(now + 2.0);
+      osc2.stop(now + 2.0);
+    };
+
+    playRing();
+    this.ringInterval = setInterval(() => {
+      playRing();
+    }, 6000);
+  }
+
+  stop() {
+    this.isRinging = false;
+    if (this.ringInterval) {
+      clearInterval(this.ringInterval);
+      this.ringInterval = null;
+    }
+    if (this.audioCtx) {
+      this.audioCtx.close().catch(() => {});
+      this.audioCtx = null;
+    }
+  }
+}
 
 // Mock data for initial charts if no real data
 export default function AdminDashboard() {
@@ -238,6 +333,24 @@ export default function AdminDashboard() {
   const prevChatsRef = useRef<any[]>([]);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const [chartData, setChartData] = useState<any[]>([]);
+  const [selectedSupportChatId, setSelectedSupportChatId] = useState<string | null>(null);
+
+  const ringerRef = useRef<PhoneRinger | null>(null);
+
+  useEffect(() => {
+    ringerRef.current = new PhoneRinger();
+    return () => {
+      ringerRef.current?.stop();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (newChatNotification && isSoundEnabled) {
+      ringerRef.current?.start();
+    } else {
+      ringerRef.current?.stop();
+    }
+  }, [newChatNotification, isSoundEnabled]);
 
   useEffect(() => {
     if (toast) {
@@ -370,12 +483,12 @@ export default function AdminDashboard() {
       } else {
         // Initialize default settings if doesn't exist
         setSiteSettings({
-          siteName: 'Naisiae Textiles Limited',
+          siteName: 'Uhuru Market Uniforms',
           siteLogo: '',
           footerLogo: '',
           favicon: '',
-          siteTagline: 'Naisiae Textiles Limited',
-          sharingTitle: 'Naisiae Textiles Limited',
+          siteTagline: 'Naisiae Textiles',
+          sharingTitle: 'Uhuru Market Uniforms',
           sharingDescription: 'Modern, High-Quality Uniforms & Apparel for Kenya\'s Leading Institutions.',
           sharingImage: '',
           enableComparison: true,
@@ -396,20 +509,13 @@ export default function AdminDashboard() {
           const prevChat = prevChatsRef.current.find(c => c.id === chat.id);
           
           // New chat or new message in existing chat from user
-          const isNewChat = !prevChat;
-          const hasNewMessage = prevChat && chat.lastUpdate?.seconds > prevChat.lastUpdate?.seconds;
+          const isNewChat = !prevChat && chat.status === 'active';
+          const hasNewMessage = prevChat && chat.lastUpdate?.seconds > prevChat.lastUpdate?.seconds && chat.status === 'active';
           const isFromUser = chat.lastSender !== 'admin';
 
           if ((isNewChat || hasNewMessage) && isFromUser) {
-            // Trigger Notification
+            // Trigger Notification (continuous PhoneRinger handles sound in useEffect)
             setNewChatNotification(chat);
-            
-            // Play Sound
-            if (isSoundEnabled) {
-              const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-emergency-alert-alarm-1002.mp3');
-              audio.volume = 0.8;
-              audio.play().catch(e => console.log('Audio play blocked:', e));
-            }
           }
         });
       }
@@ -1385,7 +1491,18 @@ export default function AdminDashboard() {
             className="fixed inset-0 z-[100] flex items-center justify-center p-6 pointer-events-none"
           >
             <div className="bg-[#0A1628] text-white p-10 rounded-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 max-w-xl w-full pointer-events-auto relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4">
+              <div className="absolute top-0 right-0 p-4 flex items-center gap-2">
+                <button 
+                  onClick={() => setIsSoundEnabled(!isSoundEnabled)} 
+                  className="p-2 hover:bg-white/10 rounded-full text-white/60 hover:text-white transition-all flex items-center justify-center"
+                  title={isSoundEnabled ? "Mute Ringer" : "Unmute Ringer"}
+                >
+                  {isSoundEnabled ? (
+                    <Volume2 size={22} className="text-[#C8961A] animate-pulse" />
+                  ) : (
+                    <VolumeX size={22} className="text-white/40" />
+                  )}
+                </button>
                 <button onClick={() => setNewChatNotification(null)} className="p-2 hover:bg-white/10 rounded-full text-white/40 hover:text-white transition-all">
                   <X size={24} />
                 </button>
@@ -1394,52 +1511,60 @@ export default function AdminDashboard() {
               <div className="flex items-center gap-6 mb-8">
                 <div className="w-20 h-20 bg-[#C8961A] rounded-[28px] flex items-center justify-center text-white shadow-2xl shadow-[#C8961A]/20">
                   <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
+                    animate={{ 
+                      rotate: [0, -10, 10, -10, 10, 0],
+                      scale: [1, 1.15, 1.15, 1.15, 1.15, 1]
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      duration: 0.7,
+                      repeatType: "reverse"
+                    }}
                   >
-                    <MessageSquare size={40} />
+                    <Phone size={36} />
                   </motion.div>
                 </div>
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-2 animate-pulse">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                    Urgent Message
+                    Incoming Live Support Call
                   </div>
-                  <h3 className="text-3xl font-display leading-[1]">New Client Inquiry</h3>
+                  <h3 className="text-3xl font-display leading-[1] text-white">Direct Customer Call</h3>
                 </div>
               </div>
 
               <div className="bg-white/5 rounded-3xl p-6 mb-8 border border-white/5">
-                <p className="text-white/60 text-[10px] uppercase font-black tracking-widest mb-3">Recent Message Body:</p>
+                <p className="text-white/60 text-[10px] uppercase font-black tracking-widest mb-3">Client Initial Message:</p>
                 <p className="text-lg font-medium leading-relaxed italic">
                   "{newChatNotification.lastMessage || 'No message preview available...'}"
                 </p>
                 <div className="mt-4 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-bold text-[#C8961A]">CS</div>
-                  <div className="text-[11px] text-white/40 tracking-wider">Session Ref: {newChatNotification.id}</div>
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-bold text-[#C8961A]">Client</div>
+                  <div className="text-[11px] text-white/40 tracking-wider">Session ID: {newChatNotification.id.replace('user_', 'ID-')}</div>
                 </div>
               </div>
 
               <div className="flex gap-4">
                 <button 
                   onClick={() => {
+                    setSelectedSupportChatId(newChatNotification.id);
                     setActiveView('live-support');
                     setNewChatNotification(null);
                   }}
                   className="flex-1 bg-white text-[#0A1628] h-16 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
                 >
-                  <Headset size={18} /> Open Command Center
+                  <Headset size={18} className="animate-pulse" /> Answer & Respond
                 </button>
                 <button 
                    onClick={() => setNewChatNotification(null)}
                    className="px-8 h-16 rounded-2xl border border-white/10 text-white/40 font-bold hover:text-white hover:bg-white/5 transition-all text-sm"
                 >
-                  Dismiss
+                  Mute / Dismiss
                 </button>
               </div>
               
               <div className="mt-6 flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[3px] text-white/20">
-                <Zap size={10} className="text-[#C8961A]" /> Naisiae Sync Protocol Active
+                <Zap size={10} className="text-[#C8961A]" /> Naisiae Phone Protocol Active
               </div>
             </div>
           </motion.div>
@@ -2722,7 +2847,12 @@ export default function AdminDashboard() {
             )}
 
             {activeView === 'live-support' && (
-              <ChatWorkspace setToast={setToast} handleFirestoreError={handleFirestoreError} />
+              <ChatWorkspace 
+                setToast={setToast} 
+                handleFirestoreError={handleFirestoreError} 
+                defaultSelectedChatId={selectedSupportChatId}
+                setDefaultSelectedChatId={setSelectedSupportChatId}
+              />
             )}
 
             {activeView === 'chat-settings' && (
@@ -3573,7 +3703,7 @@ export default function AdminDashboard() {
         <footer className="px-8 py-6 border-t border-[#E2E8F0] mt-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs text-[#64748B]">
-              &copy; {new Date().getFullYear()} <span className="font-bold text-[#1E293B]">Naisiae Textiles Limited</span>. All rights reserved.
+              &copy; {new Date().getFullYear()} <span className="font-bold text-[#1E293B]">Uhuru Market Uniforms</span>. All rights reserved.
             </p>
             <Link 
               to="/" 
@@ -6476,12 +6606,12 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
   const [resolving, setResolving] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState(initialData || {
-    siteName: 'Naisiae Textile',
+    siteName: 'Uhuru Market Uniforms',
     siteLogo: '',
     footerLogo: '',
     favicon: '',
-    siteTagline: '',
-    sharingTitle: '',
+    siteTagline: 'Naisiae Textiles',
+    sharingTitle: 'Uhuru Market Uniforms',
     sharingDescription: '',
     sharingImage: '',
     heroImages: [
@@ -7067,7 +7197,76 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
 
       {/* Social Sharing Section */}
       <div className="space-y-6 pt-6 border-t border-slate-100">
-        <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px] mb-6">Social Sharing & SEO (Open Graph)</h4>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <div>
+            <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px]">Social Sharing & SEO (Open Graph)</h4>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Configure sharing previews for social media platforms</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (!products || products.length === 0) {
+                setToast({ message: "No products available to pick from! Please seed or add some products first.", type: 'warning' });
+                return;
+              }
+              const randomProduct = products[Math.floor(Math.random() * products.length)];
+              const newFormData = {
+                ...formData,
+                sharingTitle: randomProduct.name,
+                sharingDescription: randomProduct.description || `Premium custom-tailored ${randomProduct.name} by Uhuru Market Uniforms. Heavy gauged stitching and durable fabrics.`,
+                sharingImage: randomProduct.imageUrl || ''
+              };
+              setFormData(newFormData);
+              safeSave(newFormData, true);
+              setToast({ 
+                message: `✨ Autopicked product: "${randomProduct.name}" for social sharing metadata!`, 
+                type: 'success' 
+              });
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#C8961A] to-[#A67D15] hover:from-[#A67D15] hover:to-[#C8961A] text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-md hover:scale-105 active:scale-95 group self-start sm:self-auto"
+          >
+            <Sparkles size={14} className="group-hover:animate-spin" />
+            Autopick Any Product for Sharing
+          </button>
+        </div>
+
+        {products && products.length > 0 && (
+          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2.5 ml-1">Or Quick-Pick a Specific Product for Sharing Preview:</p>
+            <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto pr-2 custom-scrollbar">
+              {products.slice(0, 10).map((prod: any) => (
+                <button
+                  key={prod.id || prod.name}
+                  type="button"
+                  onClick={() => {
+                    const newFormData = {
+                      ...formData,
+                      sharingTitle: prod.name,
+                      sharingDescription: prod.description || `Premium custom-tailored ${prod.name} by Uhuru Market Uniforms. Heavy gauged stitching and durable fabrics.`,
+                      sharingImage: prod.imageUrl || ''
+                    };
+                    setFormData(newFormData);
+                    safeSave(newFormData, true);
+                    setToast({ 
+                      message: `🎯 Selected product: "${prod.name}" for OG sharing!`, 
+                      type: 'success' 
+                    });
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border transition-all flex items-center gap-2 ${
+                    formData.sharingTitle === prod.name 
+                      ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-sm' 
+                      : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                  }`}
+                >
+                  {prod.imageUrl && (
+                    <img src={prod.imageUrl} className="w-4 h-4 rounded-md object-cover" alt="" referrerPolicy="no-referrer" />
+                  )}
+                  <span className="truncate max-w-[200px]">{prod.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="space-y-4">
