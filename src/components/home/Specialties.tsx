@@ -11,9 +11,9 @@ interface SpecialtiesProps {
 
 export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
   return (
-    <section id="specialties" className="py-12 sm:py-24 bg-white border-b border-slate-100">
+    <section id="specialties" className="pt-8 pb-4 sm:py-24 bg-white border-b border-slate-100">
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
-        <div className="flex justify-between items-end mb-6 sm:mb-12">
+        <div className="flex justify-between items-end mb-4 sm:mb-12">
           <div>
             <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-2 sm:mb-4">
               <div className="w-8 h-[2px] bg-[#C8102E]"></div> Our Specialties
