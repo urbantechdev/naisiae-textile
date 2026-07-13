@@ -419,7 +419,7 @@ export function Hero({
             onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
             placeholder="Search school uniforms, scrubs, blazers..."
-            className="w-full bg-white/95 backdrop-blur-md border border-white/20 rounded-full pl-14 pr-6 py-3.5 lg:py-4 text-[#0E121C] text-sm lg:text-base outline-none focus:ring-4 focus:ring-[#C8102E]/35 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
+            className="w-full bg-white/95 backdrop-blur-md border border-white/20 rounded-full pl-14 pr-6 py-3.5 lg:py-4 text-[#0E121C] text-sm lg:text-base outline-none focus:ring-4 focus:ring-[#C8102E]/35 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)] animate-blink-maroon"
           />
           <AnimatePresence>
             {showSearchSuggestions && searchResults.length > 0 && (
@@ -500,7 +500,7 @@ export function Hero({
           onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
           placeholder="Search school uniforms, scrubs, blazers..."
-          className="w-full bg-slate-50 border border-slate-200 rounded-full pl-12 pr-6 py-3.5 text-[#0E121C] text-sm outline-none focus:ring-4 focus:ring-[#C8102E]/20 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-md hover:shadow-lg focus:shadow-lg"
+          className="w-full bg-slate-50 border border-slate-200 rounded-full pl-12 pr-6 py-3.5 text-[#0E121C] text-sm outline-none focus:ring-4 focus:ring-[#C8102E]/20 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-md hover:shadow-lg focus:shadow-lg animate-blink-maroon"
         />
         <AnimatePresence>
           {showSearchSuggestions && searchResults.length > 0 && (
