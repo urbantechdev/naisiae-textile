@@ -261,6 +261,9 @@ export function CatalogSection({
                     <div>
                       <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-0.5 sm:mb-1">{product.category}</div>
                       <h3 className="font-bold text-[12px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-2 min-h-[1.5rem] sm:line-clamp-1">{product.name}</h3>
+                      <p className="sm:hidden text-[10.5px] text-slate-500 line-clamp-2 mt-1 mb-1 font-medium leading-relaxed">
+                        {product.description || "Premium bespoke garment tailored with extra heavy duty double-stitched fabric."}
+                      </p>
                       
                       {/* Interactive hint */}
                       <span className="text-[8px] sm:text-[9px] text-slate-400 font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
