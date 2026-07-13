@@ -560,7 +560,7 @@ Return the response in JSON format.`;
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa", 
+      appType: "custom", 
     });
     app.set('vite', vite);
     app.use(vite.middlewares);
@@ -573,6 +573,7 @@ Return the response in JSON format.`;
     }));
     // Serve static assets with aggressive cache headers and etags for instant reload
     app.use(express.static(distPath, {
+      index: false,
       maxAge: '1y',
       etag: true,
       immutable: true,
@@ -869,15 +870,15 @@ Return the response in JSON format.`;
       const countrySuffix = matchedCountry.code === 'KE' ? ' - Nairobi, DRC, TZ, UG, ETH' : ` in ${matchedCountry.name}`;
       const countryDescriptionSuffix = matchedCountry.code === 'KE' ? ', In Nairobi, DRC, TZ, UG, ETH' : ` in ${matchedCountry.name}`;
 
-      let title = `Uhuru Market Uniforms${countrySuffix} | Naisiae Textiles`;
-      let description = `Official Uhuru Market Uniforms by Naisiae Textiles. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
+      let title = `Uhuru Market Uniforms${countrySuffix}`;
+      let description = `Official Uhuru Market Uniforms. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
       let imageUrl = "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&h=630&q=80";
       let type = "website";
 
       // 1. Pre-fetch Site Settings
       let siteSettings = {
         siteName: "Uhuru Market Uniforms",
-        siteTagline: "Naisiae Textiles",
+        siteTagline: "School Uniforms & Branding",
         siteLogo: "",
         sharingImage: "",
         sharingTitle: "",
@@ -890,9 +891,19 @@ Return the response in JSON format.`;
         const settingsData = await settingsResponse.json();
         
         if (settingsData.fields) {
+          const rawSiteName = settingsData.fields.siteName?.stringValue || "";
+          const resolvedName = (rawSiteName.trim() === 'NAISIAE TEXTILES' || rawSiteName.trim() === 'Naisiae' || rawSiteName.trim() === 'Naisiae Textiles' || rawSiteName.trim() === 'Naisiae Textiles Limited' || !rawSiteName)
+            ? 'Uhuru Market Uniforms'
+            : rawSiteName;
+          
+          const rawTagline = settingsData.fields.siteTagline?.stringValue || "";
+          const resolvedTagline = (rawTagline.trim() === 'Uhuru Market Uniforms' || rawTagline.trim() === 'School Uniforms & Branding' || rawTagline.trim() === 'Naisiae Textiles' || !rawTagline)
+            ? 'School Uniforms & Branding'
+            : rawTagline;
+
           siteSettings = {
-            siteName: settingsData.fields.siteName?.stringValue || "Uhuru Market Uniforms",
-            siteTagline: settingsData.fields.siteTagline?.stringValue || "Naisiae Textiles",
+            siteName: resolvedName,
+            siteTagline: resolvedTagline,
             siteLogo: settingsData.fields.siteLogo?.stringValue || "",
             sharingImage: settingsData.fields.sharingImage?.stringValue || "",
             sharingTitle: settingsData.fields.sharingTitle?.stringValue || "",
@@ -924,7 +935,7 @@ Return the response in JSON format.`;
           } catch (e) {}
         }
       } else if (relativePath === '/' || relativePath === '') {
-        title = siteSettings.sharingTitle || `Uhuru Market Uniforms${countrySuffix} | Naisiae Textiles`;
+        title = siteSettings.sharingTitle || `Uhuru Market Uniforms${countrySuffix}`;
         description = siteSettings.sharingDescription || description;
         imageUrl = siteSettings.sharingImage || siteSettings.siteLogo || imageUrl;
       } else if (relativePath === '/products') {
