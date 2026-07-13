@@ -54,9 +54,9 @@ export function WholesaleDeals({
   };
 
   return (
-    <section id="wholesale-deals" className="py-20 bg-white border-b border-slate-100">
-      <div className="max-w-[1440px] mx-auto px-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
+    <section id="wholesale-deals" className="pt-6 pb-12 sm:py-20 bg-white border-b border-slate-100">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 sm:gap-6 mb-6 sm:mb-12">
           <div>
             <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
               <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
