@@ -255,4 +255,20 @@ body {
   @apply bg-[#F59E0B]/50 rounded-full hover:bg-[#F59E0B] transition-colors border border-[#F59E0B]/30;
 }
 
+@keyframes blink-maroon {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(128, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: rgba(128, 0, 0, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(128, 0, 0, 0.75), 0 0 35px rgba(200, 16, 46, 0.35);
+    border-color: rgba(200, 16, 46, 0.75);
+  }
+}
+
+.animate-blink-maroon {
+  animation: blink-maroon 2.5s infinite ease-in-out;
+}
+
+
 
