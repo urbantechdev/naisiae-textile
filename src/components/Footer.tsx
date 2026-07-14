@@ -6,6 +6,15 @@ import { useCart } from '../context/CartContext';
 export function Footer() {
   const { siteSettings } = useCart();
 
+  const rawSiteName = siteSettings?.siteName || 'Uhuru Market Uniforms';
+  const rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
+  const isReversed = (
+    (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
+    (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
+  );
+  const resolvedSiteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
+  const resolvedSiteTagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
+
   return (
     <footer className="bg-[#0E121C] text-white/40 pt-20 pb-32 md:pb-20 px-6 border-t border-white/5">
       {/* Verified Manufacturer Trust Banner */}
@@ -104,22 +113,22 @@ export function Footer() {
           <div className="flex items-center gap-3 mb-6">
             <div className="overflow-hidden shrink-0">
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt={siteSettings?.siteName || 'Uhuru Market Uniforms'} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+                <img src={siteSettings.siteLogo} alt={resolvedSiteName} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
               ) : (
                 <div className="w-12 h-12 flex items-center justify-center font-black text-xs text-white bg-gradient-to-tr from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-xl relative shadow-lg overflow-hidden select-none lowercase font-sans">nt</div>
               )}
             </div>
             <div className="leading-tight text-left">
               <div className="font-display text-2xl tracking-tight text-white uppercase font-black bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent">
-                Uhuru Market Uniforms
+                {resolvedSiteName}
               </div>
               <div className="text-[10px] tracking-[2px] text-[#C8961A] uppercase font-bold">
-                Naisiae Textiles
+                {resolvedSiteTagline}
               </div>
             </div>
           </div>
           <p className="text-sm leading-relaxed max-w-sm mb-4">
-            Established at the heart of Nairobi, <strong>Uhuru Market Uniforms</strong> is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
+            Established at the heart of Nairobi, <strong>{resolvedSiteName}</strong> is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
           </p>
           <div className="text-[10px] text-white/20 italic max-w-xs">
             Serving schools across East & Central Africa from our specialized workshop at Uhuru Market.
@@ -211,7 +220,7 @@ export function Footer() {
       <div className="max-w-[1440px] mx-auto px-8 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest gap-6 sm:gap-2">
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 order-2 md:order-1 text-center md:text-left">
           <div className="flex items-center gap-2">
-            <span>© 2026 Uhuru Market Uniforms. All rights reserved.</span>
+            <span>© 2026 {resolvedSiteName}. All rights reserved.</span>
             <Link 
               to="/admin" 
               className="inline-flex items-center justify-center ml-1.5 p-1 rounded-md text-white/5 hover:text-[#C8961A] hover:bg-white/[0.03] transition-all duration-300 hover:scale-[1.15] active:scale-90 group cursor-pointer" 

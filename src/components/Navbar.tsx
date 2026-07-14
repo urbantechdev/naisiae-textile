@@ -213,8 +213,14 @@ export function Navbar({
     };
   }, []);
 
-  const resolvedSiteName = 'Uhuru Market Uniforms';
-  const resolvedSiteTagline = 'Naisiae Textiles';
+  const rawSiteName = siteSettings?.siteName || 'Uhuru Market Uniforms';
+  const rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
+  const isReversed = (
+    (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
+    (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
+  );
+  const resolvedSiteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
+  const resolvedSiteTagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
 
   const searchResults = React.useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -683,7 +689,7 @@ export function Navbar({
                     <h3 className="text-xs font-black uppercase tracking-[3px] text-[#C8961A]">Expansive Sourcing Catalog</h3>
                   </div>
                   <h2 className="font-display text-xl md:text-2xl font-black text-slate-900 mt-1 uppercase tracking-tight">
-                    Uhuru Market Uniforms Catalog
+                    {resolvedSiteName} Catalog
                   </h2>
                 </div>
 

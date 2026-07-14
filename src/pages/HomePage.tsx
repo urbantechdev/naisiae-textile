@@ -445,12 +445,14 @@ export default function HomePage() {
 
   useEffect(() => {
     if (siteSettings) {
-      const siteName = siteSettings.siteName === 'NAISIAE TEXTILES' || siteSettings.siteName === 'Naisiae' || siteSettings.siteName === 'Naisiae Textiles' || siteSettings.siteName === 'Naisiae Textile' || siteSettings.siteName === 'Naisiae Textiles Limited' || !siteSettings.siteName
-        ? 'Uhuru Market Uniforms'
-        : siteSettings.siteName;
-      const tagline = siteSettings.siteTagline === 'Uhuru Market Uniforms' || siteSettings.siteTagline === 'School Uniforms & Branding' || !siteSettings.siteTagline
-        ? 'Naisiae Textiles'
-        : siteSettings.siteTagline;
+      const rawSiteName = siteSettings.siteName || 'Uhuru Market Uniforms';
+      const rawSiteTagline = siteSettings.siteTagline || 'Naisiae Textiles';
+      const isReversed = (
+        (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
+        (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
+      );
+      const siteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
+      const tagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
       const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Premium school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg';
 
