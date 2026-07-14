@@ -490,7 +490,7 @@ export default function AdminDashboard() {
           siteTagline: 'Naisiae Textiles',
           sharingTitle: 'Uhuru Market Uniforms',
           sharingDescription: 'Modern, High-Quality Uniforms & Apparel for Kenya\'s Leading Institutions.',
-          sharingImage: '',
+          sharingImage: 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg',
           enableComparison: true,
           enableReviews: true
         });
@@ -6613,7 +6613,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
     siteTagline: 'Naisiae Textiles',
     sharingTitle: 'Uhuru Market Uniforms',
     sharingDescription: '',
-    sharingImage: '',
+    sharingImage: 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg',
     heroImages: [
       { url: DEFAULT_HERO_IMAGE, title: 'PREMIUM SCHOOL UNIFORMS', subtitle: 'QUALITY THAT LASTS ALL YEAR', link: '/category/uniforms' }
     ]

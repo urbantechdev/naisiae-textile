@@ -344,30 +344,37 @@ export function FloatingChat() {
         )}
       </AnimatePresence>
 
+      {/* Background Shadow Lighting (Ambient Glow Aura) */}
+      <div className={`absolute -inset-4 rounded-full transition-all duration-1000 blur-2xl pointer-events-none -z-10 ${
+        isOpen 
+          ? 'bg-[#0A1628]/30 opacity-40 scale-75' 
+          : 'bg-gradient-to-tr from-[#C8961A] via-[#E3AC2C] to-[#C8961A] opacity-75 scale-105 animate-[pulse_3s_infinite_ease-in-out]'
+      }`} />
+
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.08, y: -3 }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => {
           setIsOpen(!isOpen);
           setShowPulse(false);
         }}
-        className={`relative w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.35)] border ${
+        className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border ${
           isOpen 
-            ? 'bg-white border-white text-[#0A1628] rotate-90 scale-90 pl-0' 
-            : 'bg-[#C8961A] border-[#C8961A]/50 text-white pr-2.5'
+            ? 'bg-[#0A1628] border-white/20 text-white shadow-[0_15px_35px_rgba(10,22,40,0.4)]' 
+            : 'bg-gradient-to-tr from-[#C8961A] via-[#E3AC2C] to-[#C8961A] border-white/10 text-white shadow-[0_20px_45px_rgba(200,150,26,0.35)]'
         }`}
       >
         {/* Continuous Staggered Signal Transmission Waves when closed */}
         {!isOpen && (
-          <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-visible">
+          <div className="absolute inset-0 pointer-events-none rounded-full overflow-visible">
             {/* Base radiant glow */}
-            <span className="absolute inset-0 rounded-2xl bg-[#C8961A]/5 animate-pulse"></span>
+            <span className="absolute inset-0 rounded-full bg-[#C8961A]/10 animate-pulse"></span>
             {/* Wave 1 */}
-            <span className="absolute inset-0 rounded-2xl border border-[#C8961A]/50 bg-[#C8961A]/10 animate-[ping_3s_infinite_ease-out]"></span>
+            <span className="absolute inset-0 rounded-full border border-[#C8961A]/40 bg-[#C8961A]/10 animate-[ping_3s_infinite_ease-out]"></span>
             {/* Wave 2 */}
-            <span className="absolute inset-0 rounded-2xl border border-[#C8961A]/30 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:1s]"></span>
+            <span className="absolute inset-0 rounded-full border border-[#C8961A]/20 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:1s]"></span>
             {/* Wave 3 */}
-            <span className="absolute inset-0 rounded-2xl border border-[#C8961A]/10 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:2s]"></span>
+            <span className="absolute inset-0 rounded-full border border-[#C8961A]/10 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:2s]"></span>
           </div>
         )}
 
@@ -378,6 +385,7 @@ export function FloatingChat() {
               initial={{ rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: 90, opacity: 0 }}
+              className="flex items-center justify-center"
             >
               <X size={20} />
             </motion.div>
@@ -387,15 +395,15 @@ export function FloatingChat() {
               initial={{ rotate: 90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: -90, opacity: 0 }}
-              className="relative flex items-center gap-2 pl-2"
+              className="relative flex items-center justify-center gap-1.5"
             >
-              <Headset size={18} className="animate-pulse" />
+              <Headset size={20} className="animate-pulse" />
               
               {/* Pulsing signal transmitter bar icons */}
-              <div className="flex items-end gap-[1.5px] h-3.5 select-none opacity-85">
-                <span className="w-[1.5px] h-[3.5px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0s]"></span>
-                <span className="w-[1.5px] h-[7px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0.2s]"></span>
-                <span className="w-[1.5px] h-[10.5px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0.4s]"></span>
+              <div className="flex items-end gap-[1.5px] h-3 select-none opacity-85">
+                <span className="w-[1.5px] h-[3px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0s]"></span>
+                <span className="w-[1.5px] h-[6px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0.2s]"></span>
+                <span className="w-[1.5px] h-[9px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0.4s]"></span>
               </div>
 
               {/* Red Transmitter LED Indicator */}

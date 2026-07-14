@@ -452,7 +452,7 @@ export default function HomePage() {
         ? 'Naisiae Textiles'
         : siteSettings.siteTagline;
       const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Premium school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
-      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&h=630&q=80';
+      const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg';
 
       document.title = `${siteName} | ${tagline}`;
       
