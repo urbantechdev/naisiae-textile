@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare, Filter, SlidersHorizontal, Star, ShoppingCart, Check, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalization } from '../../context/LocalizationContext';
 import { LazyImage } from '../LazyImage';
@@ -47,9 +47,22 @@ export function CatalogSection({
   onProductTap
 }: CatalogSectionProps) {
   const navigate = useNavigate();
-  const { formatPrice, t } = useLocalization();
-  const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
-  const [isBgRemoverActive, setIsBgRemoverActive] = React.useState(() => {
+  const { formatPrice } = useLocalization();
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
+  
+  // Local E-commerce filter states
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
+  const [selectedSizeFilter, setSelectedSizeFilter] = useState<string | null>(null);
+  const [selectedMaterialFilter, setSelectedMaterialFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<string>('featured');
+  const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Card Variant selections stored by product ID
+  const [selectedSizes, setSelectedSizes] = useState<{ [productId: string]: string }>({});
+  const [selectedColors, setSelectedColors] = useState<{ [productId: string]: string }>({});
+
+  const [isBgRemoverActive, setIsBgRemoverActive] = useState(() => {
     return localStorage.getItem('auto_bg_remover') !== 'false';
   });
 
@@ -70,397 +83,735 @@ export function CatalogSection({
     }
   };
 
+  // Pre-baked sizes & color palettes for dynamic custom swatches
+  const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const availableColors = [
+    { name: 'Navy Blue', hex: '#0B2240' },
+    { name: 'Maroon Red', hex: '#631212' },
+    { name: 'Forest Green', hex: '#163B23' },
+    { name: 'Classic Black', hex: '#111111' },
+    { name: 'Khaki Gold', hex: '#C29F68' }
+  ];
+
+  // Helper reviews pre-calculation
+  const getProductStars = (id: string) => {
+    const sum = id.charCodeAt(0) + (id.charCodeAt(id.length - 1) || 0);
+    return (sum % 2 === 0) ? 5 : 4;
+  };
+
+  const getProductRatingDecimal = (id: string) => {
+    const sum = id.charCodeAt(0) + (id.charCodeAt(id.length - 1) || 0);
+    return (sum % 2 === 0) ? '4.9' : '4.7';
+  };
+
+  const getProductReviews = (id: string) => {
+    const sum = id.charCodeAt(0) + (id.charCodeAt(id.length - 1) || 0);
+    return 10 + (sum % 110);
+  };
+
+  // Multi-tier wholesale pricing tooltips helper
+  const getWholesalePricing = (price: number) => {
+    return [
+      { qty: '1 - 10 pcs', price: price },
+      { qty: '11 - 50 pcs', price: Math.round(price * 0.9) },
+      { qty: '50+ pcs (Bulk)', price: Math.round(price * 0.8) }
+    ];
+  };
+
+  // Client-side Filter, Sort and Selection pipeline
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = [...displayProducts];
+
+    // 1. Price Range filter
+    if (selectedPriceRange !== 'all') {
+      result = result.filter(p => {
+        if (selectedPriceRange === 'under1000') return p.price < 1000;
+        if (selectedPriceRange === '1000to2500') return p.price >= 1000 && p.price <= 2500;
+        if (selectedPriceRange === 'above2500') return p.price > 2500;
+        return true;
+      });
+    }
+
+    // 2. Material/Fabric property tag filter
+    if (selectedMaterialFilter) {
+      result = result.filter(p => 
+        p.tags?.some((t: string) => t.toLowerCase().includes(selectedMaterialFilter.toLowerCase()))
+      );
+    }
+
+    // 3. Sorting pipeline
+    if (sortBy === 'priceAsc') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'priceDesc') {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'rating') {
+      result.sort((a, b) => {
+        const ratingA = Number(getProductRatingDecimal(a.id));
+        const ratingB = Number(getProductRatingDecimal(b.id));
+        return ratingB - ratingA;
+      });
+    } else if (sortBy === 'discount') {
+      result.sort((a, b) => {
+        const discA = a.badge?.toLowerCase().includes('off') ? 1 : 0;
+        const discB = b.badge?.toLowerCase().includes('off') ? 1 : 0;
+        return discB - discA;
+      });
+    }
+
+    return result;
+  }, [displayProducts, selectedPriceRange, selectedMaterialFilter, sortBy]);
+
+  // Quick action adding to shopping cart with micro-toast notice
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.stopPropagation();
+    onProductTap?.();
+    const size = selectedSizes[product.id] || 'M';
+    const color = selectedColors[product.id] || 'Navy Blue';
+    
+    const cartItem = {
+      ...product,
+      selectedVariants: { Size: size, Color: color },
+      quantity: 1,
+      price: product.price || 1800,
+      priceType: product.priceType || 'fixed'
+    };
+    
+    addToCart(cartItem);
+    
+    // Show premium screen toast
+    setToastMessage(`Added ${product.name} (${size}, ${color}) to cart successfully!`);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
+
   return (
-    <section id="catalog-section" className="py-20 max-w-[1440px] mx-auto px-8 scroll-mt-24">
+    <section id="catalog-section" className="py-12 sm:py-24 max-w-[1440px] mx-auto px-4 sm:px-8 scroll-mt-24 relative">
       <div id="shop" className="absolute -mt-24"></div>
-      <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-8 gap-6">
+
+      {/* Screen Toast for E-commerce Actions */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-50 bg-[#0A1628] text-white px-6 py-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-3"
+          >
+            <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xs">✓</div>
+            <span className="text-xs font-black tracking-wide uppercase">{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modern High-Conversion Header */}
+      <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-8 gap-6 border-b border-slate-100 pb-6">
         <div>
           <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-            <div className="w-7 h-0.5 bg-[#C8961A]"></div> Featured Products
+            <div className="w-7 h-0.5 bg-[#C8961A]"></div> Retail Storefront
           </div>
-          <h2 className="font-display text-5xl tracking-tight leading-none text-[#0E121C]">
-            {activeTab === 'all' ? 'Top Flash Deals' : activeTab}
+          <h2 className="font-display text-4xl sm:text-5xl tracking-tight leading-none text-[#0E121C]">
+            {activeTab === 'all' ? 'Quality Uniform Shop' : `${activeTab}`}
           </h2>
           
-          <div className="mt-8 hidden lg:block">
-            <div className="flex items-center gap-6 overflow-x-auto pb-4 hide-scrollbar">
-              {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
-                const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
-                return (
-                  <button
-                    key={`${tab}-${idx}`}
-                    onClick={() => {
-                       setActiveTab(tab);
-                       setActiveSubCategory(null);
-                    }}
-                    className={`whitespace-nowrap text-[13px] font-black uppercase tracking-[2px] pb-2 transition-all border-b-2 shrink-0 ${
-                      isSelected 
-                        ? 'text-[#C8961A] border-[#C8961A]' 
-                        : 'text-slate-400 border-transparent hover:text-slate-600'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                );
-              })}
-              
-              {/* Show active tab if it's not in the hardcoded list */}
-              {!['all', 'school uniforms', 'college wear', 'corporate wear', 'sports kits'].includes(activeTab.toLowerCase()) && (
+          {/* Main Category Filter Horizontal Bar */}
+          <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-4 overflow-x-auto pb-2 hide-scrollbar">
+            {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
+              const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
+              return (
                 <button
+                  key={`${tab}-${idx}`}
                   onClick={() => {
-                    setActiveTab(activeTab);
-                    setActiveSubCategory(null);
+                     setActiveTab(tab);
+                     setActiveSubCategory(null);
                   }}
-                  className="whitespace-nowrap text-[13px] font-black uppercase tracking-[2px] pb-2 transition-all border-b-2 text-[#C8961A] border-[#C8961A] shrink-0"
+                  className={`whitespace-nowrap text-xs font-black uppercase tracking-[2px] px-4 py-2 rounded-xl transition-all ${
+                    isSelected 
+                      ? 'bg-[#C8102E] text-white shadow-lg' 
+                      : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
+                  }`}
                 >
-                  {activeTab}
+                  {tab === 'all' ? 'All Uniforms' : tab}
                 </button>
-              )}
-            </div>
+              );
+            })}
           </div>
 
           {activeTab === 'School Uniforms' && uniformSubCategories.length > 0 && (
-            <div className="mt-4 hidden lg:block">
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setActiveSubCategory(null)}
+                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
+                  !activeSubCategory 
+                    ? 'bg-[#0A1628] text-white border-transparent' 
+                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                All School Uniforms
+              </button>
+              {uniformSubCategories.map((subCat, idx) => (
                 <button
-                  onClick={() => setActiveSubCategory(null)}
-                  className={`whitespace-nowrap px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border shrink-0 ${
-                    !activeSubCategory 
-                      ? 'bg-[#0A1628] text-white border-transparent' 
-                      : 'bg-white text-slate-500 border-slate-100 hover:border-slate-200'
+                  key={`${subCat}-${idx}`}
+                  onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
+                  className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
+                    activeSubCategory === subCat 
+                      ? 'bg-[#C8961A] text-white border-[#C8961A]' 
+                      : 'bg-white text-slate-500 border-slate-100 hover:border-[#C8961A]/30'
                   }`}
                 >
-                  All Uniforms
+                  {subCat}
                 </button>
-                {uniformSubCategories.map((subCat, idx) => (
-                  <button
-                    key={`${subCat}-${idx}`}
-                    onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
-                    className={`whitespace-nowrap px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border shrink-0 ${
-                      activeSubCategory === subCat 
-                        ? 'bg-[#C8961A] text-white border-[#C8961A]' 
-                        : 'bg-white text-slate-500 border-slate-100 hover:border-[#C8961A]/30'
-                    }`}
-                  >
-                    {subCat}
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-4 self-start lg:self-auto shrink-0 mb-2">
+
+        {/* Search and Extra controllers */}
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={toggleBgRemover}
-            className={`whitespace-nowrap px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border shadow-sm ${
+            className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border shadow-sm ${
               isBgRemoverActive 
                 ? 'bg-gradient-to-r from-[#C2102E]/5 to-[#C8961A]/5 text-[#C8961A] border-[#C8961A]/40' 
                 : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
             }`}
             title="Toggle background removal for catalog visuals"
           >
-            <span className={`w-2.5 h-2.5 rounded-full ${isBgRemoverActive ? 'bg-[#C8961A] animate-pulse' : 'bg-slate-300'}`}></span>
-            ✨ Auto Bg Remover
+            <span className={`w-2 h-2 rounded-full ${isBgRemoverActive ? 'bg-[#C8961A] animate-pulse' : 'bg-slate-300'}`}></span>
+            ✨ Smart BG Clean
           </button>
-          
+
           <button 
-            onClick={() => window.location.href = '/product'}
-            className="text-[#0E121C] font-bold text-sm border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8102E] hover:border-[#C8102E] transition-all self-start lg:self-auto shrink-0"
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="lg:hidden px-4 py-2.5 bg-[#0A1628] text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 shadow-sm"
           >
-            View All Products →
+            <Filter size={12} />
+            Filters & Sorting
           </button>
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-col lg:flex-row gap-4 mb-10 items-start lg:items-center justify-between w-full border-t border-slate-100 pt-6">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar w-full lg:w-auto">
-          <button 
-            onClick={() => setActiveTag(null)}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-              !activeTag ? 'bg-[#C8961A] text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-            }`}
-          >
-            All items
-          </button>
-          {allTags.map((tag, idx) => (
-            <button 
-              key={`${tag}-${idx}`}
-              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-              className={`whitespace-nowrap px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-                activeTag === tag ? 'bg-[#C8102E] text-white shadow-lg' : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-[#C8961A]'
-              }`}
+      {/* Main E-commerce Layout: Sidebar (Left) + Products Grid (Right) */}
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        
+        {/* Desktop Sidebar Filter Panel */}
+        <div className="hidden lg:block w-[280px] shrink-0 bg-white border border-slate-100 rounded-3xl p-6 shadow-sm sticky top-28">
+          <div className="flex items-center gap-2.5 border-b border-slate-100 pb-4 mb-6">
+            <SlidersHorizontal size={16} className="text-[#C8102E]" />
+            <span className="text-xs font-black uppercase tracking-widest text-[#0E121C]">Catalog Filters</span>
+          </div>
+
+          {/* Search bar inside Sidebar */}
+          <div className="relative mb-6">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+            <input 
+              type="text"
+              placeholder="Filter by keyword..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-[#C8961A] rounded-xl text-[10px] font-bold uppercase tracking-wider outline-none focus:bg-white transition-all shadow-inner"
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+
+          {/* Filter Section: Sort Order */}
+          <div className="mb-6">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Sort Results</h4>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full p-3 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-[10px] font-black uppercase tracking-wider text-slate-700 outline-none cursor-pointer focus:bg-white"
             >
-              <span className={activeTag === tag ? 'text-white' : 'text-[#C8961A]'}>#</span>
-              {tag}
-            </button>
-          ))}
+              <option value="featured">🔥 Featured Best Seller</option>
+              <option value="priceAsc">📈 Price: Low to High</option>
+              <option value="priceDesc">📉 Price: High to Low</option>
+              <option value="rating">⭐️ Top Rated (Reviews)</option>
+              <option value="discount">🏷️ Best Active Discount</option>
+            </select>
+          </div>
+
+          {/* Filter Section: Price range */}
+          <div className="mb-6">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Price Bracket</h4>
+            <div className="space-y-2">
+              {[
+                { id: 'all', label: 'All Price Brackets' },
+                { id: 'under1000', label: 'Under KES 1,000' },
+                { id: '1000to2500', label: 'KES 1,000 - 2,500' },
+                { id: 'above2500', label: 'Above KES 2,500' }
+              ].map(range => (
+                <button
+                  key={range.id}
+                  onClick={() => setSelectedPriceRange(range.id)}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-between border ${
+                    selectedPriceRange === range.id 
+                      ? 'bg-[#C8961A]/5 border-[#C8961A]/40 text-[#C8961A]' 
+                      : 'bg-white border-transparent text-slate-500 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>{range.label}</span>
+                  {selectedPriceRange === range.id && <span className="w-1.5 h-1.5 rounded-full bg-[#C8961A]"></span>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Filter Section: Fabric Quality Materials */}
+          <div className="mb-6">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Fabric Properties</h4>
+            <div className="flex flex-wrap gap-1.5">
+              {['Wool', 'Gabardine', 'Cotton', 'Polyester', 'Acrylic', 'Twill'].map(tag => {
+                const isSelected = selectedMaterialFilter === tag;
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setSelectedMaterialFilter(isSelected ? null : tag)}
+                    className={`px-2.5 py-1.5 rounded-lg text-[8.5px] font-black uppercase tracking-wider transition-all border ${
+                      isSelected 
+                        ? 'bg-[#C8102E] text-white border-transparent' 
+                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-[#C8961A]'
+                    }`}
+                  >
+                    #{tag}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Direct Shop Contact card */}
+          <div className="p-4 bg-gradient-to-br from-[#0A1628] to-[#122B4A] rounded-2xl text-white">
+            <span className="text-[8px] font-black uppercase tracking-widest text-amber-400">Jogoo Road Factory</span>
+            <p className="text-[11px] font-extrabold mt-1">Need a custom sizing or bulk embroidery quote?</p>
+            <div className="mt-4 flex flex-col gap-2">
+              <a 
+                href="tel:+254792021795" 
+                className="w-full py-2 bg-white text-[#0A1628] text-center text-[9px] font-black uppercase rounded-lg hover:bg-amber-400 transition-colors"
+              >
+                Call Factory 📞
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div className="relative w-full lg:max-w-md lg:ml-auto transform lg:translate-x-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          <input 
-            type="text"
-            placeholder="Quick filter products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-[#C8961A] rounded-xl text-xs font-semibold uppercase tracking-wider outline-none focus:bg-white transition-all shadow-inner focus:ring-4 focus:ring-[#C8961A]/5"
-          />
-          {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#C8102E] p-1 rounded-full hover:bg-slate-100 transition-all"
-            >
-              <X size={14} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
-        {displayProducts.length > 0 ? displayProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => {
-          const isExpanded = expandedProductId === product.id;
-          return (
+        {/* Mobile Filter Drawer Drawer UI */}
+        <AnimatePresence>
+          {showMobileFilters && (
             <motion.div 
-              key={product.id}
-              layout
-              whileHover={isExpanded ? undefined : { y: -6 }}
-              className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex animate-blink-orange ${
-                isExpanded 
-                  ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
-                  : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30 w-full"
-              }`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden flex justify-end"
             >
-              {!isExpanded ? (
-                <>
-                  <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-transparent cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={(e) => handleProductInteraction(product, e)}>
-                    {product.imageUrl ? (
-                      <LazyImage 
-                        src={product.imageUrl} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" 
-                        wrapperClassName="w-full h-full"
-                      />
-                    ) : (
-                      <Package size={40} className="text-[#C8961A]/20" />
-                    )}
-                    {product.badge && (
-                      <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[7px] sm:text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-sm">{product.badge}</span>
-                    )}
-                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" onClick={(e) => e.stopPropagation()}>
-                      <button 
-                        onClick={() => toggleWishlist(product)}
-                        className={`w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
-                          wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:bg-[#C8102E] hover:text-white"
-                        }`}
-                      >
-                        <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
-                      </button>
-                    </div>
+              <motion.div 
+                initial={{ x: 100 }}
+                animate={{ x: 0 }}
+                exit={{ x: 100 }}
+                className="w-5/6 max-w-sm h-full bg-white p-6 shadow-2xl overflow-y-auto flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-800 flex items-center gap-2">
+                      <SlidersHorizontal size={14} /> Shop Options
+                    </span>
+                    <button onClick={() => setShowMobileFilters(false)} className="p-2 text-slate-400 hover:text-red-500">
+                      <X size={18} />
+                    </button>
                   </div>
-                  <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={(e) => handleProductInteraction(product, e)}>
-                    <div>
-                      <div className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-0.5 sm:mb-1">{product.category}</div>
-                      <h3 className="font-bold text-[12px] sm:text-[14px] mb-1 leading-tight group-hover:text-[#C8102E] transition-colors line-clamp-2 min-h-[1.5rem] sm:line-clamp-1">{product.name}</h3>
-                      <p className="sm:hidden text-[10.5px] text-slate-500 line-clamp-2 mt-1 mb-1 font-medium leading-relaxed">
-                        {product.description || "Premium bespoke garment tailored with extra heavy duty double-stitched fabric."}
-                      </p>
-                      
-                      {/* Interactive hint */}
-                      <span className="text-[8px] sm:text-[9px] text-slate-400 font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
-                        <span>✨</span> Tap to inspect details
-                      </span>
-                    </div>
 
-                    <div className="pt-2 sm:pt-3 flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between gap-1 mb-0.5">
-                        <span className="text-xs sm:text-sm font-black text-[#C8961A]">
-                          {product.price && product.price > 0 ? formatPrice(product.price) : "Custom Quote"}
-                        </span>
-                      </div>
-                      
-                      <button 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          const cartItem = {
-                            ...product,
-                            selectedVariants: { Size: 'M', Color: 'Navy' },
-                            quantity: 1,
-                            price: product.price || 1800,
-                            priceType: product.priceType || 'fixed'
-                          };
-                          addToCart(cartItem); 
-                          navigate('/checkout');
-                        }}
-                        className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-90 text-white py-2 rounded-lg font-black text-[9px] sm:text-[10px] uppercase tracking-wider transition-all text-center shadow-sm flex items-center justify-center gap-1 active:scale-95"
-                        title="Secure instant checkout"
-                      >
-                        Buy Now ⚡
-                      </button>
-                      
-                      <div className="grid grid-cols-2 gap-1.5">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleProductInteraction(product, e); }}
-                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-1.5 rounded-lg font-bold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
-                          title="Enquire custom style details"
-                        >
-                          Enquire ✉️
-                        </button>
-                        <a 
-                          href="tel:+254792021795"
-                          onClick={(e) => e.stopPropagation()}
-                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-1.5 rounded-lg font-bold text-[8.5px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 active:scale-95"
-                          title="Call wholesale direct desk"
-                        >
-                          Call Now 📞
-                        </a>
-                      </div>
-                    </div>
+                  {/* Search inside mobile drawer */}
+                  <div className="relative mb-6">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                    <input 
+                      type="text"
+                      placeholder="Keyword Search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-extrabold uppercase outline-none"
+                    />
                   </div>
-                </>
-              ) : (
-                <div className="flex flex-col md:flex-row h-full">
-                  {/* Left Column: Product visual card and price */}
-                  <div className="w-full md:w-5/12 bg-white flex flex-col border-b md:border-b-0 md:border-r border-slate-100 shrink-0">
-                    <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-transparent flex items-center justify-center p-2">
-                      {product.imageUrl ? (
-                        <LazyImage 
-                          src={product.imageUrl} 
-                          alt={product.name} 
-                          className="w-full h-full object-cover object-top" 
-                          wrapperClassName="w-full h-full"
-                        />
-                      ) : (
-                        <Package size={50} className="text-[#C8961A]/20" />
-                      )}
-                      {product.badge && (
-                        <span className="absolute top-3 left-3 bg-[#C8102E] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">{product.badge}</span>
-                      )}
-                      <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
-                        <button 
-                          onClick={() => toggleWishlist(product)}
-                          className={`w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
-                            wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:text-[#C8102E] text-slate-400"
+
+                  {/* Sort mobile */}
+                  <div className="mb-6">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Sort</h4>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase text-slate-700 outline-none"
+                    >
+                      <option value="featured">🔥 Featured best seller</option>
+                      <option value="priceAsc">📈 Price: Low to High</option>
+                      <option value="priceDesc">📉 Price: High to Low</option>
+                      <option value="rating">⭐️ Top Rated</option>
+                    </select>
+                  </div>
+
+                  {/* Price mobile */}
+                  <div className="mb-6">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Price</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: 'all', label: 'All prices' },
+                        { id: 'under1000', label: 'Under 1k' },
+                        { id: '1000to2500', label: '1k - 2.5k' },
+                        { id: 'above2500', label: 'Above 2.5k' }
+                      ].map(range => (
+                        <button
+                          key={range.id}
+                          onClick={() => setSelectedPriceRange(range.id)}
+                          className={`px-3 py-2.5 rounded-lg text-[9px] font-black uppercase border text-center ${
+                            selectedPriceRange === range.id 
+                              ? 'bg-[#C8961A] text-white border-transparent' 
+                              : 'bg-white border-slate-200 text-slate-500'
                           }`}
                         >
-                          <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
+                          {range.label}
                         </button>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
-                      <div>
-                        <div className="text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-                        <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Base Cost</span>
-                        <span className="text-base font-black text-[#C8961A]">{formatPrice(product.price)}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Column: Spec details and actions */}
-                  <div className="w-full md:w-7/12 p-4 sm:p-5 flex flex-col justify-between bg-white relative">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
-                      className="absolute right-3 top-3 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#C8102E] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
-                      title="Collapse details view"
-                    >
-                      <X size={15} />
-                    </button>
-
-                    <div className="pr-6">
-                      <span className="inline-block bg-slate-50 border border-slate-100 text-slate-500 text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Specification Panel</span>
-                      
-                      <div className="space-y-3.5 mt-2">
-                        <div>
-                          <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Catalog Description</h4>
-                          <p className="text-[11.5px] text-slate-600 leading-relaxed font-bold">
-                            {product.description || "Premium bespoke uniform textile engineered for superior lifespan under heavy-duty institutional service. Perfect colors, fade-resistant fabrics."}
-                          </p>
-                        </div>
-
-                        {product.tags && product.tags.length > 0 && (
-                          <div>
-                            <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Fabric Properties</h4>
-                            <div className="flex flex-wrap gap-1.5">
-                              {product.tags.map((t: string, idx: number) => (
-                                <span key={idx} className="bg-[#FDFAF4] border border-[#C8961A]/10 text-[#C8961A] text-[9px] font-black px-2.5 py-1 rounded-lg">
-                                  #{t}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
-                      <button 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          const cartItem = {
-                            ...product,
-                            selectedVariants: { Size: 'M', Color: 'Navy' },
-                            quantity: 1,
-                            price: product.price || 1800,
-                            priceType: product.priceType || 'fixed'
-                          };
-                          addToCart(cartItem); 
-                          navigate('/checkout');
-                        }}
-                        className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all text-center shadow-md flex items-center justify-center gap-1.5 active:scale-95"
-                        title="Secure checkout"
-                      >
-                        Buy Now ⚡
-                      </button>
-                      
-                      <div className="grid grid-cols-2 gap-2">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
-                        >
-                          <MessageSquare size={13} strokeWidth={2.5} />
-                          Enquire ✉️
-                        </button>
-                        <a 
-                          href="tel:+254792021795"
-                          onClick={(e) => e.stopPropagation()}
-                          className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
-                        >
-                          <Phone size={13} strokeWidth={2.5} />
-                          Call Now 📞
-                        </a>
-                      </div>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                        className="w-full text-[#C8961A] hover:text-[#C8102E] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
-                      >
-                        🔍 Open full screen overlay modal
-                      </button>
+                      ))}
                     </div>
                   </div>
                 </div>
-              )}
-            </motion.div>
-          );
-        }) : (
-          <div className="col-span-full py-20 text-center text-gray-400">
-            <p>No products found. Add some from the admin panel!</p>
-          </div>
-        )}
-      </div>
 
-      {displayProducts.length > 12 && (
-        <div className="mt-16 flex justify-center">
-          <button 
-            onClick={() => setShowAllFeatured(!showAllFeatured)}
-            className="px-12 py-5 bg-gradient-to-r from-[#0A1628] via-[#C8102E] to-[#C8961A] text-white hover:opacity-90 transition-all rounded-full flex items-center gap-4 text-[11px] font-black uppercase tracking-[3px] shadow-[0_4px_16px_rgba(200,150,26,0.25)] active:scale-95 cursor-pointer"
-          >
-            {showAllFeatured ? 'Show Less' : 'View More Products'} 
-            <ChevronRight size={16} className={`transition-transform duration-500 ${showAllFeatured ? '-rotate-90' : 'rotate-90'}`} />
-          </button>
+                <button 
+                  onClick={() => setShowMobileFilters(false)}
+                  className="w-full bg-[#C8102E] text-white text-center py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest mt-12"
+                >
+                  Apply & See Results
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Dynamic Product Grid */}
+        <div className="flex-grow w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+            {filteredAndSortedProducts.length > 0 ? (
+              filteredAndSortedProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => {
+                const isExpanded = expandedProductId === product.id;
+                
+                // Get active selection variables
+                const activeSize = selectedSizes[product.id] || 'M';
+                const activeColor = selectedColors[product.id] || 'Navy Blue';
+                
+                const stars = getProductStars(product.id);
+                const decimal = getProductRatingDecimal(product.id);
+                const reviews = getProductReviews(product.id);
+                const pricingTiers = getWholesalePricing(product.price);
+
+                return (
+                  <motion.div 
+                    key={product.id}
+                    layout
+                    whileHover={isExpanded ? undefined : { y: -6 }}
+                    className={`group bg-white border rounded-[24px] overflow-hidden shadow-sm flex transition-all duration-300 ${
+                      isExpanded 
+                        ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 border-slate-100 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white" 
+                        : "flex-row sm:flex-col border-slate-100 hover:shadow-xl hover:border-[#C8961A]/20 w-full"
+                    }`}
+                  >
+                    {!isExpanded ? (
+                      <>
+                        {/* Retail Visual Card with hover interactions */}
+                        <div 
+                          className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100"
+                          onClick={(e) => handleProductInteraction(product, e)}
+                        >
+                          {product.imageUrl ? (
+                            <img 
+                              src={product.imageUrl} 
+                              alt={product.name} 
+                              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110" 
+                              loading="lazy" 
+                              referrerPolicy="no-referrer" 
+                            />
+                          ) : (
+                            <Package size={45} className="text-[#C8961A]/10" />
+                          )}
+                          
+                          {/* Top Badges */}
+                          {product.badge ? (
+                            <span className="absolute top-2.5 left-2.5 bg-[#C8102E] text-white text-[7.5px] sm:text-[9px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase shadow-md z-10">
+                              {product.badge}
+                            </span>
+                          ) : (
+                            <span className="absolute top-2.5 left-2.5 bg-[#0A1628] text-white text-[7.5px] sm:text-[9px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase shadow-md z-10">
+                              Verified ✓
+                            </span>
+                          )}
+
+                          {/* Float Wishlist button */}
+                          <div className="absolute top-2.5 right-2.5 z-10">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
+                              className={`w-8 h-8 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all ${
+                                wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "text-slate-400 hover:text-[#C8102E]"
+                              }`}
+                            >
+                              <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-[#C8102E]" : ""} />
+                            </button>
+                          </div>
+
+                          {/* Hover Quick actions on desktop */}
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex justify-between items-center gap-2">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
+                              className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg text-[9px] font-black uppercase flex items-center gap-1 backdrop-blur-md grow justify-center border border-white/15"
+                            >
+                              <Eye size={12} /> View Specs
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Retail Details and Multi-Variant Selection Box */}
+                        <div className="p-3.5 sm:p-5 flex flex-col justify-between flex-grow min-w-0">
+                          <div>
+                            {/* Star rating info */}
+                            <div className="flex items-center gap-1.5 mb-1.5">
+                              <div className="flex text-amber-400">
+                                {Array(stars).fill(0).map((_, i) => (
+                                  <Star key={i} size={10} className="fill-current" />
+                                ))}
+                              </div>
+                              <span className="text-[9px] text-slate-500 font-extrabold">{decimal} ({reviews} reviews)</span>
+                            </div>
+
+                            <h3 className="font-extrabold text-[12px] sm:text-[14px] leading-tight text-[#0E121C] group-hover:text-[#C8102E] transition-colors line-clamp-2 mb-1.5">{product.name}</h3>
+                            <div className="text-[8.5px] font-black text-[#C8961A] tracking-wider uppercase mb-3">{product.category}</div>
+                            
+                            {/* Sizing selection directly on the card */}
+                            <div className="mt-3">
+                              <div className="flex justify-between text-[7.5px] text-slate-400 font-extrabold uppercase mb-1">
+                                <span>Select Size</span>
+                                <span className="text-slate-700">{activeSize}</span>
+                              </div>
+                              <div className="flex gap-1 overflow-x-auto hide-scrollbar pb-1">
+                                {availableSizes.map(sz => (
+                                  <button
+                                    key={sz}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedSizes(prev => ({ ...prev, [product.id]: sz }));
+                                    }}
+                                    className={`w-6 h-6 shrink-0 rounded-md text-[8px] font-black flex items-center justify-center transition-all border ${
+                                      activeSize === sz 
+                                        ? 'bg-[#0E121C] text-white border-transparent' 
+                                        : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                    }`}
+                                  >
+                                    {sz}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Color Swatches selection directly on the card */}
+                            <div className="mt-2.5">
+                              <div className="flex justify-between text-[7.5px] text-slate-400 font-extrabold uppercase mb-1.5">
+                                <span>Select Color</span>
+                                <span className="text-slate-700">{activeColor}</span>
+                              </div>
+                              <div className="flex gap-1.5">
+                                {availableColors.map(col => (
+                                  <button
+                                    key={col.name}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedColors(prev => ({ ...prev, [product.id]: col.name }));
+                                    }}
+                                    style={{ backgroundColor: col.hex }}
+                                    className={`w-4 h-4 rounded-full border relative transition-all ${
+                                      activeColor === col.name 
+                                        ? 'ring-2 ring-offset-1 ring-[#C8102E] scale-110' 
+                                        : 'border-slate-200 opacity-80 hover:opacity-100'
+                                    }`}
+                                    title={col.name}
+                                  >
+                                    {activeColor === col.name && (
+                                      <Check size={8} className="text-white absolute inset-0 m-auto" />
+                                    )}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer pricing and Quick buy */}
+                          <div className="mt-5 pt-3.5 border-t border-slate-50 flex items-center justify-between gap-2">
+                            <div className="flex flex-col">
+                              <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-widest leading-none">Base Cost</span>
+                              <span className="text-sm sm:text-base font-black text-[#C8102E] mt-1">{formatPrice(product.price)}</span>
+                            </div>
+
+                            <button 
+                              onClick={(e) => handleAddToCart(e, product)}
+                              className="px-3.5 py-2 sm:px-4 bg-[#C8102E] hover:bg-[#A80B23] text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 active:scale-95 shadow-md shadow-red-100"
+                              title="Add to basket"
+                            >
+                              <ShoppingCart size={11} />
+                              Add Cart
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex flex-col md:flex-row h-full w-full">
+                        {/* Expanded Left Column: Product visual card and price */}
+                        <div className="w-full md:w-5/12 bg-white flex flex-col border-b md:border-b-0 md:border-r border-slate-100 shrink-0">
+                          <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-slate-50/50 flex items-center justify-center p-2">
+                            {product.imageUrl ? (
+                              <LazyImage 
+                                src={product.imageUrl} 
+                                alt={product.name} 
+                                className="w-full h-full object-cover object-top" 
+                                wrapperClassName="w-full h-full"
+                              />
+                            ) : (
+                              <Package size={50} className="text-[#C8961A]/20" />
+                            )}
+                            
+                            <span className="absolute top-3 left-3 bg-[#0A1628] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">
+                              DIRECT SPEC
+                            </span>
+                            
+                            <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
+                              <button 
+                                onClick={() => toggleWishlist(product)}
+                                className={`w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
+                                  wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:text-[#C8102E] text-slate-400"
+                                }`}
+                              >
+                                <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
+                            <div>
+                              <div className="text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                              <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Single Unit</span>
+                              <span className="text-base font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Expanded Right Column: Spec details and actions */}
+                        <div className="w-full md:w-7/12 p-4 sm:p-5 flex flex-col justify-between bg-white relative">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
+                            className="absolute right-3 top-3 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#C8102E] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
+                            title="Collapse details view"
+                          >
+                            <X size={15} />
+                          </button>
+
+                          <div className="pr-6">
+                            <span className="inline-block bg-slate-50 border border-slate-100 text-slate-500 text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Specification Panel</span>
+                            
+                            <div className="space-y-4 mt-2">
+                              <div>
+                                <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Catalog Description</h4>
+                                <p className="text-[11.5px] text-slate-600 leading-relaxed font-bold">
+                                  {product.description || "Premium bespoke uniform textile engineered for superior lifespan under heavy-duty institutional service. Perfect colors, fade-resistant fabrics."}
+                                </p>
+                              </div>
+
+                              {/* Multi-tier Wholesale Pricing Table */}
+                              <div>
+                                <h4 className="text-[9px] font-black text-[#C8961A] uppercase tracking-widest mb-1.5">Wholesale Price List (Direct)</h4>
+                                <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                  {pricingTiers.map((tier, idx) => (
+                                    <div key={idx} className="text-center">
+                                      <span className="text-[7.5px] text-slate-400 font-extrabold block uppercase">{tier.qty}</span>
+                                      <span className="font-extrabold text-[#0E121C] text-[10px]">{formatPrice(tier.price)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Active Sizing & Color display in specifications */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <span className="text-[8px] font-black text-slate-400 uppercase block mb-1">Selected Size</span>
+                                  <span className="inline-block bg-slate-50 border border-slate-100 text-[#0E121C] text-[10px] font-black px-2.5 py-1 rounded-md">{activeSize}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[8px] font-black text-slate-400 uppercase block mb-1">Selected Color</span>
+                                  <span className="inline-block bg-slate-50 border border-slate-100 text-[#0E121C] text-[10px] font-black px-2.5 py-1 rounded-md">{activeColor}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
+                            <button 
+                              onClick={(e) => { 
+                                handleAddToCart(e, product);
+                                setExpandedProductId(null);
+                                navigate('/checkout');
+                              }}
+                              className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all text-center shadow-md flex items-center justify-center gap-1.5 active:scale-95"
+                              title="Secure checkout"
+                            >
+                              Buy Selected Right Now ⚡
+                            </button>
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
+                                className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
+                              >
+                                <MessageSquare size={13} strokeWidth={2.5} />
+                                Enquire ✉️
+                              </button>
+                              <a 
+                                href="tel:+254792021795"
+                                onClick={(e) => e.stopPropagation()}
+                                className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
+                              >
+                                <Phone size={13} strokeWidth={2.5} />
+                                Call Now 📞
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })
+            ) : (
+              <div className="col-span-full py-20 text-center text-slate-400 bg-slate-50 rounded-3xl border border-dashed border-slate-100">
+                <Package className="mx-auto text-slate-300 mb-4 animate-bounce" size={40} />
+                <p className="text-sm font-bold uppercase tracking-wider">No matching uniform products found</p>
+                <p className="text-xs mt-1 font-medium">Try broadening your search query or selecting a different category folder.</p>
+              </div>
+            )}
+          </div>
+
+          {filteredAndSortedProducts.length > 12 && (
+            <div className="mt-16 flex justify-center">
+              <button 
+                onClick={() => setShowAllFeatured(!showAllFeatured)}
+                className="px-12 py-5 bg-gradient-to-r from-[#0A1628] via-[#C8102E] to-[#C8961A] text-white hover:opacity-90 transition-all rounded-full flex items-center gap-4 text-[11px] font-black uppercase tracking-[3px] shadow-[0_4px_16px_rgba(200,150,26,0.25)] active:scale-95 cursor-pointer"
+              >
+                {showAllFeatured ? 'Show Less' : 'View More Products'} 
+                <ChevronRight size={16} className={`transition-transform duration-500 ${showAllFeatured ? '-rotate-90' : 'rotate-90'}`} />
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </section>
   );
 }

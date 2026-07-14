@@ -419,7 +419,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
       layout
       className={`group relative flex animate-blink-orange ${
         isExpanded 
-          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70 border-transparent p-5" 
+          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 border border-slate-100 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white p-5" 
           : "flex-row md:flex-col border-[#E4E8EF] hover:shadow-xl hover:border-[#C8961A]/20 bg-white border rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
       }`}
     >

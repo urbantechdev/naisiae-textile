@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Package, ChevronRight, Plus, Phone, MessageSquare, X } from 'lucide-react';
+import { Package, ChevronRight, Plus, Phone, MessageSquare, X, Timer, Flame, ShoppingCart, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLocalization } from '../../context/LocalizationContext';
+import { useCart } from '../../context/CartContext';
 
 interface WholesaleDealsProps {
   products: any[];
@@ -20,16 +21,35 @@ export function WholesaleDeals({
   onProductTap
 }: WholesaleDealsProps) {
   const { formatPrice } = useLocalization();
+  const { addToCart } = useCart();
+  
   const wholesaleProducts = products.filter(p => 
     p.tags?.some((t: string) => t.toLowerCase() === 'wholesale' || t.toLowerCase() === 'bulk' || t.toLowerCase() === 'corporate')
   );
 
-  const [expandedProductId, setExpandedProductId] = React.useState<string | null>(null);
-  const clickTimeoutRef = React.useRef<{ [key: string]: NodeJS.Timeout | null }>({});
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
+  const clickTimeoutRef = useRef<{ [key: string]: NodeJS.Timeout | null }>({});
 
-  React.useEffect(() => {
+  // Countdown Timer State
+  const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 24, seconds: 12 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        } else if (prev.hours > 0) {
+          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        } else {
+          return { hours: 4, minutes: 59, seconds: 59 }; // Loop/reset
+        }
+      });
+    }, 1000);
+
     return () => {
-      // Clean up timeouts on unmount
+      clearInterval(timer);
       Object.values(clickTimeoutRef.current).forEach((t) => {
         if (t) clearTimeout(t);
       });
@@ -42,30 +62,93 @@ export function WholesaleDeals({
     if (clickTimeoutRef.current[productId]) {
       clearTimeout(clickTimeoutRef.current[productId]!);
       clickTimeoutRef.current[productId] = null;
-      // Double tap -> preview popup
       setSelectedQuickViewProduct(product);
     } else {
       clickTimeoutRef.current[productId] = setTimeout(() => {
         clickTimeoutRef.current[productId] = null;
-        // Single tap -> expand
         setExpandedProductId((prev) => (prev === productId ? null : productId));
       }, 250);
     }
   };
 
+  // Mock static values for stars and claim percentages for each item based on id
+  const getProductStars = (id: string) => {
+    const sum = id.charCodeAt(0) + id.charCodeAt(id.length - 1);
+    return (sum % 2 === 0) ? 5 : 4;
+  };
+
+  const getProductReviewsCount = (id: string) => {
+    const sum = id.charCodeAt(0) + id.charCodeAt(id.length - 1);
+    return 15 + (sum % 80);
+  };
+
+  const getClaimPercent = (id: string) => {
+    const sum = id.charCodeAt(0) + id.charCodeAt(id.length - 1);
+    return 45 + (sum % 45); // Between 45% and 90%
+  };
+
+  const handleQuickAddToCart = (e: React.MouseEvent, product: any) => {
+    e.stopPropagation();
+    onProductTap?.();
+    const cartItem = {
+      ...product,
+      selectedVariants: { Size: 'M', Color: 'Navy' },
+      quantity: 1,
+      price: product.price || 1800,
+      priceType: product.priceType || 'fixed'
+    };
+    addToCart(cartItem);
+  };
+
   return (
-    <section id="wholesale-deals" className="pt-6 pb-12 sm:py-20 bg-white border-b border-slate-100">
+    <section id="wholesale-deals" className="pt-6 pb-12 sm:py-24 bg-slate-50/50 border-b border-slate-100">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 sm:gap-6 mb-6 sm:mb-12">
-          <div>
-            <div className="flex items-center gap-2.5 text-[#C8102E] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-              <div className="w-7 h-0.5 bg-[#C8102E]"></div> Bulk Pricing Available
-            </div>
-            <h2 className="font-display text-5xl tracking-tight leading-none text-[#0E121C]">Wholesale Deals</h2>
+        
+        {/* Dynamic Countdown Sales Header Banner */}
+        <div className="mb-10 bg-gradient-to-r from-[#0A1628] via-[#C8102E] to-[#C8961A] rounded-3xl p-6 sm:p-10 text-white flex flex-col lg:flex-row justify-between items-center gap-6 shadow-[0_20px_50px_rgba(200,16,46,0.15)] relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+          
+          <div className="relative z-10 text-center lg:text-left">
+            <span className="text-[10px] sm:text-xs font-black tracking-[4px] uppercase bg-white/20 text-white border border-white/10 px-3.5 py-1.5 rounded-full inline-block mb-3 animate-pulse">
+              ⚡ Limited-Time Wholesale Flash Sale ⚡
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-display font-medium tracking-tight leading-tight">
+              Uhuru Market Bulk Deals
+            </h2>
+            <p className="text-white/85 text-xs sm:text-sm mt-2 max-w-lg font-medium leading-relaxed">
+              Order direct-from-factory with live wholesale discounts. Grab top quality school uniforms and blazers before current batches sell out.
+            </p>
           </div>
-          <Link to="/wholesale" className="text-[12px] font-black uppercase tracking-wider text-[#C8102E] hover:text-[#C8961A] transition-colors border-b-2 border-transparent hover:border-[#C8961A] pb-1 flex items-center gap-2">
-            View All Wholesale Items <ChevronRight size={14} />
-          </Link>
+
+          <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-white/15 shadow-inner">
+            <div className="flex items-center gap-2">
+              <Timer className="text-amber-300 shrink-0" size={18} />
+              <span className="text-[10px] font-black uppercase tracking-wider text-white/80">Sale Ends In:</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="flex flex-col items-center">
+                <span className="bg-[#0A1628]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#C8961A]">
+                  {String(timeLeft.hours).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-white/70 mt-1">Hours</span>
+              </div>
+              <span className="text-lg font-black text-amber-300 animate-pulse">:</span>
+              <div className="flex flex-col items-center">
+                <span className="bg-[#0A1628]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#C8961A]">
+                  {String(timeLeft.minutes).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-white/70 mt-1">Mins</span>
+              </div>
+              <span className="text-lg font-black text-amber-300 animate-pulse">:</span>
+              <div className="flex flex-col items-center">
+                <span className="bg-[#0A1628]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#C8961A]">
+                  {String(timeLeft.seconds).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-white/70 mt-1">Secs</span>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 lg:gap-6">
@@ -73,20 +156,25 @@ export function WholesaleDeals({
             .slice(0, showAllWholesale ? undefined : 6)
             .map(product => {
               const isExpanded = expandedProductId === product.id;
+              const stars = getProductStars(product.id);
+              const reviews = getProductReviewsCount(product.id);
+              const claimPercent = getClaimPercent(product.id);
+
               return (
                 <motion.div 
                    key={product.id}
                    layout
                    whileHover={isExpanded ? undefined : { y: -6 }}
-                   className={`group bg-white border rounded-xl overflow-hidden shadow-sm flex animate-blink-orange ${
+                   className={`group bg-white border rounded-[24px] overflow-hidden shadow-sm flex transition-all duration-300 ${
                      isExpanded 
-                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 ring-2 ring-[#C8961A]/50 shadow-2xl bg-gradient-to-br from-white to-slate-50/70" 
-                       : "flex-row sm:flex-col border-[#E4E8EF] hover:shadow-2xl hover:border-[#C8961A]/30 w-full"
+                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 border-slate-100 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white" 
+                       : "flex-row sm:flex-col border-slate-100 hover:shadow-xl hover:border-[#C8961A]/30 w-full"
                    }`}
                 >
                   {!isExpanded ? (
                     <>
-                      <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-[#FDFAF4] cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={() => handleProductInteraction(product)}>
+                      {/* Product Visual */}
+                      <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={() => handleProductInteraction(product)}>
                         {product.imageUrl ? (
                           <img 
                             src={product.imageUrl} 
@@ -98,45 +186,68 @@ export function WholesaleDeals({
                         ) : (
                           <Package size={40} className="text-[#C8961A]/20" />
                         )}
-                        <span className="absolute top-2 left-2 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white text-[7px] sm:text-[9.5px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase shadow-sm">Wholesale</span>
+                        <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[7px] sm:text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase shadow-sm flex items-center gap-1">
+                          <Flame size={10} className="text-amber-200 fill-current" /> Save Big
+                        </span>
                       </div>
+                      
+                      {/* Product Content Details */}
                       <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={() => handleProductInteraction(product)}>
                         <div>
-                          <h3 className="font-bold text-[12px] sm:text-[13px] mb-1 sm:mb-2 leading-tight line-clamp-2 min-h-[1.5rem] sm:line-clamp-1 text-[#0E121C]">{product.name}</h3>
-                          <p className="sm:hidden text-[10.5px] text-slate-500 line-clamp-2 mt-1 mb-1 font-medium leading-relaxed">
-                            {product.description || "Premium bespoke garment tailored with extra heavy duty double-stitched fabric."}
-                          </p>
+                          <div className="flex items-center gap-1 mb-1">
+                            <div className="flex text-amber-400">
+                              {Array(stars).fill(0).map((_, i) => (
+                                <Star key={i} size={10} className="fill-current" />
+                              ))}
+                            </div>
+                            <span className="text-[8px] text-slate-400 font-bold">({reviews})</span>
+                          </div>
                           
-                          {/* Interactive hint */}
-                          <span className="text-[8px] sm:text-[9px] text-[#C8961A] font-bold mb-2 block leading-none antialiased flex items-center gap-1.5 mt-1 border-t border-slate-50 pt-1.5 sm:pt-2">
-                            <span>✨</span> Tap to inspect details
-                          </span>
+                          <h3 className="font-extrabold text-[12px] sm:text-[13px] mb-1 leading-tight line-clamp-2 text-[#0E121C] group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
+                          
+                          {/* Price Display */}
+                          <div className="flex items-baseline gap-1.5 mt-1">
+                            <span className="text-xs sm:text-sm font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                            <span className="text-[9px] text-slate-400 line-through font-bold">{formatPrice(Math.round(product.price * 1.35))}</span>
+                          </div>
+
+                          {/* Claim level progress bar */}
+                          <div className="mt-2 pt-2 border-t border-slate-50">
+                            <div className="flex justify-between items-center mb-1 text-[8px] font-extrabold text-slate-400 uppercase">
+                              <span>Stock claimed</span>
+                              <span className="text-[#C8961A] font-black">{claimPercent}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-[#C8102E] to-[#C8961A]" style={{ width: `${claimPercent}%` }}></div>
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="flex flex-row sm:flex-col gap-2 mt-auto pt-2">
+                        {/* Interactive shopping buttons */}
+                        <div className="flex flex-col gap-1.5 mt-4">
+                          <button 
+                            onClick={(e) => handleQuickAddToCart(e, product)}
+                            className="w-full py-1.5 sm:py-2 bg-[#0E121C] hover:bg-[#C8102E] text-white rounded-lg text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"
+                          >
+                            <ShoppingCart size={11} />
+                            Add To Cart
+                          </button>
+                          
                           <button 
                             onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#C8961A] text-white hover:bg-[#B08214] rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5"
+                            className="w-full py-1 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-lg text-[8px] sm:text-[8.5px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1"
                           >
-                            <MessageSquare size={11} />
-                            Enquire
+                            <MessageSquare size={10} />
+                            Spec Inquiry
                           </button>
-                          <a 
-                            href="tel:+254792021795"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-grow sm:w-full py-1.5 sm:py-2 bg-[#C8102E] hover:bg-[#AF0B23] text-white rounded-lg text-[8.5px] sm:text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 text-center"
-                          >
-                            <Phone size={11} />
-                            Call Now
-                          </a>
                         </div>
                       </div>
                     </>
                   ) : (
-                    <div className="flex flex-col md:flex-row h-full">
+                    <div className="flex flex-col md:flex-row h-full w-full">
                       {/* Left Column: Product visual card and cost */}
                       <div className="w-full md:w-5/12 bg-white flex flex-col border-b md:border-b-0 md:border-r border-slate-100 shrink-0">
-                        <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-[#FDFAF4] flex items-center justify-center p-2">
+                        <div className="relative aspect-[4/3] md:aspect-[4/5] overflow-hidden bg-slate-50/50 flex items-center justify-center p-2">
                           {product.imageUrl ? (
                             <img 
                               src={product.imageUrl} 
@@ -148,7 +259,9 @@ export function WholesaleDeals({
                           ) : (
                             <Package size={50} className="text-[#C8961A]/20" />
                           )}
-                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white text-[9.5px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">Wholesale</span>
+                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10 flex items-center gap-1">
+                            <Flame size={11} className="text-amber-200 fill-current" /> Hot Deal
+                          </span>
                         </div>
                         <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
                           <div>
@@ -156,8 +269,11 @@ export function WholesaleDeals({
                             <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
                           </div>
                           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Wholesale Spec</span>
-                            <span className="text-base font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Flash Price</span>
+                            <div className="flex flex-col items-end">
+                              <span className="text-base font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                              <span className="text-[10px] text-slate-400 line-through font-bold">{formatPrice(Math.round(product.price * 1.35))}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -173,7 +289,7 @@ export function WholesaleDeals({
                         </button>
 
                         <div className="pr-6">
-                          <span className="inline-block bg-slate-50 border border-slate-100 text-slate-500 text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Bulk Supply Specifications</span>
+                          <span className="inline-block bg-[#C8102E]/5 border border-[#C8102E]/10 text-[#C8102E] text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Bulk Flash Deal Specs</span>
                           
                           <div className="space-y-3.5 mt-2">
                             <div>
@@ -186,11 +302,11 @@ export function WholesaleDeals({
                             <div className="grid grid-cols-2 gap-2 pt-1">
                               <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
                                 <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
-                                <span className="font-extrabold text-[#0E121C] text-[11px]">50 Units</span>
+                                <span className="font-extrabold text-[#0E121C] text-[11px]">10 Units</span>
                               </div>
                               <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
-                                <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Industry Fit</span>
-                                <span className="font-extrabold text-[#C8961A] text-[11px]">Hospitality / School</span>
+                                <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Fabric Standard</span>
+                                <span className="font-extrabold text-[#C8961A] text-[11px]">Heavy Gabardine</span>
                               </div>
                             </div>
 
@@ -210,29 +326,34 @@ export function WholesaleDeals({
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
+                          <button 
+                            onClick={(e) => {
+                              handleQuickAddToCart(e, product);
+                              setExpandedProductId(null);
+                            }}
+                            className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95"
+                          >
+                            <ShoppingCart size={13} />
+                            Add Bulk Bundle to Cart 🛒
+                          </button>
+
                           <div className="grid grid-cols-2 gap-2">
                             <button 
                               onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                              className="bg-[#C8961A] hover:bg-[#B08214] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                              className="bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 py-2 rounded-xl font-bold text-[9.5px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 shadow-sm"
                             >
                               <MessageSquare size={13} />
-                              Enquire
+                              Inquire Custom Specs
                             </button>
                             <a 
                               href="tel:+254792021795"
                               onClick={(e) => e.stopPropagation()}
-                              className="bg-[#C8102E] hover:bg-[#AF0B23] text-white py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 text-center shadow-sm"
+                              className="bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 py-2 rounded-xl font-bold text-[9.5px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 text-center shadow-sm"
                             >
                               <Phone size={13} />
-                              Call Now
+                              Call Direct Desk
                             </a>
                           </div>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                            className="w-full text-[#C8961A] hover:text-[#C8102E] text-[8.5px] font-black uppercase tracking-widest text-center mt-1 block"
-                          >
-                            🔍 Open full-screen overlay modal
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -245,20 +366,20 @@ export function WholesaleDeals({
 
         <div className="mt-12 flex justify-center">
            {wholesaleProducts.length > 6 && (
-             <button 
-              onClick={() => setShowAllWholesale(!showAllWholesale)}
-              className="px-10 py-4 bg-slate-100 hover:bg-[#C8102E] hover:text-white rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
-             >
-               {showAllWholesale ? 'Show Less' : 'View More Wholesale Items'} 
-               <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />
-             </button>
+              <button 
+               onClick={() => setShowAllWholesale(!showAllWholesale)}
+               className="px-10 py-4 bg-white border border-slate-200 hover:border-[#C8102E] text-slate-800 hover:text-white hover:bg-[#C8102E] rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
+              >
+                {showAllWholesale ? 'Show Less' : 'View More Deals'} 
+                <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />
+              </button>
            )}
         </div>
 
         {wholesaleProducts.length === 0 && (
             <div className="col-span-full py-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
               <Package className="mx-auto text-slate-300 mb-4" size={40} />
-              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Wholesale Collection Launching Soon</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Flash Collection Launching Soon</p>
               <p className="text-[11px] text-slate-400 mt-2 font-medium">Contact us directly for bulk pricing on any catalog item.</p>
             </div>
           )}

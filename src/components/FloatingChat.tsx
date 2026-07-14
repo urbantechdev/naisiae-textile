@@ -348,7 +348,7 @@ export function FloatingChat() {
       <div className={`absolute -inset-4 rounded-full transition-all duration-1000 blur-2xl pointer-events-none -z-10 ${
         isOpen 
           ? 'bg-[#0A1628]/30 opacity-40 scale-75' 
-          : 'bg-gradient-to-tr from-[#C8961A] via-[#E3AC2C] to-[#C8961A] opacity-75 scale-105 animate-[pulse_3s_infinite_ease-in-out]'
+          : 'bg-[#C8961A]/40 opacity-70 scale-105 animate-pulse'
       }`} />
 
       <motion.button
@@ -361,8 +361,20 @@ export function FloatingChat() {
         className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border ${
           isOpen 
             ? 'bg-[#0A1628] border-white/20 text-white shadow-[0_15px_35px_rgba(10,22,40,0.4)]' 
-            : 'bg-gradient-to-tr from-[#C8961A] via-[#E3AC2C] to-[#C8961A] border-white/10 text-white shadow-[0_20px_45px_rgba(200,150,26,0.35)]'
+            : 'bg-gradient-to-tr from-[#C8961A] via-[#E3AC2C] to-[#C8961A] border-[#E3AC2C]/40 text-white'
         }`}
+        animate={!isOpen ? {
+          boxShadow: [
+            "0 0 10px 2px rgba(227,172,44,0.45), inset 0 0 6px rgba(255,255,255,0.3)",
+            "0 0 25px 12px rgba(227,172,44,0.9), inset 0 0 12px rgba(255,255,255,0.6)",
+            "0 0 10px 2px rgba(227,172,44,0.45), inset 0 0 6px rgba(255,255,255,0.3)"
+          ]
+        } : {}}
+        transition={!isOpen ? {
+          duration: 1.8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        } : {}}
       >
         {/* Continuous Staggered Signal Transmission Waves when closed */}
         {!isOpen && (
@@ -373,8 +385,6 @@ export function FloatingChat() {
             <span className="absolute inset-0 rounded-full border border-[#C8961A]/40 bg-[#C8961A]/10 animate-[ping_3s_infinite_ease-out]"></span>
             {/* Wave 2 */}
             <span className="absolute inset-0 rounded-full border border-[#C8961A]/20 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:1s]"></span>
-            {/* Wave 3 */}
-            <span className="absolute inset-0 rounded-full border border-[#C8961A]/10 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:2s]"></span>
           </div>
         )}
 
@@ -406,10 +416,10 @@ export function FloatingChat() {
                 <span className="w-[1.5px] h-[9px] bg-white rounded-full animate-[pulse_1.2s_infinite_ease-in-out_0.4s]"></span>
               </div>
 
-              {/* Red Transmitter LED Indicator */}
-              <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C8102E] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#C8102E]"></span>
+              {/* Active Hyper-Bright Green LED Status Indicator */}
+              <span className="absolute -top-2.5 -right-2.5 flex h-3.5 w-3.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 shadow-[0_0_10px_3px_rgba(16,185,129,0.95)] border border-emerald-300"></span>
               </span>
             </motion.div>
           )}

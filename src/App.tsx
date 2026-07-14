@@ -513,30 +513,6 @@ function AppContent({ isAdmin, loading }: any) {
         <CatalogueModal />
         <FloatingChat />
         <GlobalToast />
-
-        {!isAdminRoute && (
-          <div className="fixed left-10 bottom-10 z-[90] hidden lg:block">
-            <a 
-              href="https://g.page/r/CZb3o2nm3vRgEBM/review"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 bg-[#0E121C]/95 hover:bg-[#0E121C] text-white p-3.5 rounded-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.55)] active:scale-95 transition-all group cursor-pointer hover:border-[#C8961A]/40"
-            >
-              <div className="w-9 h-9 rounded-xl bg-[#C8961A]/10 border border-[#C8961A]/20 flex items-center justify-center shrink-0">
-                <span className="text-lg">⭐</span>
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[8px] font-black text-[#C8961A] tracking-[1.5px] uppercase">Leave Us A Review</span>
-                </div>
-                <div className="text-white font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                  <span>Google Business</span>
-                  <span className="text-[8px] text-amber-400">★★★★★</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        )}
       </Suspense>
     </InactivityHandler>
   );

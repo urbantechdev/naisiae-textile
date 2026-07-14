@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, Mail, Fingerprint, Award, MapPin, Clock, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useLocalization } from '../context/LocalizationContext';
 
 export function Footer() {
   const { siteSettings } = useCart();
+  const { currentCountry } = useLocalization();
 
   const rawSiteName = siteSettings?.siteName || 'Uhuru Market Uniforms';
-  const rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
+  let rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
+  if (rawSiteTagline === 'Naisiae Textiles') {
+    rawSiteTagline = currentCountry.phone;
+  }
   const isReversed = (
     (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
     (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))

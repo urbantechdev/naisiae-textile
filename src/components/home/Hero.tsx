@@ -120,7 +120,7 @@ export function Hero({
               scale: 1.05,
               transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] }
             }}
-            className="absolute inset-0"
+            className="absolute inset-y-0 right-0 w-full lg:w-[65%] xl:w-[60%]"
           >
               {showVideo ? (
                 <div className="w-full h-full">
@@ -153,7 +153,7 @@ export function Hero({
                       muted 
                       loop 
                       playsInline
-                      className="w-full h-full object-cover object-left md:object-center"
+                      className="w-full h-full object-cover object-center"
                       onError={() => {
                         console.warn("Hero video failed to load for url:", videoUrl, "Falling back to static image.");
                         setVideoErrorSlides(prev => ({ ...prev, [currentSlide]: true }));
@@ -169,7 +169,7 @@ export function Hero({
               ) : (
               <img 
                 src={heroImages[currentSlide]?.url ? heroImages[currentSlide].url : "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fm=webp&q=60&w=1280"}
-                className="w-full h-full object-cover object-left md:object-center"
+                className="w-full h-full object-cover object-center"
                 alt={heroImages[currentSlide]?.title || 'Hero'}
                 loading="eager"
                 decoding="async"

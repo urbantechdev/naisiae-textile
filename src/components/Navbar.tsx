@@ -214,7 +214,10 @@ export function Navbar({
   }, []);
 
   const rawSiteName = siteSettings?.siteName || 'Uhuru Market Uniforms';
-  const rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
+  let rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
+  if (rawSiteTagline === 'Naisiae Textiles') {
+    rawSiteTagline = currentCountry.phone;
+  }
   const isReversed = (
     (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
     (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))

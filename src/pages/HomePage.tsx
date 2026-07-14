@@ -446,7 +446,10 @@ export default function HomePage() {
   useEffect(() => {
     if (siteSettings) {
       const rawSiteName = siteSettings.siteName || 'Uhuru Market Uniforms';
-      const rawSiteTagline = siteSettings.siteTagline || 'Naisiae Textiles';
+      let rawSiteTagline = siteSettings.siteTagline || 'Naisiae Textiles';
+      if (rawSiteTagline === 'Naisiae Textiles') {
+        rawSiteTagline = currentCountry.phone;
+      }
       const isReversed = (
         (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
         (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
@@ -487,7 +490,7 @@ export default function HomePage() {
         link.href = siteSettings.favicon;
       }
     }
-  }, [siteSettings]);
+  }, [siteSettings, currentCountry]);
 
   useEffect(() => {
     const modalPromo = promotions.find(p => p.type === 'modal');
@@ -575,6 +578,48 @@ export default function HomePage() {
           />
       </div>
 
+      {/* Interactive E-commerce Trust Badges Strip */}
+      <div className="bg-slate-50 border-b border-slate-100 py-6 px-4">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8961A]/40 hover:shadow-md transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-[#C8961A] group-hover:scale-105 transition-transform shrink-0">
+              <CheckCircle2 size={18} />
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Factory-Direct</h4>
+              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Uhuru Market Rates</p>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8102E]/40 hover:shadow-md transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-[#C8102E] group-hover:scale-105 transition-transform shrink-0">
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Board Approved</h4>
+              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">100% Quality Specs</p>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8961A]/40 hover:shadow-md transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-[#C8961A] group-hover:scale-105 transition-transform shrink-0">
+              <Package size={18} />
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Nationwide Delivery</h4>
+              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Fast Parcel Dispatch</p>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8102E]/40 hover:shadow-md transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-[#C8102E] group-hover:scale-105 transition-transform shrink-0">
+              <Scissors size={18} />
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Sizing Guarantee</h4>
+              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Hassle-Free Exchange</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="specialties">
         <Suspense fallback={<div className="h-48 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
           <Specialties 
@@ -621,6 +666,83 @@ export default function HomePage() {
         </Suspense>
       </div>
 
+      {/* High-Tech 3D Simulator Promo Block */}
+      <section className="py-12 px-4 sm:py-20 bg-[#0A1628] text-white overflow-hidden relative border-t border-b border-slate-900">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-[#C8102E]/20 via-transparent to-[#C8961A]/10 opacity-70"></div>
+        <div className="max-w-[1440px] mx-auto px-4 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
+          <div className="max-w-2xl text-center lg:text-left">
+            <span className="text-[10px] font-black tracking-[4px] uppercase text-[#C8961A] bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/20 inline-block mb-3">
+              Interactive 3D Configurator
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-display font-medium tracking-tight leading-tight">
+              Virtual Uniform & Fabric Simulator
+            </h2>
+            <p className="text-slate-300 text-xs sm:text-sm mt-4 leading-relaxed font-bold">
+              Unsure of school colors or blazers? Mix and match collars, sleeves, sweaters, and premium anti-pilling fabrics on our real-time interactive model. Order direct-to-factory with absolute sizing confidence.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+              <button 
+                onClick={() => navigate('/simulator')}
+                className="px-8 py-3.5 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+              >
+                Launch Customizer ⚡
+              </button>
+              <button 
+                onClick={() => {
+                  const shopEl = document.getElementById('catalog-section');
+                  if (shopEl) shopEl.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-6 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all"
+              >
+                Browse Premade Styles
+              </button>
+            </div>
+          </div>
+
+          {/* Interactive mockup preview container */}
+          <div className="w-full lg:w-5/12 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+            <div className="absolute top-4 left-4 flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500/60"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-green-500/60"></span>
+            </div>
+            
+            <div className="text-center pt-4">
+              <span className="text-[8px] font-mono tracking-widest text-white/50 uppercase block mb-1">Interactive Simulator Preview</span>
+              <div className="h-44 sm:h-56 bg-slate-900/60 rounded-2xl flex items-center justify-center border border-white/5 relative overflow-hidden my-4">
+                {/* Visual mockup drawing */}
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-16 h-16 bg-[#C8102E] rounded-full flex items-center justify-center text-white text-3xl shadow-lg border border-white/10">🏫</div>
+                  <span className="text-[10px] font-black tracking-widest uppercase mt-4 text-[#C8961A]">Naisiae Textiles Simulator</span>
+                  <p className="text-[8.5px] text-white/60 font-medium uppercase mt-1">Configure Collars & Sleeves in Real Time</p>
+                </div>
+                {/* Floating bubbles representing colors */}
+                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#0B2240] ring-1 ring-white/50"></span>
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#631212] ring-1 ring-white/50"></span>
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#163B23] ring-1 ring-white/50"></span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-[#0A1628]/60 p-2 rounded-lg border border-white/5">
+                  <span className="text-[7px] text-white/40 block font-bold uppercase">Fabric Weight</span>
+                  <span className="text-[9px] font-black text-white">280 GSM</span>
+                </div>
+                <div className="bg-[#0A1628]/60 p-2 rounded-lg border border-white/5">
+                  <span className="text-[7px] text-white/40 block font-bold uppercase">Composition</span>
+                  <span className="text-[9px] font-black text-[#C8961A]">Wool/Poly</span>
+                </div>
+                <div className="bg-[#0A1628]/60 p-2 rounded-lg border border-white/5">
+                  <span className="text-[7px] text-white/40 block font-bold uppercase">Pilling Resistance</span>
+                  <span className="text-[9px] font-black text-emerald-400">Class 4.5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div id="institutional">
         <Suspense fallback={<div className="h-48 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>
           <InstitutionalWholesale 
@@ -628,6 +750,79 @@ export default function HomePage() {
           />
         </Suspense>
       </div>
+
+      {/* Customer Trust Bento Grid Testimonials */}
+      <section className="py-16 sm:py-24 bg-white border-t border-slate-100 px-4 sm:px-8">
+        <div className="max-w-[1440px] mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <span className="text-xs font-black tracking-[4px] uppercase text-[#C8102E] bg-red-50 border border-red-100 px-3.5 py-1.5 rounded-full inline-block">
+              Client Feedback
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium tracking-tight text-[#0A1628] mt-4 leading-tight">
+              Trusted by Parents & Institutions
+            </h2>
+            <p className="text-slate-500 text-xs sm:text-sm font-bold uppercase mt-3 tracking-wider">
+              Real verified buyers from Nairobi and across Kenya
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#C8961A]/20 transition-all duration-300">
+              <div>
+                <div className="flex text-amber-400 gap-1 mb-4">
+                  {Array(5).fill(0).map((_, i) => <Star key={i} size={14} className="fill-current" />)}
+                </div>
+                <p className="text-slate-700 text-xs sm:text-sm font-bold leading-relaxed">
+                  "Buying direct from their Uhuru Market Jogoo Road workshop saved our school procurement budget over 30%. The cardigans are extremely thick wool and the colors didn't fade at all after 3 semesters of washings!"
+                </p>
+              </div>
+              <div className="mt-6 flex items-center gap-3 border-t border-slate-200/40 pt-4">
+                <div className="w-9 h-9 rounded-full bg-[#0A1628] text-white font-black text-[10px] flex items-center justify-center tracking-wider">MR</div>
+                <div>
+                  <h4 className="text-[10px] font-black uppercase text-slate-800">Mr. Ronald Kiprop</h4>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Principal, Hillcrest Academy</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#C8102E]/20 transition-all duration-300">
+              <div>
+                <div className="flex text-amber-400 gap-1 mb-4">
+                  {Array(5).fill(0).map((_, i) => <Star key={i} size={14} className="fill-current" />)}
+                </div>
+                <p className="text-slate-700 text-xs sm:text-sm font-bold leading-relaxed">
+                  "As a parent, uniform shopping is always stressful, but ordering from Uhuru Market online was so straightforward. Sizing swaps were easy right at their Jogoo Rd desk. Truly quality school uniforms."
+                </p>
+              </div>
+              <div className="mt-6 flex items-center gap-3 border-t border-slate-200/40 pt-4">
+                <div className="w-9 h-9 rounded-full bg-[#C8102E] text-white font-black text-[10px] flex items-center justify-center tracking-wider">MW</div>
+                <div>
+                  <h4 className="text-[10px] font-black uppercase text-slate-800">Mama Wanjiku</h4>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[#C8102E]">Verified Parent Buyer, Nairobi</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#C8961A]/20 transition-all duration-300">
+              <div>
+                <div className="flex text-amber-400 gap-1 mb-4">
+                  {Array(5).fill(0).map((_, i) => <Star key={i} size={14} className="fill-current" />)}
+                </div>
+                <p className="text-slate-700 text-xs sm:text-sm font-bold leading-relaxed">
+                  "Perfect custom sports uniforms and tracksuits for our college team. Computer embroidery is pristine, and they handled our order of 150 pairs within just 5 days. Absolute professionals."
+                </p>
+              </div>
+              <div className="mt-6 flex items-center gap-3 border-t border-slate-200/40 pt-4">
+                <div className="w-9 h-9 rounded-full bg-[#0A1628] text-white font-black text-[10px] flex items-center justify-center tracking-wider">DK</div>
+                <div>
+                  <h4 className="text-[10px] font-black uppercase text-slate-800">Dr. Kevin Omwamba</h4>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Sports Dir, Nairobi Technical</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Sourcing & SEO Authority Hub */}
       <section className="bg-slate-50 border-t border-slate-200 py-20 px-6 lg:px-12" id="seo-authority">
