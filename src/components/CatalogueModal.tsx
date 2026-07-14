@@ -18,7 +18,7 @@ interface CatalogPage {
 const CATALOG_PAGES: CatalogPage[] = [
   {
     id: 1,
-    title: "Premium School Uniform Essentials",
+    title: "Quality School Uniforms & Essentials",
     category: "Primary & Secondary School Wear",
     description: "Our signature collection for schools. Tailored from super-durable, breathable wool-blends and combed cotton that withstands heavy playground wear and daily machine washes while retaining vibrant, unfaded institution colors.",
     imageUrl: "https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80&w=600",

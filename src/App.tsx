@@ -70,7 +70,7 @@ function DynamicSEOEngine() {
       } else if (currentCountry.code === 'ET') {
         description = "የኡሁሩ ገበያ ዩኒፎርሞች (Uhuru Market Uniforms) በኢትዮጵያ ውስጥ ከፍተኛ ጥራት ያላቸውን የትምህርት ቤት ዩኒፎርሞች፣ የህክምና እና የኮርፖሬት አልባሳትን በጅምላ ዋጋ ያቀርባል።";
       } else if (currentCountry.code === 'UG') {
-        description = "Premium school uniforms and corporate apparel in Uganda by Uhuru Market Uniforms. High-density embroidery and durable fabrics at wholesale rates in Kampala.";
+        description = "Quality school uniforms and corporate apparel in Uganda by Uhuru Market Uniforms. High-density embroidery and durable fabrics at wholesale rates in Kampala.";
       }
 
       if (path.includes('/products') || path.includes('/product')) {
@@ -120,7 +120,7 @@ function DynamicSEOEngine() {
         description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countryDescriptionSuffix}.`;
       } else if (path.includes('/fabric-gallery') || path.includes('/textiles')) {
         title = `Uhuru Market Uniforms | Interactive Textile & Fabric Gallery${countrySuffix}`;
-        description = `Browse and filter our premium school uniform and corporate apparel textile samples${countryDescriptionSuffix}. Inspect material specs.`;
+        description = `Browse and filter our quality school uniform and corporate apparel textile samples${countryDescriptionSuffix}. Inspect material specs.`;
       } else if (path.includes('/uniform-simulator')) {
         title = `Uhuru Market Uniforms | Interactive 3D School Uniform Simulator${countrySuffix}`;
         description = `Configure sweaters, shirts, blazers, and ties in standard institutional colorways${countryDescriptionSuffix}. Preview custom combinations.`;

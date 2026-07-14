@@ -62,7 +62,7 @@ const FABRICS = [
   { 
     id: 'cotton-twill', 
     name: 'Naisiae Cotton-Twill Weave', 
-    desc: 'Classic diagonal parallel rib structure. Breathable, comfortable, standard for premium school uniform shirts, blouses, and trousers.',
+    desc: 'Classic diagonal parallel rib structure. Breathable, comfortable, standard for quality school uniform shirts, blouses, and trousers.',
     gsm: '220 GSM',
     composition: '100% Breathable Cotton',
     badge: 'Standard Breathable',

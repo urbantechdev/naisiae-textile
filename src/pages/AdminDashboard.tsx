@@ -2923,7 +2923,7 @@ export default function AdminDashboard() {
                                     const defaults = [
                                       {
                                         id: 'page_1',
-                                        title: "Premium School Uniform Essentials",
+                                        title: "Quality School Uniforms & Essentials",
                                         category: "Primary & Secondary School Wear",
                                         description: "Our signature collection for schools. Tailored from super-durable, breathable wool-blends and combed cotton that withstands heavy playground wear and daily machine washes while retaining vibrant, unfaded institution colors.",
                                         imageUrl: "https://images.unsplash.com/photo-1544717305-27a734ef1904?auto=format&fit=crop&q=80&w=600",
@@ -3020,7 +3020,7 @@ export default function AdminDashboard() {
                                     value={catalogueForm.title}
                                     onChange={e => setCatalogueForm({ ...catalogueForm, title: e.target.value })}
                                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
-                                    placeholder="e.g., Premium School Uniform Essentials"
+                                    placeholder="e.g., Quality School Uniforms & Essentials"
                                   />
                                 </div>
 
@@ -6615,7 +6615,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
     sharingDescription: '',
     sharingImage: 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg',
     heroImages: [
-      { url: DEFAULT_HERO_IMAGE, title: 'PREMIUM SCHOOL UNIFORMS', subtitle: 'QUALITY THAT LASTS ALL YEAR', link: '/category/uniforms' }
+      { url: DEFAULT_HERO_IMAGE, title: 'QUALITY SCHOOL UNIFORMS', subtitle: 'QUALITY THAT LASTS ALL YEAR', link: '/category/uniforms' }
     ]
   });
 
@@ -6686,7 +6686,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
       setFormData({
         ...initialData,
         heroImages: initialData.heroImages || [
-          { url: DEFAULT_HERO_IMAGE, title: 'PREMIUM SCHOOL UNIFORMS', subtitle: 'QUALITY THAT LASTS ALL YEAR', link: '/category/uniforms' }
+          { url: DEFAULT_HERO_IMAGE, title: 'QUALITY SCHOOL UNIFORMS', subtitle: 'QUALITY THAT LASTS ALL YEAR', link: '/category/uniforms' }
         ]
       });
     }
@@ -7104,7 +7104,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                     value={slide.title}
                     onChange={e => updateHeroSlide(idx, 'title', e.target.value)}
                     className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
-                    placeholder="e.g. PREMIUM SCHOOL UNIFORMS"
+                    placeholder="e.g. QUALITY SCHOOL UNIFORMS"
                   />
                 </div>
                 <div className="space-y-1.5">

@@ -406,58 +406,7 @@ export function Hero({
         ))}
       </div>
 
-      {/* Centered Hero Search Bar */}
-      <div className="hidden lg:block absolute bottom-24 left-1/2 -translate-x-1/2 z-40 w-[90%] sm:w-[80%] max-w-md lg:max-w-xl group px-4">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-            <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={20} />
-          </div>
-          <input 
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
-            onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
-            placeholder="Search school uniforms, scrubs, blazers..."
-            className="w-full bg-white/95 backdrop-blur-md border border-white/20 rounded-full pl-14 pr-6 py-3.5 lg:py-4 text-[#0E121C] text-sm lg:text-base outline-none focus:ring-4 focus:ring-[#C8102E]/35 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-[0_20px_50px_rgba(0,0,0,0.35)] animate-blink-maroon"
-          />
-          <AnimatePresence>
-            {showSearchSuggestions && searchResults.length > 0 && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute bottom-full left-0 right-0 mb-3 bg-white border border-slate-100 rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.45)] overflow-hidden max-h-[250px] overflow-y-auto z-[60]"
-              >
-                {searchResults.map((product) => (
-                  <div 
-                    key={product.id}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      setSelectedQuickViewProduct(product);
-                      setSearchQuery('');
-                      setShowSearchSuggestions(false);
-                    }}
-                    className="p-3.5 hover:bg-slate-50 cursor-pointer flex items-center gap-4 transition-colors border-b border-slate-50 last:border-none group/search"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-slate-100 p-1 flex items-center justify-center overflow-hidden shrink-0">
-                      <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-black text-[#0E121C] uppercase tracking-wider mb-0.5 truncate">{product.name}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[8px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-1.5 py-0.5 rounded shrink-0">{product.category}</span>
-                        <span className="text-[10px] font-bold text-slate-400">{formatPrice(product.price)}</span>
-                      </div>
-                    </div>
-                    <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A]/80 group-hover/search:translate-x-0.5 transition-all shrink-0" size={16} />
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
+
 
       <motion.div 
         animate={{ y: [0, 10, 0] }}
@@ -487,11 +436,11 @@ export function Hero({
       </div>
     </section>
 
-    {/* Mobile Search Bar placed right below the Hero */}
-    <div className="lg:hidden w-full px-6 py-5 bg-white border-b border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] relative z-20">
-      <div className="w-full group relative">
+    {/* Responsive Search Bar placed below the Hero for all screen sizes */}
+    <div className="w-full px-6 py-6 md:py-8 bg-white border-b border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] relative z-20">
+      <div className="w-full max-w-lg lg:max-w-2xl mx-auto group relative">
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={18} />
+          <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={20} />
         </div>
         <input 
           type="text"
@@ -500,40 +449,52 @@ export function Hero({
           onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
           placeholder="Search school uniforms, scrubs, blazers..."
-          className="w-full bg-slate-50 border border-slate-200 rounded-full pl-12 pr-6 py-3.5 text-[#0E121C] text-sm outline-none focus:ring-4 focus:ring-[#C8102E]/20 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-md hover:shadow-lg focus:shadow-lg animate-blink-maroon"
+          className="w-full bg-slate-50 border border-slate-200 rounded-full pl-14 pr-6 py-3.5 md:py-4 text-[#0E121C] text-sm md:text-base outline-none focus:ring-4 focus:ring-[#C8102E]/20 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-md hover:shadow-lg focus:shadow-lg focus:bg-white animate-blink-maroon"
         />
         <AnimatePresence>
           {showSearchSuggestions && searchResults.length > 0 && (
             <motion.div 
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden max-h-[250px] overflow-y-auto z-[60]"
+              exit={{ opacity: 0, y: 15 }}
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-white/95 backdrop-blur-md border border-slate-200 rounded-[32px] shadow-[0_30px_70px_rgba(0,0,0,0.2)] p-4 sm:p-6 w-[100vw] max-w-[95vw] sm:max-w-2xl lg:max-w-3xl max-h-[550px] overflow-y-auto z-[60]"
             >
-              {searchResults.map((product) => (
-                <div 
-                  key={product.id}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setSelectedQuickViewProduct(product);
-                    setSearchQuery('');
-                    setShowSearchSuggestions(false);
-                  }}
-                  className="p-3 hover:bg-slate-50 cursor-pointer flex items-center gap-4 transition-colors border-b border-slate-50 last:border-none group/search"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 p-1 flex items-center justify-center overflow-hidden shrink-0">
-                    <img src={product.imageUrl} className="w-full h-full object-cover object-top transition-transform group-hover/search:scale-110" alt={product.name} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-black text-[#0E121C] uppercase tracking-wider mb-0.5 truncate">{product.name}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[8px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/5 px-1.5 py-0.5 rounded shrink-0">{product.category}</span>
-                      <span className="text-[10px] font-bold text-slate-400">{formatPrice(product.price)}</span>
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <span className="text-[10px] font-black tracking-[2.5px] uppercase text-slate-400">Search Results ({searchResults.length})</span>
+                <span className="text-[9px] font-bold text-[#C8961A] bg-[#C8961A]/5 border border-[#C8961A]/10 px-2 py-0.5 rounded-full uppercase">Instant Match</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {searchResults.map((product) => (
+                  <div 
+                    key={product.id}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setSelectedQuickViewProduct(product);
+                      setSearchQuery('');
+                      setShowSearchSuggestions(false);
+                    }}
+                    className="group/search bg-slate-50/50 hover:bg-white border border-slate-100/80 hover:border-[#C8102E]/30 rounded-2xl p-4 flex gap-4 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.01]"
+                  >
+                    <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl bg-slate-100 p-1.5 flex items-center justify-center overflow-hidden shrink-0 border border-slate-100/50">
+                      <img src={product.imageUrl} className="w-full h-full object-cover object-top rounded-lg transition-transform duration-500 group-hover/search:scale-[1.06]" alt={product.name} />
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                      <div>
+                        <span className="text-[9px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/10 px-2 py-0.5 rounded-md inline-block mb-1.5">{product.category}</span>
+                        <h4 className="text-xs sm:text-sm font-black text-[#0E121C] uppercase tracking-wide leading-snug group-hover/search:text-[#C8102E] transition-colors line-clamp-2">{product.name}</h4>
+                      </div>
+                      
+                      <div className="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
+                        <span className="text-xs sm:text-sm font-black text-slate-900">{formatPrice(product.price)}</span>
+                        <span className="text-[10px] font-bold text-[#C8961A] flex items-center gap-0.5 opacity-80 group-hover/search:opacity-100 group-hover/search:translate-x-0.5 transition-all">
+                          Quick View <ChevronRight size={12} />
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <ChevronRight className="text-slate-200 group-hover/search:text-[#C8961A]/80 group-hover/search:translate-x-0.5 transition-all shrink-0" size={16} />
-                </div>
-              ))}
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

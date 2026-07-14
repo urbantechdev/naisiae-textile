@@ -453,7 +453,7 @@ export default function HomePage() {
       );
       const siteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
       const tagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
-      const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Premium school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
+      const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Quality school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg';
 
       document.title = `${siteName} | ${tagline}`;
