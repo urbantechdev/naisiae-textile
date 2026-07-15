@@ -540,81 +540,7 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
-             {/* Localization Selector Dropdown */}
-             <div className="relative font-sans shrink-0 hidden sm:block">
-               <button 
-                 onClick={() => setIsLocDropdownOpen(!isLocDropdownOpen)}
-                 className="flex items-center gap-1.5 px-1.5 py-1 sm:px-2.5 sm:py-1.5 md:px-3.5 md:py-2.5 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl md:rounded-2xl text-white hover:bg-white/10 hover:border-[#C8961A]/30 transition-all text-[8px] sm:text-[9px] font-black uppercase tracking-wider shadow-md"
-               >
-                 <span className="text-xs sm:text-sm leading-none">{currentCountry.flag}</span>
-                 <span className="hidden md:inline-block text-[9px] font-black tracking-widest text-slate-300">{currentCountry.currency}</span>
-                 <ChevronDown size={10} className="text-[#C8961A]" />
-               </button>
-               <AnimatePresence>
-                 {isLocDropdownOpen && (
-                   <>
-                     <div className="fixed inset-0 z-40" onClick={() => setIsLocDropdownOpen(false)} />
-                     <motion.div 
-                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                       exit={{ opacity: 0, y: 5, scale: 0.95 }}
-                       className="absolute right-0 mt-3 w-56 bg-[#0E121C] border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-4 z-50 overflow-hidden"
-                     >
-                       <div className="absolute top-0 inset-x-0 h-[2.5px] bg-gradient-to-r from-[#C8102E] to-[#C8961A]" />
-                       <div className="text-[8px] font-black text-white/30 tracking-[1.5px] uppercase mb-2">
-                         {t('Select Country')}
-                       </div>
-                       <div className="space-y-1 mb-4 max-h-[180px] overflow-y-auto scrollbar-thin">
-                         {COUNTRIES.map((c) => (
-                           <button
-                             key={c.code}
-                             onClick={() => {
-                               changeCountry(c.code);
-                               setIsLocDropdownOpen(false);
-                             }}
-                             className={`w-full flex items-center justify-between p-2 rounded-xl transition-all ${
-                               currentCountry.code === c.code 
-                                 ? 'bg-[#C8961A]/10 border border-[#C8961A]/30 text-white' 
-                                 : 'hover:bg-white/5 text-white/70 hover:text-white border border-transparent'
-                             }`}
-                           >
-                             <div className="flex items-center gap-2.5">
-                               <span className="text-sm leading-none">{c.flag}</span>
-                               <span className="text-[10px] font-bold tracking-wide uppercase">{c.name} ({c.currency})</span>
-                             </div>
-                             {currentCountry.code === c.code && <Check size={11} className="text-[#C8961A]" />}
-                           </button>
-                         ))}
-                       </div>
-
-                       <div className="text-[8px] font-black text-white/30 tracking-[1.5px] uppercase mb-2">
-                         {t('Select Language')}
-                       </div>
-                       <div className="grid grid-cols-2 gap-1.5">
-                         {currentCountry.languages.map((l) => (
-                           <button
-                             key={l.code}
-                             onClick={() => {
-                               changeLanguage(l.code);
-                               setIsLocDropdownOpen(false);
-                             }}
-                             className={`py-1.5 rounded-lg text-[9px] font-black text-center transition-all border ${
-                               currentLanguage === l.code 
-                                 ? 'bg-[#C8961A] text-white border-[#C8961A] shadow-md' 
-                                 : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/5'
-                             }`}
-                           >
-                             {l.label}
-                           </button>
-                         ))}
-                       </div>
-                     </motion.div>
-                   </>
-                 )}
-               </AnimatePresence>
-             </div>
-
-             <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
+              <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
                <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/50 hover:text-[#FF4F5A] transition-colors relative group">
                  <Heart size={18} className={wishlistCount > 0 ? "fill-[#FF4F5A] text-[#FF4F5A]" : "group-hover:scale-110 transition-transform md:w-5 md:h-5"} />
                  {wishlistCount > 0 && (
@@ -937,67 +863,67 @@ export function Navbar({
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  {/* Mobile Country/Language Selector inside Mega Menu */}
-                  <div className="space-y-3 pt-4 border-t border-slate-100">
-                    <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase">
-                      <span>🌐</span>
-                      <span>Country & Region</span>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      {COUNTRIES.map((c) => {
-                        const isSelected = currentCountry.code === c.code;
+                {/* Country/Language Selector inside Mega Menu (Accessible on all screen sizes) */}
+                <div className="space-y-4 pt-6 border-t border-slate-150">
+                  <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase">
+                    <span>🌐</span>
+                    <span>Country & Region</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {COUNTRIES.map((c) => {
+                      const isSelected = currentCountry.code === c.code;
+                      return (
+                        <button
+                          key={`mobile-country-${c.code}`}
+                          onClick={() => {
+                            changeCountry(c.code);
+                            appExperience.triggerFeedback('tap');
+                          }}
+                          className={`flex items-center justify-between p-3 rounded-xl transition-all border text-left ${
+                            isSelected
+                              ? 'bg-[#C8961A]/10 border-[#C8961A] text-[#0A1628]'
+                              : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-150'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg leading-none">{c.flag}</span>
+                            <div className="flex flex-col">
+                              <span className="text-[9px] font-black uppercase tracking-wide leading-tight">{c.name}</span>
+                              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.currency}</span>
+                            </div>
+                          </div>
+                          {isSelected && <Check size={12} className="text-[#C8961A] shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Language Selector */}
+                  <div className="pt-2">
+                    <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Preferred Language</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {currentCountry.languages.map((l) => {
+                        const isSelected = currentLanguage === l.code;
                         return (
                           <button
-                            key={`mobile-country-${c.code}`}
+                            key={`mobile-lang-${l.code}`}
                             onClick={() => {
-                              changeCountry(c.code);
+                              changeLanguage(l.code);
                               appExperience.triggerFeedback('tap');
                             }}
-                            className={`flex items-center justify-between p-3 rounded-xl transition-all border text-left ${
+                            className={`py-2 px-3 rounded-xl text-[9px] font-black tracking-wider uppercase text-center transition-all border ${
                               isSelected
-                                ? 'bg-[#C8961A]/10 border-[#C8961A] text-[#0A1628]'
-                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-150'
+                                ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-md'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-150'
                             }`}
                           >
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg leading-none">{c.flag}</span>
-                              <div className="flex flex-col">
-                                <span className="text-[9px] font-black uppercase tracking-wide leading-tight">{c.name}</span>
-                                <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.currency}</span>
-                              </div>
-                            </div>
-                            {isSelected && <Check size={12} className="text-[#C8961A] shrink-0" />}
+                            {l.label}
                           </button>
                         );
                       })}
-                    </div>
-
-                    {/* Mobile Language Selector */}
-                    <div className="pt-2">
-                      <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Preferred Language</div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {currentCountry.languages.map((l) => {
-                          const isSelected = currentLanguage === l.code;
-                          return (
-                            <button
-                              key={`mobile-lang-${l.code}`}
-                              onClick={() => {
-                                changeLanguage(l.code);
-                                appExperience.triggerFeedback('tap');
-                              }}
-                              className={`py-2 px-3 rounded-xl text-[9px] font-black tracking-wider uppercase text-center transition-all border ${
-                                isSelected
-                                  ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-md'
-                                  : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-150'
-                              }`}
-                            >
-                              {l.label}
-                            </button>
-                          );
-                        })}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -1178,6 +1104,69 @@ export function Navbar({
                     <ChevronRight size={14} className={item.highlight ? 'opacity-50 text-white' : 'text-white/10 group-hover:text-[#C8961A]'} />
                   </button>
                 ))}
+
+                {/* Country/Language Selector inside Mobile Menu */}
+                <div className="space-y-4 pt-6 border-t border-white/10 mt-6">
+                  <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase">
+                    <span>🌐</span>
+                    <span>Country & Region</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    {COUNTRIES.map((c) => {
+                      const isSelected = currentCountry.code === c.code;
+                      return (
+                        <button
+                          key={`hamburger-mobile-country-${c.code}`}
+                          onClick={() => {
+                            changeCountry(c.code);
+                            appExperience.triggerFeedback('tap');
+                          }}
+                          className={`flex items-center justify-between p-3 rounded-xl transition-all border text-left ${
+                            isSelected
+                              ? 'bg-[#C8961A]/10 border-[#C8961A] text-white'
+                              : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/5'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg leading-none">{c.flag}</span>
+                            <div className="flex flex-col">
+                              <span className="text-[9px] font-black uppercase tracking-wide leading-tight">{c.name}</span>
+                              <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest">{c.currency}</span>
+                            </div>
+                          </div>
+                          {isSelected && <Check size={12} className="text-[#C8961A] shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Language Selector */}
+                  <div className="pt-2">
+                    <div className="text-[8px] font-black text-slate-400 tracking-[1.5px] uppercase mb-2">Preferred Language</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {currentCountry.languages.map((l) => {
+                        const isSelected = currentLanguage === l.code;
+                        return (
+                          <button
+                            key={`hamburger-mobile-lang-${l.code}`}
+                            onClick={() => {
+                              changeLanguage(l.code);
+                              appExperience.triggerFeedback('tap');
+                            }}
+                            className={`py-2 px-3 rounded-xl text-[9px] font-black tracking-wider uppercase text-center transition-all border ${
+                              isSelected
+                                ? 'bg-white text-[#0E121C] border-white shadow-md'
+                                : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/5'
+                            }`}
+                          >
+                            {l.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Footer Branding */}

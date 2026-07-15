@@ -511,7 +511,7 @@ function AppContent({ isAdmin, loading }: any) {
         <WishlistModal isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
         <QuoteModal />
         <CatalogueModal />
-        <FloatingChat />
+        {!isAdminRoute && <FloatingChat />}
         <GlobalToast />
       </Suspense>
     </InactivityHandler>

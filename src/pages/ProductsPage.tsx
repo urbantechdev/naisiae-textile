@@ -626,7 +626,7 @@ export default function ProductsPage() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: Math.min(index * 0.05, 0.4) }}
-                      className="group bg-white rounded-2xl sm:rounded-3xl border border-slate-200/50 hover:border-slate-300 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative animate-blink-orange"
+                      className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative animate-blink-orange"
                     >
                       {/* Badge Display */}
                       <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 flex flex-col gap-1 sm:gap-1.5 items-start">

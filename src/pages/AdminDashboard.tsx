@@ -2033,29 +2033,29 @@ export default function AdminDashboard() {
                             className="w-full pl-10 pr-4 py-2 bg-white border border-[#E2E8F0] rounded-lg text-sm focus:ring-2 focus:ring-[#C8102E]/20 focus:border-[#C8102E] outline-none transition-all placeholder:text-[#94A3B8]"
                           />
                         </div>
-      <div className="flex flex-wrap gap-3">
-        <select 
-          value={productCategoryFilter}
-          onChange={(e) => setProductCategoryFilter(e.target.value)}
-          className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
-        >
-          <option value="all">All Categories</option>
-          {productCategories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-        <select 
-          value={productStatusFilter}
-          onChange={(e) => setProductStatusFilter(e.target.value)}
-          className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active Only</option>
-          <option value="inactive">Drafts Only</option>
-          <option value="wholesale">Wholesale Only</option>
-          <option value="low-stock">Low Stock (≤5)</option>
-        </select>
-      </div>
+                        <div className="grid grid-cols-2 md:flex gap-3 w-full md:w-auto shrink-0">
+                          <select 
+                            value={productCategoryFilter}
+                            onChange={(e) => setProductCategoryFilter(e.target.value)}
+                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20 w-full"
+                          >
+                            <option value="all">All Categories</option>
+                            {productCategories.map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                          <select 
+                            value={productStatusFilter}
+                            onChange={(e) => setProductStatusFilter(e.target.value)}
+                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20 w-full"
+                          >
+                            <option value="all">All Status</option>
+                            <option value="active">Active Only</option>
+                            <option value="inactive">Drafts Only</option>
+                            <option value="wholesale">Wholesale Only</option>
+                            <option value="low-stock">Low Stock (≤5)</option>
+                          </select>
+                        </div>
                       </div>
                       
                       <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 border-t border-[#E2E8F0]/50">
@@ -3967,13 +3967,21 @@ export default function AdminDashboard() {
               initial={{ scale: 1, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 1, opacity: 0, y: 50 }}
-              className="relative bg-white w-full max-w-xl rounded-none md:rounded-2xl shadow-2xl overflow-hidden h-full md:h-auto max-h-full md:max-h-[85vh] flex flex-col mt-0 md:mt-0"
+              className="relative bg-white w-full max-w-xl md:max-w-5xl xl:max-w-6xl rounded-none md:rounded-2xl shadow-2xl overflow-hidden h-full md:h-[90vh] max-h-full md:max-h-[90vh] flex flex-col mt-0 md:mt-0"
             >
-              <div className="p-4 md:p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
+              <div className="md:hidden flex justify-center py-2 bg-[#F8FAFC] shrink-0 border-b border-slate-100/50">
+                <div className="w-12 h-1 bg-slate-300 rounded-full animate-pulse" />
+              </div>
+              <div className="px-4 py-3 md:px-6 md:py-4.5 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
+                <h3 className="font-display text-lg md:text-2xl font-black tracking-wide text-[#0A1628]">
                   {editingItem ? 'Edit Product' : 'Add New Product'}
                 </h3>
-                <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
+                <button 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-[#0A1628] flex items-center justify-center transition-all"
+                >
+                  <X size={16} />
+                </button>
               </div>
               <ProductForm 
                 initialData={editingItem} 
@@ -4662,18 +4670,18 @@ function SortableImage({ url, index, onRemove, disabled }: any) {
         <div 
           {...attributes} 
           {...listeners}
-          className="absolute top-1 left-1 bg-white/80 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-slate-500 hover:text-[#1C3560] shadow-sm z-10"
+          className="absolute top-1.5 left-1.5 bg-white/95 p-1.5 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-slate-600 hover:text-[#1C3560] shadow-md z-10"
         >
-          <GripVertical size={12} />
+          <GripVertical size={14} />
         </div>
       )}
       {!disabled && (
         <button 
           type="button"
           onClick={() => onRemove(index)}
-          className="absolute top-1 right-1 bg-white/90 text-red-600 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10"
+          className="absolute top-1.5 right-1.5 bg-white/95 text-red-600 p-1.5 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-md z-10"
         >
-          <X size={12} />
+          <X size={14} />
         </button>
       )}
       {index === 0 && (
@@ -5677,7 +5685,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   placeholder="e.g. Navy Blue, XXL"
                   value={newVariant.value}
                   onChange={e => setNewVariant({...newVariant, value: e.target.value})}
-                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-[#C8102E]"
+                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#C8102E]"
                 />
               </div>
             </div>
@@ -5691,7 +5699,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     type="number"
                     value={newVariant.price}
                     onChange={e => setNewVariant({...newVariant, price: e.target.value === '' ? '' : parseFloat(e.target.value)})}
-                    className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-6 pr-3 py-2 text-xs font-bold outline-none focus:border-[#C8102E]"
+                    className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-6 pr-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#C8102E]"
                     placeholder="0"
                   />
                 </div>
@@ -5702,7 +5710,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   type="number"
                   value={newVariant.stock}
                   onChange={e => setNewVariant({...newVariant, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-[#C8102E]"
+                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#C8102E]"
                   placeholder="0"
                 />
               </div>
@@ -5839,7 +5847,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                 value={currentTag}
                 onChange={e => setCurrentTag(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-bold focus:border-[#C8102E]" 
+                className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base md:text-sm font-bold focus:border-[#C8102E] outline-none" 
               />
               <button 
                 type="button" 
@@ -5939,34 +5947,44 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
   return (
     <form onSubmit={handleSubmit} className="flex flex-col min-h-0 overflow-hidden flex-1">
       {/* Mode Selector Toggle */}
-      <div className="px-6 pt-3 flex items-center justify-between border-b border-slate-100 bg-white z-20 shrink-0">
-        <div className="flex gap-4">
+      <div className="px-4 py-2.5 md:px-6 md:py-3.5 flex items-center justify-between border-b border-slate-100 bg-white z-20 shrink-0 gap-3">
+        <div className="bg-slate-100/80 p-1 rounded-xl flex w-full max-w-[340px] relative shadow-inner">
           <button
             type="button"
-            onClick={() => setUseWizard(true)}
-            className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-slate-600'}`}
+            onClick={() => {
+              setUseWizard(true);
+              appExperience.triggerHaptic('light');
+              appExperience.playSound('tap');
+            }}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all relative z-10 text-center ${useWizard ? 'text-[#0A1628] bg-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
-            ✨ Interactive Wizard
-            {useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
+            ✨ Wizard
           </button>
           <button
             type="button"
-            onClick={() => setUseWizard(false)}
-            className={`pb-3 font-semibold text-[11px] uppercase tracking-wider relative transition-all ${!useWizard ? 'text-[#C8102E] font-black' : 'text-slate-400 hover:text-[#0A1628]'}`}
+            onClick={() => {
+              setUseWizard(false);
+              appExperience.triggerHaptic('light');
+              appExperience.playSound('tap');
+            }}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all relative z-10 text-center ${!useWizard ? 'text-[#0A1628] bg-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
-            📋 Classic Full Form
-            {!useWizard && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8102E]" />}
+            📋 Classic Form
           </button>
         </div>
         
         {useWizard && (
-          <div className="pb-3">
+          <div>
             <button
               type="button"
-              onClick={() => setCollapseWizardGuide(prev => !prev)}
-              className="flex items-center gap-1 text-[9px] font-black uppercase text-slate-500 hover:text-[#C8102E] transition-all bg-slate-50 hover:bg-slate-100 px-2 py-1 rounded-lg border border-slate-205"
+              onClick={() => {
+                setCollapseWizardGuide(prev => !prev);
+                appExperience.triggerHaptic('light');
+                appExperience.playSound('tap');
+              }}
+              className="flex items-center gap-1.5 text-[9px] font-black uppercase text-slate-500 hover:text-[#C8102E] transition-all bg-slate-50 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-sm"
             >
-              {collapseWizardGuide ? "📖 Expand Help" : "🧘 Collapse/Compact"}
+              {collapseWizardGuide ? "📖 Expand Help" : "🧘 Collapse"}
             </button>
           </div>
         )}
@@ -6052,404 +6070,473 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
 
       {/* STEP 0: Identity, description and AI assist */}
       {(!useWizard || activeStep === 0) && (
-        <div className={collapseWizardGuide ? "space-y-3.5 animate-in fade-in duration-300" : "space-y-6 animate-in fade-in duration-300"}>
-          {useWizard && !collapseWizardGuide && (
-            <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
-              <Sparkles className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
-              <div>
-                <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Core Profile & Categorization</h4>
-                <p className="text-[10px] text-slate-500 font-medium">Specify the name, category and write a summary. You can use the AI assistant below to draft these automagically!</p>
-              </div>
-            </div>
-          )}
-
-          {/* AI Content Generator Section */}
-          {!disableNonPriceFields && (
-            <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
-              </div>
-              <div className="flex items-start justify-between relative z-10">
+        <div className={`grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in duration-300 ${collapseWizardGuide ? 'space-y-3.5 md:space-y-0' : 'space-y-6 md:space-y-0'}`}>
+          {/* Main Form Fields */}
+          <div className="md:col-span-7 space-y-4 md:space-y-5">
+            {useWizard && !collapseWizardGuide && (
+              <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
+                <Sparkles className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
                 <div>
-                  <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
-                    <Sparkles size={16} className="text-indigo-500 animate-pulse" />
-                    AI Product Drafter
-                  </h4>
-                  <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
-                    Draft full details instantly based on name & category
-                  </p>
+                  <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Core Profile & Categorization</h4>
+                  <p className="text-[10px] text-slate-500 font-medium">Specify the name, category and write a summary. You can use the AI assistant to draft these automagically!</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleAIGenerateFull}
-                  disabled={isGeneratingFull || !formData.name}
-                  className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg active:scale-95 ${
-                    isGeneratingFull || !formData.name
-                      ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
-                  }`}
-                >
-                  {isGeneratingFull ? (
-                    <>
-                      <div className="w-3 h-3 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
-                      Drafting Content...
-                    </>
-                  ) : (
-                    <>
-                      <Zap size={14} />
-                      Magic Draft
-                    </>
-                  )}
-                </button>
               </div>
-              <p className="text-[10px] text-slate-500 italic relative z-10 leading-relaxed max-w-[80%]">
-                "Magic Draft" will automatically generate a professional name, market-ready description, 
-                competitive price suggestion, and relevant search tags for you.
-              </p>
-            </div>
-          )}
+            )}
 
-          {/* Product Name & Category */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5 flex-1">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Name</label>
-              <input 
-                required 
-                value={formData.name}
-                onChange={e => setFormData({...formData, name: e.target.value})}
-                disabled={disableNonPriceFields}
-                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
-              />
+            {/* Product Name & Category */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5 flex-1">
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Name</label>
+                <input 
+                  required 
+                  value={formData.name}
+                  onChange={e => setFormData({...formData, name: e.target.value})}
+                  disabled={disableNonPriceFields}
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Category</label>
+                <select 
+                  value={formData.category}
+                  onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
+                  disabled={disableNonPriceFields}
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
             </div>
+
+            {/* Sub-Category (Uniform Item) */}
+            {formData.category === 'School Uniforms' && (
+              <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Sub-Category (Uniform Item)</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <select 
+                    value={formData.subCategory}
+                    onChange={e => setFormData({...formData, subCategory: e.target.value})}
+                    disabled={disableNonPriceFields}
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select Item Type...</option>
+                    {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
+                  </select>
+                  <input 
+                    placeholder="Or type custom item name..."
+                    value={formData.subCategory}
+                    onChange={e => setFormData({...formData, subCategory: e.target.value})}
+                    disabled={disableNonPriceFields}
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  />
+                </div>
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 ml-1">Helps customers find specific items like sweaters or trousers faster.</p>
+              </div>
+            )}
+
+            {/* Short Description */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Category</label>
-              <select 
-                value={formData.category}
-                onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
+              <div className="flex justify-between items-center px-1">
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Short Description</label>
+                {!disableNonPriceFields && (
+                  <button
+                    type="button"
+                    onClick={handleGenerateDescription}
+                    disabled={isGeneratingDescription}
+                    className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+                  >
+                    <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
+                    {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
+                  </button>
+                )}
+              </div>
+              <textarea 
+                rows={collapseWizardGuide ? 4 : 6} 
+                required
+                value={formData.description}
+                onChange={e => setFormData({...formData, description: e.target.value})}
                 disabled={disableNonPriceFields}
-                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
+              ></textarea>
             </div>
           </div>
 
-          {/* Sub-Category (Uniform Item) */}
-          {formData.category === 'School Uniforms' && (
-            <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Sub-Category (Uniform Item)</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <select 
-                  value={formData.subCategory}
-                  onChange={e => setFormData({...formData, subCategory: e.target.value})}
-                  disabled={disableNonPriceFields}
-                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  <option value="">Select Item Type...</option>
-                  {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
-                </select>
-                <input 
-                  placeholder="Or type custom item name..."
-                  value={formData.subCategory}
-                  onChange={e => setFormData({...formData, subCategory: e.target.value})}
-                  disabled={disableNonPriceFields}
-                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                />
+          {/* AI Content Generator Side-Panel */}
+          <div className="md:col-span-5 flex flex-col justify-stretch">
+            {!disableNonPriceFields && (
+              <div className="bg-gradient-to-br from-indigo-50 to-blue-50/20 p-6 rounded-3xl border border-indigo-100/50 space-y-4 relative overflow-hidden group h-full flex flex-col justify-between">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <BrainCircuit size={80} className="text-indigo-600 rotate-12" />
+                </div>
+                <div className="space-y-4 relative z-10">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+                        <Sparkles size={16} className="text-indigo-500 animate-pulse" />
+                        AI Product Drafter
+                      </h4>
+                      <p className="text-[10px] text-indigo-600 font-medium uppercase tracking-wider mt-1">
+                        Draft full details instantly based on name & category
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-[10.5px] text-slate-500 italic leading-relaxed">
+                    "Magic Draft" will automatically generate a professional name, market-ready description, 
+                    competitive price suggestion, and relevant search tags for you based on the current product name.
+                  </p>
+                </div>
+                
+                <div className="pt-4 border-t border-indigo-100/30 relative z-10 flex flex-col gap-2 mt-auto">
+                  <button
+                    type="button"
+                    onClick={handleAIGenerateFull}
+                    disabled={isGeneratingFull || !formData.name}
+                    className={`w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 ${
+                      isGeneratingFull || !formData.name
+                        ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none'
+                        : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
+                    }`}
+                  >
+                    {isGeneratingFull ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                        Drafting Content...
+                      </>
+                    ) : (
+                      <>
+                        <Zap size={14} />
+                        Magic Draft
+                      </>
+                    )}
+                  </button>
+                  {!formData.name && (
+                    <span className="text-[8.5px] font-black text-slate-400 text-center uppercase tracking-wider block">Enter a product name first to unlock magic draft</span>
+                  )}
+                </div>
               </div>
-              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 ml-1">Helps customers find specific items like sweaters or trousers faster.</p>
-            </div>
-          )}
-
-          {/* Short Description */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between items-center px-1">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Short Description</label>
-              {!disableNonPriceFields && (
-                <button
-                  type="button"
-                  onClick={handleGenerateDescription}
-                  disabled={isGeneratingDescription}
-                  className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
-                >
-                  <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
-                  {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
-                </button>
-              )}
-            </div>
-            <textarea 
-              rows={3} 
-              required
-              value={formData.description}
-              onChange={e => setFormData({...formData, description: e.target.value})}
-              disabled={disableNonPriceFields}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
-            ></textarea>
+            )}
           </div>
         </div>
       )}
 
       {/* STEP 2: Value & Logistics */}
       {(!useWizard || activeStep === 2) && (
-        <div className={collapseWizardGuide ? "space-y-3.5 animate-in fade-in duration-300" : "space-y-6 animate-in fade-in duration-300"}>
-          {useWizard && !collapseWizardGuide && (
-            <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
-              <Coins className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
-              <div>
-                <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Value, Pricing & Logistics</h4>
-                <p className="text-[10px] text-slate-500 font-medium">Configure fixed retail prices, wholesale margins, old price comparisons (for sales/discounts), and baseline inventory stock.</p>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <div className="space-y-1.5 pt-[22px] sm:pt-0">
-              <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Sourcing Mode</label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  disabled={disableNonPriceFields}
-                  onClick={() => setFormData({...formData, priceType: 'fixed'})}
-                  className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
-                    formData.priceType === 'fixed' 
-                      ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
-                      : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-                  } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-                >
-                  Fixed Price
-                </button>
-                <button
-                  type="button"
-                  disabled={disableNonPriceFields}
-                  onClick={() => setFormData({...formData, priceType: 'wholesale'})}
-                  className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
-                    formData.priceType === 'wholesale' 
-                      ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
-                      : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-                  } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-                >
-                  Inquiry Only
-                </button>
-              </div>
-            </div>
-            <div className="space-y-1.5 flex flex-col justify-end">
-              <div className="flex items-center justify-between px-1">
-                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (/-)</label>
-                <button
-                  type="button"
-                  onClick={handleSuggestPrice}
-                  disabled={isSuggestingPrice}
-                  className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
-                >
-                  <Sparkles size={12} className={isSuggestingPrice ? "animate-pulse" : ""} />
-                  {isSuggestingPrice ? "Analyzing Market..." : "Suggest Price"}
-                </button>
-              </div>
-              <div className="relative">
-                <input 
-                  type="number" 
-                  required 
-                  value={formData.price}
-                  onChange={e => setFormData({...formData, price: e.target.value === '' ? '' : Number(e.target.value)})}
-                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
-              </div>
-              {pricingReasoning && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-2 p-3 bg-[#EAB308]/5 border border-[#EAB308]/20 rounded-xl flex gap-3"
-                >
-                  <div className="pt-0.5"><Zap size={14} className="text-[#C8961A]" /></div>
-                  <p className="text-[10px] text-slate-600 font-bold leading-relaxed">
-                    <span className="text-[#C8961A] font-black uppercase tracking-wider block mb-0.5">AI Insights & Market Research:</span>
-                    {pricingReasoning}
-                  </p>
-                </motion.div>
-              )}
-            </div>
-            <div className="space-y-1.5 pt-[22px] sm:pt-0">
-              <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (/-)</label>
-              <div className="relative">
-                <input 
-                  type="number" 
-                  value={formData.wholesalePrice}
-                  onChange={e => setFormData({...formData, wholesalePrice: e.target.value === '' ? '' : Number(e.target.value)})}
-                  className="w-full bg-orange-50 border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:border-orange-500 outline-none transition-colors text-orange-700 font-bold" 
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest pointer-events-none">BULK</div>
-              </div>
-            </div>
-            <div className="space-y-1.5 pt-[22px] sm:pt-0">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Old Price (Optional)</label>
-              <div className="relative">
-                <input 
-                  type="number" 
-                  value={formData.oldPrice}
-                  onChange={e => setFormData({...formData, oldPrice: e.target.value === '' ? '' : Number(e.target.value)})}
-                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
-              </div>
-            </div>
-            <div className="space-y-1.5 pt-[22px] sm:pt-0">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Base Stock (If no variants)</label>
-              <input 
-                type="number" 
-                value={formData.stock}
-                onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-              />
-            </div>
-          </div>
-
-          {!disableNonPriceFields && (
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Or Provide Image URL</label>
-              <div className="flex gap-2">
-                <input 
-                  placeholder="https://images.unsplash.com/..." 
-                  value={formData.imageUrl}
-                  onChange={e => {
-                    const url = e.target.value;
-                    setFormData({
-                      ...formData, 
-                      imageUrl: url,
-                      imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
-                    });
-                  }}
-                  className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
-                />
-                <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
-                  {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
+        <div className={`grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in duration-300 ${collapseWizardGuide ? 'space-y-3.5 md:space-y-0' : 'space-y-6 md:space-y-0'}`}>
+          {/* Sourcing and pricing inputs on left */}
+          <div className="md:col-span-7 space-y-4 md:space-y-5">
+            {useWizard && !collapseWizardGuide && (
+              <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
+                <Coins className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+                <div>
+                  <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Value, Pricing & Logistics</h4>
+                  <p className="text-[10px] text-slate-500 font-medium">Configure fixed retail prices, wholesale margins, old price comparisons (for sales/discounts), and baseline inventory stock.</p>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
 
-      {(!useWizard || activeStep === 3) && (
-        <div className={collapseWizardGuide ? "space-y-3.5 animate-in fade-in duration-300" : "space-y-6 animate-in fade-in duration-300"}>
-          <div className="space-y-1.5 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-            <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Tags & Organization</label>
-            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 mb-2">Helpful for grouping products (e.g., Seasonal, Stock Status)</p>
-            
-            <div className="flex flex-wrap gap-2 mb-3 min-h-[32px]">
-              {formData.tags.map((tag: string) => (
-                <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
-                  <Package size={10} className="text-[#C8961A]" />
-                  {tag}
-                  {!disableNonPriceFields && (
-                    <button 
-                      type="button" 
-                      onClick={() => removeTag(tag)}
-                      className="hover:text-red-300 transition-colors ml-1"
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5 pt-[22px] sm:pt-0">
+                  <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Sourcing Mode</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      disabled={disableNonPriceFields}
+                      onClick={() => setFormData({...formData, priceType: 'fixed'})}
+                      className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                        formData.priceType === 'fixed' 
+                          ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
+                          : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+                      } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
-                      <X size={10} />
+                      Fixed Price
                     </button>
-                  )}
-                </span>
-              ))}
-              {formData.tags.length === 0 && (
-                <div className="w-full py-4 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl bg-white/50">
-                  <Filter size={14} className="text-slate-300 mb-1" />
-                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">No tags assigned yet</span>
+                    <button
+                      type="button"
+                      disabled={disableNonPriceFields}
+                      onClick={() => setFormData({...formData, priceType: 'wholesale'})}
+                      className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                        formData.priceType === 'wholesale' 
+                          ? 'bg-orange-500 text-white border-orange-500 shadow-lg' 
+                          : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+                      } ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    >
+                      Inquiry Only
+                    </button>
+                  </div>
                 </div>
-              )}
+
+                <div className="space-y-1.5 flex flex-col justify-end">
+                  <div className="flex items-center justify-between px-1">
+                    <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider">Current Price (/-)</label>
+                    <button
+                      type="button"
+                      onClick={handleSuggestPrice}
+                      disabled={isSuggestingPrice}
+                      className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+                    >
+                      <Sparkles size={12} className={isSuggestingPrice ? "animate-pulse" : ""} />
+                      {isSuggestingPrice ? "Analyzing..." : "Suggest Price"}
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      required 
+                      value={formData.price}
+                      onChange={e => setFormData({...formData, price: e.target.value === '' ? '' : Number(e.target.value)})}
+                      className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-orange-600 tracking-wider ml-1">Wholesale (/-)</label>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      value={formData.wholesalePrice}
+                      onChange={e => setFormData({...formData, wholesalePrice: e.target.value === '' ? '' : Number(e.target.value)})}
+                      className="w-full bg-orange-55 border border-orange-100 rounded-xl px-4 py-3 text-base md:text-sm focus:border-orange-500 outline-none transition-colors text-orange-700 font-bold" 
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest pointer-events-none">BULK</div>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Old Price (Optional)</label>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      value={formData.oldPrice}
+                      onChange={e => setFormData({...formData, oldPrice: e.target.value === '' ? '' : Number(e.target.value)})}
+                      className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Base Stock</label>
+                  <input 
+                    type="number" 
+                    value={formData.stock}
+                    onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                  />
+                </div>
+              </div>
             </div>
 
             {!disableNonPriceFields && (
-              <>
+              <div className="space-y-1.5 pt-2">
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Or Provide Image URL</label>
                 <div className="flex gap-2">
-                  <div className="flex-1 relative">
-                    <input 
-                      placeholder="Type tag and press enter... (e.g. Winter)" 
-                      value={currentTag}
-                      onChange={e => setCurrentTag(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                      className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
-                    />
-                    <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
-                  </div>
-                  <button 
-                    type="button" 
-                    onClick={addTag}
-                    className="px-6 py-2 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
-                  >
-                    Add
-                  </button>
-                </div>
-
-                <div className="pt-3">
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Suggested Tags</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {['summer', 'winter', 'clearance', 'bestseller', 'new-arrival', 'secondary', 'primary', 'corporate', 'knitwear'].map(sTag => (
-                      <button
-                        key={sTag}
-                        type="button"
-                        onClick={() => {
-                          if (!formData.tags.includes(sTag)) {
-                            setFormData({ ...formData, tags: [...formData.tags, sTag] });
-                          }
-                        }}
-                        className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
-                          formData.tags.includes(sTag) 
-                            ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
-                        }`}
-                      >
-                        {sTag}
-                      </button>
-                    ))}
+                  <input 
+                    placeholder="https://images.unsplash.com/..." 
+                    value={formData.imageUrl}
+                    onChange={e => {
+                      const url = e.target.value;
+                      setFormData({
+                        ...formData, 
+                        imageUrl: url,
+                        imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
+                      });
+                    }}
+                    className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                  />
+                  <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
+                    {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Promotion Badge</label>
-              <select 
-                value={formData.badge}
-                onChange={e => setFormData({...formData, badge: e.target.value})}
-                disabled={disableNonPriceFields}
-                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+          {/* AI Pricing Insights Column */}
+          <div className="md:col-span-5 flex flex-col justify-stretch">
+            {pricingReasoning ? (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-6 bg-amber-50/50 border border-amber-200/60 rounded-3xl h-full flex flex-col justify-between"
               >
-                {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center gap-6 mt-6">
-              <div className="flex items-center gap-3">
-                <button 
-                  type="button"
-                  disabled={disableNonPriceFields}
-                  onClick={() => setFormData({...formData, active: !formData.active})}
-                  className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-                >
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
-                </button>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{formData.active ? 'Public' : 'Hidden'}</span>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-amber-100 p-1.5 rounded-xl text-amber-600 animate-pulse">
+                      <Sparkles size={16} />
+                    </div>
+                    <span className="text-xs font-black text-amber-900 uppercase tracking-wider block">AI Insights & Research</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 font-bold leading-relaxed">
+                    {pricingReasoning}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-amber-200/40 text-[9px] text-amber-600 font-black uppercase tracking-widest text-center">
+                  Values matched with East African community standards
+                </div>
+              </motion.div>
+            ) : (
+              <div className="p-6 bg-slate-50 rounded-3xl border border-slate-105 h-full flex flex-col justify-center items-center text-center text-slate-400 space-y-3">
+                <Coins size={36} className="text-slate-300 animate-pulse" />
+                <div>
+                  <h5 className="text-xs font-black text-slate-700 uppercase tracking-wider">Dynamic Market Pricing</h5>
+                  <p className="text-[10px] text-slate-400 font-bold max-w-xs mt-1">
+                    Click "Suggest Price" to analyze the current product's name and category against the live index to obtain competitive pricing suggestions.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* STEP 3: Variants & Tags */}
+      {(!useWizard || activeStep === 3) && (
+        <div className={`grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in duration-300 ${collapseWizardGuide ? 'space-y-3.5 md:space-y-0' : 'space-y-6 md:space-y-0'}`}>
+          {/* Tags on Left */}
+          <div className="md:col-span-7 space-y-4">
+            <div className="space-y-1.5 p-5 bg-slate-50/50 rounded-2xl border border-slate-100 h-full flex flex-col justify-between">
+              <div>
+                <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Product Tags & Organization</label>
+                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 mb-3">Helpful for grouping products (e.g., Seasonal, Stock Status)</p>
+                
+                <div className="flex flex-wrap gap-2 mb-4 min-h-[32px]">
+                  {formData.tags.map((tag: string) => (
+                    <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
+                      <Package size={10} className="text-[#C8961A]" />
+                      {tag}
+                      {!disableNonPriceFields && (
+                        <button 
+                          type="button" 
+                          onClick={() => removeTag(tag)}
+                          className="hover:text-red-300 transition-colors ml-1"
+                        >
+                          <X size={10} />
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                  {formData.tags.length === 0 && (
+                    <div className="w-full py-6 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-xl bg-white/50">
+                      <Filter size={14} className="text-slate-300 mb-1" />
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">No tags assigned yet</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button 
-                  type="button"
-                  disabled={disableNonPriceFields}
-                  onClick={() => {
-                    const isWholesale = formData.tags.includes('Wholesale');
-                    if (isWholesale) {
-                      setFormData({ ...formData, tags: formData.tags.filter((t: string) => t !== 'Wholesale') });
-                    } else {
-                      setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
-                    }
-                  }}
-                  className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
-                >
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
-                </button>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Wholesale Deal</span>
+              {!disableNonPriceFields && (
+                <div className="space-y-3 mt-auto pt-3 border-t border-slate-100">
+                  <div className="flex gap-2">
+                    <div className="flex-1 relative">
+                      <input 
+                        placeholder="Type tag and press enter... (e.g. Winter)" 
+                        value={currentTag}
+                        onChange={e => setCurrentTag(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
+                        className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
+                      />
+                      <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={addTag}
+                      className="px-6 py-2.5 bg-gradient-to-r from-[#C2112E] to-[#E94C36] hover:bg-gradient-to-r hover:from-[#AD0B23] hover:to-[#D53B25] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95"
+                    >
+                      Add
+                    </button>
+                  </div>
+
+                  <div>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Suggested Tags</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['summer', 'winter', 'clearance', 'bestseller', 'new-arrival', 'secondary', 'primary', 'corporate', 'knitwear'].map(sTag => (
+                        <button
+                          key={sTag}
+                          type="button"
+                          onClick={() => {
+                            if (!formData.tags.includes(sTag)) {
+                              setFormData({ ...formData, tags: [...formData.tags, sTag] });
+                            }
+                          }}
+                          className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
+                            formData.tags.includes(sTag) 
+                              ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
+                              : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
+                          }`}
+                        >
+                          {sTag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Promotion & Status on Right */}
+          <div className="md:col-span-5 space-y-4">
+            <div className="p-5 bg-white rounded-2xl border border-slate-105 space-y-5 h-full flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-[#64748B] tracking-wider ml-1">Promotion Badge</label>
+                  <select 
+                    value={formData.badge}
+                    onChange={e => setFormData({...formData, badge: e.target.value})}
+                    disabled={disableNonPriceFields}
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
+                  </select>
+                </div>
+
+                <div className="pt-2 space-y-3.5">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Visibility status</span>
+                    <div className="flex items-center gap-3">
+                      <button 
+                        type="button"
+                        disabled={disableNonPriceFields}
+                        onClick={() => setFormData({...formData, active: !formData.active})}
+                        className={`w-12 h-6 rounded-full transition-all relative ${formData.active ? 'bg-green-500' : 'bg-gray-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                      >
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.active ? 'left-7' : 'left-1'}`}></div>
+                      </button>
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest min-w-[45px] text-right">{formData.active ? 'Public' : 'Hidden'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Wholesale Deal</span>
+                    <div className="flex items-center gap-3">
+                      <button 
+                        type="button"
+                        disabled={disableNonPriceFields}
+                        onClick={() => {
+                          const isWholesale = formData.tags.includes('Wholesale');
+                          if (isWholesale) {
+                            setFormData({ ...formData, tags: formData.tags.filter((t: string) => t !== 'Wholesale') });
+                          } else {
+                            setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
+                          }
+                        }}
+                        className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                      >
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
+                      </button>
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest min-w-[45px] text-right">{formData.tags.includes('Wholesale') ? 'Active' : 'No'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-[9px] text-slate-400 font-bold leading-relaxed border-t border-slate-100 pt-3">
+                Wholesale deals require "Inquiry Only" sourcing mode if pricing is custom or negotiable. Make sure to review pricing settings if you enable this.
               </div>
             </div>
           </div>

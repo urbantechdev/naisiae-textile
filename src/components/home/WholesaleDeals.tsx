@@ -165,16 +165,16 @@ export function WholesaleDeals({
                    key={product.id}
                    layout
                    whileHover={isExpanded ? undefined : { y: -6 }}
-                   className={`group bg-white border rounded-[24px] overflow-hidden shadow-sm flex transition-all duration-300 ${
+                   className={`group bg-white rounded-[24px] overflow-hidden shadow-sm flex transition-all duration-300 ${
                      isExpanded 
-                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 border-slate-100 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white" 
-                       : "flex-row sm:flex-col border-slate-100 hover:shadow-xl hover:border-[#C8961A]/30 w-full"
+                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white" 
+                       : "flex-row sm:flex-col hover:shadow-xl w-full"
                    }`}
                 >
                   {!isExpanded ? (
                     <>
                       {/* Product Visual */}
-                      <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0 border-r sm:border-r-0 sm:border-b border-slate-100" onClick={() => handleProductInteraction(product)}>
+                      <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0" onClick={() => handleProductInteraction(product)}>
                         {product.imageUrl ? (
                           <img 
                             src={product.imageUrl} 

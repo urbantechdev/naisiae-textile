@@ -578,47 +578,7 @@ export default function HomePage() {
           />
       </div>
 
-      {/* Interactive E-commerce Trust Badges Strip */}
-      <div className="bg-slate-50 border-b border-slate-100 py-6 px-4">
-        <div className="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8961A]/40 hover:shadow-md transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-[#C8961A] group-hover:scale-105 transition-transform shrink-0">
-              <CheckCircle2 size={18} />
-            </div>
-            <div>
-              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Factory-Direct</h4>
-              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Uhuru Market Rates</p>
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8102E]/40 hover:shadow-md transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-[#C8102E] group-hover:scale-105 transition-transform shrink-0">
-              <ShieldCheck size={18} />
-            </div>
-            <div>
-              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Board Approved</h4>
-              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">100% Quality Specs</p>
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8961A]/40 hover:shadow-md transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-[#C8961A] group-hover:scale-105 transition-transform shrink-0">
-              <Package size={18} />
-            </div>
-            <div>
-              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Nationwide Delivery</h4>
-              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Fast Parcel Dispatch</p>
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 group hover:border-[#C8102E]/40 hover:shadow-md transition-all duration-300">
-            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-[#C8102E] group-hover:scale-105 transition-transform shrink-0">
-              <Scissors size={18} />
-            </div>
-            <div>
-              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#0A1628]">Sizing Guarantee</h4>
-              <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">Hassle-Free Exchange</p>
-            </div>
-          </div>
-        </div>
-      </div>
+
 
       <div id="specialties">
         <Suspense fallback={<div className="h-48 bg-slate-900/5 animate-pulse rounded-3xl m-6" />}>

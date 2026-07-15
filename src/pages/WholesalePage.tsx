@@ -419,15 +419,15 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
       layout
       className={`group relative flex animate-blink-orange ${
         isExpanded 
-          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 border border-slate-100 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white p-5" 
-          : "flex-row md:flex-col border-[#E4E8EF] hover:shadow-xl hover:border-[#C8961A]/20 bg-white border rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
+          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white p-5" 
+          : "flex-row md:flex-col hover:shadow-xl bg-white rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
       }`}
     >
       {!isExpanded ? (
         <>
           <div 
             onClick={handleClick}
-            className="aspect-[4/5] md:aspect-[4/3] bg-[#F1F5F9] rounded-[18px] md:rounded-[24px] overflow-hidden relative mb-0 md:mb-6 cursor-pointer flex items-center justify-center p-0 shrink-0 w-[130px] md:w-full border-r md:border-r-0 md:border-b border-slate-100"
+            className="aspect-[4/5] md:aspect-[4/3] bg-[#F1F5F9] rounded-[18px] md:rounded-[24px] overflow-hidden relative mb-0 md:mb-6 cursor-pointer flex items-center justify-center p-0 shrink-0 w-[130px] md:w-full"
           >
             {product.imageUrl ? (
               <img 
