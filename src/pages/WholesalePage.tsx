@@ -28,6 +28,7 @@ import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp,
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
+import { ImageZoomViewer } from '../components/ImageZoomViewer';
 
 export default function WholesalePage() {
   const { 
@@ -239,7 +240,7 @@ export default function WholesalePage() {
       {/* Quick View Modal */}
       <AnimatePresence>
         {selectedProduct && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 lg:p-6 overflow-hidden">
             <GoogleMerchantSchema product={selectedProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0 }}
@@ -251,52 +252,33 @@ export default function WholesalePage() {
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              exit={{ opacity: 0, scale: 0.95, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-white w-full max-w-5xl rounded-3xl md:rounded-[40px] overflow-hidden flex flex-col lg:flex-row relative z-10 shadow-2xl max-h-[92vh] md:max-h-[90vh]"
+              className="bg-white w-full max-w-5xl rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col lg:flex-row relative z-10 shadow-2xl max-h-[92vh] sm:max-h-[88vh] my-auto"
             >
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 w-10 h-10 sm:w-12 sm:h-12 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-lg border border-slate-100 hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-9 h-9 sm:w-10 sm:h-10 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-md border border-slate-100 hover:scale-105 active:scale-95 cursor-pointer"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
 
-              <div className="w-full lg:w-1/2 bg-slate-50 relative overflow-hidden flex items-center justify-center p-6 sm:p-10 lg:p-12 shrink-0 h-48 sm:h-64 md:h-80 lg:h-auto">
-                {selectedProduct.imageUrl ? (
-                  <img 
-                    src={selectedProduct.imageUrl} 
-                    className="w-full h-full object-contain rounded-2xl drop-shadow-xl"
-                    alt={selectedProduct.name}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-2xl">
-                    <Package size={60} className="text-slate-200" />
-                  </div>
-                )}
-                
-                {selectedProduct.badge && (
-                  <span className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-[#C8102E] text-white text-[10px] md:text-[12px] font-black px-4 md:px-6 py-1.5 md:py-2 rounded-full tracking-[2px] md:tracking-[3px] uppercase shadow-lg">
-                    {selectedProduct.badge}
-                  </span>
-                )}
+              <div className="w-full lg:w-1/2 bg-slate-50 relative overflow-hidden flex flex-col items-center justify-center p-3 sm:p-6 shrink-0 max-h-[38vh] lg:max-h-none">
+                <ImageZoomViewer 
+                  src={selectedProduct.imageUrl} 
+                  alt={selectedProduct.name}
+                  imageUrls={selectedProduct.imageUrls}
+                  badge={selectedProduct.badge}
+                  aspectRatio="aspect-square max-h-[30vh] lg:max-h-[44vh] max-w-[260px] sm:max-w-[340px] mx-auto"
+                />
               </div>
 
-              <div className="w-full lg:w-1/2 flex flex-col min-h-0 bg-white">
+              <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-hidden flex-1">
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-6 sm:p-10 lg:p-12">
-                  <div className="text-[11px] text-[#C8961A] font-black tracking-[3px] uppercase mb-4 flex items-center gap-2">
-                    <span className="w-6 h-[1.5px] bg-[#C8961A]"></span>
-                    {selectedProduct.category}
-                  </div>
-                  <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-[#0A1628] leading-[1.1] mb-3">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                  <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#0A1628] leading-[1.1] mb-3">
                     {selectedProduct.name}
                   </h2>
-                  <div className="mb-6">
-                    <span className="inline-block text-[10px] font-black uppercase tracking-[2px] text-[#C8961A] bg-[#C8961A]/10 px-3 py-1 rounded-md">
-                      Institutional Bulk Order
-                    </span>
-                  </div>
                   
                   <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
                     {selectedProduct.description || "Institutional grade apparel engineered for Kenya's leading organizations. Durable fabric with industrial-strength stitching."}
@@ -343,9 +325,20 @@ export default function WholesalePage() {
                 </div>
 
                 {/* Sticky/Fixed polished Interactive Action Footer */}
-                <div className="bg-white/95 backdrop-blur-md p-4 sm:p-6 lg:p-8 border-t border-slate-100 shrink-0 space-y-3 shadow-[0_-12px_30px_rgba(0,0,0,0.03)]">
-                  {/* Row 1: Inquiry Cart & Wishlist */}
-                  <div className="flex gap-3">
+                <div className="bg-white p-3.5 sm:p-4 border-t border-slate-100 shrink-0 z-50">
+                  <div className="flex items-center gap-2 max-w-full">
+                    <button 
+                      onClick={() => toggleWishlist(selectedProduct)}
+                      className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border transition-all cursor-pointer shrink-0 ${
+                        wishlist.some(p => p.id === selectedProduct.id) 
+                          ? "bg-red-50 border-red-200 text-red-500" 
+                          : "border-slate-200 text-slate-500 hover:text-red-500 hover:border-red-300 bg-slate-50"
+                      }`}
+                      title="Add to Wishlist"
+                    >
+                      <Heart size={16} className={wishlist.some(p => p.id === selectedProduct.id) ? "fill-current" : ""} />
+                    </button>
+
                     <button 
                       onClick={() => { 
                         addToCart({
@@ -355,45 +348,32 @@ export default function WholesalePage() {
                           customization: selectedProduct.priceType === 'wholesale' ? customizationDetails : undefined
                         }); 
                         setSelectedProduct(null); 
-                        // Reset inputs
                         setInquiryQty(50);
                         setCustomizationDetails('');
                       }}
-                      className="flex-grow bg-[#0A1628] hover:bg-[#C8102E] text-white h-12 sm:h-14 rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-xs uppercase tracking-[2px] transition-all flex items-center justify-center gap-2.5 shadow-xl hover:shadow-[#0A1628]/10 active:scale-[0.98] cursor-pointer"
+                      className="w-10 h-10 sm:w-11 sm:h-11 bg-[#0A1628] hover:bg-[#C8102E] text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer"
+                      title="Add to Inquiry / Cart"
                     >
-                      <ShoppingBag size={18} /> 
-                      <span>{selectedProduct.priceType === 'wholesale' ? 'Add to Inquiry' : 'Wholesale Request'}</span>
+                      <ShoppingBag size={16} />
                     </button>
-                    <button 
-                      onClick={() => toggleWishlist(selectedProduct)}
-                      className={`w-12 sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center border-2 transition-all cursor-pointer shrink-0 ${
-                        wishlist.some(p => p.id === selectedProduct.id) 
-                          ? "bg-red-50 border-red-100 text-red-500" 
-                          : "border-slate-100 text-slate-400 hover:text-red-400 hover:border-red-100 bg-slate-50/50"
-                      }`}
-                      title="Add to Wishlist"
-                    >
-                      <Heart size={18} className={wishlist.some(p => p.id === selectedProduct.id) ? "fill-current scale-110" : "transition-transform hover:scale-110"} />
-                    </button>
-                  </div>
 
-                  {/* Row 2: Instant Contact */}
-                  <div className="grid grid-cols-2 gap-3">
                     <a 
                       href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedProduct.name}.`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-[#25D366] hover:bg-[#128C7E] text-white h-11 sm:h-12 rounded-xl flex items-center justify-center gap-2 font-black text-[10px] sm:text-[11px] uppercase tracking-[1.5px] transition-all shadow-md hover:shadow-[#25D366]/10 active:scale-[0.98] flex"
+                      className="bg-[#25D366] hover:bg-[#128C7E] text-white h-10 sm:h-11 px-3.5 rounded-xl flex items-center justify-center gap-1.5 font-bold text-xs uppercase tracking-wide transition-all shadow-sm active:scale-95 shrink-0"
+                      title="WhatsApp Inquiry"
                     >
-                      <MessageSquare size={16} />
-                      <span className="truncate">WhatsApp Inquiry</span>
+                      <MessageSquare size={15} />
+                      <span className="hidden sm:inline">WhatsApp</span>
                     </a>
+
                     <a 
                       href="tel:+254792021795"
-                      className="bg-[#C8102E] hover:bg-[#A30D25] text-white h-11 sm:h-12 rounded-xl flex items-center justify-center gap-2 font-black text-[10px] sm:text-[11px] uppercase tracking-[1.5px] transition-all shadow-md hover:shadow-[#C8102E]/10 active:scale-[0.98] flex"
+                      className="w-10 h-10 sm:w-11 sm:h-11 bg-slate-800 hover:bg-slate-900 text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0"
+                      title="Call Direct"
                     >
-                      <Phone size={16} />
-                      <span>Call Now</span>
+                      <Phone size={15} />
                     </a>
                   </div>
                 </div>

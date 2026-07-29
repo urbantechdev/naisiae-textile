@@ -56,8 +56,8 @@ function DynamicSEOEngine() {
   useEffect(() => {
     const updateSEO = () => {
       const path = location.pathname;
-      const countrySuffix = currentCountry.code === 'KE' ? ' - Nairobi, DRC, TZ, UG, ETH' : ` in ${currentCountry.name}`;
-      const countryDescriptionSuffix = currentCountry.code === 'KE' ? ', In Nairobi, DRC, TZ, UG, ETH' : ` in ${currentCountry.name}`;
+      const countrySuffix = currentCountry.code === 'KE' ? '' : ` in ${currentCountry.name}`;
+      const countryDescriptionSuffix = currentCountry.code === 'KE' ? '' : ` in ${currentCountry.name}`;
       
       let title = `Uhuru Market Uniforms${countrySuffix}`;
       let description = `Official Uhuru Market Uniforms. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
@@ -105,7 +105,7 @@ function DynamicSEOEngine() {
         description = `Understand bulk order production terms, factory SLA timelines, and contract invoicing procedures${countryDescriptionSuffix}.`;
       } else if (path.includes('/shipping')) {
         title = `Uhuru Market Uniforms | Shipping, Nationwide Logistics & Pickup${countrySuffix}`;
-        description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}${countryDescriptionSuffix === `, In Nairobi, DRC, TZ, UG, ETH` ? countryDescriptionSuffix : ''}.`;
+        description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}.`;
       } else if (path.includes('/returns')) {
         title = `Uhuru Market Uniforms | Returns Policy & Quality Guarantee${countrySuffix}`;
         description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies${countryDescriptionSuffix}.`;

@@ -522,7 +522,11 @@ export function CatalogSection({
                         {/* Retail Visual Card with hover interactions */}
                         <div 
                           className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0"
-                          onClick={(e) => handleProductInteraction(product, e)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onProductTap?.();
+                            setSelectedQuickViewProduct(product);
+                          }}
                         >
                           {product.imageUrl ? (
                             <img 
@@ -559,13 +563,14 @@ export function CatalogSection({
                             </button>
                           </div>
 
-                          {/* Hover Quick actions on desktop */}
-                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex justify-between items-center gap-2">
+                          {/* Quick View actions for mobile & desktop */}
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center items-center gap-2 z-10">
                             <button
                               onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                              className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg text-[9px] font-black uppercase flex items-center gap-1 backdrop-blur-md grow justify-center border border-white/15"
+                              className="w-9 h-9 rounded-full bg-white/95 hover:bg-white text-[#0A1628] flex items-center justify-center shadow-lg backdrop-blur-md border border-white/30 active:scale-95 transition-all"
+                              title="View Specs & HD Details"
                             >
-                              <Eye size={12} /> View Specs
+                              <Eye size={16} />
                             </button>
                           </div>
                         </div>
@@ -583,7 +588,16 @@ export function CatalogSection({
                               <span className="text-[9px] text-slate-500 font-extrabold">{decimal} ({reviews} reviews)</span>
                             </div>
 
-                            <h3 className="font-extrabold text-[12px] sm:text-[14px] leading-tight text-[#0E121C] group-hover:text-[#C8102E] transition-colors line-clamp-2 mb-1.5">{product.name}</h3>
+                            <h3 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onProductTap?.();
+                                setSelectedQuickViewProduct(product);
+                              }}
+                              className="font-extrabold text-[12px] sm:text-[14px] leading-tight text-[#0E121C] group-hover:text-[#C8102E] transition-colors line-clamp-2 mb-1.5 cursor-pointer"
+                            >
+                              {product.name}
+                            </h3>
                             <div className="text-[8.5px] font-black text-[#C8961A] tracking-wider uppercase mb-3">{product.category}</div>
                             
                             {/* Sizing selection directly on the card */}
@@ -650,14 +664,22 @@ export function CatalogSection({
                               <span className="text-sm sm:text-base font-black text-[#C8102E] mt-1">{formatPrice(product.price)}</span>
                             </div>
 
-                            <button 
-                              onClick={(e) => handleAddToCart(e, product)}
-                              className="px-3.5 py-2 sm:px-4 bg-[#C8102E] hover:bg-[#A80B23] text-white rounded-xl text-[9px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 active:scale-95 shadow-md shadow-red-100"
-                              title="Add to basket"
-                            >
-                              <ShoppingCart size={11} />
-                              Add Cart
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
+                                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all"
+                                title="View Specs"
+                              >
+                                <Eye size={15} />
+                              </button>
+                              <button 
+                                onClick={(e) => handleAddToCart(e, product)}
+                                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#C8102E] hover:bg-[#A80B23] text-white flex items-center justify-center active:scale-95 transition-all shadow-md shadow-red-100"
+                                title="Add to Cart"
+                              >
+                                <ShoppingCart size={15} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </>

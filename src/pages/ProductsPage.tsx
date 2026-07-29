@@ -28,11 +28,15 @@ import {
   ShieldCheck, 
   Truck, 
   Star,
-  Info
+  Info,
+  Eye,
+  Zap,
+  Mail
 } from 'lucide-react';
 import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { LazyImage } from '../components/LazyImage';
+import { ImageZoomViewer } from '../components/ImageZoomViewer';
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
@@ -674,10 +678,14 @@ export default function ProductsPage() {
                           wrapperClassName="w-full h-full"
                           placeholderColor="bg-slate-100" 
                         />
-                        <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-                          <span className="px-5 py-3.5 bg-white text-[#0A1628] rounded-xl font-black text-[9px] uppercase tracking-[3px] shadow-2xl scale-95 group-hover:scale-100 transition-transform">
-                            Quick Customization
-                          </span>
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleOpenQuickView(p); }}
+                            className="w-9 h-9 rounded-full bg-white/95 hover:bg-white text-[#0A1628] flex items-center justify-center shadow-lg backdrop-blur-md border border-white/30 active:scale-95 transition-all"
+                            title="Quick View Specs"
+                          >
+                            <Eye size={16} />
+                          </button>
                         </div>
                       </div>
 
@@ -704,7 +712,7 @@ export default function ProductsPage() {
 
                         <div>
                           {/* Retail / Wholesale Pricing */}
-                          <div className="flex items-baseline gap-1 sm:gap-2 mb-3 sm:mb-5">
+                          <div className="flex items-baseline gap-1 sm:gap-2 mb-3 sm:mb-4">
                             {isWholesaleItem && (!p.price || p.price === 0) ? (
                               <div>
                                 <span className="text-xs sm:text-base font-black text-slate-700">Custom Quote Req</span>
@@ -724,34 +732,39 @@ export default function ProductsPage() {
                             )}
                           </div>
 
-                          {/* Interactive CTAs */}
-                          <div className="flex flex-col gap-1.5 sm:gap-2">
+                          {/* Simplified Icon Action Bar */}
+                          <div className="flex items-center gap-1.5 pt-1">
                             <button 
                               onClick={() => handleBuyNow(p)}
-                              className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-2 sm:py-3.5 px-2 sm:px-3 rounded-lg sm:rounded-xl font-black text-[8px] sm:text-[9.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1 sm:gap-1.5 active:scale-95 shadow-md"
-                              title="Instant secure buy checkout"
+                              className="flex-1 bg-[#C2102E] hover:bg-[#A80B23] text-white h-9 rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all text-xs"
+                              title="Instant Checkout"
                             >
-                              Buy Now ⚡
+                              <Zap size={14} className="fill-current text-amber-300" />
                             </button>
-                            <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                              <button 
-                                onClick={() => {
-                                  setQuoteProduct(p);
-                                  setIsQuoteModalOpen(true);
-                                }}
-                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-1.5 sm:py-3 px-1 sm:px-1.5 rounded-lg sm:rounded-xl font-black text-[7.5px] sm:text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-0.5 sm:gap-1 active:scale-95"
-                                title="Request custom bulk quote"
-                              >
-                                Enquire ✉️
-                              </button>
-                              <a 
-                                href="tel:+254792021795"
-                                className="bg-slate-50 border border-slate-200 hover:border-[#0A1628]/30 hover:bg-slate-100 text-[#0A1628] py-1.5 sm:py-3 px-1 sm:px-1.5 rounded-lg sm:rounded-xl font-black text-[7.5px] sm:text-[8.5px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-0.5 sm:gap-1 active:scale-95"
-                                title="Call wholesale direct desk"
-                              >
-                                Call Now 📞
-                              </a>
-                            </div>
+                            <button 
+                              onClick={() => handleOpenQuickView(p)}
+                              className="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center active:scale-95 transition-all shrink-0"
+                              title="View Specs & HD Image"
+                            >
+                              <Eye size={15} />
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setQuoteProduct(p);
+                                setIsQuoteModalOpen(true);
+                              }}
+                              className="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center active:scale-95 transition-all shrink-0"
+                              title="Request Custom Quote"
+                            >
+                              <Mail size={15} />
+                            </button>
+                            <a 
+                              href="tel:+254792021795"
+                              className="w-9 h-9 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center active:scale-95 transition-all shrink-0"
+                              title="Call Direct Desk"
+                            >
+                              <Phone size={14} />
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -786,44 +799,39 @@ export default function ProductsPage() {
       {/* QUICK VIEW & DETAILED CUSTOMIZATION OVERLAY DIALOG */}
       <AnimatePresence>
         {selectedProduct && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-[200] flex items-center justify-center p-2 sm:p-4 overflow-hidden">
             <GoogleMerchantSchema product={selectedProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl overflow-hidden w-full max-w-4xl shadow-2xl border border-slate-100 flex flex-col lg:flex-row relative max-h-[90vh] lg:max-h-none"
+              className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden w-full max-w-4xl shadow-2xl border border-slate-100 flex flex-col lg:flex-row relative max-h-[92vh] sm:max-h-[88vh] my-auto"
             >
               {/* Close Button */}
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-black flex items-center justify-center transition-colors"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/95 border border-slate-200 hover:bg-slate-200 text-slate-700 hover:text-black flex items-center justify-center transition-colors shadow-lg active:scale-95"
               >
                 <X size={18} />
               </button>
 
               {/* Left Column: Product Info & Image gallery indicator */}
-              <div className="w-full lg:w-1/2 bg-slate-50 p-6 flex flex-col justify-center relative border-b lg:border-b-0 lg:border-r border-slate-100 max-h-[350px] lg:max-h-[600px] overflow-hidden">
-                <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-md max-w-[340px] mx-auto w-full relative">
-                  <LazyImage src={selectedProduct.imageUrl} alt={selectedProduct.name} className="object-cover object-top w-full h-full" placeholderColor="bg-slate-200" />
-                  <div className="absolute bottom-4 left-4 right-4 bg-black/60 select-backdrop-blur text-white text-[9px] font-bold py-1.5 px-3 rounded-lg text-center">
-                    🔍 Uhuru Market Batch ID: #{selectedProduct.id.slice(0, 6).toUpperCase()}
-                  </div>
+              <div className="w-full lg:w-1/2 bg-slate-50 p-3 sm:p-6 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-r border-slate-100 shrink-0 max-h-[38vh] lg:max-h-none overflow-hidden">
+                <ImageZoomViewer 
+                  src={selectedProduct.imageUrl} 
+                  alt={selectedProduct.name}
+                  imageUrls={selectedProduct.imageUrls}
+                  badge={selectedProduct.badge}
+                  aspectRatio="aspect-square max-h-[30vh] lg:max-h-[44vh] max-w-[260px] sm:max-w-[340px] mx-auto"
+                />
+                <div className="mt-2 text-center text-slate-400 text-[10px] font-bold">
+                  🔍 Batch Ref: #{selectedProduct.id?.slice(0, 8).toUpperCase()}
                 </div>
               </div>
 
               {/* Right Column: Interactive customization options form */}
-              <div className="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col justify-between overflow-y-auto max-h-[50vh] lg:max-h-[600px]">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2.5 py-1 bg-[#C8961A]/10 text-[#C8961A] text-[9px] font-black uppercase tracking-[1.5px] rounded">
-                      {selectedProduct.category}
-                    </span>
-                    {selectedProduct.subCategory && (
-                      <span className="text-xs text-slate-400 font-bold">&#8250; {selectedProduct.subCategory}</span>
-                    )}
-                  </div>
-
+              <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-hidden flex-1">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-4">
                   <h2 className="text-xl lg:text-2xl font-bold text-[#0A1628] mb-2">{selectedProduct.name}</h2>
                   
                   {/* Detailed features review block */}
@@ -978,20 +986,21 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Pricing summary & Quick Action Area */}
-                <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+                <div className="shrink-0 bg-white border-t border-slate-100 p-3.5 sm:p-4 z-20 flex items-center justify-between gap-3">
                   <div>
                     <span className="text-[10px] text-slate-400 font-bold uppercase block">Calculated Value</span>
-                    <span className="text-2xl font-black text-[#0A1628] font-mono">
+                    <span className="text-xl sm:text-2xl font-black text-[#0A1628] font-mono">
                       {formatPrice(computedProductPrice)}
                     </span>
                   </div>
 
-                  <div className="flex gap-2 w-full sm:w-auto">
+                  <div className="flex gap-2">
                     <button 
                       onClick={handleAddCustomProductToCart}
-                      className="flex-1 sm:flex-initial px-6 py-4 bg-[#0A1628] hover:bg-[#C8102E] text-white rounded-xl font-black text-[10px] uppercase tracking-[2px] transition-all flex items-center justify-center gap-2 shrink-0 active:scale-95 shadow-md"
+                      className="w-10 h-10 sm:w-11 sm:h-11 bg-[#0A1628] hover:bg-[#C8102E] text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer shadow-md"
+                      title="Add to Cart"
                     >
-                      <ShoppingBag size={14} /> Add To Bag 🛒
+                      <ShoppingBag size={16} />
                     </button>
                   </div>
                 </div>

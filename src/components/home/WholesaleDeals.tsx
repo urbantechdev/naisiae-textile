@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Package, ChevronRight, Plus, Phone, MessageSquare, X, Timer, Flame, ShoppingCart, Star } from 'lucide-react';
+import { Package, ChevronRight, Plus, Phone, MessageSquare, X, Timer, Flame, ShoppingCart, Star, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLocalization } from '../../context/LocalizationContext';
 import { useCart } from '../../context/CartContext';
@@ -174,7 +174,14 @@ export function WholesaleDeals({
                   {!isExpanded ? (
                     <>
                       {/* Product Visual */}
-                      <div className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0" onClick={() => handleProductInteraction(product)}>
+                      <div 
+                        className="relative aspect-[4/5] sm:aspect-[4/3] w-[130px] sm:w-full overflow-hidden bg-slate-50/50 cursor-pointer flex items-center justify-center p-0 shrink-0" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onProductTap?.();
+                          setSelectedQuickViewProduct(product);
+                        }}
+                      >
                         {product.imageUrl ? (
                           <img 
                             src={product.imageUrl} 
@@ -192,7 +199,7 @@ export function WholesaleDeals({
                       </div>
                       
                       {/* Product Content Details */}
-                      <div className="p-3 sm:p-4 cursor-pointer flex flex-col justify-between flex-grow min-w-0" onClick={() => handleProductInteraction(product)}>
+                      <div className="p-3 sm:p-4 flex flex-col justify-between flex-grow min-w-0">
                         <div>
                           <div className="flex items-center gap-1 mb-1">
                             <div className="flex text-amber-400">
@@ -203,7 +210,16 @@ export function WholesaleDeals({
                             <span className="text-[8px] text-slate-400 font-bold">({reviews})</span>
                           </div>
                           
-                          <h3 className="font-extrabold text-[12px] sm:text-[13px] mb-1 leading-tight line-clamp-2 text-[#0E121C] group-hover:text-[#C8102E] transition-colors">{product.name}</h3>
+                          <h3 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onProductTap?.();
+                              setSelectedQuickViewProduct(product);
+                            }}
+                            className="font-extrabold text-[12px] sm:text-[13px] mb-1 leading-tight line-clamp-2 text-[#0E121C] group-hover:text-[#C8102E] transition-colors cursor-pointer"
+                          >
+                            {product.name}
+                          </h3>
                           
                           {/* Price Display */}
                           <div className="flex items-baseline gap-1.5 mt-1">
@@ -224,21 +240,20 @@ export function WholesaleDeals({
                         </div>
 
                         {/* Interactive shopping buttons */}
-                        <div className="flex flex-col gap-1.5 mt-4">
-                          <button 
-                            onClick={(e) => handleQuickAddToCart(e, product)}
-                            className="w-full py-1.5 sm:py-2 bg-[#0E121C] hover:bg-[#C8102E] text-white rounded-lg text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"
-                          >
-                            <ShoppingCart size={11} />
-                            Add To Cart
-                          </button>
-                          
+                        <div className="flex items-center gap-1.5 mt-4">
                           <button 
                             onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                            className="w-full py-1 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-lg text-[8px] sm:text-[8.5px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1"
+                            className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0"
+                            title="Spec Inquiry & HD View"
                           >
-                            <MessageSquare size={10} />
-                            Spec Inquiry
+                            <Eye size={15} />
+                          </button>
+                          <button 
+                            onClick={(e) => handleQuickAddToCart(e, product)}
+                            className="flex-1 h-8 sm:h-9 bg-[#0E121C] hover:bg-[#C8102E] text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-sm"
+                            title="Add to Cart"
+                          >
+                            <ShoppingCart size={15} />
                           </button>
                         </div>
                       </div>

@@ -3955,7 +3955,7 @@ export default function AdminDashboard() {
       {/* Product Modal */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-stretch md:items-center justify-center p-0 md:p-4">
+          <div className="fixed top-0 left-0 right-0 bottom-20 md:bottom-0 z-50 flex items-stretch md:items-center justify-center p-0 md:p-4">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -3967,7 +3967,7 @@ export default function AdminDashboard() {
               initial={{ scale: 1, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 1, opacity: 0, y: 50 }}
-              className="relative bg-white w-full max-w-xl md:max-w-5xl xl:max-w-6xl rounded-none md:rounded-2xl shadow-2xl overflow-hidden h-full md:h-[90vh] max-h-full md:max-h-[90vh] flex flex-col mt-0 md:mt-0"
+              className="relative bg-white w-full max-w-xl md:max-w-5xl xl:max-w-6xl rounded-t-2xl md:rounded-2xl shadow-2xl overflow-hidden h-full md:h-[90vh] max-h-full md:max-h-[90vh] flex flex-col mt-0 md:mt-0"
             >
               <div className="md:hidden flex justify-center py-2 bg-[#F8FAFC] shrink-0 border-b border-slate-100/50">
                 <div className="w-12 h-1 bg-slate-300 rounded-full animate-pulse" />

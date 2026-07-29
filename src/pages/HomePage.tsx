@@ -27,6 +27,7 @@ import {
   Scissors,
   ChevronDown,
   ArrowRight,
+  Zap,
   Image as ImageIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -40,6 +41,7 @@ const CatalogSection = lazy(() => import('../components/home/CatalogSection').th
 const InstitutionalWholesale = lazy(() => import('../components/home/InstitutionalWholesale').then(m => ({ default: m.InstitutionalWholesale })));
 import { ProductScrollNavigator } from '../components/ProductScrollNavigator';
 import { PullToRefresh } from '../components/PullToRefresh';
+import { ImageZoomViewer } from '../components/ImageZoomViewer';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, getDoc, setDoc, increment } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
@@ -1128,7 +1130,7 @@ export default function HomePage() {
       {/* Product Quick View Modal */}
       <AnimatePresence>
         {selectedQuickViewProduct && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4 lg:p-6 overflow-hidden">
             <GoogleMerchantSchema product={selectedQuickViewProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0 }}
@@ -1143,7 +1145,7 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.93, y: 30 }}
               transition={{ type: 'spring', damping: 30, stiffness: 350 }}
-              className="relative w-full max-w-6xl bg-white/95 rounded-[24px] lg:rounded-[36px] overflow-hidden flex flex-col lg:flex-row h-auto max-h-[92vh] lg:max-h-[88vh] z-10 shadow-[0_50px_100px_-25px_rgba(0,0,0,0.55)] border border-slate-100 backdrop-blur-md"
+              className="relative w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col lg:flex-row max-h-[92vh] sm:max-h-[88vh] z-10 shadow-2xl border border-slate-100 backdrop-blur-md my-auto"
             >
               {/* Premium top thin visual balance stripe */}
               <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C8961A] via-[#C8102E] to-[#7D2AE8] z-[60]" />
@@ -1151,40 +1153,33 @@ export default function HomePage() {
               {/* Close Button */}
               <button 
                 onClick={() => handleCloseQuickView()}
-                className="absolute top-4 right-4 lg:top-6 lg:right-6 z-[60] w-12 h-12 bg-white/95 border border-slate-200/80 hover:border-slate-300 rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-lg hover:scale-105 active:scale-95"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-[60] w-9 h-9 sm:w-10 sm:h-10 bg-white/95 border border-slate-200/80 hover:border-slate-300 rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-md active:scale-95"
                 aria-label="Close"
               >
-                <X size={20} className="stroke-[2.5]" />
+                <X size={18} className="stroke-[2.5]" />
               </button>
 
               {/* Product Gallery Section */}
-              <div className="w-full lg:w-1/2 bg-slate-50 relative flex flex-col items-center justify-center p-4 lg:p-12 shrink-0 h-auto bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
-                <AnimatePresence mode="wait">
-                  {(() => {
-                    const variantImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url);
-                    
-                    const galleryImages = [
-                      selectedQuickViewProduct.imageUrl,
-                      ...(selectedQuickViewProduct.imageUrls || [])
-                    ].filter((url, index, self) => url && self.indexOf(url) === index);
+              <div className="w-full lg:w-1/2 bg-slate-50 relative flex flex-col items-center justify-center p-3 sm:p-6 shrink-0 bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden max-h-[38vh] lg:max-h-none">
+                {(() => {
+                  const variantImageUrl = Object.values(selectedVariants).map(val => selectedQuickViewProduct.variants?.find((v: any) => v.value === val && v.imageUrl)).find(url => url);
+                  
+                  const galleryImages = [
+                    selectedQuickViewProduct.imageUrl,
+                    ...(selectedQuickViewProduct.imageUrls || [])
+                  ].filter((url, index, self) => url && self.indexOf(url) === index);
 
-                    const activeImageUrl = variantImageUrl || galleryImages[activeThumbnailIndex] || selectedQuickViewProduct.imageUrl;
-                    
-                    return activeImageUrl ? (
-                      <div className="relative group/zoom w-full h-[30vh] sm:h-[40vh] lg:h-[60vh] flex items-center justify-center cursor-zoom-in bg-slate-50/50 rounded-3xl overflow-hidden shadow-inner">
-                        <motion.img 
-                          key={activeImageUrl}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 1.1 }}
-                          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                          src={activeImageUrl} 
-                          className="w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 group-hover/zoom:scale-125"
-                          alt={selectedQuickViewProduct.name}
-                        />
+                  const activeImageUrl = variantImageUrl || galleryImages[activeThumbnailIndex] || selectedQuickViewProduct.imageUrl;
 
-                        {/* Dynamic Client Logo Visualizer Overlay */}
-                        {brandingType !== 'None' && customLogoUrl && (
+                  return (
+                    <ImageZoomViewer
+                      src={activeImageUrl}
+                      alt={selectedQuickViewProduct.name}
+                      imageUrls={galleryImages}
+                      badge={selectedQuickViewProduct.badge}
+                      aspectRatio="aspect-square max-h-[30vh] lg:max-h-[48vh] max-w-[260px] sm:max-w-[340px] mx-auto"
+                      overlayChildren={
+                        brandingType !== 'None' && customLogoUrl ? (
                           <motion.div 
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
@@ -1207,73 +1202,23 @@ export default function HomePage() {
                               {brandingType === 'Embroidery' ? 'Stitch' : 'Print'}
                             </div>
                           </motion.div>
-                        )}
-                        
-                        {/* High-End Information Overlay */}
-                        <div className="absolute inset-x-0 bottom-0 p-8 flex justify-between items-end bg-gradient-to-t from-slate-200/50 to-transparent opacity-0 group-hover/zoom:opacity-100 transition-opacity pointer-events-none">
-                            <div className="space-y-1">
-                                <p className="text-[10px] font-black uppercase tracking-[3px] text-[#0E121C]">Precision Detail</p>
-                                <p className="text-[11px] font-bold text-slate-400">100% Genuine Textile Analysis</p>
-                            </div>
-                            <div className="bg-[#0E121C] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                <Search size={14} /> Full View Mode
-                            </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-full h-[40vh] flex items-center justify-center text-slate-200">
-                        <ImageIcon size={100} />
-                      </div>
-                    );
-                  })()}
-                </AnimatePresence>
-
-                {/* Thumbnails Gallery */}
-                {(() => {
-                  const galleryImages = [
-                    selectedQuickViewProduct.imageUrl,
-                    ...(selectedQuickViewProduct.imageUrls || [])
-                  ].filter((url, index, self) => url && self.indexOf(url) === index);
-
-                  if (galleryImages.length <= 1) return null;
-
-                  return (
-                    <div className="flex gap-3 mt-6 lg:mt-8 pb-2 max-w-full overflow-x-auto scrollbar-hide px-2">
-                      {galleryImages.map((url, idx) => (
-                        <button
-                          key={`${url}-${idx}`}
-                          onClick={() => setActiveThumbnailIndex(idx)}
-                          className={`relative w-16 h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                            activeThumbnailIndex === idx 
-                              ? 'border-[#C8961A] scale-105 shadow-md' 
-                              : 'border-white hover:border-slate-200'
-                          }`}
-                        >
-                          <img src={url} className="w-full h-full object-cover" alt={`view ${idx + 1}`} />
-                          {activeThumbnailIndex === idx && (
-                            <div className="absolute inset-0 bg-[#C8961A]/5" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
+                        ) : null
+                      }
+                    />
                   );
                 })()}
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-6 lg:top-10 left-6 lg:left-10 bg-gradient-to-r from-[#FF4F5A] to-[#C8961A] text-white text-[9px] lg:text-[11px] font-black px-4 py-2 rounded-full tracking-[2px] uppercase shadow-[0_4px_12px_rgba(200,150,26,0.35)] z-20 animate-pulse">
+                  <span className="absolute top-4 sm:top-6 left-4 sm:left-6 bg-gradient-to-r from-[#FF4F5A] to-[#C8961A] text-white text-[9px] sm:text-[10px] font-black px-3 py-1.5 rounded-full tracking-[2px] uppercase shadow-md z-20">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
               </div>
 
               {/* Product Info Section */}
-              <div className="w-full lg:w-1/2 flex flex-col flex-1 overflow-hidden h-full bg-white">
-                <div className="flex-1 overflow-y-auto px-6 py-6 lg:p-10 scrollbar-thin">
-                  <div className="mb-6">
-                    <div className="text-[10px] text-[#C8961A] font-extrabold tracking-[4px] uppercase mb-2.5 flex items-center gap-2">
-                      <span className="w-5 h-[2px] bg-[#C8961A]"></span>
-                      {selectedQuickViewProduct.category}
-                    </div>
+              <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-hidden flex-1">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-thin">
+                  <div className="mb-4">
                     <h2 className="font-sans text-2xl lg:text-3.5xl font-black text-[#0E121C] tracking-tight leading-tight mb-3">
                       {selectedQuickViewProduct.name}
                     </h2>
@@ -1707,74 +1652,71 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Sticky Action Footer - Fully Visible & Highly Prominent */}
-                <div className="shrink-0 bg-white border-t border-slate-100 p-4 lg:p-5 shadow-[0_-15px_30px_rgba(0,0,0,0.035)] z-50">
-                  <div className="flex flex-col lg:flex-row gap-2.5 max-w-full">
+                {/* Sticky Action Footer - Simplified & Modern */}
+                <div className="shrink-0 bg-white border-t border-slate-100 p-3.5 sm:p-4 z-50">
+                  <div className="flex items-center gap-2 max-w-full">
                     
-                    {/* Share, compare & wishlist row */}
-                    <div className="order-2 lg:order-1 flex gap-2 w-full lg:w-auto shrink-0">
+                    {/* Share, compare & wishlist icon buttons */}
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <button 
                         onClick={() => toggleCompare(selectedQuickViewProduct)}
-                        className={`flex-1 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center gap-1.5 lg:gap-0 border border-slate-200 transition-all cursor-pointer ${
+                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
                           compareList.find(i => i.id === selectedQuickViewProduct.id) 
                             ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
-                            : "border-slate-200/80 text-slate-505 hover:border-[#C8961A] hover:text-[#C8961A] bg-slate-50"
+                            : "border-slate-200 text-slate-500 hover:border-[#C8961A] hover:text-[#C8961A] bg-slate-50"
                         }`}
                         title="Compare Specs"
                         type="button"
                       >
-                        <GitCompare size={14} className={compareList.find(i => i.id === selectedQuickViewProduct.id) ? "scale-105 stroke-[2.5]" : "transition-transform"} />
-                        <span className="lg:hidden text-[9px] font-black uppercase tracking-wider">Compare</span>
+                        <GitCompare size={16} />
                       </button>
                       
                       <button 
                         onClick={() => toggleWishlist(selectedQuickViewProduct)}
-                        className={`flex-1 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center gap-1.5 lg:gap-0 border border-slate-200 transition-all cursor-pointer ${
+                        className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
                           wishlist.find(i => i.id === selectedQuickViewProduct.id) 
                             ? "bg-red-50 border-red-200 text-[#C2102E]" 
-                            : "border-slate-200/80 text-slate-505 hover:border-red-400 hover:text-[#C2102E] bg-slate-50"
+                            : "border-slate-200 text-slate-500 hover:border-red-400 hover:text-[#C2102E] bg-slate-50"
                         }`}
                         title="Wishlist"
                         type="button"
                       >
-                        <Heart size={14} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current scale-105" : "transition-transform"} />
-                        <span className="lg:hidden text-[9px] font-black uppercase tracking-wider">Wishlist</span>
+                        <Heart size={16} className={wishlist.find(i => i.id === selectedQuickViewProduct.id) ? "fill-current" : ""} />
                       </button>
 
                       <button 
                         onClick={() => handleShareProduct(selectedQuickViewProduct)}
-                        className="flex-1 lg:w-11 lg:h-11 border border-slate-200/80 bg-slate-50 rounded-xl flex items-center justify-center gap-1.5 lg:gap-0 text-slate-550 hover:border-slate-400 hover:text-slate-850 transition-all cursor-pointer"
-                        title="Share Page"
+                        className="w-10 h-10 sm:w-11 sm:h-11 border border-slate-200 bg-slate-50 rounded-xl flex items-center justify-center text-slate-500 hover:border-slate-400 hover:text-slate-800 transition-all cursor-pointer"
+                        title="Share Product"
                         type="button"
                       >
-                        <Share2 size={14} className="transition-transform" />
-                        <span className="lg:hidden text-[9px] font-black uppercase tracking-wider">Share</span>
+                        <Share2 size={16} />
                       </button>
                     </div>
 
-                    {/* Primary Button options depending on is wholesale or not */}
+                    {/* Simplified Primary Action Buttons */}
                     {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
-                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-2 w-full lg:flex-1">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
                         <a 
                           href={`https://wa.me/254792021795?text=Hello, I'm interested in wholesale order for ${selectedQuickViewProduct.name}.`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-[#25D366]/10 active:scale-[0.98]"
+                          className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white h-10 sm:h-11 rounded-xl font-bold text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 min-w-0"
+                          title="WhatsApp Inquiry"
                         >
-                          <MessageSquare size={14} className="shrink-0" />
-                          <span className="truncate">WhatsApp Inquiry</span>
+                          <MessageSquare size={15} className="shrink-0" />
+                          <span className="truncate">WhatsApp</span>
                         </a>
                         <a 
                           href="tel:+254792021795"
-                          className="flex-1 bg-slate-800 hover:bg-slate-900 border border-slate-800 hover:border-slate-900 text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                          className="w-10 h-10 sm:w-11 sm:h-11 bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0"
+                          title="Call Sales"
                         >
-                          <Phone size={14} className="shrink-0" />
-                          <span>Call Sales</span>
+                          <Phone size={15} />
                         </a>
                       </div>
                     ) : (
-                      <div className="order-1 lg:order-2 flex flex-col sm:flex-row gap-2 w-full lg:flex-1">
-                        {/* High-contrast Add to Selection Cart */}
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
                         <button 
                           onClick={() => {
                             const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
@@ -1800,14 +1742,13 @@ export default function HomePage() {
                             handleCloseQuickView();
                             setIsCartOpen(true);
                           }}
-                          className="flex-1 bg-[#0E121C] hover:bg-slate-800 border border-[#0E121C] text-white h-11 lg:h-11 rounded-xl font-extrabold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] cursor-pointer"
+                          className="w-10 h-10 sm:w-11 sm:h-11 bg-[#0E121C] hover:bg-slate-800 text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer"
                           type="button"
+                          title="Add to Cart"
                         >
-                          <ShoppingBag size={14} className="text-[#C8961A] stroke-[2.5]" />
-                          <span>Add to Cart 🛒</span>
+                          <ShoppingBag size={16} />
                         </button>
 
-                        {/* Premium Buy Now & Instant Checkout Form */}
                         <button 
                           onClick={() => {
                             const basePrice = selectedQuickViewProduct.priceType === 'wholesale' ? 0 : selectedQuickViewProduct.price;
@@ -1833,20 +1774,12 @@ export default function HomePage() {
                             handleCloseQuickView(true);
                             navigate('/checkout');
                           }}
-                          className="relative overflow-hidden flex-1 bg-gradient-to-r from-[#C2102E] to-[#C8961A] text-white h-11 lg:h-11 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center justify-center shadow-md active:scale-[0.98] group cursor-pointer"
+                          className="flex-1 bg-[#C2102E] hover:bg-[#A80B23] text-white h-10 sm:h-11 rounded-xl font-bold text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer min-w-0"
                           type="button"
+                          title="Buy Now"
                         >
-                          {/* Gentle active sweep effect */}
-                          <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-[1250ms] ease-in-out"></div>
-                          <div className="relative flex items-center justify-center gap-2">
-                            <span>Buy Now ⚡</span>
-                            <span className="bg-white/15 text-white text-[9px] px-1.5 py-0.5 rounded border border-white/10 font-mono tracking-tight shrink-0">
-                              {formatPrice((selectedQuickViewProduct.price + Object.entries(selectedVariants).reduce((sum, [type, val]) => {
-                                const variant = selectedQuickViewProduct.variants?.find((v: any) => v.type === type && v.value === val);
-                                return sum + (variant?.price || 0);
-                              }, 0)) * inquiryUnits)}
-                            </span>
-                          </div>
+                          <Zap size={15} />
+                          <span className="truncate">Buy Now</span>
                         </button>
                       </div>
                     )}

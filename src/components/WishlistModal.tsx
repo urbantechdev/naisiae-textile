@@ -139,9 +139,10 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
                             
                             <button 
                               onClick={() => handleMoveToCart(item)}
-                              className="text-[10px] font-black uppercase text-[#0A1628] hover:text-[#C8102E] flex items-center gap-2 transition-colors"
+                              className="w-8 h-8 rounded-lg bg-[#0A1628] hover:bg-[#C8102E] text-white flex items-center justify-center transition-all active:scale-95 shadow-sm"
+                              title="Move to Cart"
                             >
-                              Add to Bag <ArrowRight size={12} />
+                              <ShoppingBag size={14} />
                             </button>
                            </div>
                         </div>

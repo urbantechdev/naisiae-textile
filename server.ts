@@ -867,8 +867,8 @@ Return the response in JSON format.`;
         relativePath = relativePath.slice(0, -1);
       }
 
-      const countrySuffix = matchedCountry.code === 'KE' ? ' - Nairobi, DRC, TZ, UG, ETH' : ` in ${matchedCountry.name}`;
-      const countryDescriptionSuffix = matchedCountry.code === 'KE' ? ', In Nairobi, DRC, TZ, UG, ETH' : ` in ${matchedCountry.name}`;
+      const countrySuffix = matchedCountry.code === 'KE' ? '' : ` in ${matchedCountry.name}`;
+      const countryDescriptionSuffix = matchedCountry.code === 'KE' ? '' : ` in ${matchedCountry.name}`;
 
       let title = `Uhuru Market Uniforms${countrySuffix}`;
       let description = `Official Uhuru Market Uniforms. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;

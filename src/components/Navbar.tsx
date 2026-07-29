@@ -500,14 +500,9 @@ export function Navbar({
                 </div>
               )}
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="font-display text-xs sm:text-xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-none bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
-                  {resolvedSiteName}
-                </span>
-              </div>
-              <span className="text-[6px] sm:text-[8px] md:text-[9.5px] tracking-[1.5px] sm:tracking-[2px] text-[#C8961A] uppercase font-black mt-0.5 sm:mt-1.5 group-hover:translate-x-1 transition-transform">
-                {resolvedSiteTagline}
+            <div className="flex items-center">
+              <span className="font-display text-lg sm:text-2xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-tight bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
+                {resolvedSiteName}
               </span>
             </div>
           </Link>
@@ -984,9 +979,6 @@ export function Navbar({
                   <div className="font-display text-base tracking-[2px] text-white uppercase font-black">
                     {resolvedSiteName}
                   </div>
-                  <div className="text-[8px] tracking-[3px] text-[#C8961A] font-black uppercase mt-1">
-                    {resolvedSiteTagline}
-                  </div>
                 </div>
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
@@ -1329,9 +1321,36 @@ export function Navbar({
       )}
 
       {/* Mobile Bottom Navigation - Shared across all pages */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-[#0E121C]/95 backdrop-blur-xl border-t border-white/[0.08] flex items-center justify-between px-2 py-1.5 pb-safe shadow-[0_-10px_35px_rgba(0,0,0,0.5)]">
-        {/* Top visual brand line divider */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A]" />
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-[#0E121C]/95 backdrop-blur-xl flex items-center justify-between px-2 py-1.5 pb-safe shadow-[0_-12px_40px_rgba(0,0,0,0.6)]">
+        {/* Single Wave Curved Top Edge with Brand Gradient Border */}
+        <div className="absolute -top-[16px] left-0 right-0 w-full overflow-hidden leading-none pointer-events-none">
+          <svg 
+            viewBox="0 0 1200 60" 
+            preserveAspectRatio="none" 
+            className="w-full h-[17px] block"
+          >
+            <defs>
+              <linearGradient id="navWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#C8102E" />
+                <stop offset="50%" stopColor="#E94C36" />
+                <stop offset="100%" stopColor="#C8961A" />
+              </linearGradient>
+            </defs>
+            {/* Wave background fill matching navbar */}
+            <path 
+              d="M 0 32 C 350 58, 850 6, 1200 32 L 1200 60 L 0 60 Z" 
+              fill="#0E121C"
+              fillOpacity="0.95"
+            />
+            {/* Top curved wave stroke gradient */}
+            <path 
+              d="M 0 32 C 350 58, 850 6, 1200 32" 
+              fill="none" 
+              stroke="url(#navWaveGradient)" 
+              strokeWidth="5" 
+            />
+          </svg>
+        </div>
 
         <Link 
           to="/" 
