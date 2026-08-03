@@ -231,7 +231,9 @@ Return the response in JSON format.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
-        contents: `Create a professional, SEO-optimized marketing description for a product named "${name}" in the category "${category}". Tags: ${(tags || []).join(', ')}. Keep it concise but persuasive.`,
+        contents: `Write an authentic, human-tailored trade product description for "${name}" in category "${category}". Tags: ${(tags || []).join(', ')}.
+Focus on practical details: fabric composition (e.g. poly-viscose twill, 100% combed cotton, 300 GSM fleece, acrylic knit), stitching durability (bar-tacks, double-needle hems), fit, and care instructions (color-fast, machine washable).
+STRICTLY AVOID AI buzzwords such as "bespoke", "seamlessly", "game-changer", "ultimate", "unparalleled", "elevate", "cutting-edge", or generic marketing fluff. Write concise, realistic trade copy as written by an experienced uniform outfitter.`,
       });
 
       res.json({ text: response.text || "Failed to generate description" });
@@ -256,8 +258,9 @@ Return the response in JSON format.`;
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
         contents: `Generate realistic product details for the Kenyan uniform market: ${name} (Category: ${category}). 
-        Provide a persuasive description highlighting durability, Kenyan market price suggestion in KSH, subCategory, and relevant tags.
-        Prices should reflect Uhuru Market/Nairobi Industrial Area competitiveness.`,
+        Provide a practical trade description focusing on real fabric composition, weave, weight, stitching durability, fit, and laundering care.
+        STRICTLY AVOID AI buzzwords such as 'bespoke', 'seamlessly', 'game-changer', 'ultimate', 'unparalleled', 'elevate', or 'cutting-edge'.
+        Prices should reflect competitive Uhuru Market / Nairobi wholesale and retail apparel trends in KSH.`,
         config: {
           responseMimeType: "application/json",
           responseSchema: {
