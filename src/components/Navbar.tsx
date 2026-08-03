@@ -21,7 +21,9 @@ import {
   Globe,
   Check,
   ChevronDown,
-  Star
+  Star,
+  Wind,
+  Sparkles
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
@@ -475,16 +477,31 @@ export function Navbar({
       </AnimatePresence>
 
       <header 
-        className={`w-full relative transition-all duration-700 border-b border-white/5 ${
+        className={`w-full relative transition-all duration-700 ${
           isScrolled 
-            ? 'bg-[#0E121C]/95 backdrop-blur-2xl py-0 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
-            : 'bg-[#0E121C] py-0'
+            ? 'bg-[#0E121C]/92 backdrop-blur-2xl py-0 shadow-[0_15px_40px_rgba(0,0,0,0.5)]' 
+            : 'bg-[#0E121C]/95 backdrop-blur-xl py-0'
         }`}
       >
-        {/* Signature Branding Top Accent Line */}
-        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] z-20"></div>
+        {/* Subtle Signature Branding Top Line with Gentle Shimmer */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] z-20">
+          <motion.div 
+            animate={{ x: ['-100%', '200%'] }}
+            transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
+            className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+          />
+        </div>
 
-        <div className={`max-w-[1440px] mx-auto px-2.5 sm:px-4 md:px-6 lg:px-20 flex items-center justify-between gap-2 md:gap-12 transition-all duration-700 ${isScrolled ? 'h-14 sm:h-20 md:h-24' : 'h-16 sm:h-24 md:h-32'}`}>
+        {/* Simple Soft Glassy Header Light Sheen */}
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden opacity-30">
+          <motion.div 
+            animate={{ x: ['-100%', '200%'] }}
+            transition={{ repeat: Infinity, repeatDelay: 5, duration: 3.5, ease: "easeInOut" }}
+            className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"
+          />
+        </div>
+
+        <div className={`relative z-20 max-w-[1440px] mx-auto px-2.5 sm:px-4 md:px-6 lg:px-20 flex items-center justify-between gap-2 md:gap-12 transition-all duration-700 ${isScrolled ? 'h-14 sm:h-20 md:h-24' : 'h-16 sm:h-24 md:h-32'}`}>
           {/* Brand Identity with Canva Gradient Theme */}
           <Link to="/" className="group flex items-center gap-2 md:gap-4 shrink-0">
             <div className={`relative transition-all duration-700 ${isScrolled ? 'w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14' : 'w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20'}`}>
@@ -496,7 +513,7 @@ export function Navbar({
                   <span className="relative z-10 select-none tracking-tight">NT</span>
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#C8961A_0%,transparent_60%)] opacity-35 mix-blend-overlay"></div>
-                  <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </div>
               )}
             </div>
@@ -519,12 +536,12 @@ export function Navbar({
                 >
                   <Link 
                     to={localizedLink} 
-                    className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-550 relative group py-2 px-1 ${
-                      isScrolled ? 'text-white/70' : 'text-white'
+                    className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-550 relative group py-2 px-3 rounded-xl hover:bg-white/5 backdrop-blur-sm ${
+                      isScrolled ? 'text-white/80' : 'text-white'
                     } hover:text-[#C8961A]`}
                   >
                     <span className="relative z-10">{item.name}</span>
-                    <span className={`absolute -bottom-1 left-0 h-[2px] bg-[#C8961A] transition-all duration-700 ${
+                    <span className={`absolute -bottom-1 left-0 h-[2.5px] bg-gradient-to-r from-[#C8102E] to-[#C8961A] transition-all duration-500 rounded-full ${
                       isActive ? 'w-full' : 'w-0'
                     } group-hover:w-full`}></span>
                   </Link>
@@ -535,15 +552,15 @@ export function Navbar({
 
           {/* Action Hub */}
           <div className="flex items-center gap-4 lg:gap-8">
-              <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/5 backdrop-blur-xl rounded-xl md:rounded-2xl border border-white/10 hidden sm:flex">
-               <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/50 hover:text-[#FF4F5A] transition-colors relative group">
-                 <Heart size={18} className={wishlistCount > 0 ? "fill-[#FF4F5A] text-[#FF4F5A]" : "group-hover:scale-110 transition-transform md:w-5 md:h-5"} />
+              <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/10 backdrop-blur-2xl rounded-xl md:rounded-2xl border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.2)] hidden sm:flex hover:border-white/30 transition-all">
+               <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/70 hover:text-[#FF4F5A] transition-all relative group hover:scale-110">
+                 <Heart size={18} className={wishlistCount > 0 ? "fill-[#FF4F5A] text-[#FF4F5A]" : "transition-transform md:w-5 md:h-5"} />
                  {wishlistCount > 0 && (
                    <span className="absolute top-1 right-1 w-2 h-2 bg-[#FF4F5A] rounded-full animate-ping"></span>
                  )}
                </button>
-               <div className="w-[1px] h-4 bg-white/10 mx-1"></div>
-               <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-1.5 md:p-2 text-white/50 hover:text-[#00C4CC] transition-colors relative group">
+               <div className="w-[1px] h-4 bg-white/15 mx-1"></div>
+               <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-1.5 md:p-2 text-white/70 hover:text-[#00C4CC] transition-all relative group hover:scale-110">
                  <GitCompare size={18} className="group-hover:rotate-45 transition-transform md:w-5 md:h-5" />
                </button>
             </div>
@@ -551,9 +568,14 @@ export function Navbar({
             <button 
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Cart"
-              className="group relative p-2 md:p-4 bg-[#C8961A] text-white hover:bg-[#B08011] hover:shadow-[0_0_20px_rgba(200,150,26,0.4)] transition-all duration-550 rounded-lg md:rounded-2xl shadow-xl active:scale-90"
+              className="group relative p-2 md:p-4 bg-[#C8961A] text-white hover:bg-[#B08011] hover:shadow-[0_0_25px_rgba(200,150,26,0.6)] transition-all duration-550 rounded-lg md:rounded-2xl shadow-xl active:scale-90 overflow-hidden"
             >
               <ShoppingBag size={16} className="relative z-10 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5" />
+              <motion.div 
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12"
+              />
               {cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 md:-top-3 md:-right-3 w-4 h-4 md:w-6 md:h-6 bg-[#FF4F5A] text-white text-[8px] md:text-[10px] font-black flex items-center justify-center rounded-full border-[1.5px] md:border-[3px] border-[#0E121C] shadow-lg animate-pulse">
                   {cartCount}
@@ -563,9 +585,15 @@ export function Navbar({
 
             <button 
               onClick={() => setIsQuoteModalOpen(true)}
-              className="hidden lg:flex items-center gap-3 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white hover:shadow-[0_4px_25px_rgba(200,16,46,0.4)] hover:-translate-y-0.5 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-500 active:scale-95 shadow-[0_12px_40px_rgba(200,16,46,0.2)]"
+              className="hidden lg:flex items-center gap-3 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] text-white hover:shadow-[0_8px_30px_rgba(200,16,46,0.5)] hover:-translate-y-0.5 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-500 active:scale-95 shadow-[0_12px_40px_rgba(200,16,46,0.3)] relative overflow-hidden border border-white/20"
             >
-              <Package size={18} /> Enquire
+              <Package size={18} className="relative z-10" /> 
+              <span className="relative z-10">Enquire</span>
+              <motion.div 
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent transform -skew-x-12"
+              />
             </button>
 
             <button 
@@ -574,14 +602,42 @@ export function Navbar({
                 appExperience.triggerFeedback('tap');
               }} 
               aria-label="Open Expansive Mega Menu"
-              className="p-2 md:p-4 bg-white text-slate-800 hover:bg-slate-50 rounded-lg md:rounded-2xl transition-all border border-slate-200 hover:border-[#C8961A]/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
+              className="p-2 md:p-4 bg-white/95 backdrop-blur-xl text-slate-800 hover:bg-white rounded-lg md:rounded-2xl transition-all border border-white/40 hover:border-[#C8961A]/60 flex items-center justify-center cursor-pointer shadow-lg hover:scale-105 active:scale-95"
             >
               <Menu size={18} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#0E121C]" />
             </button>
           </div>
         </div>
 
-
+        {/* Single Wave Curved Bottom Edge Design */}
+        <div className="absolute -bottom-[14px] sm:-bottom-[18px] left-0 right-0 w-full overflow-hidden leading-none pointer-events-none z-30">
+          <svg 
+            className="relative block w-full h-[14px] sm:h-[18px]" 
+            viewBox="0 0 1200 40" 
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <linearGradient id="header-single-wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#C8102E" />
+                <stop offset="50%" stopColor="#E94C36" />
+                <stop offset="100%" stopColor="#C8961A" />
+              </linearGradient>
+            </defs>
+            {/* Header dark background fill matching top bar style */}
+            <path 
+              d="M 0 0 L 1200 0 L 1200 14 C 850 -8, 350 36, 0 8 Z" 
+              fill="#0E121C" 
+              fillOpacity={isScrolled ? "0.95" : "0.98"}
+            />
+            {/* Single Wave Signature Accent Line */}
+            <path 
+              d="M 0 8 C 350 36, 850 -8, 1200 14" 
+              fill="none" 
+              stroke="url(#header-single-wave-gradient)" 
+              strokeWidth="2.5" 
+            />
+          </svg>
+        </div>
       </header>
 
       {/* Expansive Mega Menu Drawer */}
@@ -1321,7 +1377,7 @@ export function Navbar({
       )}
 
       {/* Mobile Bottom Navigation - Shared across all pages */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-[#0E121C]/95 backdrop-blur-xl flex items-center justify-between px-2 py-1.5 pb-safe shadow-[0_-12px_40px_rgba(0,0,0,0.6)]">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-xl flex items-center justify-between px-2 py-1.5 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.08)] border-t border-slate-200/80">
         {/* Single Wave Curved Top Edge with Brand Gradient Border */}
         <div className="absolute -top-[16px] left-0 right-0 w-full overflow-hidden leading-none pointer-events-none">
           <svg 
@@ -1336,10 +1392,10 @@ export function Navbar({
                 <stop offset="100%" stopColor="#C8961A" />
               </linearGradient>
             </defs>
-            {/* Wave background fill matching navbar */}
+            {/* Wave background fill matching white navbar */}
             <path 
               d="M 0 32 C 350 58, 850 6, 1200 32 L 1200 60 L 0 60 Z" 
-              fill="#0E121C"
+              fill="#FFFFFF"
               fillOpacity="0.95"
             />
             {/* Top curved wave stroke gradient */}
@@ -1355,24 +1411,24 @@ export function Navbar({
         <Link 
           to="/" 
           onClick={() => appExperience.triggerFeedback('tap')} 
-          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname === '/' ? 'text-[#C8961A]' : 'text-white/45'}`}
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname === '/' ? 'text-[#C8102E]' : 'text-slate-600 hover:text-slate-900'}`}
         >
-          <Home size={20} className={location.pathname === '/' ? 'scale-110 drop-shadow-[0_0_6px_rgba(200,150,26,0.5)]' : 'opacity-80'} />
-          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname === '/' ? 'text-[#C8961A]' : 'text-white/50'}`}>Home</span>
+          <Home size={20} className={location.pathname === '/' ? 'scale-110 text-[#C8102E]' : 'opacity-80'} />
+          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname === '/' ? 'text-[#C8102E] font-black' : 'text-slate-600'}`}>Home</span>
           {location.pathname === '/' && (
-            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8961A] shadow-[0_0_8px_#C8961A]" />
+            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8102E] shadow-[0_0_6px_#C8102E]" />
           )}
         </Link>
 
         <Link 
           to="/product" 
           onClick={() => appExperience.triggerFeedback('tap')} 
-          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/product') ? 'text-[#C8961A]' : 'text-white/45'}`}
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/product') ? 'text-[#C8102E]' : 'text-slate-600 hover:text-slate-900'}`}
         >
-          <Package size={20} className={location.pathname.startsWith('/product') ? 'scale-110 drop-shadow-[0_0_6px_rgba(200,150,26,0.5)]' : 'opacity-80'} />
-          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/product') ? 'text-[#C8961A]' : 'text-white/50'}`}>Product</span>
+          <Package size={20} className={location.pathname.startsWith('/product') ? 'scale-110 text-[#C8102E]' : 'opacity-80'} />
+          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/product') ? 'text-[#C8102E] font-black' : 'text-slate-600'}`}>Product</span>
           {location.pathname.startsWith('/product') && (
-            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8961A] shadow-[0_0_8px_#C8961A]" />
+            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8102E] shadow-[0_0_6px_#C8102E]" />
           )}
         </Link>
 
@@ -1382,13 +1438,13 @@ export function Navbar({
               appExperience.triggerFeedback('success');
               setIsQuoteModalOpen(true);
             }}
-            className="w-13 h-13 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-full border-[3px] border-[#0E121C] flex items-center justify-center text-white shadow-[0_6px_20px_rgba(200,16,46,0.4)] active:scale-90 transition-transform relative group/quote"
+            className="w-13 h-13 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-full border-[3px] border-white flex items-center justify-center text-white shadow-[0_6px_20px_rgba(200,16,46,0.35)] active:scale-90 transition-transform relative group/quote"
           >
             {/* Soft backdrop pulsating glow */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] -z-10 blur-[8px] opacity-70 group-hover:opacity-100 transition-opacity animate-pulse"></div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] -z-10 blur-[8px] opacity-60 group-hover:opacity-100 transition-opacity animate-pulse"></div>
             <Plus size={26} className="text-white font-extrabold drop-shadow" />
           </button>
-          <span className="text-[9px] font-black tracking-tighter uppercase text-[#C8961A] mt-1 drop-shadow-sm font-sans">Get Quote</span>
+          <span className="text-[9px] font-black tracking-tighter uppercase text-[#C8102E] mt-1 font-sans">Get Quote</span>
         </div>
 
         <a 
@@ -1396,19 +1452,19 @@ export function Navbar({
           target="_blank" 
           rel="noopener noreferrer"
           onClick={() => appExperience.triggerFeedback('tap')}
-          className="flex-1 flex flex-col items-center py-1 gap-1 text-white/45 active:text-[#C8961A] active:scale-95 transition-all text-center"
+          className="flex-1 flex flex-col items-center py-1 gap-1 text-slate-600 hover:text-slate-900 active:text-[#C8102E] active:scale-95 transition-all text-center"
         >
           <MessageSquare size={20} className="opacity-80" />
-          <span className="text-[9px] font-bold tracking-tighter uppercase text-white/50">Chat</span>
+          <span className="text-[9px] font-bold tracking-tighter uppercase text-slate-600">Chat</span>
         </a>
 
         <a 
           href="tel:+254792021795"
           onClick={() => appExperience.triggerFeedback('tap')}
-          className="flex-1 flex flex-col items-center py-1 gap-1 text-white/45 active:text-[#C8961A] active:scale-95 transition-all text-center"
+          className="flex-1 flex flex-col items-center py-1 gap-1 text-slate-600 hover:text-slate-900 active:text-[#C8102E] active:scale-95 transition-all text-center"
         >
           <Phone size={20} className="opacity-80" />
-          <span className="text-[9px] font-bold tracking-tighter uppercase text-white/50">Call</span>
+          <span className="text-[9px] font-bold tracking-tighter uppercase text-slate-600">Call</span>
         </a>
       </div>
     </div>

@@ -57,6 +57,7 @@ export default function ProductsPage() {
   
   // State
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -297,10 +298,12 @@ export default function ProductsPage() {
         setIsMenuOpen={setIsMenuOpen}
       />
       
-      <Breadcrumb />
+      <div className="hidden md:block">
+        <Breadcrumb />
+      </div>
 
-      {/* Modern High-End E-commerce Hero */}
-      <div className="relative py-20 px-6 overflow-hidden bg-[#0A1628] text-white">
+      {/* Modern High-End E-commerce Hero - Desktop Only */}
+      <div className="hidden md:block relative py-12 lg:py-20 px-6 overflow-hidden bg-[#0A1628] text-white">
         {/* Abstract background graphics with low latency vector shapes */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -351,11 +354,166 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-6 py-12">
+      {/* MOBILE STICKY TOP FILTER & SEARCH BAR */}
+      <div className="lg:hidden bg-white border-b border-slate-200 sticky top-[60px] z-30 shadow-xs px-3 py-2.5 space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <input 
+              type="text" 
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full py-2 pl-8 pr-7 bg-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#C8102E]"
+            />
+            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs p-1"
+              >
+                ×
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border shrink-0 ${
+              isMobileFiltersOpen || selectedCategory !== 'all' || activeTag || onlyWholesale
+                ? 'bg-[#0A1628] text-white border-transparent'
+                : 'bg-slate-100 text-slate-700 border-slate-200'
+            }`}
+          >
+            <SlidersHorizontal size={14} />
+            <span>Filter</span>
+            {(selectedCategory !== 'all' || activeTag || onlyWholesale) && (
+              <span className="w-2 h-2 rounded-full bg-[#C8961A]" />
+            )}
+          </button>
+        </div>
+
+        {/* Horizontal Category Scroll */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-xs">
+          {Object.keys(categoriesWithCounts).map(catName => {
+            const isSelected = selectedCategory === catName;
+            const displayName = catName === 'all' ? 'All Uniforms' : catName;
+            return (
+              <button
+                key={catName}
+                onClick={() => setSelectedCategory(catName)}
+                className={`px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border ${
+                  isSelected 
+                    ? 'bg-[#C8102E] text-white border-transparent shadow-xs' 
+                    : 'bg-slate-100 text-slate-600 border-slate-200/60'
+                }`}
+              >
+                {displayName} ({categoriesWithCounts[catName]})
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* MOBILE DRAWER SHEET FOR FULL FILTERS */}
+      <AnimatePresence>
+        {isMobileFiltersOpen && (
+          <div className="lg:hidden fixed inset-0 z-[150] bg-black/60 backdrop-blur-xs flex justify-end">
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-full max-w-xs bg-white h-full flex flex-col p-5 overflow-y-auto shadow-2xl space-y-6"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#0A1628] flex items-center gap-2">
+                  <SlidersHorizontal size={16} /> Product Filters
+                </h3>
+                <button 
+                  onClick={() => setIsMobileFiltersOpen(false)}
+                  className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Wholesale Toggle */}
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Package size={16} className="text-[#C8961A]" />
+                  <span className="text-xs font-bold text-[#0A1628]">Wholesale Volume Only</span>
+                </div>
+                <button
+                  onClick={() => setOnlyWholesale(!onlyWholesale)}
+                  className={`w-10 h-6 flex items-center rounded-full p-0.5 transition-colors ${
+                    onlyWholesale ? 'bg-emerald-500' : 'bg-slate-200'
+                  }`}
+                >
+                  <div className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform ${onlyWholesale ? 'translate-x-4' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              {/* Price limit slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-xs font-bold">
+                  <span>Max Price Limit</span>
+                  <span className="text-[#C8961A] font-mono">{formatPrice(priceRange)}</span>
+                </div>
+                <input 
+                  type="range"
+                  min="0"
+                  max={maxProductPrice}
+                  value={priceRange}
+                  onChange={(e) => setPriceRange(Number(e.target.value))}
+                  className="w-full accent-[#C8961A] h-1.5 bg-slate-100 rounded-lg"
+                />
+              </div>
+
+              {/* Popular tags */}
+              <div className="space-y-2">
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Popular Tags</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {allTags.map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-all border ${
+                        activeTag === tag 
+                          ? 'bg-[#C8961A] text-white border-transparent' 
+                          : 'bg-slate-50 text-slate-600 border-slate-200'
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="pt-4 border-t border-slate-100 flex gap-2">
+                <button 
+                  onClick={handleClearFilters} 
+                  className="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl"
+                >
+                  Clear All
+                </button>
+                <button 
+                  onClick={() => setIsMobileFiltersOpen(false)} 
+                  className="flex-1 py-2.5 bg-[#0A1628] text-white font-bold text-xs rounded-xl"
+                >
+                  Apply
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-6 py-4 sm:py-12">
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* LEFT SIDEBAR: E-COMMERCE FILTERS PANEL */}
-          <aside className="w-full lg:w-[280px] shrink-0 space-y-8 bg-white border border-slate-200/60 p-6 rounded-3xl shadow-sm self-start">
+          {/* LEFT SIDEBAR: E-COMMERCE FILTERS PANEL (Desktop) */}
+          <aside className="hidden lg:block w-full lg:w-[280px] shrink-0 space-y-8 bg-white border border-slate-200/60 p-6 rounded-3xl shadow-sm self-start">
             
             {/* Auto Background Remover Section */}
             <div className="p-4 bg-gradient-to-br from-[#FDFAF4] to-slate-50 border border-[#C8961A]/10 rounded-2xl">
@@ -472,7 +630,7 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Price Limit Slider Filter (Only matches retail catalog items with a valid pricing) */}
+            {/* Price Limit Slider Filter */}
             <div className="space-y-3 pb-2">
               <div className="flex justify-between items-center">
                 <h4 className="text-[10px] font-black uppercase tracking-[3px] text-slate-400">Max Price Limit</h4>
@@ -526,10 +684,10 @@ export default function ProductsPage() {
           </aside>
 
           {/* RIGHT SIDE: PRODUCT LISTING ECOMMERCE SPACE */}
-          <main className="flex-1 space-y-8">
+          <main className="flex-1 space-y-4 sm:space-y-8">
             
-            {/* Toolbar section */}
-            <div className="bg-white border border-slate-200/60 p-5 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+            {/* Toolbar section (Desktop only) */}
+            <div className="hidden sm:flex bg-white border border-slate-200/60 p-5 rounded-3xl flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-slate-50 border border-slate-100 rounded-xl text-[#0A1628]">
                   <Grid size={16} />
@@ -705,8 +863,8 @@ export default function ProductsPage() {
                             {p.name}
                           </h3>
                           
-                          <p className="hidden xs:line-clamp-2 sm:line-clamp-2 text-slate-400 text-[10px] sm:text-xs mb-3 sm:mb-4 font-medium leading-relaxed">
-                            {p.description || "Premium institutional garment tailored with extra heavy duty double-stitched cotton blend."}
+                          <p className="hidden md:block text-slate-400 text-[10px] sm:text-xs mb-3 sm:mb-4 font-medium leading-relaxed">
+                            {p.description || "Tailored institutional apparel cut from high-grade poly-cotton twill with double-needle reinforced seams and color-fast dyes."}
                           </p>
                         </div>
 
@@ -776,7 +934,7 @@ export default function ProductsPage() {
             )}
 
             {/* Dynamic Sourcing highlights banner */}
-            <div className="bg-gradient-to-r from-[#0A1628] to-[#12243d] border border-white/5 rounded-3xl p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6 shadow-md mt-16">
+            <div className="hidden lg:flex bg-gradient-to-r from-[#0A1628] to-[#12243d] border border-white/5 rounded-3xl p-8 text-white flex-col md:flex-row justify-between items-center gap-6 shadow-md mt-16">
               <div className="space-y-2">
                 <span className="text-[10px] uppercase tracking-[3px] text-[#C8961A] font-black">Uhuru Market Guarantee</span>
                 <h4 className="text-xl font-display font-medium">Ordering Institutional Supplies at Scale?</h4>
@@ -842,7 +1000,7 @@ export default function ProductsPage() {
                   </div>
 
                   <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6">
-                    {selectedProduct.description || "Industrial grade garment. Woven from durable ring-spun yarns that withstand institutional scouring and rugged wash cycles without sagging."}
+                    {selectedProduct.description || "Tailored institutional garment woven from durable cotton-blend twill with bar-tacked stress points and color-fast dyeing."}
                   </p>
 
                   <div className="space-y-5">

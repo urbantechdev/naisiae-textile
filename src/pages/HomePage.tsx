@@ -447,21 +447,11 @@ export default function HomePage() {
 
   useEffect(() => {
     if (siteSettings) {
-      const rawSiteName = siteSettings.siteName || 'Uhuru Market Uniforms';
-      let rawSiteTagline = siteSettings.siteTagline || 'Naisiae Textiles';
-      if (rawSiteTagline === 'Naisiae Textiles') {
-        rawSiteTagline = currentCountry.phone;
-      }
-      const isReversed = (
-        (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
-        (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
-      );
-      const siteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
-      const tagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
-      const description = siteSettings.sharingDescription || 'Official Uhuru Market Uniforms by Naisiae Textiles. Quality school uniforms, corporate wear & institutional branding in Nairobi. Buy direct & save.';
+      const siteTitle = siteSettings.sharingTitle || 'Uhuru Market Uniforms';
+      const description = siteSettings.sharingDescription || 'Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg';
 
-      document.title = `${siteName} | ${tagline}`;
+      document.title = siteTitle;
       
       // Update meta description
       const metaDescription = document.querySelector('meta[name="description"]');
@@ -475,10 +465,10 @@ export default function HomePage() {
         if (el) el.setAttribute(attr, value);
       };
 
-      updateMeta('meta[property="og:title"]', 'content', `${siteName} | ${tagline}`);
+      updateMeta('meta[property="og:title"]', 'content', siteTitle);
       updateMeta('meta[property="og:description"]', 'content', description);
       updateMeta('meta[property="og:image"]', 'content', sharingImage);
-      updateMeta('meta[property="twitter:title"]', 'content', `${siteName} | ${tagline}`);
+      updateMeta('meta[property="twitter:title"]', 'content', siteTitle);
       updateMeta('meta[property="twitter:description"]', 'content', description);
       updateMeta('meta[property="twitter:image"]', 'content', sharingImage);
 
@@ -1097,7 +1087,7 @@ export default function HomePage() {
                   {compareList.map((item, idx) => (
                     <div key={`${item.id}-desc-${idx}`} className="py-8 border-t border-slate-100 text-center">
                       <p className="text-xs text-slate-500 leading-relaxed max-w-[200px] mx-auto px-2">
-                        {item.description || "School Uniforms engineered textile with institutional-grade durability."}
+                        {item.description || "Tailored uniform apparel cut from durable cotton-blend twill with color-fast dyes."}
                       </p>
                     </div>
                   ))}
@@ -1487,7 +1477,7 @@ export default function HomePage() {
                       </summary>
                       <div className="p-4 text-slate-600 text-xs leading-relaxed border-t border-slate-100 bg-white space-y-3">
                         <div className="font-semibold italic text-slate-700 border-l-3 border-[#C8961A] pl-3">
-                          {selectedQuickViewProduct.description || "Finely crafted institutional and school-grade apparel optimized for rugged multi-season use."}
+                          {selectedQuickViewProduct.description || "Tailored institutional apparel woven from durable poly-cotton blend with reinforced seams for long-term wear."}
                         </div>
                         
                         <div className="grid grid-cols-2 gap-3 pt-1">

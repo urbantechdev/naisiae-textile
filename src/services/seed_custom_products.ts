@@ -33,7 +33,7 @@ const RAW_PRODUCTS = [
   {
     name: "High School Trousers",
     priceType: "fixed",
-    description: "Premium quality high school trousers available in Summit, Grey, and Short styles.",
+    description: "Tailored from heavy-duty 65/35 poly-viscose gabardine fabric designed for daily high school wear. Features twin slant front pockets, a secure brass fly zipper, bar-tacked stress points, and an inner anti-slip waistband. Available in classic Summit, Grey, and Short cuts with pre-hemmed cuffs that resist fraying through repeated laundry cycles.",
     wholesalePrice: 350,
     oldPrice: null,
     variants: "Size:26|Style:Short=350,Size:26|Style:Summit=550,Size:26|Style:Grey=700,Size:28|Style:Short=350,Size:28|Style:Summit=550,Size:28|Style:Grey=700,Size:30|Style:Short=350,Size:30|Style:Summit=550,Size:30|Style:Grey=750",
@@ -47,7 +47,7 @@ const RAW_PRODUCTS = [
   {
     name: "Primary School Trousers",
     priceType: "fixed",
-    description: "Durable primary school trousers available in Summit and Grey styles.",
+    description: "Sturdy poly-cotton twill trousers built for active primary school students. Includes a half-elastic waistband for growth flexibility and easy pull-on comfort, deep side pockets, and double-needle seat seams to prevent splits during games. Offered in Summit navy and standard school grey shades.",
     wholesalePrice: 220,
     oldPrice: null,
     variants: "Size:20|Style:Summit=220,Size:20|Style:Grey=300,Size:22|Style:Summit=240,Size:22|Style:Grey=300,Size:24|Style:Summit=260,Size:24|Style:Grey=320,Size:26|Style:Summit=280,Size:26|Style:Grey=340,Size:28|Style:Summit=300,Size:28|Style:Grey=360,Size:30|Style:Summit=320,Size:30|Style:Grey=380,Size:32|Style:Summit=340,Size:32|Style:Grey=400,Size:34|Style:Summit=360,Size:34|Style:Grey=420,Size:36|Style:Summit=440,Size:36|Style:Grey=490",
@@ -61,7 +61,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Shorts",
     priceType: "fixed",
-    description: "School shorts available in Summit, Grey, Kijana/Thika, Khaki, and American styles.",
+    description: "Classic school uniform shorts tailored from 220 GSM heavy-grade cotton-poly fabric. Styled with a structured waistband, belt loops, side slit pockets, and a buttoned rear pocket. Built with anti-fade dyes to maintain rich colors through school term washing. Options include Summit, Grey, Kijana/Thika, Khaki, and American patterns.",
     wholesalePrice: 240,
     oldPrice: null,
     variants: "Size:20|Style:Summit=240,Size:20|Style:Grey=320,Size:20|Style:Kijana=450,Size:22|Style:Summit=260,Size:22|Style:Grey=340,Size:22|Style:Kijana=450,Size:24|Style:Summit=280,Size:24|Style:Grey=360,Size:24|Style:Kijana=500,Size:26|Style:Summit=300,Size:26|Style:Grey=380,Size:26|Style:Kijana=500,Size:28|Style:Summit=320,Size:28|Style:Grey=400,Size:28|Style:Kijana=550,Size:28|Style:American=500,Size:30|Style:Summit=340,Size:30|Style:Grey=420,Size:30|Style:Kijana=550,Size:30|Style:American=500,Size:32|Style:Summit=360,Size:32|Style:Grey=440,Size:32|Style:Kijana=600,Size:32|Style:American=550,Size:34|Style:Summit=360,Size:34|Style:Grey=440,Size:34|Style:Kijana=600,Size:34|Style:American=550,Size:36|Style:Kijana=650,Size:36|Style:American=600",
@@ -75,7 +75,7 @@ const RAW_PRODUCTS = [
   {
     name: "PE Shorts",
     priceType: "fixed",
-    description: "Comfortable physical education shorts in plain and striped variants.",
+    description: "Breathable physical education shorts tailored from quick-drying knitted polyester mesh. Features a wide elastic waistband with a drawcord inside for a secure fit during athletics and team sports. Double-stitched hems ensure longevity through energetic activity.",
     wholesalePrice: 220,
     oldPrice: null,
     variants: "Size:20|Style:Plain=220,Size:22|Style:Plain=240,Size:24|Style:Plain=260,Size:26|Style:Plain=280,Size:26|Style:Stripes=240,Size:28|Style:Plain=300,Size:28|Style:Stripes=260,Size:30|Style:Plain=320,Size:30|Style:Stripes=280,Size:32|Style:Plain=340,Size:32|Style:Stripes=300,Size:36|Style:Plain=360,Size:36|Style:Stripes=320,Size:40|Style:Plain=420,Size:40|Style:Stripes=340,Size:44|Style:Plain=440,Size:44|Style:Stripes=360,Size:48|Style:Stripes=380",
@@ -89,7 +89,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Shirts",
     priceType: "fixed",
-    description: "School uniform shirts in Plain, Checked, Yoke, Cotton, and Long Sleeve styles.",
+    description: "Crisp uniform shirts sewn from a 110 GSM poplin weave blend (cotton-polyester) for effortless ironing and skin breathability. Styled with a stiff fused collar, durable button closures, a left chest pocket, and reinforced armhole stitching. Available in Plain, Checked, Yoke detail, 100% Cotton, and Long Sleeve options.",
     wholesalePrice: 200,
     oldPrice: null,
     variants: "Size:E|Style:Plain=200,Size:E|Style:Checked=250,Size:18|Style:Yoke=230,Size:18|Style:Cotton=350,Size:18|Style:LongSleeve=250,Size:20|Style:Yoke=270,Size:20|Style:Cotton=370,Size:20|Style:LongSleeve=330,Size:22|Style:Yoke=290,Size:22|Style:Cotton=390,Size:22|Style:LongSleeve=330,Size:24|Style:Yoke=310,Size:24|Style:Cotton=410,Size:24|Style:LongSleeve=350,Size:26|Style:Yoke=330,Size:26|Style:Cotton=430,Size:26|Style:LongSleeve=350,Size:28|Style:Yoke=350,Size:28|Style:Cotton=450,Size:28|Style:LongSleeve=400,Size:30|Style:Yoke=350,Size:30|Style:Cotton=450,Size:30|Style:LongSleeve=400,Size:SS|Style:Plain=250,Size:SS|Style:Checked=300,Size:S|Style:Plain=250,Size:S|Style:Checked=300,Size:M|Style:Plain=300,Size:M|Style:Checked=300,Size:L|Style:Plain=300,Size:L|Style:Checked=300,Size:XL|Style:Plain=300,Size:XL|Style:Checked=300,Size:XXL|Style:Plain=300,Size:XXL|Style:Checked=300",
@@ -103,7 +103,7 @@ const RAW_PRODUCTS = [
   {
     name: "Long-Sleeve Sweaters",
     priceType: "fixed",
-    description: "Warm long-sleeve school sweaters in plain or striped designs.",
+    description: "Warm V-neck long-sleeve school sweaters knitted from 100% heavy-gauge low-pill acrylic yarn. Features double-ply ribbed cuffs and a snug ribbed waist to trap body heat on cold morning assemblies. Machine washable without stretching or shape distortion. Plain or contrast neck stripe options.",
     wholesalePrice: 450,
     oldPrice: null,
     variants: "Size:22|Style:Plain=450,Size:22|Style:Stripes=470,Size:24|Style:Plain=490,Size:24|Style:Stripes=510,Size:26|Style:Plain=520,Size:26|Style:Stripes=540,Size:28|Style:Plain=540,Size:28|Style:Stripes=560,Size:30|Style:Plain=570,Size:30|Style:Stripes=590,Size:32|Style:Plain=600,Size:32|Style:Stripes=620,Size:34|Style:Plain=650,Size:34|Style:Stripes=670,Size:36|Style:Plain=700,Size:36|Style:Stripes=720,Size:38|Style:Plain=750,Size:38|Style:Stripes=770,Size:40|Style:Plain=800,Size:40|Style:Stripes=820,Size:42|Style:Plain=1000,Size:42|Style:Stripes=1050,Size:44|Style:Plain=1200,Size:44|Style:Stripes=1250",
@@ -117,7 +117,7 @@ const RAW_PRODUCTS = [
   {
     name: "Short-Sleeve Sweaters",
     priceType: "fixed",
-    description: "Lightweight short-sleeve school sweaters/vests.",
+    description: "Sleeveless and short-sleeve sweater vests ideal for moderate school weather. Machine-knitted with soft 10-gauge acrylic yarn, featuring ribbed armholes and a sturdy V-neckband that maintains its shape over long term wear.",
     wholesalePrice: 410,
     oldPrice: null,
     variants: "Size:22|Style:Plain=410,Size:22|Style:Stripes=430,Size:24|Style:Plain=450,Size:24|Style:Stripes=470,Size:26|Style:Plain=480,Size:26|Style:Stripes=500,Size:28|Style:Plain=500,Size:28|Style:Stripes=520,Size:30|Style:Plain=530,Size:30|Style:Stripes=550,Size:32|Style:Plain=560,Size:32|Style:Stripes=580,Size:34|Style:Plain=610,Size:34|Style:Stripes=630,Size:36|Style:Plain=660,Size:36|Style:Stripes=680,Size:38|Style:Plain=710,Size:38|Style:Stripes=730,Size:40|Style:Plain=760,Size:40|Style:Stripes=780,Size:42|Style:Plain=950,Size:42|Style:Stripes=970,Size:44|Style:Plain=1150,Size:44|Style:Stripes=1170",
@@ -131,7 +131,7 @@ const RAW_PRODUCTS = [
   {
     name: "Fleece Jackets",
     priceType: "fixed",
-    description: "Heavy-duty school fleece jackets for cold weather.",
+    description: "Heavyweight 300 GSM anti-pill polar fleece jackets tailored for school assemblies and cold boarding nights. Built with a sturdy full-length front zipper, stand-up collar, deep hand-warmer pockets, and elasticated wrist cuffs for insulation.",
     wholesalePrice: 1300,
     oldPrice: 1600,
     variants: "Size:20-24=1300,Size:26-28=1400,Size:30-32=1500,Size:34-36=1600,Size:38=1700,Size:40=1800",
@@ -145,7 +145,7 @@ const RAW_PRODUCTS = [
   {
     name: "Tracksuits",
     priceType: "fixed",
-    description: "School tracksuits available in Normal and Special school specifications.",
+    description: "Full two-piece school tracksuit set comprising a zip-up track jacket and matching track pants. Made from durable micro-tapestry polyester with a soft inner jersey lining. Zippered jacket pockets, elasticated cuffs, and reinforced knee panels ensure long-lasting performance for sports days.",
     wholesalePrice: 800,
     oldPrice: null,
     variants: "Size:20-26|Type:Normal=800,Size:20-26|Type:Special=850,Size:28-30|Type:Normal=850,Size:28-30|Type:Special=900,Size:32-34|Type:Normal=900,Size:32-34|Type:Special=950,Size:36-38|Type:Normal=1000,Size:36-38|Type:Special=1050,Size:40|Type:Normal=1100,Size:40|Type:Special=1150,Size:42|Type:Normal=1200,Size:42|Type:Special=1250,Size:44|Type:Normal=1350",
@@ -159,7 +159,7 @@ const RAW_PRODUCTS = [
   {
     name: "School T-Shirts",
     priceType: "fixed",
-    description: "School t-shirts in plain or LDP branded material.",
+    description: "Soft 180 GSM combed cotton crew-neck and polo-style t-shirts for sports, houses, and casual school events. Features taped neck seams to prevent stretching, double-stitched sleeve cuffs, and a smooth surface suitable for screen printing or school crest embroidery.",
     wholesalePrice: 250,
     oldPrice: null,
     variants: "Size:60-65|Type:Plain=250,Size:60-65|Type:LDP=300,Size:70-75|Type:Plain=300,Size:70-75|Type:LDP=350,Size:80-90|Type:Plain=350,Size:80-90|Type:LDP=400",
@@ -173,7 +173,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Socks",
     priceType: "fixed",
-    description: "Premium quality school socks.",
+    description: "Pack of 6 knee-high ribbed school socks knitted from a comfortable 80% cotton and 20% elastane blend. Reinforced heel and toe cushions prevent wear holes from school shoes, while elasticated turnover tops keep the socks securely in place all day.",
     wholesalePrice: 1680,
     oldPrice: null,
     variants: "Type:Pack=1680",
@@ -187,7 +187,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Ties",
     priceType: "fixed",
-    description: "Standard and small sizing school ties.",
+    description: "Smart woven uniform ties tailored from smooth matte polyester yarn. Stain-resistant finish with neat tipping and a durable inner interlining that preserves crisp knotting for daily school assembly standards.",
     wholesalePrice: 40,
     oldPrice: null,
     variants: "Type:Small=40,Type:Standard=60",
@@ -201,7 +201,7 @@ const RAW_PRODUCTS = [
   {
     name: "KMTC Cardigans",
     priceType: "fixed",
-    description: "Official KMTC uniform cardigans designed with specialized premium wool blends.",
+    description: "Official Kenya Medical Training College (KMTC) button-down cardigans crafted from a premium navy wool-blend yarn. Features deep front welt pockets, clear KMTC button fasteners, and reinforced cuffs designed for hospital ward shifts and clinical rounds.",
     wholesalePrice: 1500,
     oldPrice: null,
     variants: null,
@@ -215,7 +215,7 @@ const RAW_PRODUCTS = [
   {
     name: "KMTC Dresses",
     priceType: "fixed",
-    description: "Official KMTC uniform dresses tailored for ultimate comfort and professional clinical style.",
+    description: "Official KMTC nursing and clinical dresses tailored from easy-care teal poly-cotton poplin. Designed with a neat action-back pleat for easy arm movement during ward duties, side slit pockets, a notched collar, and durable front button fastenings.",
     wholesalePrice: 1500,
     oldPrice: null,
     variants: null,
@@ -229,7 +229,7 @@ const RAW_PRODUCTS = [
   {
     name: "KMTC Aprons",
     priceType: "fixed",
-    description: "Official KMTC medical aprons crafted with easy-wash durable fabric.",
+    description: "Protective medical aprons for KMTC students and hospital interns. Cut from splash-resistant heavyweight twill fabric with reinforced tie tapes, twin front utility pockets, and adjustable neck straps for full coverage during clinical practicals.",
     wholesalePrice: 500,
     oldPrice: null,
     variants: null,
@@ -243,7 +243,7 @@ const RAW_PRODUCTS = [
   {
     name: "KMTC Labcoat",
     priceType: "fixed",
-    description: "White laboratory coats for KMTC students, clinicians, and medical school professionals.",
+    description: "Classic white laboratory coat for KMTC students, doctors, and lab technicians. Tailored from 200 GSM high-grade poly-cotton twill with a side-access slit, three deep patch pockets, a notched lapel, and concealed press-stud closures.",
     wholesalePrice: 800,
     oldPrice: null,
     variants: null,
@@ -257,7 +257,7 @@ const RAW_PRODUCTS = [
   {
     name: "Chef Trousers",
     priceType: "fixed",
-    description: "Professional checkered or plain chef trousers designed with moisture-wicking technology.",
+    description: "Professional kitchen trousers crafted from 65/35 poly-cotton twill with a stain-release finish. Styled with a soft elasticated waistband and internal drawstring for all-day kitchen comfort, side slant pockets, and a rear wallet pocket. Plain black or traditional houndstooth check.",
     wholesalePrice: 1000,
     oldPrice: null,
     variants: null,
@@ -271,7 +271,7 @@ const RAW_PRODUCTS = [
   {
     name: "Chef Jackets",
     priceType: "fixed",
-    description: "Double-breasted professional chef jackets styled with heat resistance and high durability.",
+    description: "Double-breasted professional executive chef jackets tailored from 220 GSM drill cotton blend. Heat-resistant cloth-covered buttons, a thermometer sleeve pocket, ventilated underarm eyelets, and a mandarin collar provide utility and heat relief.",
     wholesalePrice: 800,
     oldPrice: null,
     variants: null,
@@ -285,7 +285,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Blazers",
     priceType: "fixed",
-    description: "Premium structured school uniform blazers featuring double fusion reinforcement.",
+    description: "Structured school blazers constructed with a durable poly-viscose outer shell, smooth inner satin lining, and double-fused chest canvas for a sharp silhouette. Features gold or silver emblem button options, three patch pockets, and an inside wallet pocket.",
     wholesalePrice: 2500,
     oldPrice: null,
     variants: null,
@@ -299,7 +299,7 @@ const RAW_PRODUCTS = [
   {
     name: "Sleepover Wear",
     priceType: "fixed",
-    description: "Comfortable school sleepover, flannel and boarding gear crafted with ultra-soft fibers.",
+    description: "Cozy 100% brushed cotton flannel pajamas and boarding school lounge sets. Breathable, warm, and gentle on the skin with an elastic drawstring waist and double-stitched seams for durable nightwear.",
     wholesalePrice: 1000,
     oldPrice: null,
     variants: null,
@@ -313,7 +313,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Scarfs",
     priceType: "fixed",
-    description: "Knitted winter school scarfs using heavy gauges for extra cozy insulation.",
+    description: "Heavy-knit acrylic school scarves crafted with a soft rib weave in rich institutional colors. Provides thermal protection during cold mornings while remaining light, non-itchy, and easy to wash.",
     wholesalePrice: 300,
     oldPrice: null,
     variants: null,
@@ -327,7 +327,7 @@ const RAW_PRODUCTS = [
   {
     name: "School Muffins",
     priceType: "fixed",
-    description: "Warm school uniform headwear / winter muffins.",
+    description: "Warm knitted winter beanie caps / muffins for school students. Made from stretchable soft acrylic yarn with a turned-up cuff that provides double coverage over the ears on cold morning trips.",
     wholesalePrice: 300,
     oldPrice: null,
     variants: null,

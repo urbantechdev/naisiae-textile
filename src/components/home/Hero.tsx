@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ChevronRight, Scissors, RefreshCw, Package } from 'lucide-react';
+import { Search, ChevronRight, Scissors, RefreshCw, Package, Wind, Sparkles, Feather } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useLocalization } from '../../context/LocalizationContext';
@@ -101,11 +101,20 @@ export function Hero({
   return (
     <>
       <section id="hero" className="relative min-h-[35vh] lg:h-[70vh] lg:min-h-[525px] flex items-center justify-center overflow-hidden bg-[#0E121C] py-4 lg:py-0">
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         
         {/* Subtle bottom shadow overlay to transition into sections below */}
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0E121C] to-transparent z-10"></div>
- 
+
+        {/* Simple Soft Ambient Glow */}
+        <div className="absolute inset-0 z-[5] overflow-hidden opacity-20 pointer-events-none">
+          <motion.div 
+            animate={{ opacity: [0.15, 0.35, 0.15] }}
+            transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-[#C8102E]/20 to-[#C8961A]/20 blur-[120px] rounded-full"
+          />
+        </div>
+
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={currentSlide}
@@ -239,17 +248,17 @@ export function Hero({
       <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-10 sm:pt-14 pb-8 lg:py-0 gap-4 lg:gap-10">
         <div className="max-w-xl lg:max-w-[750px] w-full flex flex-col gap-4 lg:gap-8 order-1 lg:order-1">
 
-          <div className="hidden lg:flex min-h-[140px] sm:min-h-[180px] lg:min-h-[220px] flex-col justify-center">
+          <div className="hidden lg:flex min-h-[160px] sm:min-h-[200px] lg:min-h-[240px] flex-col justify-center">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentSlide}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-4 lg:space-y-8"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="space-y-4 lg:space-y-6"
               >
-                <div className="space-y-4 lg:space-y-8">
+                <div className="space-y-4 lg:space-y-6 relative z-10">
                     <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -281,7 +290,7 @@ export function Hero({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-white/70 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
+                    className="text-white/80 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
                   >
                     {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Uhuru Market Uniforms: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
@@ -290,25 +299,20 @@ export function Hero({
             </AnimatePresence>
           </div>
 
-
-
-
-
           <div className="hidden lg:flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
             <Link
               to="/product"
-              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#C8102E] text-white rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(200,16,46,0.2)] flex items-center justify-center lg:min-w-[220px]"
+              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:opacity-90 active:scale-95 shadow-lg flex items-center justify-center lg:min-w-[220px]"
             >
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
               <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
-                Shop <ChevronRight size={18} className="hidden sm:block group-hover:translate-x-2 transition-transform" />
+                Shop <ChevronRight size={18} className="hidden sm:block group-hover:translate-x-1 transition-transform" />
               </span>
             </Link>
             <button
               onClick={() => setIsCatalogueModalOpen(true)}
-              className="flex-1 lg:flex-none group px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-2xl border border-white/10 text-white rounded-xl sm:rounded-2xl transition-all duration-500 hover:bg-white hover:text-[#0A1628] shadow-2xl flex items-center justify-center lg:min-w-[220px]"
+              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:bg-white hover:text-[#0A1628] shadow-md flex items-center justify-center lg:min-w-[220px]"
             >
-              <span className="text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
+              <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
                 Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform" />
               </span>
             </button>

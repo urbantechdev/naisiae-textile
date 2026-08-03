@@ -489,7 +489,7 @@ export default function AdminDashboard() {
           favicon: '',
           siteTagline: 'Naisiae Textiles',
           sharingTitle: 'Uhuru Market Uniforms',
-          sharingDescription: 'Modern, High-Quality Uniforms & Apparel for Kenya\'s Leading Institutions.',
+          sharingDescription: 'Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.',
           sharingImage: 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg',
           enableComparison: true,
           enableReviews: true
@@ -740,6 +740,14 @@ export default function AdminDashboard() {
         age_group = 'kids';
       }
 
+      // Determine gender
+      let gender = 'unisex';
+      if (nameLower.includes('women') || nameLower.includes('ladies') || nameLower.includes('girls') || nameLower.includes('skirt')) {
+        gender = 'female';
+      } else if (nameLower.includes('men') || nameLower.includes('boys') || nameLower.includes('trousers')) {
+        gender = 'male';
+      }
+
       // Determine size / color defaults
       let color = 'Assorted';
       let size = 'Standard';
@@ -784,27 +792,29 @@ export default function AdminDashboard() {
       // Ensure description is rich, compliant and contains NO forbidden marketing slogans (sale, discount, promo, buy now)
       let googleDesc = (p.description || '').replace(/(buy now|best price|free shipping|sale|promo|discount|special offer|whatsapp us|call now|\+254)/gi, '').trim();
       if (googleDesc.split(/\s+/).length < 5) {
-        googleDesc = `${p.name} - high-quality institutional grade bespoke apparel. This premium garment features durable combed textile fibers, reinforced stitching, and anti-pilling materials engineered specifically for daily wear and outstanding durability. Certified school and corporate wear standard.`;
+        googleDesc = `${p.name} - tailored institutional apparel cut from high-grade poly-cotton twill with double-needle reinforced seams, bar-tacked stress points, and color-fast dyes. Machine washable and built for long-term daily school and corporate wear.`;
       }
 
       const base_link = window.location.origin.includes('localhost') || window.location.origin.includes('run.app')
         ? window.location.origin
         : 'https://naisiaetextiles.com';
 
+      const productId = (p.id || `naisiae_${p.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`).substring(0, 50);
+
       return {
-        'id': p.id || `naisiae_${p.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`,
-        'title': p.name.length > 10 ? p.name : `Naisiae ${p.name}`,
-        'description': googleDesc.substring(0, 4999),
+        'id': productId,
+        'title': p.name.length > 5 ? p.name.substring(0, 150) : `Naisiae ${p.name}`.substring(0, 150),
+        'description': googleDesc.substring(0, 4900),
         'link': `${base_link}/products/?product=${encodeURIComponent(p.id || p.name)}`,
         'image_link': image_link,
-        'availability': (p.active && p.stock !== 0) ? 'in stock' : 'out of stock',
+        'availability': (p.active !== false && p.stock !== 0) ? 'in_stock' : 'out_of_stock',
         'price': `${p.price || 1200} KES`,
         'condition': 'new',
-        'brand': 'Naisiae',
+        'brand': 'Naisiae Textiles',
         'google_product_category': google_category,
         'identifier_exists': 'no',
-        'mpn': `NAI-${(p.id || p.name).toUpperCase().replace(/[^A-Z0-9]/g, '-')}`,
-        'gender': 'unisex',
+        'mpn': `NAI-${(p.id || p.name).toUpperCase().replace(/[^A-Z0-9]/g, '-')}`.substring(0, 70),
+        'gender': gender,
         'age_group': age_group,
         'color': color,
         'size': size,
@@ -6699,7 +6709,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
     favicon: '',
     siteTagline: 'Naisiae Textiles',
     sharingTitle: 'Uhuru Market Uniforms',
-    sharingDescription: '',
+    sharingDescription: 'Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.',
     sharingImage: 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg',
     heroImages: [
       { url: DEFAULT_HERO_IMAGE, title: 'QUALITY SCHOOL UNIFORMS', subtitle: 'QUALITY THAT LASTS ALL YEAR', link: '/category/uniforms' }

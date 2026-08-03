@@ -59,8 +59,8 @@ function DynamicSEOEngine() {
       const countrySuffix = currentCountry.code === 'KE' ? '' : ` in ${currentCountry.name}`;
       const countryDescriptionSuffix = currentCountry.code === 'KE' ? '' : ` in ${currentCountry.name}`;
       
-      let title = `Uhuru Market Uniforms${countrySuffix}`;
-      let description = `Official Uhuru Market Uniforms. School uniforms, corporate wear, and industrial branding${countryDescriptionSuffix}.`;
+      let title = "Uhuru Market Uniforms";
+      let description = `Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.`;
 
       // Adapt description based on country to maximize regional textile SEO searches
       if (currentCountry.code === 'TZ') {
@@ -74,55 +74,38 @@ function DynamicSEOEngine() {
       }
 
       if (path.includes('/products') || path.includes('/product')) {
-        title = `Uhuru Market Uniforms | Our Uniform Products${countrySuffix}`;
         description = `Browse our full catalog of custom-tailored garments${countryDescriptionSuffix}. High-quality school uniforms, corporate wear, and specialized protective gear.`;
       } else if (path.includes('/categories')) {
-        title = `Uhuru Market Uniforms | Uniform Categories & Options${countrySuffix}`;
         description = `Explore our uniform manufacturing categories${countryDescriptionSuffix} including Education, Hospitality, Medical, Security, and Corporate branding.`;
       } else if (path.includes('/services')) {
-        title = `Uhuru Market Uniforms | Bulk Manufacturing & Branding Services${countrySuffix}`;
         description = `From heavy-duty industrial stitching to custom embroidery and screen printing${countryDescriptionSuffix}. Discover our mass-scale production.`;
       } else if (path.includes('/portfolio')) {
-        title = `Uhuru Market Uniforms | Our Work & Delivered Projects${countrySuffix}`;
         description = `See examples of bulk uniform orders we have successfully delivered across East Africa${countryDescriptionSuffix}. Inspect our design quality.`;
       } else if (path.includes('/contact')) {
-        title = `Uhuru Market Uniforms | Contact Us & Visit Workshop${countrySuffix}`;
         description = `Get a custom apparel supply quote. Contact our local support at ${currentCountry.phone} or visit our localized service center${countryDescriptionSuffix}.`;
       } else if (path.includes('/about')) {
-        title = `Uhuru Market Uniforms | Our Story & Manufacturing Heritage${countrySuffix}`;
         description = `Learn about Uhuru Market Uniforms' premium uniform craftsmanship, raw material grading & regional community-driven production${countryDescriptionSuffix}.`;
       } else if (path.includes('/wholesale')) {
-        title = `Uhuru Market Uniforms | Institutional Bulk Orders & Wholesale Request${countrySuffix}`;
         description = `Request contract pricing on high-volume uniform supply for schools, hospitals, security agencies, and hospitality brands${countryDescriptionSuffix}.`;
       } else if (path.includes('/checkout')) {
-        title = `Uhuru Market Uniforms | Review Bulk Sourcing & Checkout${countrySuffix}`;
         description = `Verify your wholesale inquiries, customizable branding preferences, and secure client profile syncing${countryDescriptionSuffix}.`;
       } else if (path.includes('/privacy') || path.includes('/policy')) {
-        title = `Uhuru Market Uniforms | Privacy Policy${countrySuffix}`;
         description = `We safeguard our clients' organizational and personal details under local data protection regulations${countryDescriptionSuffix}.`;
       } else if (path.includes('/terms')) {
-        title = `Uhuru Market Uniforms | Terms of Service & Manufacturing Contracts${countrySuffix}`;
         description = `Understand bulk order production terms, factory SLA timelines, and contract invoicing procedures${countryDescriptionSuffix}.`;
       } else if (path.includes('/shipping')) {
-        title = `Uhuru Market Uniforms | Shipping, Nationwide Logistics & Pickup${countrySuffix}`;
         description = `Find shipping estimates, prompt direct courier networks, and convenient localized delivery across ${currentCountry.name}.`;
       } else if (path.includes('/returns')) {
-        title = `Uhuru Market Uniforms | Returns Policy & Quality Guarantee${countrySuffix}`;
         description = `Read our terms for size corrections, fitting alterations, and manufacturing defect policies${countryDescriptionSuffix}.`;
       } else if (path.includes('/blog')) {
-        title = `Uhuru Market Uniforms | Industry Guides & Sourcing Logbook${countrySuffix}`;
         description = `Expert advice and detailed logbooks on uniform fabrics, embroidery quality parameters, and factory procurement${countryDescriptionSuffix}.`;
       } else if (path.includes('/faq')) {
-        title = `Uhuru Market Uniforms | Frequently Asked Questions${countrySuffix}`;
         description = `Read answers about minimum order quantities (MOQs), fabric choices, corporate customization, and regional supply queries${countryDescriptionSuffix}.`;
       } else if (path.includes('/careers')) {
-        title = `Uhuru Market Uniforms | Careers & Tailoring Opportunities${countrySuffix}`;
         description = `Join our production team. Inspect open sewing, embroidery machine operations, and quality inspection roles${countryDescriptionSuffix}.`;
       } else if (path.includes('/fabric-gallery') || path.includes('/textiles')) {
-        title = `Uhuru Market Uniforms | Interactive Textile & Fabric Gallery${countrySuffix}`;
         description = `Browse and filter our quality school uniform and corporate apparel textile samples${countryDescriptionSuffix}. Inspect material specs.`;
       } else if (path.includes('/uniform-simulator')) {
-        title = `Uhuru Market Uniforms | Interactive 3D School Uniform Simulator${countrySuffix}`;
         description = `Configure sweaters, shirts, blazers, and ties in standard institutional colorways${countryDescriptionSuffix}. Preview custom combinations.`;
       }
 
