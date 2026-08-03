@@ -538,7 +538,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white font-sans text-[#0A1628]">
       {/* Screen Reader and Crawler SEO Identifier */}
-      <h1 className="sr-only">Uhuru Market Uniforms | Naisiae Textiles</h1>
+      <h1 className="sr-only">Uhuru Market Uniforms</h1>
       {/* Top Promotion Bar & Navbar */}
       <Navbar 
         wishlistCount={wishlist.length}
