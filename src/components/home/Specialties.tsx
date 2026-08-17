@@ -25,14 +25,14 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         <div className="flex justify-between items-end mb-6 sm:mb-12">
           <div>
-            <div className="flex items-center gap-3 text-[#C8102E] text-[10px] font-black tracking-[4px] uppercase mb-2 sm:mb-4">
-              <div className="w-8 h-[2px] bg-[#C8102E]"></div> Direct-from-Factory
+            <div className="flex items-center gap-3 text-[#08047D] text-[10px] font-black tracking-[4px] uppercase mb-2 sm:mb-4">
+              <div className="w-8 h-[2px] bg-[#08047D]"></div> Direct-from-Factory
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-[#0A1628] leading-none">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display text-[#08047D] leading-none">
               Shop by Category
             </h2>
           </div>
-          <Link to="/products" className="hidden sm:flex text-sm font-bold text-[#0A1628] hover:text-[#C8102E] transition-colors items-center gap-2">
+          <Link to="/products" className="hidden sm:flex text-sm font-bold text-[#08047D] hover:text-[#08047D] transition-colors items-center gap-2">
             Explore All Departments <ChevronRight size={14} />
           </Link>
         </div>
@@ -79,7 +79,7 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
                   {/* Bubble Container */}
                   <div className="relative group/bubble">
                     {/* Ring background gradient effect */}
-                    <div className="absolute -inset-0.5 bg-gradient-to-tr from-[#C8961A] to-[#C8102E] rounded-full blur-[2px] opacity-75 group-hover/bubble:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute -inset-0.5 bg-gradient-to-tr from-[#FA9411] to-[#08047D] rounded-full blur-[2px] opacity-75 group-hover/bubble:opacity-100 transition-opacity duration-300"></div>
                     
                     {/* Inner Circle Image/Fallbacks */}
                     <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white border border-white flex items-center justify-center p-0.5 shadow-md">
@@ -98,7 +98,7 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
 
                     {/* App-like Crown badge for top picks */}
                     {idx === 0 && (
-                      <span className="absolute -top-1 -right-1 bg-[#C8961A] text-white text-[7px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-sm animate-bounce">
+                      <span className="absolute -top-1 -right-1 bg-[#FA9411] text-white text-[7px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white shadow-sm animate-bounce">
                         🔥
                       </span>
                     )}
@@ -163,17 +163,17 @@ export function Specialties({ categories, setActiveTab }: SpecialtiesProps) {
                     <div className="w-full h-full bg-slate-100 flex items-center justify-center"><Package size={40} className="text-slate-200" /></div>
                   )}
                   {/* Premium overlay gradients */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A1628]/95 via-[#0A1628]/40 to-transparent transition-opacity duration-300 group-hover:via-[#0A1628]/50"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#08047D]/95 via-[#08047D]/40 to-transparent transition-opacity duration-300 group-hover:via-[#08047D]/50"></div>
                 </div>
 
                 {/* Tag item count badge */}
                 <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-black tracking-wider text-slate-800 uppercase shadow-sm flex items-center gap-1.5 border border-white/20">
-                  <Tag size={10} className="text-[#C8102E]" />
+                  <Tag size={10} className="text-[#08047D]" />
                   {getProductCount(cat.title)}
                 </div>
 
                 <div className="absolute bottom-8 left-8 right-8">
-                  {cat.subtitle && <p className="text-[10px] text-[#C8961A] font-black uppercase tracking-[2px] mb-1.5">{cat.subtitle}</p>}
+                  {cat.subtitle && <p className="text-[10px] text-[#FA9411] font-black uppercase tracking-[2px] mb-1.5">{cat.subtitle}</p>}
                   <h3 className="text-2xl font-bold text-white mb-4 leading-tight group-hover:text-amber-100 transition-colors">{cat.title}</h3>
                   <div className="flex items-center gap-2 text-white/70 text-[10px] font-black uppercase tracking-widest group-hover:text-white transition-colors">
                     Shop Department <ArrowRight size={12} className="group-hover:translate-x-1.5 transition-transform duration-300" />

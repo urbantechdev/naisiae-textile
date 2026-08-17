@@ -72,7 +72,7 @@ export default function PortfolioPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#0A1628]">
+    <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#08047D]">
       <Navbar 
         wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
@@ -84,8 +84,8 @@ export default function PortfolioPage() {
 
       <section className="py-32 px-6">
         <div className="max-w-[1440px] mx-auto text-center mb-24">
-            <h1 className="font-display text-8xl md:text-[10rem] text-[#0A1628] leading-[0.8] tracking-tighter mb-12 uppercase italic">
-                Our <span className="text-white/0 stroke-text font-black" style={{ WebkitTextStroke: '2px #0A1628' }}>Legacy</span>
+            <h1 className="font-display text-8xl md:text-[10rem] text-[#08047D] leading-[0.8] tracking-tighter mb-12 uppercase italic">
+                Our <span className="text-white/0 stroke-text font-black" style={{ WebkitTextStroke: '2px #08047D' }}>Legacy</span>
             </h1>
             <p className="text-slate-400 max-w-2xl mx-auto text-sm uppercase font-black tracking-[5px]">
                 Proven scale, quality, and commitment to excellence across Kenya.
@@ -110,19 +110,19 @@ export default function PortfolioPage() {
                             className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-[1.05]" 
                             placeholderColor="bg-slate-200"
                         />
-                        <div className="absolute inset-0 bg-[#0A1628]/10 group-hover:bg-transparent transition-colors"></div>
+                        <div className="absolute inset-0 bg-[#08047D]/10 group-hover:bg-transparent transition-colors"></div>
                         <div className="absolute top-8 left-8">
-                            <span className="px-4 py-1.5 bg-white text-[#0A1628] text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                            <span className="px-4 py-1.5 bg-white text-[#08047D] text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg">
                                 {project.tag}
                             </span>
                         </div>
                     </div>
                     <div className="flex justify-between items-start">
                         <div>
-                            <h3 className="text-3xl font-display uppercase tracking-widest text-[#0A1628] mb-4">{project.title}</h3>
+                            <h3 className="text-3xl font-display uppercase tracking-widest text-[#08047D] mb-4">{project.title}</h3>
                             <p className="text-slate-500 text-sm leading-relaxed max-w-xs">{project.description}</p>
                         </div>
-                        <div className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center text-slate-300 group-hover:text-[#C8102E] group-hover:border-[#C8102E] transition-all cursor-pointer">
+                        <div className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center text-slate-300 group-hover:text-[#08047D] group-hover:border-[#08047D] transition-all cursor-pointer">
                             <ExternalLink size={20} />
                         </div>
                     </div>
@@ -131,12 +131,12 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      <section className="py-32 px-6 bg-[#0A1628] text-white">
+      <section className="py-32 px-6 bg-[#08047D] text-white">
          <div className="max-w-[1440px] mx-auto text-center">
-            <h2 className="font-display text-5xl md:text-7xl tracking-tighter mb-12 italic">Join the Leading <span className="text-[#C8961A]">Institutions</span></h2>
+            <h2 className="font-display text-5xl md:text-7xl tracking-tighter mb-12 italic">Join the Leading <span className="text-[#FA9411]">Institutions</span></h2>
             <button 
               onClick={() => setIsQuoteModalOpen(true)}
-              className="px-16 py-6 bg-[#C8961A] text-white rounded-full font-black text-[12px] uppercase tracking-[4px] hover:bg-white hover:text-[#0A1628] transition-all"
+              className="px-16 py-6 bg-[#FA9411] text-white rounded-full font-black text-[12px] uppercase tracking-[4px] hover:bg-white hover:text-[#08047D] transition-all"
             >
                 Start Your Partnership
             </button>
@@ -154,7 +154,7 @@ export default function PortfolioPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedProject(null)}
-              className="absolute inset-0 bg-[#0A1628]/95 backdrop-blur-xl"
+              className="absolute inset-0 bg-[#08047D]/95 backdrop-blur-xl"
             ></motion.div>
             
             <motion.div 
@@ -180,14 +180,14 @@ export default function PortfolioPage() {
               </div>
 
               <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-center overflow-y-auto">
-                <span className="text-[10px] font-black uppercase text-[#C8961A] tracking-[4px] mb-4">
+                <span className="text-[10px] font-black uppercase text-[#FA9411] tracking-[4px] mb-4">
                   {selectedProject.tag} Project
                 </span>
-                <h2 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-8 uppercase italic">
+                <h2 className="font-display text-4xl lg:text-6xl text-[#08047D] leading-[0.9] mb-8 uppercase italic">
                   {selectedProject.title}
                 </h2>
                 
-                <div className="h-0.5 w-12 bg-[#0A1628] mb-8"></div>
+                <div className="h-0.5 w-12 bg-[#08047D] mb-8"></div>
                 
                 <p className="text-slate-500 text-base lg:text-lg leading-relaxed font-light mb-10 italic">
                   {selectedProject.description || "A comprehensive custom textile solution developed with precision and care, ensuring institutional legacy through superior craftsmanship."}
@@ -195,29 +195,29 @@ export default function PortfolioPage() {
 
                 <div className="grid grid-cols-2 gap-6 mb-10">
                   <div className="space-y-4">
-                    <h3 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Specifications</h3>
+                    <h3 className="text-[10px] font-black uppercase text-[#08047D] tracking-widest">Specifications</h3>
                     <div className="space-y-2">
-                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#08047D] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> Double-knit weave
                        </div>
-                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#08047D] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> High-tensile thread
                        </div>
-                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#08047D] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> Institutional Grade
                        </div>
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-[10px] font-black uppercase text-[#C8102E] tracking-widest">Impact</h3>
+                    <h3 className="text-[10px] font-black uppercase text-[#08047D] tracking-widest">Impact</h3>
                     <div className="space-y-2">
-                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#08047D] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> 500+ Students clad
                        </div>
-                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#08047D] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> 3 Year Lifecycle
                        </div>
-                       <div className="text-[11px] font-bold text-[#0A1628] flex items-center gap-2">
+                       <div className="text-[11px] font-bold text-[#08047D] flex items-center gap-2">
                          <div className="w-1 h-1 rounded-full bg-slate-300"></div> Brand Perfection
                        </div>
                     </div>
@@ -227,11 +227,11 @@ export default function PortfolioPage() {
                 <div className="space-y-4 border-t border-slate-100 pt-8">
                   <div className="flex items-center gap-4 py-3 border-b border-slate-100/50">
                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest w-24">Deliverable</span>
-                    <span className="text-xs font-bold text-[#0A1628]">Custom Textile Design & Bulk Production</span>
+                    <span className="text-xs font-bold text-[#08047D]">Custom Textile Design & Bulk Production</span>
                   </div>
                   <div className="flex items-center gap-4 py-3 border-b border-slate-100/50">
                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest w-24">Partner</span>
-                    <span className="text-xs font-bold text-[#0A1628]">{selectedProject.title}</span>
+                    <span className="text-xs font-bold text-[#08047D]">{selectedProject.title}</span>
                   </div>
                 </div>
 
@@ -240,7 +240,7 @@ export default function PortfolioPage() {
                     setSelectedProject(null);
                     setIsQuoteModalOpen(true);
                   }}
-                  className="mt-12 w-full py-5 bg-[#0A1628] text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-[#C8102E] transition-all shadow-xl active:scale-95"
+                  className="mt-12 w-full py-5 bg-[#08047D] text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-[#08047D] transition-all shadow-xl active:scale-95"
                 >
                   Inquire For Your Project
                 </button>

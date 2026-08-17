@@ -127,7 +127,7 @@ export default function FAQPage() {
   const filteredFaqs = activeTab === 'All' ? faqs : faqs.filter(f => f.category === activeTab);
 
   return (
-    <div id="faq-root-container" className="min-h-screen bg-[#0E121C] text-white flex flex-col font-sans">
+    <div id="faq-root-container" className="min-h-screen bg-[#04023D] text-white flex flex-col font-sans">
       <Navbar 
         wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
@@ -138,14 +138,14 @@ export default function FAQPage() {
       <Breadcrumb />
 
       {/* Hero Header */}
-      <section className="relative overflow-hidden pt-36 pb-20 bg-gradient-to-b from-[#162032] to-[#0E121C] border-b border-white/5">
-        <div className="absolute inset-0 bg-[#0E121C]/40 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(199,16,46,0.15),transparent_80%)]"></div>
+      <section className="relative overflow-hidden pt-36 pb-20 bg-gradient-to-b from-[#162032] to-[#04023D] border-b border-white/5">
+        <div className="absolute inset-0 bg-[#04023D]/40 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(199,16,46,0.15),transparent_80%)]"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <span className="text-[#C8961A] text-xs font-black uppercase tracking-[4px] bg-[#C8961A]/10 px-4 py-1.5 rounded-full inline-block mb-4 border border-[#C8961A]/20">
+          <span className="text-[#FA9411] text-xs font-black uppercase tracking-[4px] bg-[#FA9411]/10 px-4 py-1.5 rounded-full inline-block mb-4 border border-[#FA9411]/20">
             Institutional Support
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-7xl uppercase font-display font-black tracking-tighter text-white mb-6">
-            FAQ <span className="font-sans text-[#C8102E] font-medium tracking-normal lowercase italic">& support</span>
+            FAQ <span className="font-sans text-[#08047D] font-medium tracking-normal lowercase italic">& support</span>
           </h1>
           <p className="max-w-2xl mx-auto text-white/70 text-base md:text-lg font-light leading-relaxed">
             Detailed answers and production insights regarding custom bulk uniform manufacturing, fabric grading standards, and wholesale order placement.
@@ -163,7 +163,7 @@ export default function FAQPage() {
               onClick={() => setActiveTab(cat)}
               className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest border transition-all duration-300 ${
                 activeTab === cat
-                  ? 'bg-[#C8102E] text-white border-[#C8102E] shadow-[0_10px_25px_rgba(200,16,46,0.3)] scale-105'
+                  ? 'bg-[#08047D] text-white border-[#08047D] shadow-[0_10px_25px_rgba(200,16,46,0.3)] scale-105'
                   : 'bg-white/5 text-white/60 border-white/5 hover:text-white hover:bg-white/10'
               }`}
             >
@@ -186,7 +186,7 @@ export default function FAQPage() {
                   exit={{ opacity: 0, y: -10 }}
                   className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
                     isOpen 
-                      ? 'border-[#C8961A]/50 bg-white/[0.03] shadow-[0_15px_30px_rgba(0,0,0,0.3)]' 
+                      ? 'border-[#FA9411]/50 bg-white/[0.03] shadow-[0_15px_30px_rgba(0,0,0,0.3)]' 
                       : 'border-white/5 bg-white/[0.01] hover:border-white/10 hover:bg-white/[0.02]'
                   }`}
                 >
@@ -195,14 +195,14 @@ export default function FAQPage() {
                     className="w-full px-6 py-6 md:py-8 flex items-center justify-between text-left gap-4"
                   >
                     <div className="flex items-center gap-4">
-                      <HelpCircle className={`shrink-0 transition-colors duration-300 ${isOpen ? 'text-[#C8961A]' : 'text-white/30'}`} size={22} />
-                      <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-white group-hover:text-[#C8961A] transition-colors">
+                      <HelpCircle className={`shrink-0 transition-colors duration-300 ${isOpen ? 'text-[#FA9411]' : 'text-white/30'}`} size={22} />
+                      <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-white group-hover:text-[#FA9411] transition-colors">
                         {faq.question}
                       </h3>
                     </div>
                     <ChevronDown 
                       size={20} 
-                      className={`text-white/40 shrink-0 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[#C8961A]' : ''}`} 
+                      className={`text-white/40 shrink-0 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[#FA9411]' : ''}`} 
                     />
                   </button>
 
@@ -217,7 +217,7 @@ export default function FAQPage() {
                       >
                         <div className="px-6 pb-8 md:px-14 text-white/70 text-sm md:text-base font-light leading-relaxed border-t border-white/5 pt-4">
                           <p className="mb-4">{faq.answer}</p>
-                          <span className="text-[10px] uppercase tracking-widest font-mono text-[#C8961A]">
+                          <span className="text-[10px] uppercase tracking-widest font-mono text-[#FA9411]">
                             Category: {faq.category}
                           </span>
                         </div>
@@ -239,7 +239,7 @@ export default function FAQPage() {
           <div className="flex flex-wrap items-center gap-4 shrink-0 w-full md:w-auto">
             <Link 
               to="/contact" 
-              className="flex-1 md:flex-none text-center px-6 py-4 bg-white text-[#0E121C] text-xs font-black uppercase tracking-wider rounded-xl hover:bg-[#C8961A] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+              className="flex-1 md:flex-none text-center px-6 py-4 bg-white text-[#04023D] text-xs font-black uppercase tracking-wider rounded-xl hover:bg-[#FA9411] hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
             >
               Contact Support <ArrowRight size={14} />
             </Link>

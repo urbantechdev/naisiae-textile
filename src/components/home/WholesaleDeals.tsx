@@ -105,7 +105,7 @@ export function WholesaleDeals({
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8">
         
         {/* Dynamic Countdown Sales Header Banner */}
-        <div className="mb-10 bg-gradient-to-r from-[#0A1628] via-[#C8102E] to-[#C8961A] rounded-3xl p-6 sm:p-10 text-white flex flex-col lg:flex-row justify-between items-center gap-6 shadow-[0_20px_50px_rgba(200,16,46,0.15)] relative overflow-hidden">
+        <div className="mb-10 bg-gradient-to-r from-[#08047D] via-[#08047D] to-[#FA9411] rounded-3xl p-6 sm:p-10 text-white flex flex-col lg:flex-row justify-between items-center gap-6 shadow-[0_20px_50px_rgba(200,16,46,0.15)] relative overflow-hidden">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
           
           <div className="relative z-10 text-center lg:text-left">
@@ -128,21 +128,21 @@ export function WholesaleDeals({
             
             <div className="flex items-center gap-2">
               <div className="flex flex-col items-center">
-                <span className="bg-[#0A1628]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#C8961A]">
+                <span className="bg-[#08047D]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#FA9411]">
                   {String(timeLeft.hours).padStart(2, '0')}
                 </span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-white/70 mt-1">Hours</span>
               </div>
               <span className="text-lg font-black text-amber-300 animate-pulse">:</span>
               <div className="flex flex-col items-center">
-                <span className="bg-[#0A1628]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#C8961A]">
+                <span className="bg-[#08047D]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#FA9411]">
                   {String(timeLeft.minutes).padStart(2, '0')}
                 </span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-white/70 mt-1">Mins</span>
               </div>
               <span className="text-lg font-black text-amber-300 animate-pulse">:</span>
               <div className="flex flex-col items-center">
-                <span className="bg-[#0A1628]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#C8961A]">
+                <span className="bg-[#08047D]/90 font-mono font-black text-lg sm:text-xl px-3 py-1.5 rounded-lg border border-white/10 tracking-widest text-[#FA9411]">
                   {String(timeLeft.seconds).padStart(2, '0')}
                 </span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-white/70 mt-1">Secs</span>
@@ -191,9 +191,9 @@ export function WholesaleDeals({
                             referrerPolicy="no-referrer" 
                           />
                         ) : (
-                          <Package size={40} className="text-[#C8961A]/20" />
+                          <Package size={40} className="text-[#FA9411]/20" />
                         )}
-                        <span className="absolute top-2 left-2 bg-[#C8102E] text-white text-[7px] sm:text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase shadow-sm flex items-center gap-1">
+                        <span className="absolute top-2 left-2 bg-[#08047D] text-white text-[7px] sm:text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase shadow-sm flex items-center gap-1">
                           <Flame size={10} className="text-amber-200 fill-current" /> Save Big
                         </span>
                       </div>
@@ -216,14 +216,14 @@ export function WholesaleDeals({
                               onProductTap?.();
                               setSelectedQuickViewProduct(product);
                             }}
-                            className="font-extrabold text-[12px] sm:text-[13px] mb-1 leading-tight line-clamp-2 text-[#0E121C] group-hover:text-[#C8102E] transition-colors cursor-pointer"
+                            className="font-extrabold text-[12px] sm:text-[13px] mb-1 leading-tight line-clamp-2 text-[#04023D] group-hover:text-[#08047D] transition-colors cursor-pointer"
                           >
                             {product.name}
                           </h3>
                           
                           {/* Price Display */}
                           <div className="flex items-baseline gap-1.5 mt-1">
-                            <span className="text-xs sm:text-sm font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                            <span className="text-xs sm:text-sm font-black text-[#08047D]">{formatPrice(product.price)}</span>
                             <span className="text-[9px] text-slate-400 line-through font-bold">{formatPrice(Math.round(product.price * 1.35))}</span>
                           </div>
 
@@ -231,10 +231,10 @@ export function WholesaleDeals({
                           <div className="mt-2 pt-2 border-t border-slate-50">
                             <div className="flex justify-between items-center mb-1 text-[8px] font-extrabold text-slate-400 uppercase">
                               <span>Stock claimed</span>
-                              <span className="text-[#C8961A] font-black">{claimPercent}%</span>
+                              <span className="text-[#FA9411] font-black">{claimPercent}%</span>
                             </div>
                             <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-[#C8102E] to-[#C8961A]" style={{ width: `${claimPercent}%` }}></div>
+                              <div className="h-full bg-gradient-to-r from-[#08047D] to-[#FA9411]" style={{ width: `${claimPercent}%` }}></div>
                             </div>
                           </div>
                         </div>
@@ -250,7 +250,7 @@ export function WholesaleDeals({
                           </button>
                           <button 
                             onClick={(e) => handleQuickAddToCart(e, product)}
-                            className="flex-1 h-8 sm:h-9 bg-[#0E121C] hover:bg-[#C8102E] text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-sm"
+                            className="flex-1 h-8 sm:h-9 bg-[#04023D] hover:bg-[#08047D] text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-sm"
                             title="Add to Cart"
                           >
                             <ShoppingCart size={15} />
@@ -272,21 +272,21 @@ export function WholesaleDeals({
                               referrerPolicy="no-referrer" 
                             />
                           ) : (
-                            <Package size={50} className="text-[#C8961A]/20" />
+                            <Package size={50} className="text-[#FA9411]/20" />
                           )}
-                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10 flex items-center gap-1">
+                          <span className="absolute top-3 left-3 bg-gradient-to-r from-[#08047D] to-[#FA9411] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10 flex items-center gap-1">
                             <Flame size={11} className="text-amber-200 fill-current" /> Hot Deal
                           </span>
                         </div>
                         <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
                           <div>
-                            <div className="text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-                            <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
+                            <div className="text-[9px] text-[#FA9411] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                            <h3 className="font-extrabold text-[#04023D] text-sm leading-snug line-clamp-2">{product.name}</h3>
                           </div>
                           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Flash Price</span>
                             <div className="flex flex-col items-end">
-                              <span className="text-base font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                              <span className="text-base font-black text-[#08047D]">{formatPrice(product.price)}</span>
                               <span className="text-[10px] text-slate-400 line-through font-bold">{formatPrice(Math.round(product.price * 1.35))}</span>
                             </div>
                           </div>
@@ -304,7 +304,7 @@ export function WholesaleDeals({
                         </button>
 
                         <div className="pr-6">
-                          <span className="inline-block bg-[#C8102E]/5 border border-[#C8102E]/10 text-[#C8102E] text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Bulk Flash Deal Specs</span>
+                          <span className="inline-block bg-[#08047D]/5 border border-[#08047D]/10 text-[#08047D] text-[8px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider mb-3">Bulk Flash Deal Specs</span>
                           
                           <div className="space-y-3.5 mt-2">
                             <div>
@@ -317,11 +317,11 @@ export function WholesaleDeals({
                             <div className="grid grid-cols-2 gap-2 pt-1">
                               <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
                                 <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
-                                <span className="font-extrabold text-[#0E121C] text-[11px]">10 Units</span>
+                                <span className="font-extrabold text-[#04023D] text-[11px]">10 Units</span>
                               </div>
                               <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
                                 <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Fabric Standard</span>
-                                <span className="font-extrabold text-[#C8961A] text-[11px]">Heavy Gabardine</span>
+                                <span className="font-extrabold text-[#FA9411] text-[11px]">Heavy Gabardine</span>
                               </div>
                             </div>
 
@@ -330,7 +330,7 @@ export function WholesaleDeals({
                                 <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Fabric Properties</h4>
                                 <div className="flex flex-wrap gap-1.5">
                                   {product.tags.map((t: string, idx: number) => (
-                                    <span key={idx} className="bg-slate-100 border border-slate-200 text-[#C8102E] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
+                                    <span key={idx} className="bg-slate-100 border border-slate-200 text-[#08047D] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
                                       #{t}
                                     </span>
                                   ))}
@@ -346,7 +346,7 @@ export function WholesaleDeals({
                               handleQuickAddToCart(e, product);
                               setExpandedProductId(null);
                             }}
-                            className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95"
+                            className="w-full bg-gradient-to-r from-[#08047D] to-[#FA9411] hover:opacity-95 text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95"
                           >
                             <ShoppingCart size={13} />
                             Add Bulk Bundle to Cart 🛒
@@ -383,7 +383,7 @@ export function WholesaleDeals({
            {wholesaleProducts.length > 6 && (
               <button 
                onClick={() => setShowAllWholesale(!showAllWholesale)}
-               className="px-10 py-4 bg-white border border-slate-200 hover:border-[#C8102E] text-slate-800 hover:text-white hover:bg-[#C8102E] rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
+               className="px-10 py-4 bg-white border border-slate-200 hover:border-[#08047D] text-slate-800 hover:text-white hover:bg-[#08047D] rounded-xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center gap-3 group shadow-sm"
               >
                 {showAllWholesale ? 'Show Less' : 'View More Deals'} 
                 <Plus size={14} className={`transition-transform duration-500 ${showAllWholesale ? 'rotate-45' : ''}`} />

@@ -110,7 +110,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-40 text-slate-400 gap-4">
-        <Loader2 className="animate-spin text-[#C8961A]" size={32} />
+        <Loader2 className="animate-spin text-[#FA9411]" size={32} />
         <p className="text-[10px] font-black uppercase tracking-[4px]">Initializing Live Support Workspace...</p>
       </div>
     );
@@ -134,7 +134,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
       }`}>
         <div className="p-4 md:p-8 border-b border-slate-200 shrink-0">
           <div className="flex items-center justify-between mb-4 md:mb-6">
-            <h3 className="text-lg md:text-xl font-display text-[#0A1628]">Support Queue</h3>
+            <h3 className="text-lg md:text-xl font-display text-[#08047D]">Support Queue</h3>
             <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 text-green-600 rounded-lg">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
               <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">Live</span>
@@ -147,7 +147,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
               placeholder="Filter sessions..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white border border-slate-200 rounded-xl md:rounded-2xl pl-12 pr-4 py-2.5 md:py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none transition-all"
+              className="w-full bg-white border border-slate-200 rounded-xl md:rounded-2xl pl-12 pr-4 py-2.5 md:py-3.5 text-xs font-bold focus:border-[#FA9411] outline-none transition-all"
             />
           </div>
         </div>
@@ -165,16 +165,16 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                 onClick={() => setSelectedChatId(chat.id)}
                 className={`w-full text-left p-4 md:p-5 rounded-2xl md:rounded-[28px] transition-all group relative ${
                   selectedChatId === chat.id 
-                    ? 'bg-[#0A1628] text-white shadow-xl' 
-                    : 'bg-white hover:bg-slate-50 text-[#0A1628] border border-slate-100'
+                    ? 'bg-[#08047D] text-white shadow-xl' 
+                    : 'bg-white hover:bg-slate-50 text-[#08047D] border border-slate-100'
                 }`}
               >
                 <div className="flex items-start justify-between mb-1.5">
                   <div className="flex items-center gap-3">
                     <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center ${
-                      selectedChatId === chat.id ? 'bg-[#C8961A]/20' : 'bg-[#F1F5F9]'
+                      selectedChatId === chat.id ? 'bg-[#FA9411]/20' : 'bg-[#F1F5F9]'
                     }`}>
-                      <User size={16} className={selectedChatId === chat.id ? 'text-[#C8961A]' : 'text-slate-400'} />
+                      <User size={16} className={selectedChatId === chat.id ? 'text-[#FA9411]' : 'text-slate-400'} />
                     </div>
                     <div>
                       <h4 className="text-[10px] md:text-[11px] font-black uppercase tracking-widest">{chat.id.replace('user_', 'ID-')}</h4>
@@ -187,7 +187,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                     </div>
                   </div>
                   {chat.status === 'active' && (
-                    <div className="w-2 h-2 rounded-full bg-[#C8102E] shadow-[0_0_10px_rgba(200,16,46,0.5)] animate-pulse"></div>
+                    <div className="w-2 h-2 rounded-full bg-[#08047D] shadow-[0_0_10px_rgba(200,16,46,0.5)] animate-pulse"></div>
                   )}
                 </div>
                 <p className={`text-[10px] md:text-[11px] line-clamp-1 opacity-60 ${selectedChatId === chat.id ? 'text-white' : 'text-slate-500'}`}>
@@ -216,19 +216,19 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                   <ArrowLeft size={18} />
                 </button>
 
-                <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#0A1628] flex items-center justify-center text-[#C8961A] shrink-0">
+                <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#08047D] flex items-center justify-center text-[#FA9411] shrink-0">
                   <Headset size={20} className="md:hidden" />
                   <Headset size={28} className="hidden md:block" />
                 </div>
                 <div>
-                  <h4 className="text-base md:text-2xl font-display text-[#0A1628] tracking-tight truncate max-w-[180px] md:max-w-none">
+                  <h4 className="text-base md:text-2xl font-display text-[#08047D] tracking-tight truncate max-w-[180px] md:max-w-none">
                     Support Session
                   </h4>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="px-1.5 py-0.5 bg-slate-100 rounded-md text-[8px] font-bold uppercase tracking-wider text-slate-500 border border-slate-200 truncate max-w-[120px]">
                       {selectedChatId.replace('user_', 'ID-')}
                     </span>
-                    <span className="hidden sm:inline-flex text-[9px] font-bold text-[#C8961A]/80 items-center gap-1">
+                    <span className="hidden sm:inline-flex text-[9px] font-bold text-[#FA9411]/80 items-center gap-1">
                       <ShieldCheck size={10} /> Secure Live Link
                     </span>
                   </div>
@@ -263,8 +263,8 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                       </div>
                       <div className={`px-4 py-3 md:p-5 rounded-2xl md:rounded-[32px] text-xs md:text-sm leading-relaxed shadow-sm ${
                         msg.sender === 'admin' 
-                          ? 'bg-[#0A1628] text-white rounded-tr-none' 
-                          : 'bg-white text-[#0A1628] border border-[#E2E8F0]/60 rounded-tl-none'
+                          ? 'bg-[#08047D] text-white rounded-tr-none' 
+                          : 'bg-white text-[#08047D] border border-[#E2E8F0]/60 rounded-tl-none'
                       }`}>
                         {msg.text}
                       </div>
@@ -283,7 +283,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                   onChange={(e) => setReply(e.target.value)}
                   placeholder="Direct reply to client session..."
                   rows={2}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-4 md:px-6 py-2.5 text-xs md:text-sm font-medium focus:border-[#C8961A] outline-none transition-all resize-none shadow-inner bg-slate-50/60"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl px-4 md:px-6 py-2.5 text-xs md:text-sm font-medium focus:border-[#FA9411] outline-none transition-all resize-none shadow-inner bg-slate-50/60"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -294,7 +294,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                 <button 
                   type="submit"
                   disabled={!reply.trim() || isSending}
-                  className="flex items-center justify-center w-10 h-10 md:w-14 md:h-12 bg-[#0A1628] hover:bg-[#C8961A] text-white rounded-xl md:rounded-2xl transition-all shadow-md active:scale-95 disabled:opacity-30 shrink-0"
+                  className="flex items-center justify-center w-10 h-10 md:w-14 md:h-12 bg-[#08047D] hover:bg-[#FA9411] text-white rounded-xl md:rounded-2xl transition-all shadow-md active:scale-95 disabled:opacity-30 shrink-0"
                 >
                   {isSending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                 </button>
@@ -306,7 +306,7 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Delivery Verified</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Zap size={12} className="text-[#C8961A]" />
+                    <Zap size={12} className="text-[#FA9411]" />
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Syncing Real-time</span>
                   </div>
                 </div>
@@ -317,31 +317,31 @@ export default function ChatWorkspace({ setToast, handleFirestoreError, defaultS
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 md:p-20 gap-6 md:gap-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-[#C8961A]/5 blur-3xl rounded-full"></div>
-              <div className="w-24 h-24 md:w-32 md:h-32 bg-[#0A1628] rounded-[36px] md:rounded-[48px] flex items-center justify-center text-[#C8961A] relative z-10 shadow-2xl">
+              <div className="absolute inset-0 bg-[#FA9411]/5 blur-3xl rounded-full"></div>
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-[#08047D] rounded-[36px] md:rounded-[48px] flex items-center justify-center text-[#FA9411] relative z-10 shadow-2xl">
                  <Headset size={44} className="md:hidden" />
                  <Headset size={64} className="hidden md:block" />
               </div>
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="absolute -inset-6 md:-inset-10 border border-dashed border-[#C8961A]/10 rounded-full"
+                className="absolute -inset-6 md:-inset-10 border border-dashed border-[#FA9411]/10 rounded-full"
               />
             </div>
             <div className="max-w-md space-y-3">
-              <h4 className="text-xl md:text-3xl font-display text-[#0A1628]">Support Command Center</h4>
+              <h4 className="text-xl md:text-3xl font-display text-[#08047D]">Support Command Center</h4>
               <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
                 Connect with clients in real-time. Manage manufacturing enquiries, direct textile sourcing, and logistics support from a single expansive interface.
               </p>
             </div>
             <div className="flex items-center gap-8 md:gap-10">
                <div className="text-center">
-                 <div className="text-xl md:text-2xl font-display text-[#C8961A]">{chats.filter(c => c.status === 'active').length}</div>
+                 <div className="text-xl md:text-2xl font-display text-[#FA9411]">{chats.filter(c => c.status === 'active').length}</div>
                  <div className="text-[9px] font-black uppercase tracking-widest text-slate-300 mt-1">Pending</div>
                </div>
                <div className="w-[1px] h-8 md:h-10 bg-slate-100"></div>
                <div className="text-center">
-                 <div className="text-xl md:text-2xl font-display text-[#0A1628]">{chats.length}</div>
+                 <div className="text-xl md:text-2xl font-display text-[#08047D]">{chats.length}</div>
                  <div className="text-[9px] font-black uppercase tracking-widest text-slate-300 mt-1">Total History</div>
                </div>
             </div>

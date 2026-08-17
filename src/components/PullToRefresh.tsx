@@ -113,19 +113,19 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
           opacity: pullDistance > 15 ? 1 : 0
         }}
       >
-        <div className="bg-[#0E121C] border border-white/10 shadow-[0_12px_24px_rgba(0,0,0,0.5)] p-2.5 rounded-full flex items-center justify-center w-11 h-11">
+        <div className="bg-[#04023D] border border-white/10 shadow-[0_12px_24px_rgba(0,0,0,0.5)] p-2.5 rounded-full flex items-center justify-center w-11 h-11">
           {isRefreshing ? (
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-              className="text-[#C8961A]"
+              className="text-[#FA9411]"
             >
               <RefreshCw size={18} />
             </motion.div>
           ) : (
             <div 
               style={{ transform: `rotate(${rotation}deg)` }}
-              className={`transition-colors ${progressPercent >= 100 ? 'text-[#C8102E]' : 'text-[#C8961A]'}`}
+              className={`transition-colors ${progressPercent >= 100 ? 'text-[#08047D]' : 'text-[#FA9411]'}`}
             >
               <RefreshCw size={18} style={{ opacity: Math.max(0.3, progressPercent / 100) }} />
             </div>

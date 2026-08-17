@@ -12,7 +12,7 @@ function SortableItem({ id, children }: { id: string, children: React.ReactNode 
   const style = { transform: CSS.Transform.toString(transform), transition };
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm relative group mb-3">
-      <div {...attributes} {...listeners} className="cursor-grab hover:text-[#C8102E] text-slate-300">
+      <div {...attributes} {...listeners} className="cursor-grab hover:text-[#08047D] text-slate-300">
         <GripVertical size={20} />
       </div>
       <div className="flex-1 overflow-hidden">
@@ -112,12 +112,12 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
       <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
         <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between">
           <div>
-            <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Content Management</h3>
+            <h3 className="text-2xl font-display text-[#08047D] tracking-wide">Content Management</h3>
             <p className="text-xs text-slate-500 mt-1">Manage Categories, Services and Portfolio items</p>
           </div>
           <button 
             onClick={() => setEditingItem({ title: '' })}
-            className="bg-[#0A1628] hover:bg-[#1C3560] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold text-sm transition-colors"
+            className="bg-[#08047D] hover:bg-[#050259] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold text-sm transition-colors"
           >
             <Plus size={16} /> Add New Item
           </button>
@@ -128,7 +128,7 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
             <button
               key={tab}
               onClick={() => { setActiveTab(tab); setEditingItem(null); }}
-              className={`px-8 py-4 font-bold text-sm tracking-wider uppercase whitespace-nowrap transition-colors border-b-2 ${activeTab === tab ? 'border-[#C8102E] text-[#C8102E]' : 'border-transparent text-slate-500 hover:text-[#0A1628]'}`}
+              className={`px-8 py-4 font-bold text-sm tracking-wider uppercase whitespace-nowrap transition-colors border-b-2 ${activeTab === tab ? 'border-[#08047D] text-[#08047D]' : 'border-transparent text-slate-500 hover:text-[#08047D]'}`}
             >
               {tab}
             </button>
@@ -154,7 +154,7 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
                              <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center"><Package size={20} className="text-slate-300"/></div>
                            )}
                            <div className="flex-1">
-                             <h4 className="font-bold text-[#0A1628] text-sm truncate">{item.title}</h4>
+                             <h4 className="font-bold text-[#08047D] text-sm truncate">{item.title}</h4>
                              {item.description && <p className="text-[10px] text-slate-500 truncate mt-1">{item.description}</p>}
                            </div>
                            <div className="flex gap-2">
@@ -177,18 +177,18 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
                <div className="space-y-4">
                   <div>
                     <label className="text-xs font-bold text-slate-500 uppercase">Title</label>
-                    <input type="text" value={editingItem.title || ''} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#C8102E]" />
+                    <input type="text" value={editingItem.title || ''} onChange={e => setEditingItem({...editingItem, title: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#08047D]" />
                   </div>
 
                   {activeTab === 'categories' && (
                     <>
                       <div>
                         <label className="text-xs font-bold text-slate-500 uppercase">Subtitle</label>
-                        <input type="text" value={editingItem.subtitle || ''} onChange={e => setEditingItem({...editingItem, subtitle: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#C8102E]" />
+                        <input type="text" value={editingItem.subtitle || ''} onChange={e => setEditingItem({...editingItem, subtitle: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#08047D]" />
                       </div>
                       <div>
                         <label className="text-xs font-bold text-slate-500 uppercase">Redirect Link</label>
-                        <input type="text" value={editingItem.link || ''} onChange={e => setEditingItem({...editingItem, link: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#C8102E]" placeholder="/?tab=Category#shop" />
+                        <input type="text" value={editingItem.link || ''} onChange={e => setEditingItem({...editingItem, link: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#08047D]" placeholder="/?tab=Category#shop" />
                       </div>
                     </>
                   )}
@@ -196,19 +196,19 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
                   {activeTab === 'portfolio' && (
                      <div>
                         <label className="text-xs font-bold text-slate-500 uppercase">Tag (e.g. Education)</label>
-                        <input type="text" value={editingItem.tag || ''} onChange={e => setEditingItem({...editingItem, tag: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#C8102E]" />
+                        <input type="text" value={editingItem.tag || ''} onChange={e => setEditingItem({...editingItem, tag: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#08047D]" />
                      </div>
                   )}
 
                   <div>
                      <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
-                     <textarea rows={3} value={editingItem.description || ''} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#C8102E]" />
+                     <textarea rows={3} value={editingItem.description || ''} onChange={e => setEditingItem({...editingItem, description: e.target.value})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#08047D]" />
                   </div>
 
                   {activeTab === 'services' && (
                      <div>
                        <label className="text-xs font-bold text-slate-500 uppercase">Features (Comma separated)</label>
-                       <textarea rows={2} value={editingItem.features?.join(', ') || ''} onChange={e => setEditingItem({...editingItem, features: e.target.value.split(',').map((s: string) => s.trim())})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#C8102E]" placeholder="Feature 1, Feature 2" />
+                       <textarea rows={2} value={editingItem.features?.join(', ') || ''} onChange={e => setEditingItem({...editingItem, features: e.target.value.split(',').map((s: string) => s.trim())})} className="w-full mt-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#08047D]" placeholder="Feature 1, Feature 2" />
                      </div>
                   )}
 
@@ -231,8 +231,8 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
                </div>
 
                <div className="mt-8 flex gap-3">
-                  <button onClick={handleSave} className="flex-1 bg-[#1C3560] text-white py-3 rounded-lg font-bold text-sm hover:bg-[#0A1628] transition-colors">Save Item</button>
-                  <button onClick={() => setEditingItem(null)} className="w-[30%] bg-white border border-slate-200 text-[#1C3560] py-3 rounded-lg font-bold text-sm hover:bg-slate-50">Cancel</button>
+                  <button onClick={handleSave} className="flex-1 bg-[#050259] text-white py-3 rounded-lg font-bold text-sm hover:bg-[#08047D] transition-colors">Save Item</button>
+                  <button onClick={() => setEditingItem(null)} className="w-[30%] bg-white border border-slate-200 text-[#050259] py-3 rounded-lg font-bold text-sm hover:bg-slate-50">Cancel</button>
                </div>
             </div>
           )}
@@ -243,7 +243,7 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
         <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden relative shadow-2xl">
             <div className="p-8 border-b border-slate-100">
-              <h3 className="text-2xl font-display font-bold text-[#0A1628]">Import Image</h3>
+              <h3 className="text-2xl font-display font-bold text-[#08047D]">Import Image</h3>
               <p className="text-sm text-slate-500 mt-2">Paste a website or image URL. The platform will automatically extract the image.</p>
             </div>
             <div className="p-8">
@@ -254,7 +254,7 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
                   value={urlInput}
                   onChange={e => setUrlInput(e.target.value)}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-4 text-sm font-bold text-[#0A1628] focus:border-[#C8961A] outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-4 text-sm font-bold text-[#08047D] focus:border-[#FA9411] outline-none"
                   autoFocus
                 />
               </div>
@@ -268,7 +268,7 @@ export function ContentManager({ categories, services, portfolio, setToast, hand
               </button>
               <button 
                 onClick={resolveImageUrl}
-                className="flex-1 px-4 py-3 bg-[#0A1628] text-white rounded-xl font-bold flex flex-col items-center justify-center hover:bg-[#1C3560]"
+                className="flex-1 px-4 py-3 bg-[#08047D] text-white rounded-xl font-bold flex flex-col items-center justify-center hover:bg-[#050259]"
               >
                 Import Image
               </button>

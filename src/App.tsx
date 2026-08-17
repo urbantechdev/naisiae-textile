@@ -246,6 +246,7 @@ function DynamicSEOEngine() {
           "addressCountry": currentCountry.code
         },
         "priceRange": "$$",
+        "hasMap": "https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv",
         "geo": {
           "@type": "GeoCoordinates",
           "latitude": currentCountry.latitude,
@@ -271,9 +272,10 @@ function DynamicSEOEngine() {
       const organizationSchema = {
         "@context": "https://schema.org",
         "@type": "ClothingStore",
-        "name": "Uhuru Market Uniforms",
+        "name": "UHURU MARKET UNIFORMS",
         "url": "https://naisiaetextiles.com/",
         "logo": "https://naisiaetextiles.com/logo.png",
+        "hasMap": "https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Uhuru Market, Jogoo Road",
@@ -281,6 +283,7 @@ function DynamicSEOEngine() {
           "addressCountry": "KE"
         },
         "sameAs": [
+          "https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv",
           "https://www.facebook.com/naisiaetextiles",
           "https://www.instagram.com/nice_naadokila"
         ]
@@ -400,9 +403,9 @@ function ReviewRedirect() {
     window.location.replace("https://g.page/r/CZb3o2nm3vRgEBM/review");
   }, []);
   return (
-    <div className="min-h-screen bg-[#0E121C] flex flex-col items-center justify-center text-white p-6 font-sans">
+    <div className="min-h-screen bg-[#04023D] flex flex-col items-center justify-center text-white p-6 font-sans">
       <div className="text-center max-w-sm space-y-4">
-        <div className="w-16 h-16 rounded-full bg-[#C8961A]/10 border border-[#C8961A]/30 flex items-center justify-center text-[#C8961A] mx-auto animate-spin">
+        <div className="w-16 h-16 rounded-full bg-[#FA9411]/10 border border-[#FA9411]/30 flex items-center justify-center text-[#FA9411] mx-auto animate-spin">
           <span className="text-2xl">⭐</span>
         </div>
         <h2 className="text-xl font-black uppercase tracking-wider">Redirecting to Google Reviews...</h2>

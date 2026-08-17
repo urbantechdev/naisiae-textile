@@ -101,7 +101,7 @@ export default function WholesalePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0A1628]">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#08047D]">
       <Navbar 
         wishlistCount={wishlist.length}
         setIsWishlistOpen={setIsWishlistOpen}
@@ -112,7 +112,7 @@ export default function WholesalePage() {
       <Breadcrumb />
 
       {/* Hero Section */}
-      <section className="relative py-24 bg-[#0A1628] overflow-hidden">
+      <section className="relative py-24 bg-[#08047D] text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
         </div>
@@ -121,7 +121,7 @@ export default function WholesalePage() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#C8961A]/10 border border-[#C8961A]/20 rounded-full text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-8"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#FA9411]/10 border border-[#FA9411]/20 rounded-full text-[#FA9411] text-[10px] font-black tracking-[4px] uppercase mb-8"
             >
               <Zap size={14} /> Bulk & Institution Solutions
             </motion.div>
@@ -131,7 +131,7 @@ export default function WholesalePage() {
               transition={{ delay: 0.1 }}
               className="font-display text-6xl md:text-8xl text-white tracking-[2px] leading-[0.9] mb-6"
             >
-              Wholesale <span className="text-[#C8961A]">Catalogue</span>
+              Wholesale <span className="text-[#FA9411]">Catalogue</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -157,8 +157,8 @@ export default function WholesalePage() {
                   onClick={() => setActiveCategory(cat)}
                   className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all ${
                     activeCategory === cat 
-                    ? 'bg-[#0A1628] text-white shadow-xl shadow-[#0A1628]/20' 
-                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-[#0A1628]'
+                    ? 'bg-[#08047D] text-white shadow-xl shadow-[#08047D]/20' 
+                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-[#08047D]'
                   }`}
                 >
                   {cat}
@@ -167,13 +167,13 @@ export default function WholesalePage() {
             </div>
             
             <div className="w-full lg:w-96 relative group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#C8102E] transition-colors" size={20} />
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#08047D] transition-colors" size={20} />
               <input 
                 type="text" 
                 placeholder="Search catalog..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-16 bg-slate-50 border-none rounded-[20px] pl-16 pr-8 text-sm outline-none ring-2 ring-transparent focus:ring-[#C8102E]/10 transition-all font-medium"
+                className="w-full h-16 bg-slate-50 border-none rounded-[20px] pl-16 pr-8 text-sm outline-none ring-2 ring-transparent focus:ring-[#08047D]/10 transition-all font-medium"
               />
             </div>
           </div>
@@ -214,21 +214,21 @@ export default function WholesalePage() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-[#C8961A]/10 text-[#C8961A] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+            <div className="w-16 h-16 bg-[#FA9411]/10 text-[#FA9411] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
               <Package size={32} />
             </div>
             <h4 className="font-display text-3xl tracking-wide">Bulk Production</h4>
             <p className="text-slate-400 text-sm leading-relaxed">State-of-the-art facilities capable of delivering 10,000+ units per month with consistent quality.</p>
           </div>
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-[#1C3560]/10 text-[#1C3560] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+            <div className="w-16 h-16 bg-[#050259]/10 text-[#050259] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle2 size={32} />
             </div>
             <h4 className="font-display text-3xl tracking-wide">ISO Quality Control</h4>
             <p className="text-slate-400 text-sm leading-relaxed">Every garment undergoes a 5-step inspection process to ensure durable stitching and accurate branding.</p>
           </div>
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-[#C8102E]/10 text-[#C8102E] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+            <div className="w-16 h-16 bg-[#08047D]/10 text-[#08047D] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
               <Zap size={32} />
             </div>
             <h4 className="font-display text-3xl tracking-wide">Fast Turnaround</h4>
@@ -247,7 +247,7 @@ export default function WholesalePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedProduct(null)}
-              className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
+              className="absolute inset-0 bg-[#08047D]/80 backdrop-blur-md"
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
@@ -258,7 +258,7 @@ export default function WholesalePage() {
             >
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-9 h-9 sm:w-10 sm:h-10 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-md border border-slate-100 hover:scale-105 active:scale-95 cursor-pointer"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-9 h-9 sm:w-10 sm:h-10 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center text-slate-800 hover:text-[#08047D] transition-all shadow-md border border-slate-100 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -276,7 +276,7 @@ export default function WholesalePage() {
               <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-hidden flex-1">
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-                  <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#0A1628] leading-[1.1] mb-3">
+                  <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#08047D] leading-[1.1] mb-3">
                     {selectedProduct.name}
                   </h2>
                   
@@ -287,26 +287,26 @@ export default function WholesalePage() {
                   {selectedProduct.priceType === 'wholesale' && (
                     <div className="space-y-4 mb-8 p-4 sm:p-6 bg-orange-50/40 rounded-2xl border border-orange-100/40">
                       <div className="space-y-1.5">
-                        <label className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider ml-1">Inquiry Quantity</label>
+                        <label className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider ml-1">Inquiry Quantity</label>
                         <div className="relative">
                           <input 
                             type="number" 
                             min="1"
                             value={inquiryQty}
                             onChange={(e) => setInquiryQty(parseInt(e.target.value) || 1)}
-                            className="w-full bg-white border border-orange-200 rounded-xl px-4 py-3 text-xs sm:text-sm font-black outline-none focus:border-[#C8102E] transition-all"
+                            className="w-full bg-white border border-orange-200 rounded-xl px-4 py-3 text-xs sm:text-sm font-black outline-none focus:border-[#08047D] transition-all"
                           />
                           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-orange-300 uppercase tracking-widest">PCS</span>
                         </div>
                       </div>
                       
                       <div className="space-y-1.5">
-                        <label className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider ml-1">Customization / Branding Details</label>
+                        <label className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider ml-1">Customization / Branding Details</label>
                         <textarea 
                           placeholder="Please specify size range, logo placement (embroidery/print), or specific fabric requirements..."
                           value={customizationDetails}
                           onChange={(e) => setCustomizationDetails(e.target.value)}
-                          className="w-full bg-white border border-orange-200 rounded-xl px-4 py-3 text-[11px] font-medium outline-none focus:border-[#C8102E] transition-all min-h-[100px] resize-none"
+                          className="w-full bg-white border border-orange-200 rounded-xl px-4 py-3 text-[11px] font-medium outline-none focus:border-[#08047D] transition-all min-h-[100px] resize-none"
                         ></textarea>
                       </div>
                     </div>
@@ -315,11 +315,11 @@ export default function WholesalePage() {
                   <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-100">
                     <div>
                       <h4 className="text-[9px] font-black uppercase text-slate-400 tracking-[2px] mb-1">Material Grade</h4>
-                      <p className="text-[11px] sm:text-xs font-bold text-[#0A1628]">Institutional Heavy Duty</p>
+                      <p className="text-[11px] sm:text-xs font-bold text-[#08047D]">Institutional Heavy Duty</p>
                     </div>
                     <div>
                       <h4 className="text-[9px] font-black uppercase text-slate-400 tracking-[2px] mb-1">Min. Bulk order</h4>
-                      <p className="text-[11px] sm:text-xs font-bold text-[#0A1628]">50 Units (Varies)</p>
+                      <p className="text-[11px] sm:text-xs font-bold text-[#08047D]">50 Units (Varies)</p>
                     </div>
                   </div>
                 </div>
@@ -351,7 +351,7 @@ export default function WholesalePage() {
                         setInquiryQty(50);
                         setCustomizationDetails('');
                       }}
-                      className="w-10 h-10 sm:w-11 sm:h-11 bg-[#0A1628] hover:bg-[#C8102E] text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer"
+                      className="w-10 h-10 sm:w-11 sm:h-11 bg-[#08047D] hover:bg-[#08047D] text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer"
                       title="Add to Inquiry / Cart"
                     >
                       <ShoppingBag size={16} />
@@ -419,17 +419,17 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
               <Package size={48} className="text-slate-200" />
             )}
             
-            <div className="absolute inset-0 bg-[#0A1628]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[18px] md:rounded-[24px]" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute inset-0 bg-[#08047D]/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 rounded-[18px] md:rounded-[24px]" onClick={(e) => e.stopPropagation()}>
               <button 
                 onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                className="w-12 h-12 rounded-2xl bg-white text-[#0A1628] flex items-center justify-center hover:bg-[#C8102E] hover:text-white transition-all shadow-xl hover:-translate-y-1"
+                className="w-12 h-12 rounded-2xl bg-white text-[#08047D] flex items-center justify-center hover:bg-[#08047D] hover:text-white transition-all shadow-xl hover:-translate-y-1"
               >
                 <Plus size={20} />
               </button>
               <button 
                 onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl hover:-translate-y-1 ${
-                  isWishlisted ? 'bg-[#C8102E] text-white' : 'bg-white text-slate-400 hover:text-red-500'
+                  isWishlisted ? 'bg-[#08047D] text-white' : 'bg-white text-slate-400 hover:text-red-500'
                 }`}
               >
                 <Heart size={20} className={isWishlisted ? "fill-current" : ""} />
@@ -437,7 +437,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
             </div>
 
             {product.badge && (
-              <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-[#C8102E] text-white text-[7px] md:text-[8px] font-black px-1.5 py-0.5 md:px-3 md:py-1 rounded-full tracking-[1.5px] md:tracking-[2px] uppercase shadow-lg">
+              <span className="absolute top-2 left-2 md:top-4 md:left-4 bg-[#08047D] text-white text-[7px] md:text-[8px] font-black px-1.5 py-0.5 md:px-3 md:py-1 rounded-full tracking-[1.5px] md:tracking-[2px] uppercase shadow-lg">
                 {product.badge}
               </span>
             )}
@@ -446,17 +446,17 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
           <div className="pl-3 md:px-2 flex flex-col justify-between flex-1 min-w-0 cursor-pointer" onClick={handleClick}>
             <div>
               <div className="flex items-center gap-2 mb-1 md:mb-2">
-                <span className="text-[8px] md:text-[9px] font-black text-[#C8961A] uppercase tracking-[1.5px] md:tracking-[3px]">{product.category}</span>
+                <span className="text-[8px] md:text-[9px] font-black text-[#FA9411] uppercase tracking-[1.5px] md:tracking-[3px]">{product.category}</span>
                 <div className="h-[1px] flex-1 bg-slate-100 hidden md:block"></div>
                 <Package size={12} className="text-slate-300 hidden md:block" />
               </div>
-              <h3 className="font-display text-sm md:text-2xl text-[#0A1628] leading-tight mb-1 md:mb-2 group-hover:text-[#C8102E] transition-colors line-clamp-2 md:line-clamp-1">{product.name}</h3>
+              <h3 className="font-display text-sm md:text-2xl text-[#08047D] leading-tight mb-1 md:mb-2 group-hover:text-[#08047D] transition-colors line-clamp-2 md:line-clamp-1">{product.name}</h3>
               <p className="md:hidden text-[10.5px] text-slate-500 line-clamp-2 mt-1 mb-1 font-medium leading-relaxed">
                 {product.description || "Premium bespoke uniform textile engineered for superior lifespan under heavy-duty institutional service."}
               </p>
               
               {/* Interactive hint */}
-              <span className="text-[8px] md:text-[9px] text-[#C8961A]/75 font-bold mb-2 block leading-none antialiased">
+              <span className="text-[8px] md:text-[9px] text-[#FA9411]/75 font-bold mb-2 block leading-none antialiased">
                 ✨ Tap to inspect wholesale details
               </span>
             </div>
@@ -479,7 +479,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                 </a>
                 <a 
                   href="tel:+254792021795"
-                  className="flex-1 bg-[#C8102E] hover:bg-[#9E0D24] text-white py-1.5 md:py-2.5 rounded-lg md:rounded-xl font-black text-[8px] md:text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                  className="flex-1 bg-[#08047D] hover:bg-[#050259] text-white py-1.5 md:py-2.5 rounded-lg md:rounded-xl font-black text-[8px] md:text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 shadow-sm"
                 >
                   <Phone size={12} />
                   Call
@@ -500,15 +500,15 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                   className="w-full h-full object-cover rounded-xl" 
                 />
               ) : (
-                <Package size={50} className="text-[#C8961A]/20" />
+                <Package size={50} className="text-[#FA9411]/20" />
               )}
               {product.badge && (
-                <span className="absolute top-3 left-3 bg-[#C8102E] text-white text-[9.5px] font-black px-2.5 py-1 rounded-full tracking-widest uppercase shadow-md z-10">{product.badge}</span>
+                <span className="absolute top-3 left-3 bg-[#08047D] text-white text-[9.5px] font-black px-2.5 py-1 rounded-full tracking-widest uppercase shadow-md z-10">{product.badge}</span>
               )}
             </div>
             <div>
-              <div className="text-[10px] text-[#C8961A] font-black tracking-widest uppercase mb-1">{product.category}</div>
-              <h3 className="font-display text-2xl text-[#0A1628] leading-tight line-clamp-2">{product.name}</h3>
+              <div className="text-[10px] text-[#FA9411] font-black tracking-widest uppercase mb-1">{product.category}</div>
+              <h3 className="font-display text-2xl text-[#08047D] leading-tight line-clamp-2">{product.name}</h3>
             </div>
           </div>
 
@@ -517,7 +517,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
             {/* Close / Collapse button */}
             <button 
               onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
-              className="absolute right-0 top-0 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#C8102E] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
+              className="absolute right-0 top-0 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#08047D] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
               title="Close specification details"
             >
               <X size={15} />
@@ -539,11 +539,11 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
                     <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Minimum Order</span>
-                    <span className="font-extrabold text-[#0E121C] text-[11px]">50 Units</span>
+                    <span className="font-extrabold text-[#04023D] text-[11px]">50 Units</span>
                   </div>
                   <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
                     <span className="text-[8px] text-slate-400 font-extrabold block uppercase">Lead Time</span>
-                    <span className="font-extrabold text-[#C8961A] text-[11px]">7 - 14 Days</span>
+                    <span className="font-extrabold text-[#FA9411] text-[11px]">7 - 14 Days</span>
                   </div>
                 </div>
 
@@ -552,7 +552,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                     <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Fabric Properties</h4>
                     <div className="flex flex-wrap gap-1.5">
                       {product.tags.map((t: string, idx: number) => (
-                        <span key={idx} className="bg-slate-50 border border-slate-200 text-[#C8961A] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
+                        <span key={idx} className="bg-slate-50 border border-slate-200 text-[#FA9411] text-[9.5px] font-black px-2.5 py-1 rounded-lg">
                           #{t}
                         </span>
                       ))}
@@ -577,7 +577,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
                 <a 
                   href="tel:+254792021795"
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-[#C8102E] hover:bg-[#9E0D24] text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
+                  className="bg-[#08047D] hover:bg-[#050259] text-white py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 text-center"
                 >
                   <Phone size={13} />
                   Call Now
@@ -585,7 +585,7 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
               </div>
               <button 
                 onClick={(e) => { e.stopPropagation(); onPreview(); }}
-                className="w-full text-[#C8961A] hover:text-[#C8102E] text-[9px] font-black uppercase tracking-widest text-center mt-1 block"
+                className="w-full text-[#FA9411] hover:text-[#08047D] text-[9px] font-black uppercase tracking-widest text-center mt-1 block"
               >
                 🔍 Click to open detailed inquiry/quote builder
               </button>

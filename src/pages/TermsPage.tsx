@@ -42,12 +42,12 @@ export default function TermsPage() {
       />
       <div className="pt-20">
         <Breadcrumb />
-        <section className="py-24 px-6 bg-[#C8102E] text-white">
+        <section className="py-24 px-6 bg-[#08047D] text-white">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#C8102E] mx-auto mb-8"
+              className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#08047D] mx-auto mb-8"
             >
               <Scale size={40} />
             </motion.div>
@@ -60,8 +60,8 @@ export default function TermsPage() {
           <div className="max-w-3xl mx-auto prose prose-slate">
             <div className="space-y-12">
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 1. Acceptance of Terms
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 1. Acceptance of Terms
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   By accessing the Naisiae Textiles Limited website and placing an order, you agree to comply with and be bound by these terms. These terms govern all institutional sales, wholesale contracts, and individual purchases.
@@ -69,8 +69,8 @@ export default function TermsPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 2. Custom Manufacturing
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 2. Custom Manufacturing
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   For custom orders (Uniforms, Knitwear, Branding):
@@ -85,7 +85,7 @@ export default function TermsPage() {
 
               <div className="bg-slate-900 p-10 rounded-[32px] text-white">
                 <h2 className="text-2xl font-display tracking-[3px] mb-6 flex items-center gap-3">
-                  <Gavel size={24} className="text-[#C8961A]" /> Order Cancellation
+                  <Gavel size={24} className="text-[#FA9411]" /> Order Cancellation
                 </h2>
                 <p className="text-white/70 leading-relaxed text-sm font-medium">
                   Customized items cannot be cancelled once production has started. For stock items, cancellations must be made within 4 hours of order placement.
@@ -93,8 +93,8 @@ export default function TermsPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 3. Pricing & Payments
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 3. Pricing & Payments
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   All prices are in Kenyan Shillings (/-) and inclusive of relevant taxes unless stated otherwise for wholesale bulk exports. We currenty accept M-Pesa, Bank Transfers, and Major Credit Cards.
@@ -102,8 +102,8 @@ export default function TermsPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 4. Limitation of Liability
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 4. Limitation of Liability
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   Naisiae Textiles Limited shall not be liable for any indirect or consequential loss caused by delays in logistical transport partners. Our liability is limited to the value of the goods purchased.

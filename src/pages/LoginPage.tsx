@@ -139,10 +139,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A1628] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#08047D] flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden text-center">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-[#C8102E]/10 rounded-full blur-[120px]"></div>
-        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-[#C8961A]/10 rounded-full blur-[120px]"></div>
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-[#08047D]/10 rounded-full blur-[120px]"></div>
+        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-[#FA9411]/10 rounded-full blur-[120px]"></div>
       </div>
 
       <motion.div 
@@ -151,10 +151,10 @@ export default function LoginPage() {
         className="relative z-10 w-full max-w-md bg-[#152849]/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl"
       >
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-16 h-16 bg-[#C8102E] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[#C8102E]/20 rotate-3">
+          <div className="w-16 h-16 bg-[#08047D] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[#08047D]/20 rotate-3">
             <ShieldCheck size={32} className="text-white -rotate-3" />
           </div>
-          <h1 className="font-display text-3xl tracking-[3px] text-[#C8961A] mb-2 uppercase">Platform Secure Login</h1>
+          <h1 className="font-display text-3xl tracking-[3px] text-[#FA9411] mb-2 uppercase">Platform Secure Login</h1>
           <p className="text-gray-400 text-sm">Protected administrator management portal for Naisiae Textiles Limited</p>
         </div>
 
@@ -162,13 +162,13 @@ export default function LoginPage() {
         <div className="flex p-1 bg-black/20 rounded-xl mb-8">
           <button 
             onClick={() => setLoginMethod('google')}
-            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${loginMethod === 'google' ? 'bg-[#C8961A] text-[#0A1628]' : 'text-white/40 hover:text-white/60'}`}
+            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${loginMethod === 'google' ? 'bg-[#FA9411] text-[#08047D]' : 'text-white/40 hover:text-white/60'}`}
           >
             Google OAuth
           </button>
           <button 
             onClick={() => setLoginMethod('email')}
-            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${loginMethod === 'email' ? 'bg-[#C8961A] text-[#0A1628]' : 'text-white/40 hover:text-white/60'}`}
+            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${loginMethod === 'email' ? 'bg-[#FA9411] text-[#08047D]' : 'text-white/40 hover:text-white/60'}`}
           >
             Email & Pass
           </button>
@@ -193,10 +193,10 @@ export default function LoginPage() {
               <button 
                 disabled={loading}
                 onClick={handleGoogleLogin}
-                className="w-full h-14 bg-white hover:bg-gray-50 text-[#0A1628] font-bold rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] relative group overflow-hidden"
+                className="w-full h-14 bg-white hover:bg-gray-50 text-[#08047D] font-bold rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] relative group overflow-hidden"
               >
                 {loading ? (
-                  <div className="w-6 h-6 border-3 border-gray-100 border-t-[#0A1628] rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-3 border-gray-100 border-t-[#08047D] rounded-full animate-spin"></div>
                 ) : (
                   <>
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
@@ -218,13 +218,13 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-1">Administrator ID</label>
                 <div className="relative group">
-                  <UserIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#C8961A] transition-colors" />
+                  <UserIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#FA9411] transition-colors" />
                   <input 
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Enter your identifier..."
-                    className="w-full h-12 bg-black/20 border border-white/5 rounded-xl pl-12 pr-4 text-sm text-white outline-none focus:border-[#C8961A]/50 transition-all font-medium"
+                    className="w-full h-12 bg-black/20 border border-white/5 rounded-xl pl-12 pr-4 text-sm text-white outline-none focus:border-[#FA9411]/50 transition-all font-medium"
                     required
                   />
                 </div>
@@ -233,13 +233,13 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-1">Password</label>
                 <div className="relative group">
-                  <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#C8961A] transition-colors" />
+                  <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-[#FA9411] transition-colors" />
                   <input 
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full h-12 bg-black/20 border border-white/5 rounded-xl pl-12 pr-4 text-sm text-white outline-none focus:border-[#C8961A]/50 transition-all font-medium"
+                    className="w-full h-12 bg-black/20 border border-white/5 rounded-xl pl-12 pr-4 text-sm text-white outline-none focus:border-[#FA9411]/50 transition-all font-medium"
                     required
                   />
                 </div>
@@ -248,7 +248,7 @@ export default function LoginPage() {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-[#C8102E] hover:bg-[#A60D26] text-white font-black uppercase tracking-[2px] text-xs rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                className="w-full h-14 bg-[#08047D] hover:bg-[#050259] text-white font-black uppercase tracking-[2px] text-xs rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="w-6 h-6 border-3 border-red-200 border-t-white rounded-full animate-spin"></div>
@@ -268,7 +268,7 @@ export default function LoginPage() {
             By continuing, you agree to the Naisiae Textiles Limited <br /> data processing and security terms.
           </p>
           <div className="mt-4 text-center">
-            <Link to="/" className="text-[10px] text-[#C8961A] font-bold uppercase tracking-widest hover:text-white transition-colors">
+            <Link to="/" className="text-[10px] text-[#FA9411] font-bold uppercase tracking-widest hover:text-white transition-colors">
               ← Back to Uhuru Market Home
             </Link>
           </div>

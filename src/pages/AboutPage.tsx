@@ -51,7 +51,7 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#C8102E] mb-4 block">Our Story</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#08047D] mb-4 block">Our Story</span>
             <h1 className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-8 uppercase">
               Excellence <br /> In Textiles.
             </h1>
@@ -71,7 +71,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="group relative bg-[#0A1628] rounded-[40px] p-12 md:p-16 overflow-hidden min-h-[500px] flex flex-col justify-end"
+            className="group relative bg-[#08047D] rounded-[40px] p-12 md:p-16 overflow-hidden min-h-[500px] flex flex-col justify-end"
           >
             <div className="absolute top-12 left-12 w-20 h-20 bg-white/10 rounded-full flex items-center justify-center text-white backdrop-blur-sm group-hover:scale-110 transition-transform duration-500">
               <Target size={40} />
@@ -84,7 +84,7 @@ export default function AboutPage() {
                 in comfort, durability, and identity to every student and professional.
               </p>
             </div>
-            <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[#C8102E]/20 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[#08047D]/20 rounded-full blur-[100px] pointer-events-none" />
           </motion.div>
 
           {/* Vision Block */}
@@ -92,7 +92,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="group relative bg-[#C8102E] rounded-[40px] p-12 md:p-16 overflow-hidden min-h-[500px] flex flex-col justify-end"
+            className="group relative bg-[#08047D] rounded-[40px] p-12 md:p-16 overflow-hidden min-h-[500px] flex flex-col justify-end"
           >
             <div className="absolute top-12 left-12 w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-white backdrop-blur-sm group-hover:scale-110 transition-transform duration-500">
               <Compass size={40} />
@@ -115,7 +115,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tighter mb-4">The Values We Live By</h2>
-            <div className="w-20 h-1.5 bg-[#C8102E] mx-auto rounded-full" />
+            <div className="w-20 h-1.5 bg-[#08047D] mx-auto rounded-full" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -132,7 +132,7 @@ export default function AboutPage() {
                 transition={{ delay: idx * 0.1 }}
                 className="bg-white p-10 rounded-[32px] shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300"
               >
-                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-[#C8102E] mb-6">
+                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-[#08047D] mb-6">
                   {value.icon}
                 </div>
                 <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-3 font-sans italic">{value.title}</h3>
@@ -150,12 +150,12 @@ export default function AboutPage() {
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8">Ready to transform?</h2>
             <Link 
               to="/"
-              className="inline-flex items-center gap-2 bg-[#C8102E] px-10 py-5 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all duration-300"
+              className="inline-flex items-center gap-2 bg-[#08047D] px-10 py-5 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all duration-300"
             >
               Explore Our Collection
             </Link>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-[#C8102E]/20 to-transparent opacity-50" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#08047D]/20 to-transparent opacity-50" />
         </div>
       </section>
       <Footer />

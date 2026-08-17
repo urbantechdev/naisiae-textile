@@ -131,7 +131,7 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
 
         {/* Badge Indicator */}
         {badge && (
-          <div className="absolute top-3 left-3 z-20 px-3 py-1 bg-[#C8102E] text-white text-[9.5px] font-black uppercase tracking-wider rounded-full shadow-md">
+          <div className="absolute top-3 left-3 z-20 px-3 py-1 bg-[#08047D] text-white text-[9.5px] font-black uppercase tracking-wider rounded-full shadow-md">
             {badge}
           </div>
         )}
@@ -144,10 +144,10 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
               e.stopPropagation();
               setIsLightboxOpen(true);
             }}
-            className="bg-white/90 hover:bg-white text-[#0A1628] hover:text-[#C8102E] px-3 py-1.5 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-md backdrop-blur-md transition-all border border-slate-200/80 hover:scale-105 active:scale-95"
+            className="bg-white/90 hover:bg-white text-[#08047D] hover:text-[#08047D] px-3 py-1.5 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-md backdrop-blur-md transition-all border border-slate-200/80 hover:scale-105 active:scale-95"
             title="Click to Enlarge Fullscreen"
           >
-            <ZoomIn size={14} className="text-[#C8102E]" />
+            <ZoomIn size={14} className="text-[#08047D]" />
             <span className="hidden sm:inline">Zoom HD</span>
           </button>
         </div>
@@ -155,7 +155,7 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
         {/* Bottom Hover Guide Notice */}
         <div className={`absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/75 via-black/40 to-transparent text-white transition-opacity duration-300 pointer-events-none flex items-center justify-between ${isHovered ? 'opacity-100' : 'opacity-0 sm:group-hover/zoom:opacity-100'}`}>
           <div className="flex items-center gap-1.5 text-[10px] font-extrabold tracking-wide">
-            <Search size={13} className="text-[#C8961A]" />
+            <Search size={13} className="text-[#FA9411]" />
             <span>{isHovered ? 'Move cursor to inspect detail' : 'Hover to magnify • Click to Enlarge'}</span>
           </div>
           <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded text-[8.5px] uppercase font-black tracking-widest">2.3x HD Lens</span>
@@ -175,7 +175,7 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
               }}
               className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 bg-white ${
                 activeImageIndex === idx 
-                  ? 'border-[#C8961A] scale-105 shadow-md ring-2 ring-[#C8961A]/20' 
+                  ? 'border-[#FA9411] scale-105 shadow-md ring-2 ring-[#FA9411]/20' 
                   : 'border-slate-200 hover:border-slate-300 opacity-70 hover:opacity-100'
               }`}
             >
@@ -196,7 +196,7 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
             {/* Top Toolbar */}
             <div className="flex items-center justify-between z-30 w-full max-w-6xl mx-auto text-white">
               <div className="flex items-center gap-2">
-                <span className="bg-[#C8961A] text-[#0A1628] font-black text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">
+                <span className="bg-[#FA9411] text-[#08047D] font-black text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider">
                   HD Texture Inspector
                 </span>
                 <h4 className="text-sm font-bold text-slate-200 truncate max-w-[200px] sm:max-w-md hidden sm:block">
@@ -239,7 +239,7 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
                 <button 
                   type="button"
                   onClick={() => setIsLightboxOpen(false)}
-                  className="w-8 h-8 rounded-full bg-[#C8102E] hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-lg ml-1"
+                  className="w-8 h-8 rounded-full bg-[#08047D] hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-lg ml-1"
                   title="Close Fullscreen View"
                 >
                   <X size={18} />
@@ -305,7 +305,7 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
                         resetZoom();
                       }}
                       className={`w-10 h-10 rounded-lg overflow-hidden border transition-all ${
-                        activeImageIndex === idx ? 'border-[#C8961A] scale-105' : 'border-slate-700 opacity-60 hover:opacity-100'
+                        activeImageIndex === idx ? 'border-[#FA9411] scale-105' : 'border-slate-700 opacity-60 hover:opacity-100'
                       }`}
                     >
                       <img src={url} className="w-full h-full object-cover" alt={`thumb ${idx}`} />

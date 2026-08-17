@@ -10,12 +10,12 @@ export function GlobalToast() {
 
   const typeConfig = {
     success: {
-      bg: 'bg-[#0A1628]/95 border-[#10B981]/30 text-white',
+      bg: 'bg-[#08047D]/95 border-[#10B981]/30 text-white',
       icon: <CheckCircle2 size={18} className="text-[#10B981] shrink-0" />,
       radial: 'rgba(16, 185, 129, 0.15)',
     },
     warning: {
-      bg: 'bg-[#0A1628]/95 border-[#F59E0B]/30 text-white',
+      bg: 'bg-[#08047D]/95 border-[#F59E0B]/30 text-white',
       icon: <AlertCircle size={18} className="text-[#F59E0B] shrink-0" />,
       radial: 'rgba(245, 158, 11, 0.15)',
     },
@@ -25,9 +25,9 @@ export function GlobalToast() {
       radial: 'rgba(239, 68, 68, 0.15)',
     },
     info: {
-      bg: 'bg-[#0A1628]/95 border-[#C8961A]/30 text-white',
-      icon: <Info size={18} className="text-[#C8961A] shrink-0" />,
-      radial: 'rgba(200, 150, 26, 0.15)',
+      bg: 'bg-[#08047D]/95 border-[#FA9411]/30 text-white',
+      icon: <Info size={18} className="text-[#FA9411] shrink-0" />,
+      radial: 'rgba(250, 148, 17, 0.15)',
     },
   };
 

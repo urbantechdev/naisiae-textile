@@ -108,18 +108,18 @@ export function CatalogueModal() {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 15, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="bg-[#0A1628] w-full max-w-4xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+            className="bg-[#08047D] w-full max-w-4xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
             <div className="p-4 md:p-6 border-b border-white/10 flex items-center justify-between bg-[#07101E] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#C8961A]/10 flex items-center justify-center text-[#C8961A]">
+                <div className="w-10 h-10 rounded-xl bg-[#FA9411]/10 flex items-center justify-center text-[#FA9411]">
                   <BookOpen size={20} />
                 </div>
                 <div>
                   <h2 className="font-display text-xl md:text-2xl text-white font-bold leading-none mb-1">Interactive Sourcing Catalogue</h2>
-                  <p className="text-[9px] md:text-[10px] text-[#C8961A] font-black uppercase tracking-[2px]">Uhuru Market Uniforms Sourcing Guide (2026 Edition)</p>
+                  <p className="text-[9px] md:text-[10px] text-[#FA9411] font-black uppercase tracking-[2px]">Uhuru Market Uniforms Sourcing Guide (2026 Edition)</p>
                 </div>
               </div>
               <button 
@@ -131,7 +131,7 @@ export function CatalogueModal() {
             </div>
 
             {/* Content Body */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 items-center justify-center bg-gradient-to-b from-[#0A1628] to-[#060D18]">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 items-center justify-center bg-gradient-to-b from-[#08047D] to-[#060D18]">
               {/* Left Column: Premium Interactive Slide */}
               <div className="w-full lg:w-1/2 flex flex-col">
                 <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-white/10 bg-black/40 group shadow-lg">
@@ -141,7 +141,7 @@ export function CatalogueModal() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 flex flex-col justify-end">
-                    <span className="text-[8px] font-black tracking-widest text-[#C8961A] uppercase bg-black/40 self-start px-2 py-0.5 rounded border border-[#C8961A]/20">
+                    <span className="text-[8px] font-black tracking-widest text-[#FA9411] uppercase bg-black/40 self-start px-2 py-0.5 rounded border border-[#FA9411]/20">
                       {activePage.category}
                     </span>
                     <h3 className="text-white text-base md:text-lg font-black mt-1 tracking-tight">{activePage.title}</h3>
@@ -150,13 +150,13 @@ export function CatalogueModal() {
                   {/* Nav Arrows */}
                   <button 
                     onClick={(e) => { e.stopPropagation(); prevPage(); }}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#C8961A] text-white flex items-center justify-center transition-colors border border-white/5 active:scale-95 cursor-pointer z-10"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#FA9411] text-white flex items-center justify-center transition-colors border border-white/5 active:scale-95 cursor-pointer z-10"
                   >
                     <ChevronLeft size={16} />
                   </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); nextPage(); }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#C8961A] text-white flex items-center justify-center transition-colors border border-white/5 active:scale-95 cursor-pointer z-10"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#FA9411] text-white flex items-center justify-center transition-colors border border-white/5 active:scale-95 cursor-pointer z-10"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -168,7 +168,7 @@ export function CatalogueModal() {
                     <button 
                       key={idx}
                       onClick={() => setCurrentPageIndex(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentPageIndex ? 'w-6 bg-[#C8961A]' : 'w-1.5 bg-white/20 hover:bg-white/40'}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentPageIndex ? 'w-6 bg-[#FA9411]' : 'w-1.5 bg-white/20 hover:bg-white/40'}`}
                     />
                   ))}
                 </div>
@@ -184,16 +184,16 @@ export function CatalogueModal() {
                   <h4 className="text-white text-xl md:text-2xl font-black tracking-tight leading-tight uppercase text-zinc-100">
                     {activePage.category}
                   </h4>
-                  <p className="text-white/70 text-[11px] md:text-[13px] leading-relaxed mt-3 border-l-2 border-[#C8961A] pl-3.5 font-medium italic">
+                  <p className="text-white/70 text-[11px] md:text-[13px] leading-relaxed mt-3 border-l-2 border-[#FA9411] pl-3.5 font-medium italic">
                     {activePage.description}
                   </p>
 
                   <div className="mt-6 space-y-2">
-                    <p className="text-[9px] text-[#C8961A] font-black uppercase tracking-[2.5px]">Technical Fabric Specifications</p>
+                    <p className="text-[9px] text-[#FA9411] font-black uppercase tracking-[2.5px]">Technical Fabric Specifications</p>
                     <div className="grid grid-cols-2 gap-2">
                       {activePage.highlights.map((item, i) => (
                         <div key={i} className="flex items-center gap-2 text-[10px] md:text-[11px] text-white/80 font-bold">
-                          <span className="w-1.5 h-1.5 bg-[#C8102E] rounded-full shrink-0"></span>
+                          <span className="w-1.5 h-1.5 bg-[#08047D] rounded-full shrink-0"></span>
                           <span>{item}</span>
                         </div>
                       ))}
@@ -205,7 +205,7 @@ export function CatalogueModal() {
                 <div className="mt-8 pt-4 border-t border-white/5 shrink-0 flex flex-col sm:flex-row gap-3">
                   <button 
                     onClick={handleDownload}
-                    className="flex-1 bg-[#C8102E] hover:bg-[#A30D25] text-white rounded-xl py-3.5 px-6 font-black text-[10px] md:text-[11px] uppercase tracking-[3px] transition-colors duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-95"
+                    className="flex-1 bg-[#08047D] hover:bg-[#050259] text-white rounded-xl py-3.5 px-6 font-black text-[10px] md:text-[11px] uppercase tracking-[3px] transition-colors duration-300 flex items-center justify-center gap-2.5 shadow-lg active:scale-95"
                   >
                     <Download size={14} />
                     Download Catalogue
@@ -216,7 +216,7 @@ export function CatalogueModal() {
                       setIsCatalogueModalOpen(false);
                       setIsQuoteModalOpen(true);
                     }}
-                    className="flex-1 bg-white hover:bg-[#C8961A] hover:text-white text-[#0A1628] rounded-xl py-3.5 px-6 font-black text-[10px] md:text-[11px] uppercase tracking-[3px] transition-all duration-300 flex items-center justify-center gap-2.5 active:scale-95"
+                    className="flex-1 bg-white hover:bg-[#FA9411] hover:text-white text-[#08047D] rounded-xl py-3.5 px-6 font-black text-[10px] md:text-[11px] uppercase tracking-[3px] transition-all duration-300 flex items-center justify-center gap-2.5 active:scale-95"
                   >
                     <FileText size={14} />
                     Instant Sourcing Inquiry
@@ -229,11 +229,11 @@ export function CatalogueModal() {
             <div className="bg-[#07101E] px-4 py-3 shrink-0 border-t border-white/5 flex flex-wrap items-center justify-between gap-3 text-[10px] text-slate-400">
               <span className="font-bold uppercase tracking-wider">Direct Sourcing Desk:</span>
               <div className="flex gap-4 items-center">
-                <a href="tel:+254792021795" className="flex items-center gap-1.5 font-black text-white hover:text-[#C8961A] transition-colors">
-                  <Phone size={11} className="text-[#C8961A]" /> +254 792 021 795
+                <a href="tel:+254792021795" className="flex items-center gap-1.5 font-black text-white hover:text-[#FA9411] transition-colors">
+                  <Phone size={11} className="text-[#FA9411]" /> +254 792 021 795
                 </a>
                 <a href="https://wa.me/254792021795?text=Hello, I would like to request a specialized uniform catalog." className="flex items-center gap-1.5 font-black text-white hover:text-emerald-400 transition-colors">
-                  <MessageSquare size={11} className="text-[#C8961A]" /> WhatsApp Chat
+                  <MessageSquare size={11} className="text-[#FA9411]" /> WhatsApp Chat
                 </a>
               </div>
             </div>

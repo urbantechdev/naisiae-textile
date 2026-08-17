@@ -40,7 +40,7 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
+            className="absolute inset-0 bg-[#08047D]/80 backdrop-blur-md"
             onClick={onClose}
           />
 
@@ -56,11 +56,11 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
               {/* Header Interface */}
               <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#F0A500] rounded-2xl flex items-center justify-center text-white">
+                  <div className="w-10 h-10 bg-[#FA9411] rounded-2xl flex items-center justify-center text-white">
                     <Heart size={20} fill="currentColor" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black uppercase tracking-[3px] text-[#0A1628]">Your Collection</h2>
+                    <h2 className="text-sm font-black uppercase tracking-[3px] text-[#08047D]">Your Collection</h2>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
                       {wishlist.length} {wishlist.length === 1 ? 'Design' : 'Designs'} Saved
                     </p>
@@ -81,7 +81,7 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-8 py-20">
                     <div className="relative">
                       <div className="absolute inset-0 bg-amber-50 rounded-full blur-2xl opacity-50 scale-150"></div>
-                      <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center text-[#F0A500] relative z-10 border border-amber-100">
+                      <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center text-[#FA9411] relative z-10 border border-amber-100">
                         <Heart size={42} />
                       </div>
                     </div>
@@ -96,7 +96,7 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
                         onClose();
                         navigate('/products');
                       }}
-                      className="px-8 py-4 bg-[#0A1628] text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-[#C8961A] transition-all shadow-xl shadow-[#0A1628]/10 active:scale-95"
+                      className="px-8 py-4 bg-[#08047D] text-white rounded-2xl font-black text-[10px] uppercase tracking-[3px] hover:bg-[#FA9411] transition-all shadow-xl shadow-[#08047D]/10 active:scale-95"
                     >
                       Browse Our Catalog
                     </button>
@@ -109,7 +109,7 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex gap-5 p-5 bg-white rounded-[2.5rem] border border-slate-100 relative group transition-all hover:border-[#F0A500]/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]"
+                        className="flex gap-5 p-5 bg-white rounded-[2.5rem] border border-slate-100 relative group transition-all hover:border-[#FA9411]/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]"
                       >
                         {/* Product Thumbnail Asset */}
                         <div className="w-24 h-24 bg-slate-50 rounded-[1.5rem] overflow-hidden border border-slate-100 shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
@@ -124,22 +124,22 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
                         {/* Content Management Blocks */}
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
                           <div className="space-y-1">
-                            <h4 className="text-xs font-black uppercase tracking-wide text-[#0A1628] truncate pr-8 group-hover:text-[#F0A500] transition-colors">
+                            <h4 className="text-xs font-black uppercase tracking-wide text-[#08047D] truncate pr-8 group-hover:text-[#FA9411] transition-colors">
                               {item.name}
                             </h4>
-                            <p className="text-[8px] font-black uppercase tracking-wider text-[#C8961A] bg-[#C8961A]/5 px-2 py-0.5 rounded-full border border-[#C8961A]/10 w-fit">
+                            <p className="text-[8px] font-black uppercase tracking-wider text-[#FA9411] bg-[#FA9411]/5 px-2 py-0.5 rounded-full border border-[#FA9411]/10 w-fit">
                               {item.category}
                             </p>
                           </div>
 
                           <div className="flex items-center justify-between mt-3">
-                            <span className="text-xs font-black text-[#0A1628] tabular-nums">
+                            <span className="text-xs font-black text-[#08047D] tabular-nums">
                               {formatPrice(item.price)}
                             </span>
                             
                             <button 
                               onClick={() => handleMoveToCart(item)}
-                              className="w-8 h-8 rounded-lg bg-[#0A1628] hover:bg-[#C8102E] text-white flex items-center justify-center transition-all active:scale-95 shadow-sm"
+                              className="w-8 h-8 rounded-lg bg-[#08047D] hover:bg-[#08047D] text-white flex items-center justify-center transition-all active:scale-95 shadow-sm"
                               title="Move to Cart"
                             >
                               <ShoppingBag size={14} />
@@ -169,10 +169,10 @@ export function WishlistModal({ isOpen, onClose }: WishlistModalProps) {
                       onClose();
                       navigate('/products');
                     }}
-                    className="w-full flex items-center justify-center gap-4 py-5 bg-[#0A1628] text-white rounded-2xl font-black text-[10px] uppercase tracking-[4px] hover:bg-[#C8961A] transition-all shadow-2xl shadow-[#0A1628]/20 group active:scale-[0.98]"
+                    className="w-full flex items-center justify-center gap-4 py-5 bg-[#08047D] text-white rounded-2xl font-black text-[10px] uppercase tracking-[4px] hover:bg-[#FA9411] transition-all shadow-2xl shadow-[#08047D]/20 group active:scale-[0.98]"
                   >
                     Continue Browsing Catalog
-                    <div className="p-1 bg-white/10 rounded-lg group-hover:bg-white group-hover:text-[#C8961A] transition-all">
+                    <div className="p-1 bg-white/10 rounded-lg group-hover:bg-white group-hover:text-[#FA9411] transition-all">
                       <ArrowRight size={12} />
                     </div>
                   </button>

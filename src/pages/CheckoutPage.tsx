@@ -500,7 +500,7 @@ export default function CheckoutPage() {
           </motion.div>
           {isMpesa ? (
             <>
-              <h1 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-6">
+              <h1 className="font-display text-4xl lg:text-6xl text-[#08047D] leading-[0.9] mb-6">
                 Order <span className="text-green-600">Fast-Tracked!</span>
               </h1>
               <p className="text-slate-500 font-medium text-lg leading-relaxed mb-8 max-w-xl mx-auto">
@@ -508,13 +508,13 @@ export default function CheckoutPage() {
               </p>
 
               {/* Digital receipt ticket */}
-              <div className="bg-[#0E121C] text-white p-6 rounded-3xl text-left border border-white/10 mb-12 max-w-md mx-auto relative overflow-hidden shadow-2xl">
+              <div className="bg-[#04023D] text-white p-6 rounded-3xl text-left border border-white/10 mb-12 max-w-md mx-auto relative overflow-hidden shadow-2xl">
                 {/* Neon decorative edge */}
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#C8961A]" />
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#FA9411]" />
                 
                 <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                   <div>
-                    <span className="text-[9px] font-black text-[#C8961A] tracking-[2px] uppercase block">NAISIAE TEXTILES LTD</span>
+                    <span className="text-[9px] font-black text-[#FA9411] tracking-[2px] uppercase block">NAISIAE TEXTILES LTD</span>
                     <span className="text-[8px] text-white/40 uppercase tracking-widest mt-0.5 block">Official Payment Invoice</span>
                   </div>
                   <span className="text-[9px] font-black text-green-400 bg-green-400/10 border border-green-400/20 px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
@@ -539,7 +539,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-white/40 font-bold uppercase tracking-wider text-[9px]">Sourcing Level</span>
-                    <span className="font-black text-[#C8961A] uppercase tracking-wide">
+                    <span className="font-black text-[#FA9411] uppercase tracking-wide">
                       {submittedQuoteData.mpesaPaymentOption === 'deposit' ? '50% Order Booking' : '100% Fully Paid'}
                     </span>
                   </div>
@@ -552,8 +552,8 @@ export default function CheckoutPage() {
             </>
           ) : (
             <>
-              <h1 className="font-display text-4xl lg:text-6xl text-[#0A1628] leading-[0.9] mb-6">
-                Inquiry <span className="text-[#C8961A]">Received</span>
+              <h1 className="font-display text-4xl lg:text-6xl text-[#08047D] leading-[0.9] mb-6">
+                Inquiry <span className="text-[#FA9411]">Received</span>
               </h1>
               <p className="text-slate-500 font-medium text-lg leading-relaxed mb-12">
                 Thank you for sourcing with Naisiae Textiles Limited. Our sourcing team is reviewing your request and will contact you via WhatsApp/Email within 12 hours with a formal quote and production timeline.
@@ -564,7 +564,7 @@ export default function CheckoutPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               to="/products"
-              className="px-10 py-5 bg-[#0A1628] text-white rounded-2xl font-black text-[12px] uppercase tracking-[3px] hover:bg-[#C8102E] transition-all shadow-xl"
+              className="px-10 py-5 bg-[#08047D] text-white rounded-2xl font-black text-[12px] uppercase tracking-[3px] hover:bg-[#08047D] transition-all shadow-xl"
             >
               Continue Sourcing
             </Link>
@@ -589,7 +589,7 @@ export default function CheckoutPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#0E121C]/85 backdrop-blur-md z-[99999] flex items-center justify-center p-6"
+            className="fixed inset-0 bg-[#04023D]/85 backdrop-blur-md z-[99999] flex items-center justify-center p-6"
           >
             <motion.div 
               initial={{ scale: 0.95, y: 15 }}
@@ -667,7 +667,7 @@ export default function CheckoutPage() {
                       <span className="text-emerald-400 font-bold">&gt;</span> {log}
                     </div>
                   ))}
-                  <div className="text-[#C8961A]/70 italic animate-pulse font-bold">
+                  <div className="text-[#FA9411]/70 italic animate-pulse font-bold">
                     &gt; Matching with registered transaction records...
                   </div>
                 </div>
@@ -738,11 +738,11 @@ export default function CheckoutPage() {
       ) : (
         <div className="pt-32 lg:pt-44 pb-24 px-6 max-w-[1440px] mx-auto">
         <div className="flex items-center gap-4 mb-12">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#C8102E] transition-all shadow-sm">
+          <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#08047D] transition-all shadow-sm">
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="font-display text-4xl lg:text-5xl text-[#0A1628] tracking-tight leading-none uppercase">Initialize <span className="text-[#C8961A]">Sourcing</span></h1>
+            <h1 className="font-display text-4xl lg:text-5xl text-[#08047D] tracking-tight leading-none uppercase">Initialize <span className="text-[#FA9411]">Sourcing</span></h1>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] mt-2 italic">Institutional Compliance & Bulk Processing</p>
           </div>
         </div>
@@ -752,11 +752,11 @@ export default function CheckoutPage() {
           <div className="lg:col-span-7 space-y-8">
             <div className="bg-white rounded-[40px] p-8 lg:p-12 shadow-2xl shadow-black/5 border border-slate-50">
               <div className="flex items-center gap-4 mb-10">
-                <div className="w-12 h-12 bg-[#0A1628] rounded-2xl flex items-center justify-center text-[#C8961A]">
+                <div className="w-12 h-12 bg-[#08047D] rounded-2xl flex items-center justify-center text-[#FA9411]">
                   <ShieldCheck size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-[#0A1628]">Institutional Details</h2>
+                  <h2 className="text-xl font-bold text-[#08047D]">Institutional Details</h2>
                   <p className="text-xs font-medium text-slate-400">Please provide contact information for the procurement lead.</p>
                 </div>
               </div>
@@ -765,7 +765,7 @@ export default function CheckoutPage() {
               {!currentUser ? (
                 <div className="p-6 bg-slate-50 border border-slate-100 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="text-center sm:text-left">
-                    <h3 className="text-sm font-bold text-[#0A1628] flex items-center gap-1.5 justify-center sm:justify-start">
+                    <h3 className="text-sm font-bold text-[#08047D] flex items-center gap-1.5 justify-center sm:justify-start">
                       ⚡ Express Sourcing Setup
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 font-medium">Connect your Google account to auto-fill details instantly.</p>
@@ -774,7 +774,7 @@ export default function CheckoutPage() {
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={authLoading}
-                    className="bg-white hover:bg-slate-100 border border-slate-200 text-[#0A1628] font-black text-[10px] uppercase tracking-[1.5px] px-5 py-3.5 rounded-xl flex items-center gap-2.5 shadow-sm active:scale-95 transition-all w-full sm:w-auto justify-center cursor-pointer"
+                    className="bg-white hover:bg-slate-100 border border-slate-200 text-[#08047D] font-black text-[10px] uppercase tracking-[1.5px] px-5 py-3.5 rounded-xl flex items-center gap-2.5 shadow-sm active:scale-95 transition-all w-full sm:w-auto justify-center cursor-pointer"
                   >
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="Google" />
                     {authLoading ? "Syncing..." : "Sign in with Google"}
@@ -783,7 +783,7 @@ export default function CheckoutPage() {
               ) : (
                 <div className="p-4 bg-green-50/50 border border-green-100/40 rounded-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3 self-start sm:self-center">
-                    <div className="w-9 h-9 rounded-full bg-[#C8961A]/10 border border-[#C8961A]/20 flex items-center justify-center font-bold text-xs text-[#0A1628] overflow-hidden shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-[#FA9411]/10 border border-[#FA9411]/20 flex items-center justify-center font-bold text-xs text-[#08047D] overflow-hidden shrink-0">
                       {currentUser.photoURL ? (
                         <img src={currentUser.photoURL} alt="User avatar" className="w-full h-full object-cover" />
                       ) : (
@@ -791,14 +791,14 @@ export default function CheckoutPage() {
                       )}
                     </div>
                     <div>
-                      <h3 className="text-xs font-black text-[#0A1628]">Profile Connected</h3>
+                      <h3 className="text-xs font-black text-[#08047D]">Profile Connected</h3>
                       <p className="text-[10px] text-slate-500 font-bold truncate max-w-[200px] sm:max-w-xs">{currentUser.displayName || currentUser.email}</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={handleSignOut}
-                    className="text-[9px] font-black text-[#C8102E] hover:text-[#940F22] uppercase tracking-[1.5px] bg-white px-3.5 py-2 rounded-lg border border-slate-150 shadow-sm active:scale-95 transition-all cursor-pointer w-full sm:w-auto text-center"
+                    className="text-[9px] font-black text-[#08047D] hover:text-[#940F22] uppercase tracking-[1.5px] bg-white px-3.5 py-2 rounded-lg border border-slate-150 shadow-sm active:scale-95 transition-all cursor-pointer w-full sm:w-auto text-center"
                   >
                     Disconnect Profile
                   </button>
@@ -809,28 +809,28 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
-                      <User size={12} className="text-[#C8961A]" /> Full Name
+                      <User size={12} className="text-[#FA9411]" /> Full Name
                     </label>
                     <input 
                       required
                       type="text" 
                       value={formData.name}
                       onChange={e => setFormData({...formData, name: e.target.value})}
-                      className={`w-full bg-slate-50 border ${errors.name ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                      className={`w-full bg-slate-50 border ${errors.name ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all`}
                       placeholder="e.g. John Doe"
                     />
                     {errors.name && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.name}</p>}
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
-                      <Mail size={12} className="text-[#C8961A]" /> 
+                      <Mail size={12} className="text-[#FA9411]" /> 
                     </label>
                     <input 
                       required
                       type="email" 
                       value={formData.email}
                       onChange={e => setFormData({...formData, email: e.target.value})}
-                      className={`w-full bg-slate-50 border ${errors.email ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                      className={`w-full bg-slate-50 border ${errors.email ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all`}
                       placeholder=""
                     />
                     {errors.email && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.email}</p>}
@@ -840,27 +840,27 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
-                      <Phone size={12} className="text-[#C8961A]" /> Phone / WhatsApp
+                      <Phone size={12} className="text-[#FA9411]" /> Phone / WhatsApp
                     </label>
                     <input 
                       required
                       type="tel" 
                       value={formData.phone}
                       onChange={e => setFormData({...formData, phone: e.target.value})}
-                      className={`w-full bg-slate-50 border ${errors.phone ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                      className={`w-full bg-slate-50 border ${errors.phone ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all`}
                       placeholder="+254..."
                     />
                     {errors.phone && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.phone}</p>}
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
-                      <Package size={12} className="text-[#C8961A]" /> Institution Name
+                      <Package size={12} className="text-[#FA9411]" /> Institution Name
                     </label>
                     <input 
                       type="text" 
                       value={formData.institution}
                       onChange={e => setFormData({...formData, institution: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all"
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all"
                       placeholder="e.g. Alliance High School"
                     />
                   </div>
@@ -872,7 +872,7 @@ export default function CheckoutPage() {
                     <h3 className="text-xs font-black uppercase tracking-[2px] text-slate-400 ml-1">
                       Sourcing Delivery Option
                     </h3>
-                    <span className="text-[9px] font-black uppercase tracking-[1.5px] bg-[#C8961A]/10 text-[#C8961A] border border-[#C8961A]/20 px-2.5 py-0.5 rounded-lg flex items-center gap-1">
+                    <span className="text-[9px] font-black uppercase tracking-[1.5px] bg-[#FA9411]/10 text-[#FA9411] border border-[#FA9411]/20 px-2.5 py-0.5 rounded-lg flex items-center gap-1">
                       🛡️ Verified Location
                     </span>
                   </div>
@@ -888,7 +888,7 @@ export default function CheckoutPage() {
                       }}
                       className={`p-4.5 rounded-2xl border-2 text-left transition-all ${
                         deliveryMethod === 'pickup'
-                          ? 'border-[#C8961A] bg-[#C8961A]/5 ring-4 ring-[#C8961A]/5'
+                          ? 'border-[#FA9411] bg-[#FA9411]/5 ring-4 ring-[#FA9411]/5'
                           : 'border-slate-100 hover:border-slate-200 bg-white'
                       }`}
                     >
@@ -896,7 +896,7 @@ export default function CheckoutPage() {
                         <span className="text-2xl">🏪</span>
                         <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 uppercase tracking-wider">Free</span>
                       </div>
-                      <h4 className="text-[11px] font-black uppercase text-[#0A1628] tracking-wider">Self Pick-up</h4>
+                      <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-wider">Self Pick-up</h4>
                       <p className="text-[10px] text-slate-400 mt-1 font-semibold leading-relaxed">
                         Collect at Uhuru Market Stall, Nairobi. Zero delivery charge.
                       </p>
@@ -920,7 +920,7 @@ export default function CheckoutPage() {
                         <span className="text-2xl">🛵</span>
                         <span className="text-[10px] font-black text-green-600 bg-green-50 px-2.5 py-1 rounded-lg border border-green-200 uppercase tracking-wider">{formatPrice(300)}</span>
                       </div>
-                      <h4 className="text-[11px] font-black uppercase text-[#0A1628] tracking-wider">Nairobi Courier</h4>
+                      <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-wider">Nairobi Courier</h4>
                       <p className="text-[10px] text-slate-400 mt-1 font-semibold leading-relaxed">
                         Direct doorstep delivery within Nairobi County.
                       </p>
@@ -944,7 +944,7 @@ export default function CheckoutPage() {
                         <span className="text-2xl">🌍</span>
                         <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200 uppercase tracking-wider">TBD</span>
                       </div>
-                      <h4 className="text-[11px] font-black uppercase text-[#0A1628] tracking-wider">Other / Export</h4>
+                      <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-wider">Other / Export</h4>
                       <p className="text-[10px] text-slate-400 mt-1 font-semibold leading-relaxed">
                         Eldoret, Kisumu, Kampala, Dar es Salaam cross-border transit.
                       </p>
@@ -952,10 +952,10 @@ export default function CheckoutPage() {
                   </div>
 
                   {deliveryMethod === 'pickup' && (
-                    <div className="bg-amber-500/5 border border-[#C8961A]/30 rounded-2xl p-4.5 flex gap-3 items-start animate-in fade-in duration-200">
+                    <div className="bg-amber-500/5 border border-[#FA9411]/30 rounded-2xl p-4.5 flex gap-3 items-start animate-in fade-in duration-200">
                       <span className="text-xl">📍</span>
                       <div className="space-y-1">
-                        <p className="text-[11px] font-black text-[#0A1628] uppercase tracking-wider">Uhuru Market Collection Stall</p>
+                        <p className="text-[11px] font-black text-[#08047D] uppercase tracking-wider">Uhuru Market Collection Stall</p>
                         <p className="text-[10px] leading-relaxed text-slate-500">
                           Visit Naisiae Textiles factory point at Uhuru Market, Nairobi. We will coordinate fulfillment confirmation and pickup time slots over WhatsApp.
                         </p>
@@ -968,7 +968,7 @@ export default function CheckoutPage() {
                       <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-4.5 flex gap-3 items-start">
                         <span className="text-xl">🛵</span>
                         <div className="space-y-1">
-                          <p className="text-[11px] font-black text-[#0A1628] uppercase tracking-wider">Nairobi Doorstep Delivery ({formatPrice(300)})</p>
+                          <p className="text-[11px] font-black text-[#08047D] uppercase tracking-wider">Nairobi Doorstep Delivery ({formatPrice(300)})</p>
                           <p className="text-[10px] leading-relaxed text-slate-500">
                             A flat delivery fee of {formatPrice(300)} will be added to your order summary. Please provide your Nairobi delivery coordinates below.
                           </p>
@@ -984,7 +984,7 @@ export default function CheckoutPage() {
                           type="text" 
                           value={formData.shippingAddress}
                           onChange={e => setFormData({...formData, shippingAddress: e.target.value})}
-                          className={`w-full bg-slate-50 border ${errors.shippingAddress ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                          className={`w-full bg-slate-50 border ${errors.shippingAddress ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all`}
                           placeholder="e.g. Westlands Commercial Center, 3rd Floor, Nairobi"
                         />
                         {errors.shippingAddress && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.shippingAddress}</p>}
@@ -997,7 +997,7 @@ export default function CheckoutPage() {
                       <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-4.5 flex gap-3 items-start">
                         <span className="text-xl">✈️</span>
                         <div className="space-y-1">
-                          <p className="text-[11px] font-black text-[#0A1628] uppercase tracking-wider">East African Cross-Border Sourcing</p>
+                          <p className="text-[11px] font-black text-[#08047D] uppercase tracking-wider">East African Cross-Border Sourcing</p>
                           <p className="text-[10px] leading-relaxed text-slate-500">
                             Provide your custom shipping destination. Cargo parameters and transit billing rates will be verified by Naisiae Textiles during order processing.
                           </p>
@@ -1017,7 +1017,7 @@ export default function CheckoutPage() {
                               setFormData({...formData, shippingCountry: code});
                               setCountryDirectly(code);
                             }}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all"
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all"
                           >
                             <option value="KE">🇰🇪 Kenya (KES / Ksh)</option>
                             <option value="UG">🇺🇬 Uganda (UGX / USh)</option>
@@ -1036,7 +1036,7 @@ export default function CheckoutPage() {
                             type="text" 
                             value={formData.shippingCity}
                             onChange={e => setFormData({...formData, shippingCity: e.target.value})}
-                            className={`w-full bg-slate-50 border ${errors.shippingCity ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                            className={`w-full bg-slate-50 border ${errors.shippingCity ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all`}
                             placeholder="e.g. Mombasa, Kisumu, Kampala, Dar es Salaam"
                           />
                           {errors.shippingCity && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.shippingCity}</p>}
@@ -1052,7 +1052,7 @@ export default function CheckoutPage() {
                           type="text" 
                           value={formData.shippingAddress}
                           onChange={e => setFormData({...formData, shippingAddress: e.target.value})}
-                          className={`w-full bg-slate-50 border ${errors.shippingAddress ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all`}
+                          className={`w-full bg-slate-50 border ${errors.shippingAddress ? 'border-red-500' : 'border-slate-100'} rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all`}
                           placeholder="e.g. Nakasero Market Area, Plot 12, Kampala"
                         />
                         {errors.shippingAddress && <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1">{errors.shippingAddress}</p>}
@@ -1063,13 +1063,13 @@ export default function CheckoutPage() {
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 ml-1 flex items-center gap-2">
-                    <MessageSquare size={12} className="text-[#C8961A]" /> Customization & Production Details
+                    <MessageSquare size={12} className="text-[#FA9411]" /> Customization & Production Details
                   </label>
                   <textarea 
                     value={formData.details}
                     onChange={e => setFormData({...formData, details: e.target.value})}
                     rows={4}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#C8961A]/5 focus:bg-white transition-all resize-none"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-slate-300 outline-none focus:ring-4 focus:ring-[#FA9411]/5 focus:bg-white transition-all resize-none"
                     placeholder="Mention branding needs, logo embroidery positions, specific fabric weight, or urgent timelines..."
                   />
                 </div>
@@ -1091,14 +1091,14 @@ export default function CheckoutPage() {
                       onClick={() => setCheckoutMethod('rfq')}
                       className={`p-5 rounded-2xl border-2 text-left transition-all cursor-pointer relative ${
                         checkoutMethod === 'rfq'
-                          ? 'bg-[#0A1628]/5 border-[#0A1628] text-[#0A1628]'
+                          ? 'bg-[#08047D]/5 border-[#08047D] text-[#08047D]'
                           : 'bg-white border-slate-100 hover:border-slate-200 text-slate-500'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-black uppercase tracking-[1.5px]">Standard RFQ</span>
                         <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          checkoutMethod === 'rfq' ? 'border-[#0A1628] bg-[#0A1628]' : 'border-slate-300'
+                          checkoutMethod === 'rfq' ? 'border-[#08047D] bg-[#08047D]' : 'border-slate-300'
                         }`}>
                           {checkoutMethod === 'rfq' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                         </div>
@@ -1112,7 +1112,7 @@ export default function CheckoutPage() {
                       onClick={() => setCheckoutMethod('mpesa')}
                       className={`p-5 rounded-2xl border-2 text-left transition-all relative overflow-hidden cursor-pointer ${
                         checkoutMethod === 'mpesa'
-                          ? 'bg-gradient-to-br from-green-50/70 to-emerald-50/20 border-emerald-500 text-[#0E121C]'
+                          ? 'bg-gradient-to-br from-green-50/70 to-emerald-50/20 border-emerald-500 text-[#04023D]'
                           : 'bg-white border-slate-100 hover:border-slate-200 text-slate-500'
                       }`}
                     >
@@ -1146,7 +1146,7 @@ export default function CheckoutPage() {
                         📱
                       </div>
                       <div>
-                        <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-[1px] flex items-center gap-1.5 flex-wrap">
+                        <h4 className="text-xs font-black text-[#08047D] uppercase tracking-[1px] flex items-center gap-1.5 flex-wrap">
                           M-Pesa Direct Sourcing Clerk
                           <span className="px-1.5 py-0.5 bg-[#3BB348]/10 text-[#3BB348] rounded-md text-[8px] font-black uppercase border border-[#3BB348]/20">Auto-Detect Active</span>
                         </h4>
@@ -1157,7 +1157,7 @@ export default function CheckoutPage() {
                     {/* Step 1: Deposit Type Selection */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 bg-[#0a1628] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">1</div>
+                        <div className="w-5 h-5 bg-[#08047D] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">1</div>
                         <span className="text-[9.5px] font-black uppercase tracking-[2px] text-slate-700">
                           Step 1: booking level & pricing breakdown
                         </span>
@@ -1190,7 +1190,7 @@ export default function CheckoutPage() {
                       </div>
 
                       {/* Micro invoice widget */}
-                      <div className="bg-[#0A1628] text-[#EDF2F7] rounded-2xl p-4 border border-white/5 shadow-md relative overflow-hidden">
+                      <div className="bg-[#08047D] text-[#EDF2F7] rounded-2xl p-4 border border-white/5 shadow-md relative overflow-hidden">
                         <div className="absolute -top-12 -right-12 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
                         <div className="space-y-1.5 text-xs font-mono">
                           <div className="flex justify-between text-slate-400 text-[10px] uppercase font-bold tracking-wider">
@@ -1223,7 +1223,7 @@ export default function CheckoutPage() {
                     {/* Step 2: Authenticate Lipa na M-Pesa via STK Push */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 bg-[#0a1628] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">2</div>
+                        <div className="w-5 h-5 bg-[#08047D] text-white text-[9px] font-black rounded-full flex items-center justify-center font-mono">2</div>
                         <span className="text-[9.5px] font-black uppercase tracking-[2px] text-slate-700">
                           Step 2: Trigger M-Pesa STK Push Prompt
                         </span>
@@ -1235,7 +1235,7 @@ export default function CheckoutPage() {
                         </div>
                         
                         <div>
-                          <span className="text-[8px] font-black text-[#C8961A] tracking-[2px] uppercase block mb-1">Safaricom Lipa na M-Pesa</span>
+                          <span className="text-[8px] font-black text-[#FA9411] tracking-[2px] uppercase block mb-1">Safaricom Lipa na M-Pesa</span>
                           <h4 className="text-sm font-black text-white uppercase tracking-wide">M-Pesa Express Instant Handshake</h4>
                           <p className="text-[10px] text-slate-300 font-semibold leading-relaxed mt-1">
                             Receive an automated secure payment prompt directly on your mobile line to authorize commitment booking.
@@ -1278,7 +1278,7 @@ export default function CheckoutPage() {
                             <div className="relative w-14 h-14 flex items-center justify-center">
                               <div className="absolute inset-0 border-2 border-slate-700 rounded-full"></div>
                               <div className="absolute inset-0 border-2 border-t-[#3BB348] rounded-full animate-spin"></div>
-                              <span className="text-sm font-black font-mono text-[#C8961A]">{stkCountdown}s</span>
+                              <span className="text-sm font-black font-mono text-[#FA9411]">{stkCountdown}s</span>
                             </div>
                             <p className="text-xs font-black text-amber-400 uppercase tracking-wider">PIN Prompt sent to {stkPhoneNumber}</p>
                             <p className="text-[10.5px] text-slate-300 leading-relaxed max-w-[280px]">
@@ -1289,7 +1289,7 @@ export default function CheckoutPage() {
 
                         {stkPushState === 'verifying' && (
                           <div className="py-6 flex flex-col items-center justify-center text-center space-y-2.5">
-                            <div className="w-10 h-10 border-2 border-[#C8961A] border-t-transparent rounded-full animate-spin"></div>
+                            <div className="w-10 h-10 border-2 border-[#FA9411] border-t-transparent rounded-full animate-spin"></div>
                             <p className="text-xs font-black text-amber-500 uppercase tracking-widest animate-pulse">Verifying M-Pesa Receipt...</p>
                             <p className="text-[10px] text-slate-400">Querying Safaricom payment logs for confirmation code...</p>
                           </div>
@@ -1365,7 +1365,7 @@ export default function CheckoutPage() {
                     className={`w-full py-6 text-white rounded-3xl font-black text-[13px] uppercase tracking-[4px] transition-all flex items-center justify-center gap-4 shadow-2xl group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
                       checkoutMethod === 'mpesa' 
                         ? 'bg-[#3BB348] hover:bg-green-600 shadow-green-600/10' 
-                        : 'bg-[#0A1628] hover:bg-[#C8102E] shadow-[#0A1628]/20'
+                        : 'bg-[#08047D] hover:bg-[#08047D] shadow-[#08047D]/20'
                     }`}
                   >
                     {loading 
@@ -1374,7 +1374,7 @@ export default function CheckoutPage() {
                         ? "Verify payment & complete order 🚀" 
                         : "Submit Inquiry to Procurement"
                     }
-                    <div className="p-1 bg-white/10 rounded-lg group-hover:bg-white group-hover:text-[#C8102E] transition-all">
+                    <div className="p-1 bg-white/10 rounded-lg group-hover:bg-white group-hover:text-[#08047D] transition-all">
                       <ArrowRight size={16} />
                     </div>
                   </button>
@@ -1392,7 +1392,7 @@ export default function CheckoutPage() {
                   <Truck size={24} />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-[#0A1628]">Nationwide Logistics</h4>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-[#08047D]">Nationwide Logistics</h4>
                   <p className="text-[10px] font-medium text-slate-400">Insured bulk delivery across Kenya.</p>
                 </div>
               </div>
@@ -1401,7 +1401,7 @@ export default function CheckoutPage() {
                   <ShieldCheck size={24} />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-[#0A1628]">Quality Inspection</h4>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-[#08047D]">Quality Inspection</h4>
                   <p className="text-[10px] font-medium text-slate-400">Institutional grade material certification.</p>
                 </div>
               </div>
@@ -1410,10 +1410,10 @@ export default function CheckoutPage() {
 
           {/* Cart Summary Column */}
           <div className="lg:col-span-5 space-y-8">
-            <div className="bg-[#0A1628] rounded-[40px] p-8 lg:p-10 shadow-2xl shadow-[#0A1628]/10 text-white sticky top-44">
+            <div className="bg-[#08047D] rounded-[40px] p-8 lg:p-10 shadow-2xl shadow-[#08047D]/10 text-white sticky top-44">
               <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/10">
-                <h3 className="font-display text-2xl tracking-wide uppercase italic">Sourcing <span className="text-[#C8961A]">Summary</span></h3>
-                <span className="text-[10px] font-black bg-[#C8961A] text-[#0A1628] px-4 py-1.5 rounded-full uppercase tracking-[2px]">{cart.length} SKUs</span>
+                <h3 className="font-display text-2xl tracking-wide uppercase italic">Sourcing <span className="text-[#FA9411]">Summary</span></h3>
+                <span className="text-[10px] font-black bg-[#FA9411] text-[#08047D] px-4 py-1.5 rounded-full uppercase tracking-[2px]">{cart.length} SKUs</span>
               </div>
 
               <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar mb-10">
@@ -1428,7 +1428,7 @@ export default function CheckoutPage() {
                         <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest whitespace-nowrap">
                           {item.quantity} Units {item.price > 0 && `× ${formatPrice(item.price)}`}
                         </span>
-                        <span className="text-xs font-black text-[#C8961A] tabular-nums">
+                        <span className="text-xs font-black text-[#FA9411] tabular-nums">
                           {item.price > 0 ? formatPrice(item.price * item.quantity) : 'Price on Inquiry'}
                         </span>
                       </div>
@@ -1448,7 +1448,7 @@ export default function CheckoutPage() {
                       {/* Live logo and customization details inside Checkout summary */}
                       {item.brandingType && (
                         <div className="mt-2.5 p-2 bg-white/5 border border-white/10 rounded-xl space-y-2">
-                          <div className="inline-block px-2 py-0.5 bg-[#C8961A]/20 text-[#C8961A] text-[8px] font-black uppercase tracking-[1.5px] rounded border border-[#C8961A]/30">
+                          <div className="inline-block px-2 py-0.5 bg-[#FA9411]/20 text-[#FA9411] text-[8px] font-black uppercase tracking-[1.5px] rounded border border-[#FA9411]/30">
                             🪡 Custom Branding Active
                           </div>
                           <div className="text-[9px] text-white/70 font-bold uppercase tracking-wide">
@@ -1482,7 +1482,7 @@ export default function CheckoutPage() {
                 )}
                 <div className="flex justify-between text-white/40 font-black text-[10px] uppercase tracking-widest">
                   <span>Inland Shipping (Est.)</span>
-                  <span className="text-[#C8961A]">
+                  <span className="text-[#FA9411]">
                     {deliveryMethod === 'nairobi' ? formatPrice(300) : deliveryMethod === 'pickup' ? 'FREE' : 'TBD'}
                   </span>
                 </div>
@@ -1492,7 +1492,7 @@ export default function CheckoutPage() {
                     <p className="text-3xl font-black tracking-tighter text-white tabular-nums">{formatPrice(finalCartTotal)}</p>
                   </div>
                   <div className="text-right">
-                    <div className="flex items-center gap-1.5 text-[8px] font-black text-[#C8961A] uppercase tracking-[2px] bg-[#C8961A]/10 px-3 py-1.5 rounded-lg border border-[#C8961A]/20">
+                    <div className="flex items-center gap-1.5 text-[8px] font-black text-[#FA9411] uppercase tracking-[2px] bg-[#FA9411]/10 px-3 py-1.5 rounded-lg border border-[#FA9411]/20">
                       <ShieldCheck size={10} /> VAT Compliant
                     </div>
                   </div>

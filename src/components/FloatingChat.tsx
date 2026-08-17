@@ -173,7 +173,7 @@ export function FloatingChat() {
           >
             {/* Header */}
             <div className={`p-4 transition-colors duration-500 relative overflow-hidden shrink-0 ${
-              chatMode === 'ai' ? 'bg-[#C8961A]' : 'bg-[#0A1628]'
+              chatMode === 'ai' ? 'bg-[#FA9411]' : 'bg-[#08047D]'
             }`}>
                <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
@@ -182,18 +182,18 @@ export function FloatingChat() {
                <div className="relative z-10 flex items-center justify-between">
                  <div className="flex items-center gap-3">
                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-                     chatMode === 'ai' ? 'bg-white/20 border border-white/30' : 'bg-[#C8961A]/10 border border-[#C8961A]/20'
+                     chatMode === 'ai' ? 'bg-white/20 border border-white/30' : 'bg-[#FA9411]/10 border border-[#FA9411]/20'
                    }`}>
                      <div className="relative">
-                       <Headset className={chatMode === 'ai' ? 'text-white' : 'text-[#C8961A]'} size={24} />
-                       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#0A1628]"></span>
+                       <Headset className={chatMode === 'ai' ? 'text-white' : 'text-[#FA9411]'} size={24} />
+                       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#08047D]"></span>
                      </div>
                    </div>
                    <div>
                      <h4 className="text-white text-xs font-black uppercase tracking-widest">
                        {chatMode === 'ai' ? 'OpenHuman Intelligence' : (chatSettings?.title || 'Production Support')}
                      </h4>
-                     <p className={`text-[10px] font-bold ${chatMode === 'ai' ? 'text-[#0A1628]' : 'text-[#C8961A]'}`}>
+                     <p className={`text-[10px] font-bold ${chatMode === 'ai' ? 'text-[#08047D]' : 'text-[#FA9411]'}`}>
                        {chatMode === 'ai' ? 'Real-time Production AI' : (chatSettings?.subtitle || 'Live Support')}
                      </p>
                    </div>
@@ -232,7 +232,7 @@ export function FloatingChat() {
                   <button 
                     onClick={() => setChatMode('direct')}
                     className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all ${
-                      chatMode === 'direct' ? 'bg-[#0A1628] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'
+                      chatMode === 'direct' ? 'bg-[#08047D] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'
                     }`}
                   >
                     {chatSettings?.directLabel || 'Direct'}
@@ -240,7 +240,7 @@ export function FloatingChat() {
                   <button 
                     onClick={() => setChatMode('ai')}
                     className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all flex items-center gap-1 ${
-                      chatMode === 'ai' ? 'bg-[#C8961A] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'
+                      chatMode === 'ai' ? 'bg-[#FA9411] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'
                     }`}
                   >
                     {chatSettings?.aiLabel || 'OpenHuman'}
@@ -255,15 +255,15 @@ export function FloatingChat() {
                 <div className="flex-1 bg-white p-4 overflow-y-auto space-y-4 custom-scrollbar">
                   {isLoadingMessages ? (
                     <div className="h-full flex items-center justify-center">
-                      <Loader2 size={24} className="text-[#C8961A] animate-spin opacity-20" />
+                      <Loader2 size={24} className="text-[#FA9411] animate-spin opacity-20" />
                     </div>
                   ) : messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
                       <div className="w-14 h-14 bg-slate-50 rounded-3xl flex items-center justify-center">
-                        {chatMode === 'ai' ? <Zap size={24} className="text-[#C8961A]" /> : <Headset size={24} className="text-slate-400" />}
+                        {chatMode === 'ai' ? <Zap size={24} className="text-[#FA9411]" /> : <Headset size={24} className="text-slate-400" />}
                       </div>
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#0A1628]">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#08047D]">
                           {chatMode === 'ai' ? 'AI Sourcing Active' : 'Manufacturing Support'}
                         </p>
                         <p className="text-[9px] font-medium max-w-[180px] mt-1">
@@ -281,14 +281,14 @@ export function FloatingChat() {
                         >
                           <div className={`max-w-[85%] p-3 rounded-2xl text-[12px] leading-relaxed shadow-sm ${
                             msg.sender === 'user' 
-                              ? (chatMode === 'ai' ? 'bg-[#C8961A] text-white' : 'bg-[#0A1628] text-white') + ' rounded-br-none shadow-lg'
+                              ? (chatMode === 'ai' ? 'bg-[#FA9411] text-white' : 'bg-[#08047D] text-white') + ' rounded-br-none shadow-lg'
                               : msg.sender === 'ai'
-                                ? 'bg-slate-900 text-white rounded-bl-none border-l-4 border-[#C8961A]'
-                                : 'bg-slate-100 text-[#0A1628] border border-slate-100 rounded-bl-none'
+                                ? 'bg-slate-900 text-white rounded-bl-none border-l-4 border-[#FA9411]'
+                                : 'bg-slate-100 text-[#08047D] border border-slate-100 rounded-bl-none'
                           }`}>
                             {(msg.sender === 'ai' || msg.sender === 'admin' || msg.sender === 'system') && (
                               <div className="flex items-center gap-1.5 mb-2 pb-2 border-b border-black/5">
-                                <Zap size={10} className={msg.sender === 'ai' ? 'text-[#C8961A]' : 'text-[#0A1628]'} />
+                                <Zap size={10} className={msg.sender === 'ai' ? 'text-[#FA9411]' : 'text-[#08047D]'} />
                                 <span className="text-[8px] font-black uppercase tracking-widest opacity-70">
                                   {msg.sender === 'ai' ? 'Intelligence' : (msg.sender === 'admin' ? 'Support Lead' : 'System')}
                                 </span>
@@ -313,19 +313,19 @@ export function FloatingChat() {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       placeholder="Type message..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-4 pr-12 py-3 text-[11px] font-bold focus:border-[#C8961A] outline-none transition-all placeholder:text-slate-300"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-4 pr-12 py-3 text-[11px] font-bold focus:border-[#FA9411] outline-none transition-all placeholder:text-slate-300"
                     />
                     <button 
                       type="submit"
                       disabled={!newMessage.trim() || isSending}
-                      className="absolute right-1.5 top-1.5 bottom-1.5 w-8 h-8 bg-[#0A1628] hover:bg-[#C8102E] text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-30 active:scale-95"
+                      className="absolute right-1.5 top-1.5 bottom-1.5 w-8 h-8 bg-[#08047D] hover:bg-[#08047D] text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-30 active:scale-95"
                     >
                       {isSending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                     </button>
                   </form>
                   <div className="mt-2 flex items-center justify-between gap-1">
                     <div className="flex items-center gap-2">
-                      <Zap size={10} className="text-[#C8961A]" />
+                      <Zap size={10} className="text-[#FA9411]" />
                       <span className="text-[8px] font-black uppercase tracking-[3px] text-slate-300">
                         {chatMode === 'ai' ? 'OpenHuman AI Active' : 'Sync Protocols Active'}
                       </span>
@@ -347,8 +347,8 @@ export function FloatingChat() {
       {/* Background Shadow Lighting (Ambient Glow Aura) */}
       <div className={`absolute -inset-4 rounded-full transition-all duration-1000 blur-2xl pointer-events-none -z-10 ${
         isOpen 
-          ? 'bg-[#0A1628]/30 opacity-40 scale-75' 
-          : 'bg-[#C8961A]/40 opacity-70 scale-105 animate-pulse'
+          ? 'bg-[#08047D]/30 opacity-40 scale-75' 
+          : 'bg-[#FA9411]/40 opacity-70 scale-105 animate-pulse'
       }`} />
 
       <motion.button
@@ -360,8 +360,8 @@ export function FloatingChat() {
         }}
         className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border ${
           isOpen 
-            ? 'bg-[#0A1628] border-white/20 text-white shadow-[0_15px_35px_rgba(10,22,40,0.4)]' 
-            : 'bg-gradient-to-tr from-[#C8961A] via-[#E3AC2C] to-[#C8961A] border-[#E3AC2C]/40 text-white'
+            ? 'bg-[#08047D] border-white/20 text-white shadow-[0_15px_35px_rgba(10,22,40,0.4)]' 
+            : 'bg-gradient-to-tr from-[#FA9411] via-[#E3AC2C] to-[#FA9411] border-[#E3AC2C]/40 text-white'
         }`}
         animate={!isOpen ? {
           boxShadow: [
@@ -380,11 +380,11 @@ export function FloatingChat() {
         {!isOpen && (
           <div className="absolute inset-0 pointer-events-none rounded-full overflow-visible">
             {/* Base radiant glow */}
-            <span className="absolute inset-0 rounded-full bg-[#C8961A]/10 animate-pulse"></span>
+            <span className="absolute inset-0 rounded-full bg-[#FA9411]/10 animate-pulse"></span>
             {/* Wave 1 */}
-            <span className="absolute inset-0 rounded-full border border-[#C8961A]/40 bg-[#C8961A]/10 animate-[ping_3s_infinite_ease-out]"></span>
+            <span className="absolute inset-0 rounded-full border border-[#FA9411]/40 bg-[#FA9411]/10 animate-[ping_3s_infinite_ease-out]"></span>
             {/* Wave 2 */}
-            <span className="absolute inset-0 rounded-full border border-[#C8961A]/20 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:1s]"></span>
+            <span className="absolute inset-0 rounded-full border border-[#FA9411]/20 bg-transparent animate-[ping_3s_infinite_ease-out] [animation-delay:1s]"></span>
           </div>
         )}
 

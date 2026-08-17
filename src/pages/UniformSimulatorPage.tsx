@@ -211,7 +211,7 @@ export default function UniformSimulatorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#0A1628] pb-12">
+    <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#08047D] pb-12">
       {/* Navbar with mega menu and cart integrations */}
       <Navbar 
         wishlistCount={wishlistCount}
@@ -227,11 +227,11 @@ export default function UniformSimulatorPage() {
       {/* Hero Header with Premium Naisiae Typography */}
       <section className="pt-24 pb-8 px-6">
         <div className="max-w-[1440px] mx-auto text-center">
-          <span className="text-[10px] font-black text-[#C8961A] uppercase tracking-[4px] bg-[#C8961A]/10 px-4 py-1.5 rounded-full mb-4 inline-block">
+          <span className="text-[10px] font-black text-[#FA9411] uppercase tracking-[4px] bg-[#FA9411]/10 px-4 py-1.5 rounded-full mb-4 inline-block">
             Virtual Tailor Lab
           </span>
-          <h1 className="font-display text-5xl md:text-[7.5rem] text-[#0A1628] leading-[0.8] tracking-tighter mb-6 uppercase italic">
-            Uniform <span className="text-white/0 stroke-text font-black" style={{ WebkitTextStroke: '2px #0A1628' }}>Simulator</span>
+          <h1 className="font-display text-5xl md:text-[7.5rem] text-[#08047D] leading-[0.8] tracking-tighter mb-6 uppercase italic">
+            Uniform <span className="text-white/0 stroke-text font-black" style={{ WebkitTextStroke: '2px #08047D' }}>Simulator</span>
           </h1>
           <p className="text-slate-500 max-w-2xl mx-auto text-xs md:text-sm uppercase font-bold tracking-[3px] leading-relaxed">
             Configure sweaters, shirts, blazers, and ties in Nairobi's standard school colorways. Preview instantly in real-time Vector rendering.
@@ -311,8 +311,8 @@ export default function UniformSimulatorPage() {
                     <rect x="20" y="0" width="40" height="40" fill="#000000" opacity="0.18" />
                     <line x1="0" y1="12" x2="40" y2="12" stroke="#F1C40F" strokeWidth="1.5" opacity="0.3" />
                     <line x1="12" y1="0" x2="12" y2="40" stroke="#F1C40F" strokeWidth="1.5" opacity="0.3" />
-                    <line x1="0" y1="32" x2="40" y2="32" stroke="#C8102E" strokeWidth="1" opacity="0.3" />
-                    <line x1="32" y1="0" x2="32" y2="40" stroke="#C8102E" strokeWidth="1" opacity="0.3" />
+                    <line x1="0" y1="32" x2="40" y2="32" stroke="#08047D" strokeWidth="1" opacity="0.3" />
+                    <line x1="32" y1="0" x2="32" y2="40" stroke="#08047D" strokeWidth="1" opacity="0.3" />
                   </pattern>
                 </defs>
 
@@ -397,8 +397,8 @@ export default function UniformSimulatorPage() {
                     <path d="M230 155 L210 220 L245 200 Z" fill={`url(#${FABRICS.find(f => f.id === outerFabric)?.patternId || 'pattern-heavy-drill'})`} />
 
                     {/* Blazer buttons */}
-                    <circle cx="200" cy="235" r="4" fill="#C8961A" />
-                    <circle cx="200" cy="255" r="4" fill="#C8961A" />
+                    <circle cx="200" cy="235" r="4" fill="#FA9411" />
+                    <circle cx="200" cy="255" r="4" fill="#FA9411" />
                   </g>
                 ) : (
                   // Sweater (Full long sleeve knit) or Vest (sleeveless)
@@ -464,7 +464,7 @@ export default function UniformSimulatorPage() {
                   <g id="embroidery-crest" transform="translate(162, 185) scale(0.65)">
                     {/* Outer Crest Shape */}
                     <path d="M5 5 C5 5, 25 -5, 45 5 C45 25, 40 45, 25 55 C10 45, 5 25, 5 5 Z" fill={trimColor.hex} />
-                    <path d="M8 8 C8 8, 25 -2, 42 8 C42 24, 38 42, 25 51 C12 42, 8 24, 8 8 Z" fill="#0A1628" />
+                    <path d="M8 8 C8 8, 25 -2, 42 8 C42 24, 38 42, 25 51 C12 42, 8 24, 8 8 Z" fill="#08047D" />
                     
                     {/* Symbolic inner star / embroidery lines */}
                     <polygon points="25,15 28,24 37,24 30,30 33,39 25,33 17,39 20,30 13,24 22,24" fill={trimColor.hex} />
@@ -509,7 +509,7 @@ export default function UniformSimulatorPage() {
               </svg>
 
               {/* Live Badge Watermark Indicator */}
-              <div className="absolute bottom-6 left-6 bg-[#0E121C] text-white/90 text-[7px] font-mono rounded-lg px-2.5 py-1 uppercase tracking-widest border border-white/10 flex items-center gap-1.5 z-20">
+              <div className="absolute bottom-6 left-6 bg-[#04023D] text-white/90 text-[7px] font-mono rounded-lg px-2.5 py-1 uppercase tracking-widest border border-white/10 flex items-center gap-1.5 z-20">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                 Badge: {customBadgeText || 'Plain Crest'}
               </div>
@@ -528,14 +528,14 @@ export default function UniformSimulatorPage() {
                     appExperience.triggerFeedback('success');
                     window.print();
                   }}
-                  className="p-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl hover:text-[#0A1628] hover:border-slate-300 transition-all flex items-center justify-center"
+                  className="p-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl hover:text-[#08047D] hover:border-slate-300 transition-all flex items-center justify-center"
                   title="Print Specification Page"
                 >
                   <Printer size={14} />
                 </button>
                 <button
                   onClick={handleRequestSample}
-                  className="bg-[#0A1628] hover:bg-[#C8102E] text-white px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[2px] transition-all flex items-center gap-1.5"
+                  className="bg-[#08047D] hover:bg-[#08047D] text-white px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[2px] transition-all flex items-center gap-1.5"
                 >
                   <Plus size={12} /> Add Config to Swatch Pack
                 </button>
@@ -551,14 +551,14 @@ export default function UniformSimulatorPage() {
                 <Layers size={18} />
               </div>
               <div className="space-y-1.5">
-                <h4 className="text-xs font-black uppercase tracking-[2px] text-[#0A1628]">Recommended Raw Material</h4>
+                <h4 className="text-xs font-black uppercase tracking-[2px] text-[#08047D]">Recommended Raw Material</h4>
                 <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
-                  For this selection, Naisiae recommends pairing the <span className="text-[#0A1628] font-bold">Uhuru Heavy-Duty Drill</span> for bottoms and <span className="text-[#0A1628] font-bold">Jogoo Low-Pill Acrylic</span> for sweaters. These are certified by the Kenya Bureau of Standards for longevity and safety.
+                  For this selection, Naisiae recommends pairing the <span className="text-[#08047D] font-bold">Uhuru Heavy-Duty Drill</span> for bottoms and <span className="text-[#08047D] font-bold">Jogoo Low-Pill Acrylic</span> for sweaters. These are certified by the Kenya Bureau of Standards for longevity and safety.
                 </p>
                 <div className="pt-2">
                   <a 
                     href="/fabric-gallery" 
-                    className="text-[9px] font-black uppercase tracking-[2.5px] text-[#C8102E] hover:text-[#0A1628] transition-colors flex items-center gap-1"
+                    className="text-[9px] font-black uppercase tracking-[2.5px] text-[#08047D] hover:text-[#08047D] transition-colors flex items-center gap-1"
                   >
                     Browse Fabrics Gallery <ChevronRight size={12} />
                   </a>
@@ -577,11 +577,11 @@ export default function UniformSimulatorPage() {
             
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#C8102E]/5 flex items-center justify-center text-[#C8102E]">
+                <div className="w-9 h-9 rounded-full bg-[#08047D]/5 flex items-center justify-center text-[#08047D]">
                   <Sliders size={18} />
                 </div>
                 <div>
-                  <h2 className="text-xs font-black uppercase tracking-[2.5px] text-[#0A1628]">Virtual Tailoring Rig</h2>
+                  <h2 className="text-xs font-black uppercase tracking-[2.5px] text-[#08047D]">Virtual Tailoring Rig</h2>
                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Configure Every Component Live</p>
                 </div>
               </div>
@@ -604,7 +604,7 @@ export default function UniformSimulatorPage() {
                   setShirtFabric('cotton-twill');
                   setBottomFabric('heavy-drill');
                 }}
-                className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 hover:text-[#C8102E] transition-all flex items-center gap-1.5"
+                className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 hover:text-[#08047D] transition-all flex items-center gap-1.5"
               >
                 <RotateCcw size={12} /> Reset Config
               </button>
@@ -622,7 +622,7 @@ export default function UniformSimulatorPage() {
                       setGenderFit('boy');
                     }}
                     className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                      genderFit === 'boy' ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                      genderFit === 'boy' ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                     }`}
                   >
                     Boys Fit (Trousers)
@@ -633,7 +633,7 @@ export default function UniformSimulatorPage() {
                       setGenderFit('girl');
                     }}
                     className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                      genderFit === 'girl' ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                      genderFit === 'girl' ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                     }`}
                   >
                     Girls Fit (Skirt)
@@ -650,7 +650,7 @@ export default function UniformSimulatorPage() {
                       setOuterwearStyle('sweater');
                     }}
                     className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                      outerwearStyle === 'sweater' ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                      outerwearStyle === 'sweater' ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                     }`}
                   >
                     Sweater
@@ -661,7 +661,7 @@ export default function UniformSimulatorPage() {
                       setOuterwearStyle('vest');
                     }}
                     className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                      outerwearStyle === 'vest' ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                      outerwearStyle === 'vest' ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                     }`}
                   >
                     Knit Vest
@@ -672,7 +672,7 @@ export default function UniformSimulatorPage() {
                       setOuterwearStyle('blazer');
                     }}
                     className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                      outerwearStyle === 'blazer' ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                      outerwearStyle === 'blazer' ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                     }`}
                   >
                     Blazer
@@ -685,7 +685,7 @@ export default function UniformSimulatorPage() {
             {/* Parameter 2: Outerwear Color Picker */}
             <div className="space-y-3">
               <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">
-                3. Primary Outerwear Shade: <span className="text-[#0A1628] font-bold">{outerColor.name}</span>
+                3. Primary Outerwear Shade: <span className="text-[#08047D] font-bold">{outerColor.name}</span>
               </label>
               <div className="flex flex-wrap gap-3">
                 {HIGH_SCHOOL_COLORS.map((color) => (
@@ -696,7 +696,7 @@ export default function UniformSimulatorPage() {
                       setOuterColor(color);
                     }}
                     className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center relative ${
-                      outerColor.key === color.key ? 'border-[#C8102E] scale-110 shadow-md' : 'border-slate-200 hover:border-slate-400'
+                      outerColor.key === color.key ? 'border-[#08047D] scale-110 shadow-md' : 'border-slate-200 hover:border-slate-400'
                     }`}
                     title={color.name}
                   >
@@ -724,7 +724,7 @@ export default function UniformSimulatorPage() {
                           setTrimStyle(p as any);
                         }}
                         className={`flex-1 py-2 text-[8px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                          trimStyle === p ? 'bg-[#C8961A] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                          trimStyle === p ? 'bg-[#FA9411] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                         }`}
                       >
                         {p} Stripe
@@ -744,7 +744,7 @@ export default function UniformSimulatorPage() {
                           setTrimColor(color);
                         }}
                         className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center relative ${
-                          trimColor.name === color.name ? 'border-[#0A1628] scale-110' : 'border-slate-200'
+                          trimColor.name === color.name ? 'border-[#08047D] scale-110' : 'border-slate-200'
                         }`}
                         title={color.name}
                       >
@@ -774,7 +774,7 @@ export default function UniformSimulatorPage() {
                         setShirtStyle(s.id as any);
                       }}
                       className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                        shirtStyle === s.id ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                        shirtStyle === s.id ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                       }`}
                     >
                       {s.label}
@@ -794,7 +794,7 @@ export default function UniformSimulatorPage() {
                         setShirtColor(color);
                       }}
                       className={`px-4 py-2.5 rounded-xl border-2 transition-all text-[9px] font-bold uppercase tracking-wider ${
-                        shirtColor.key === color.key ? 'bg-white border-[#0A1628] shadow-sm' : 'bg-slate-50 border-transparent hover:border-slate-200 text-slate-500'
+                        shirtColor.key === color.key ? 'bg-white border-[#08047D] shadow-sm' : 'bg-slate-50 border-transparent hover:border-slate-200 text-slate-500'
                       }`}
                     >
                       <span className="inline-block w-2.5 h-2.5 rounded-full mr-2 shadow-inner border border-slate-200/60" style={{ backgroundColor: color.hex }} />
@@ -809,7 +809,7 @@ export default function UniformSimulatorPage() {
             {/* Parameter 5: Bottoms Color Selection */}
             <div className="space-y-3">
               <label className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">
-                5. Bottoms Fabric Tone ({genderFit === 'boy' ? 'Trousers' : 'Skirt'}): <span className="text-[#0A1628] font-bold">{bottomColor.name}</span>
+                5. Bottoms Fabric Tone ({genderFit === 'boy' ? 'Trousers' : 'Skirt'}): <span className="text-[#08047D] font-bold">{bottomColor.name}</span>
               </label>
               <div className="flex gap-3">
                 {BOTTOM_COLORS.map((color) => (
@@ -821,7 +821,7 @@ export default function UniformSimulatorPage() {
                     }}
                     className={`flex-1 py-3 rounded-2xl border-2 text-[9px] font-black uppercase tracking-widest transition-all ${
                       bottomColor.key === color.key 
-                        ? 'bg-[#0A1628] text-white border-[#0A1628] shadow' 
+                        ? 'bg-[#08047D] text-white border-[#08047D] shadow' 
                         : 'bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300'
                     }`}
                   >
@@ -840,7 +840,7 @@ export default function UniformSimulatorPage() {
                     <Layers size={16} />
                   </div>
                   <div>
-                    <h3 className="text-[11px] font-black uppercase tracking-[2px] text-[#0A1628]">Material Texture & Loom Specs</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-[2px] text-[#08047D]">Material Texture & Loom Specs</h3>
                     <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Toggle high-fidelity fabric blends and weaves</p>
                   </div>
                 </div>
@@ -852,7 +852,7 @@ export default function UniformSimulatorPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Outerwear Fabric:</span>
-                    <span className="text-[9px] font-bold text-[#C8102E]">{FABRICS.find(f => f.id === outerFabric)?.name}</span>
+                    <span className="text-[9px] font-bold text-[#08047D]">{FABRICS.find(f => f.id === outerFabric)?.name}</span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {FABRICS.map((fab) => (
@@ -864,8 +864,8 @@ export default function UniformSimulatorPage() {
                         }}
                         className={`py-2 px-1.5 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-1 text-center ${
                           outerFabric === fab.id 
-                            ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-sm scale-[1.03]' 
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#0A1628]'
+                            ? 'bg-[#08047D] text-white border-[#08047D] shadow-sm scale-[1.03]' 
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#08047D]'
                         }`}
                       >
                         <span className="text-[8px] font-black tracking-tighter truncate w-full">{fab.name.split(' ')[1] || fab.name}</span>
@@ -877,11 +877,11 @@ export default function UniformSimulatorPage() {
                   {outerFabric && (
                     <div className="p-3 bg-white/80 rounded-xl border border-slate-100 text-[10px] leading-relaxed text-slate-500 flex justify-between items-start gap-4">
                       <div className="space-y-0.5">
-                        <span className="font-bold text-[#0A1628]">{FABRICS.find(f => f.id === outerFabric)?.name}</span>
+                        <span className="font-bold text-[#08047D]">{FABRICS.find(f => f.id === outerFabric)?.name}</span>
                         <p className="text-[9px] leading-relaxed">{FABRICS.find(f => f.id === outerFabric)?.desc}</p>
                       </div>
                       <div className="shrink-0 text-right font-mono text-[8px] space-y-0.5 border-l border-slate-200 pl-3">
-                        <span className="block font-bold text-[#C8961A]">{FABRICS.find(f => f.id === outerFabric)?.gsm}</span>
+                        <span className="block font-bold text-[#FA9411]">{FABRICS.find(f => f.id === outerFabric)?.gsm}</span>
                         <span className="block text-slate-400">{FABRICS.find(f => f.id === outerFabric)?.composition}</span>
                       </div>
                     </div>
@@ -892,7 +892,7 @@ export default function UniformSimulatorPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Shirt / Blouse Fabric:</span>
-                    <span className="text-[9px] font-bold text-[#C8102E]">{FABRICS.find(f => f.id === shirtFabric)?.name}</span>
+                    <span className="text-[9px] font-bold text-[#08047D]">{FABRICS.find(f => f.id === shirtFabric)?.name}</span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {FABRICS.map((fab) => (
@@ -904,8 +904,8 @@ export default function UniformSimulatorPage() {
                         }}
                         className={`py-2 px-1.5 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-1 text-center ${
                           shirtFabric === fab.id 
-                            ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-sm scale-[1.03]' 
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#0A1628]'
+                            ? 'bg-[#08047D] text-white border-[#08047D] shadow-sm scale-[1.03]' 
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#08047D]'
                         }`}
                       >
                         <span className="text-[8px] font-black tracking-tighter truncate w-full">{fab.name.split(' ')[1] || fab.name}</span>
@@ -917,11 +917,11 @@ export default function UniformSimulatorPage() {
                   {shirtFabric && (
                     <div className="p-3 bg-white/80 rounded-xl border border-slate-100 text-[10px] leading-relaxed text-slate-500 flex justify-between items-start gap-4">
                       <div className="space-y-0.5">
-                        <span className="font-bold text-[#0A1628]">{FABRICS.find(f => f.id === shirtFabric)?.name}</span>
+                        <span className="font-bold text-[#08047D]">{FABRICS.find(f => f.id === shirtFabric)?.name}</span>
                         <p className="text-[9px] leading-relaxed">{FABRICS.find(f => f.id === shirtFabric)?.desc}</p>
                       </div>
                       <div className="shrink-0 text-right font-mono text-[8px] space-y-0.5 border-l border-slate-200 pl-3">
-                        <span className="block font-bold text-[#C8961A]">{FABRICS.find(f => f.id === shirtFabric)?.gsm}</span>
+                        <span className="block font-bold text-[#FA9411]">{FABRICS.find(f => f.id === shirtFabric)?.gsm}</span>
                         <span className="block text-slate-400">{FABRICS.find(f => f.id === shirtFabric)?.composition}</span>
                       </div>
                     </div>
@@ -932,7 +932,7 @@ export default function UniformSimulatorPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Bottoms Fabric:</span>
-                    <span className="text-[9px] font-bold text-[#C8102E]">{FABRICS.find(f => f.id === bottomFabric)?.name}</span>
+                    <span className="text-[9px] font-bold text-[#08047D]">{FABRICS.find(f => f.id === bottomFabric)?.name}</span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {FABRICS.map((fab) => (
@@ -944,8 +944,8 @@ export default function UniformSimulatorPage() {
                         }}
                         className={`py-2 px-1.5 rounded-xl border text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-1 text-center ${
                           bottomFabric === fab.id 
-                            ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-sm scale-[1.03]' 
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#0A1628]'
+                            ? 'bg-[#08047D] text-white border-[#08047D] shadow-sm scale-[1.03]' 
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#08047D]'
                         }`}
                       >
                         <span className="text-[8px] font-black tracking-tighter truncate w-full">{fab.name.split(' ')[1] || fab.name}</span>
@@ -957,11 +957,11 @@ export default function UniformSimulatorPage() {
                   {bottomFabric && (
                     <div className="p-3 bg-white/80 rounded-xl border border-slate-100 text-[10px] leading-relaxed text-slate-500 flex justify-between items-start gap-4">
                       <div className="space-y-0.5">
-                        <span className="font-bold text-[#0A1628]">{FABRICS.find(f => f.id === bottomFabric)?.name}</span>
+                        <span className="font-bold text-[#08047D]">{FABRICS.find(f => f.id === bottomFabric)?.name}</span>
                         <p className="text-[9px] leading-relaxed">{FABRICS.find(f => f.id === bottomFabric)?.desc}</p>
                       </div>
                       <div className="shrink-0 text-right font-mono text-[8px] space-y-0.5 border-l border-slate-200 pl-3">
-                        <span className="block font-bold text-[#C8961A]">{FABRICS.find(f => f.id === bottomFabric)?.gsm}</span>
+                        <span className="block font-bold text-[#FA9411]">{FABRICS.find(f => f.id === bottomFabric)?.gsm}</span>
                         <span className="block text-slate-400">{FABRICS.find(f => f.id === bottomFabric)?.composition}</span>
                       </div>
                     </div>
@@ -984,7 +984,7 @@ export default function UniformSimulatorPage() {
                         setTieStyle(t as any);
                       }}
                       className={`flex-1 py-2 text-[8px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                        tieStyle === t ? 'bg-[#0A1628] text-white shadow' : 'text-slate-500 hover:text-[#0A1628]'
+                        tieStyle === t ? 'bg-[#08047D] text-white shadow' : 'text-slate-500 hover:text-[#08047D]'
                       }`}
                     >
                       {t}
@@ -1005,7 +1005,7 @@ export default function UniformSimulatorPage() {
                           setTieColor(color);
                         }}
                         className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center relative ${
-                          tieColor.key === color.key ? 'border-[#0A1628] scale-110' : 'border-slate-200'
+                          tieColor.key === color.key ? 'border-[#08047D] scale-110' : 'border-slate-200'
                         }`}
                         title={color.name}
                       >
@@ -1037,7 +1037,7 @@ export default function UniformSimulatorPage() {
                           setSelectedBadge(b.id);
                         }}
                         className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                          selectedBadge === b.id ? 'bg-[#0A1628] text-white' : 'text-slate-500 hover:text-[#0A1628]'
+                          selectedBadge === b.id ? 'bg-[#08047D] text-white' : 'text-slate-500 hover:text-[#08047D]'
                         }`}
                       >
                         {b.label}
@@ -1053,7 +1053,7 @@ export default function UniformSimulatorPage() {
                     maxLength={24}
                     value={customBadgeText}
                     onChange={(e) => setCustomBadgeText(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold text-[#0A1628] focus:ring-2 focus:ring-[#C8102E] focus:outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold text-[#08047D] focus:ring-2 focus:ring-[#08047D] focus:outline-none"
                     placeholder="Enter school name..."
                   />
                 </div>
@@ -1064,8 +1064,8 @@ export default function UniformSimulatorPage() {
           </div>
 
           {/* Dynamic Wholesale Cost Estimator & Quote Trigger */}
-          <div className="bg-gradient-to-r from-[#0E121C] to-[#1E293B] text-white rounded-[3.5rem] p-8 md:p-10 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#C8961A]/10 to-transparent rounded-full pointer-events-none" />
+          <div className="bg-[#04023D] text-white rounded-[3.5rem] p-8 md:p-10 shadow-xl space-y-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FA9411]/10 to-transparent rounded-full pointer-events-none" />
             
             <div className="flex items-center gap-3 border-b border-white/10 pb-4">
               <div className="w-10 h-10 rounded-2xl bg-emerald-400/15 flex items-center justify-center text-emerald-400">
@@ -1117,8 +1117,8 @@ export default function UniformSimulatorPage() {
                 <p className="text-white font-mono text-sm font-black">{formatPrice(pricingData.netCost)}</p>
               </div>
               <div>
-                <p className="text-[7.5px] font-black text-[#C8961A] mb-0.5">Total Saved</p>
-                <p className="text-[#C8961A] font-mono text-sm font-black">{formatPrice(pricingData.saving)}</p>
+                <p className="text-[7.5px] font-black text-[#FA9411] mb-0.5">Total Saved</p>
+                <p className="text-[#FA9411] font-mono text-sm font-black">{formatPrice(pricingData.saving)}</p>
               </div>
             </div>
 
@@ -1135,7 +1135,7 @@ export default function UniformSimulatorPage() {
                     appExperience.triggerFeedback('success');
                     setIsQuoteModalOpen(true);
                   }}
-                  className="bg-[#C8102E] hover:bg-[#A60D24] text-white px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-1.5 active:scale-95 shadow-lg shadow-[#C8102E]/20"
+                  className="bg-[#08047D] hover:bg-[#A60D24] text-white px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-1.5 active:scale-95 shadow-lg shadow-[#08047D]/20"
                 >
                   <FileText size={14} /> Submit Design for Tender Quote
                 </button>

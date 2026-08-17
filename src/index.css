@@ -5,23 +5,22 @@
   --font-display: "Comfortaa", sans-serif;
   --font-barlow: "Barlow", sans-serif;
   
-  /* Naisiae blended brand custom variables */
-  --color-primary: #C8102E;      /* Royal Crimson Red */
-  --color-secondary: #C8961A;    /* Antique Institutional Gold */
-  --color-accent: #E94C36;       /* Sunset Amber / Copper */
-  --color-canvapink: #E94C36;
-  --color-canva-purple: #C8102E;
-  --color-canva-teal: #C8961A;
+  /* Brand custom variables */
+  --color-primary: #08047D;      /* Brand Deep Royal Navy */
+  --color-secondary: #FA9411;    /* Brand Vibrant Gold-Amber */
+  --color-accent: #FA9411;       /* Brand Accent */
+  --color-brand-blue: #08047D;
+  --color-brand-gold: #FA9411;
 }
 
 @layer base {
   :root {
-    --canva-teal: #C8961A;       /* Noble Gold */
-    --canva-purple: #C8102E;     /* Signature Crimson Red */
-    --canva-pink: #E94C36;       /* Radiant sunset orange */
-    --canva-light-purple: #FDF9F4; /* Luxurious Linen/Ivory warm contrast */
-    --canva-gradient: linear-gradient(135deg, #C8102E 0%, #E94C36 50%, #C8961A 100%);
-    --canva-gradient-hover: linear-gradient(135deg, #AC0B23 0%, #C93C27 50%, #AC7D11 100%);
+    --brand-primary: #08047D;
+    --brand-secondary: #FA9411;
+    --brand-primary-hover: #050259;
+    --brand-accent: #FA9411;
+    --brand-accent-hover: #E08208;
+    --brand-blend: linear-gradient(135deg, #08047D 0%, #FA9411 100%);
   }
 
   html {
@@ -52,61 +51,12 @@
     max-width: 100vw;
   }
 
-  /* Redefine button.bg-[#C8102E] and a.bg-[#C8102E] to use the signature Naisiae Scarlet-Gold gradients */
-  [class*="bg-[#C8102E]"],
-  [class*="bg-[#C8102E]"]:hover {
-    background: var(--canva-gradient) !important;
-    color: white !important;
-    border-color: transparent !important;
-  }
-
-  [class*="hover:bg-[#8B0000]"]:hover,
-  [class*="hover:bg-[#A60D26]"]:hover,
-  [class*="hover:bg-[#9E0D24]"]:hover,
-  [class*="hover:bg-[#A30D25]"]:hover,
-  [class*="hover:bg-[#A00000]"]:hover,
-  [class*="hover:bg-[#C8102E]"]:hover {
-    background: var(--canva-gradient-hover) !important;
-    transform: translateY(-2px) scale(1.02) !important;
-    box-shadow: 0 12px 30px -4px rgba(200,16,46,0.45) !important;
-  }
-
-  /* Color style interceptions for premium look-and-feel - RESTORED ORIGINAL BRAND COLOR REFINEMENTS */
-  [class*="text-[#C8961A]"] {
-    color: var(--canva-teal) !important;
-  }
-  [class*="bg-[#C8961A]"] {
-    background: var(--canva-gradient) !important;
-    color: white !important;
-  }
-  [class*="hover:bg-[#C8961A]"]:hover {
-    background: var(--canva-gradient-hover) !important;
-  }
-  [class*="border-[#C8961A]"] {
-    border-color: #E94C36 !important; /* Premium Sunset Amber replace harsh yellow */
-  }
-  [class*="bg-[#C8961A]/5"] {
-    background-color: rgba(200, 150, 26, 0.05) !important;
-  }
-  [class*="bg-[#C8961A]/10"] {
-    background-color: rgba(200, 150, 26, 0.10) !important;
-  }
-  [class*="shadow-[#C8102E]"] {
-    box-shadow: 0 15px 35px -10px rgba(200, 16, 46, 0.45) !important;
-  }
-  [class*="text-[#0A1628]"] {
-    color: #12141D !important;
-  }
-
-  /* One-side Edge design border: top gradient line for products, blocks, and core cards on hover */
-
-  /* Ensure relative positioning and overflow-hidden to clip the edge border perfectly to rounded corners */
+  /* One-side Edge design border: top blended brand line on hover */
   .group.bg-white.border.rounded-xl,
   .group.bg-white.border.rounded-2xl,
   .group\/card,
-  [class*="hover:border-[#C8961A]"],
-  [class*="hover:border-[#C8961A]/50"],
-  [class*="border-[#C8961A]"]:hover {
+  [class*="hover:border-[#08047D]"],
+  [class*="border-[#08047D]"]:hover {
     position: relative !important;
     overflow: hidden !important;
   }
@@ -115,32 +65,31 @@
   .group.bg-white.border.rounded-xl,
   .group.bg-white.border.rounded-2xl {
     border-radius: 1.5rem !important;
-    box-shadow: 0 12px 36px -12px rgba(200, 16, 46, 0.10), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
-    border-color: rgba(200, 16, 46, 0.08) !important;
+    box-shadow: 0 12px 36px -12px rgba(8, 4, 125, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(8, 4, 125, 0.08) !important;
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .group.bg-white.border.rounded-xl:hover,
   .group.bg-white.border.rounded-2xl:hover {
     transform: translateY(-4px) !important;
-    box-shadow: 0 20px 45px -12px rgba(200, 16, 46, 0.18), 0 1px 5px rgba(0, 0, 0, 0.04) !important;
-    border-color: rgba(200, 16, 46, 0.15) !important;
+    box-shadow: 0 20px 45px -12px rgba(8, 4, 125, 0.16), 0 0 15px rgba(250, 148, 17, 0.15) !important;
+    border-color: rgba(250, 148, 17, 0.3) !important;
   }
 
-  /* Pseudo-element implementation for the premium top-edge design border */
+  /* Pseudo-element implementation for blended brand top-edge border */
   .group.bg-white.border.rounded-xl::before,
   .group.bg-white.border.rounded-2xl::before,
   .group\/card::before,
-  [class*="hover:border-[#C8961A]"]::before,
-  [class*="hover:border-[#C8961A]/50"]::before,
-  [class*="border-[#C8961A]"]:hover::before {
+  [class*="hover:border-[#08047D]"]::before,
+  [class*="border-[#08047D]"]:hover::before {
     content: '' !important;
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     height: 4px !important;
-    background: var(--canva-gradient) !important;
+    background: linear-gradient(90deg, #08047D 0%, #FA9411 100%) !important;
     z-index: 30 !important;
     opacity: 0 !important;
     transform: scaleX(0) !important;
@@ -151,14 +100,13 @@
   .group.bg-white.border.rounded-xl:hover::before,
   .group.bg-white.border.rounded-2xl:hover::before,
   .group\/card:hover::before,
-  [class*="hover:border-[#C8961A]"]:hover::before,
-  [class*="hover:border-[#C8961A]/50"]:hover::before,
-  [class*="border-[#C8961A]"]:hover::before {
+  [class*="hover:border-[#08047D]"]:hover::before,
+  [class*="border-[#08047D]"]:hover::before {
     opacity: 1 !important;
     transform: scaleX(1) !important;
   }
 
-  /* Right-edge vertical gradient border for all cards & right-gradient-edge elements */
+  /* Right-edge vertical brand border for cards */
   .right-gradient-edge,
   .group.bg-white.border.rounded-xl,
   .group.bg-white.border.rounded-2xl {
@@ -175,7 +123,7 @@
     bottom: 0 !important;
     right: 0 !important;
     width: 3px !important;
-    background: linear-gradient(to bottom, #C8102E, #E94C36, #C8961A) !important;
+    background: linear-gradient(180deg, #FA9411 0%, #08047D 100%) !important;
     z-index: 30 !important;
     opacity: 0.6 !important;
     transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease !important;
@@ -184,40 +132,8 @@
   .right-gradient-edge:hover::after,
   .group.bg-white.border.rounded-xl:hover::after,
   .group.bg-white.border.rounded-2xl:hover::after {
-    width: 6px !important;
+    width: 5px !important;
     opacity: 1 !important;
-  }
-
-  /* Hover edge line design specifically targeting primary buttons and block buttons */
-  [class*="bg-[#C8102E]"],
-  [class*="bg-[#C8961A]"],
-  .btn-premium {
-    position: relative !important;
-    overflow: hidden !important;
-  }
-
-  [class*="bg-[#C8102E]"]::after,
-  [class*="bg-[#C8961A]"]::after,
-  .btn-premium::after {
-    content: '' !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 3px !important;
-    background: var(--canva-gradient) !important;
-    z-index: 20 !important;
-    opacity: 0 !important;
-    transform: scaleX(0) !important;
-    transform-origin: center !important;
-    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-  }
-
-  [class*="bg-[#C8102E]"]:hover::after,
-  [class*="bg-[#C8961A]"]:hover::after,
-  .btn-premium:hover::after {
-    opacity: 1 !important;
-    transform: scaleX(1) !important;
   }
 
   /* Reset navbar shadows and border radii back to standard */
@@ -231,7 +147,7 @@
 }
 
 body {
-  @apply antialiased text-[#0A1628];
+  @apply antialiased text-slate-900;
 }
 
 /* Custom Scrollbar */
@@ -252,37 +168,22 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-[#F59E0B]/50 rounded-full hover:bg-[#F59E0B] transition-colors border border-[#F59E0B]/30;
+  @apply bg-[#FA9411]/70 rounded-full hover:bg-[#FA9411] transition-colors border border-[#FA9411]/30;
 }
 
-@keyframes blink-maroon {
+@keyframes blink-gold {
   0%, 100% {
-    box-shadow: 0 0 6px rgba(128, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05);
-    border-color: rgba(128, 0, 0, 0.25);
+    box-shadow: 0 0 6px rgba(250, 148, 17, 0.25), 0 4px 12px rgba(8, 4, 125, 0.08);
+    border-color: rgba(250, 148, 17, 0.25);
   }
   50% {
-    box-shadow: 0 0 20px rgba(128, 0, 0, 0.75), 0 0 35px rgba(200, 16, 46, 0.35);
-    border-color: rgba(200, 16, 46, 0.75);
+    box-shadow: 0 0 20px rgba(250, 148, 17, 0.75), 0 0 35px rgba(8, 4, 125, 0.35);
+    border-color: rgba(250, 148, 17, 0.75);
   }
 }
 
-.animate-blink-maroon {
-  animation: blink-maroon 2.5s infinite ease-in-out;
-}
-
-@keyframes blink-orange {
-  0%, 100% {
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1), 0 0 4px rgba(249, 115, 22, 0.15);
-    border-color: rgba(249, 115, 22, 0.2);
-  }
-  50% {
-    box-shadow: 0 10px 25px rgba(249, 115, 22, 0.45), 0 0 20px rgba(249, 115, 22, 0.35);
-    border-color: rgba(249, 115, 22, 0.65);
-  }
-}
-
-.animate-blink-orange {
-  animation: blink-orange 2.5s infinite ease-in-out;
+.animate-blink-gold {
+  animation: blink-gold 2.5s infinite ease-in-out;
 }
 
 /* Mobile App Native Fit & Safe Area Helpers */

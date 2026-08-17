@@ -235,17 +235,17 @@ export function Navbar({
       p.name?.toLowerCase().includes(q) || 
       p.category?.toLowerCase().includes(q) ||
       p.tags?.some((t: string) => t.toLowerCase().includes(q))
-    ).slice(0, 4).map(p => ({ ...p, type: 'product', icon: <Package size={14} className="text-[#C8961A]" /> }));
+    ).slice(0, 4).map(p => ({ ...p, type: 'product', icon: <Package size={14} className="text-[#FA9411]" /> }));
 
     const serviceResults = services.filter(s => 
       s.title?.toLowerCase().includes(q) || 
       s.description?.toLowerCase().includes(q)
-    ).slice(0, 2).map(s => ({ ...s, name: s.title, type: 'service', icon: <Zap size={14} className="text-[#C8961A]" /> }));
+    ).slice(0, 2).map(s => ({ ...s, name: s.title, type: 'service', icon: <Zap size={14} className="text-[#FA9411]" /> }));
 
     const categories = Array.from(new Set(products.map(p => p.category))).filter((c): c is string => !!c);
     const catResults = categories.filter(c => 
       c.toLowerCase().includes(q)
-    ).slice(0, 2).map(c => ({ id: c, name: c, type: 'category', icon: <Filter size={14} className="text-[#C8961A]" /> }));
+    ).slice(0, 2).map(c => ({ id: c, name: c, type: 'category', icon: <Filter size={14} className="text-[#FA9411]" /> }));
 
     return [...prodResults, ...catResults, ...serviceResults];
   }, [searchQuery, products, services]);
@@ -456,17 +456,17 @@ export function Navbar({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] text-white overflow-hidden relative z-[110] border-b border-white/10"
+            className="bg-[#050259] text-white overflow-hidden relative z-[110] border-b border-[#FA9411]/20"
           >
             <div className="max-w-[1440px] mx-auto px-6 py-2.5 flex items-center justify-between gap-6 text-[9px] font-black tracking-[3px] uppercase">
               <div className="flex items-center gap-4 font-sans">
-                <Megaphone size={12} className="shrink-0 animate-bounce" />
+                <Megaphone size={12} className="shrink-0 animate-bounce text-[#FA9411]" />
                 <span className="hidden lg:inline">{promo.title}</span>
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-white/80 lowercase tracking-widest italic">{promo.subtitle || 'Exclusive Offer'}</span>
                 {promo.buttonLink && (
-                  <Link to={promo.buttonLink} className="bg-white text-[#C8102E] px-4 py-1 rounded-full hover:bg-neutral-100 transition-all font-black text-[8px] tracking-wider uppercase shadow-md animate-pulse">
+                  <Link to={promo.buttonLink} className="bg-[#FA9411] hover:bg-[#E08208] text-white px-4 py-1 rounded-full transition-all font-black text-[8px] tracking-wider uppercase shadow-md active:scale-95">
                     {promo.buttonText || 'Discover'}
                   </Link>
                 )}
@@ -477,55 +477,35 @@ export function Navbar({
       </AnimatePresence>
 
       <header 
-        className={`w-full relative transition-all duration-700 ${
+        className={`w-full relative transition-all duration-700 bg-[#08047D] ${
           isScrolled 
-            ? 'bg-[#0E121C]/92 backdrop-blur-2xl py-0 shadow-[0_15px_40px_rgba(0,0,0,0.5)]' 
-            : 'bg-[#0E121C]/95 backdrop-blur-xl py-0'
+            ? 'py-0 shadow-[0_10px_30px_rgba(8,4,125,0.4)]' 
+            : 'py-0'
         }`}
       >
-        {/* Subtle Signature Branding Top Line with Gentle Shimmer */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] z-20">
-          <motion.div 
-            animate={{ x: ['-100%', '200%'] }}
-            transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
-            className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent shadow-[0_0_8px_rgba(255,255,255,0.6)]"
-          />
-        </div>
-
-        {/* Simple Soft Glassy Header Light Sheen */}
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden opacity-30">
-          <motion.div 
-            animate={{ x: ['-100%', '200%'] }}
-            transition={{ repeat: Infinity, repeatDelay: 5, duration: 3.5, ease: "easeInOut" }}
-            className="w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"
-          />
-        </div>
-
         <div className={`relative z-20 max-w-[1440px] mx-auto px-2.5 sm:px-4 md:px-6 lg:px-20 flex items-center justify-between gap-2 md:gap-12 transition-all duration-700 ${isScrolled ? 'h-14 sm:h-20 md:h-24' : 'h-16 sm:h-24 md:h-32'}`}>
-          {/* Brand Identity with Canva Gradient Theme */}
+          {/* Brand Identity */}
           <Link to="/" className="group flex items-center gap-2 md:gap-4 shrink-0">
             <div className={`relative transition-all duration-700 ${isScrolled ? 'w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14' : 'w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20'}`}>
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#C8102E] to-[#C8961A] blur-[8px] md:blur-[16px] opacity-65 group-hover:opacity-100 transition-opacity rounded-full"></div>
+              <div className="absolute inset-0 bg-[#FA9411]/30 blur-[10px] opacity-65 group-hover:opacity-100 transition-opacity rounded-full"></div>
               {siteSettings?.siteLogo ? (
                 <img src={siteSettings.siteLogo} alt="Logo" className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center font-display text-xs sm:text-base md:text-xl lg:text-2xl text-white bg-gradient-to-tr from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-lg sm:rounded-2xl relative z-10 shadow-xl overflow-hidden font-black transition-all border border-white/20 group-hover:border-[#C8961A]/50 group-hover:shadow-[0_0_20px_rgba(200,150,26,0.3)]">
-                  <span className="relative z-10 select-none tracking-tight">NT</span>
-                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#C8961A_0%,transparent_60%)] opacity-35 mix-blend-overlay"></div>
-                  <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <div className="w-full h-full flex items-center justify-center font-display text-xs sm:text-base md:text-xl lg:text-2xl text-[#08047D] bg-white rounded-lg sm:rounded-2xl relative z-10 shadow-xl overflow-hidden font-black transition-all border border-white/40 group-hover:scale-105">
+                  <span className="relative z-10 select-none tracking-tight">UM</span>
+                  <div className="absolute bottom-0 inset-x-0 h-1 bg-[#FA9411]"></div>
                 </div>
               )}
             </div>
             <div className="flex items-center">
-              <span className="font-display text-lg sm:text-2xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-tight bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent group-hover:brightness-110">
+              <span className="font-display text-lg sm:text-2xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-tight text-white group-hover:text-white/90 drop-shadow-sm">
                 {resolvedSiteName}
               </span>
             </div>
           </Link>
 
           {/* Centered Navigation */}
-          <nav className="hidden xl:flex items-center gap-12 flex-1 justify-center h-full self-stretch">
+          <nav className="hidden xl:flex items-center gap-10 flex-1 justify-center h-full self-stretch">
             {navItems.map((item) => {
               const localizedLink = getLocalizedLink(item.link);
               const isActive = location.pathname === item.link || location.pathname === localizedLink;
@@ -536,14 +516,14 @@ export function Navbar({
                 >
                   <Link 
                     to={localizedLink} 
-                    className={`text-[10px] font-black uppercase tracking-[4px] transition-all duration-550 relative group py-2 px-3 rounded-xl hover:bg-white/5 backdrop-blur-sm ${
-                      isScrolled ? 'text-white/80' : 'text-white'
-                    } hover:text-[#C8961A]`}
+                    className={`text-[10.5px] font-black uppercase tracking-[3px] transition-all duration-300 relative group py-2.5 px-4 rounded-xl ${
+                      isActive ? 'text-white bg-white/15' : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
                   >
                     <span className="relative z-10">{item.name}</span>
-                    <span className={`absolute -bottom-1 left-0 h-[2.5px] bg-gradient-to-r from-[#C8102E] to-[#C8961A] transition-all duration-500 rounded-full ${
-                      isActive ? 'w-full' : 'w-0'
-                    } group-hover:w-full`}></span>
+                    <span className={`absolute bottom-0 left-3 right-3 h-[2.5px] bg-[#FA9411] transition-all duration-300 rounded-full ${
+                      isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    }`}></span>
                   </Link>
                 </div>
               );
@@ -551,33 +531,28 @@ export function Navbar({
           </nav>
 
           {/* Action Hub */}
-          <div className="flex items-center gap-4 lg:gap-8">
-              <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/10 backdrop-blur-2xl rounded-xl md:rounded-2xl border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.2)] hidden sm:flex hover:border-white/30 transition-all">
-               <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/70 hover:text-[#FF4F5A] transition-all relative group hover:scale-110">
-                 <Heart size={18} className={wishlistCount > 0 ? "fill-[#FF4F5A] text-[#FF4F5A]" : "transition-transform md:w-5 md:h-5"} />
-                 {wishlistCount > 0 && (
-                   <span className="absolute top-1 right-1 w-2 h-2 bg-[#FF4F5A] rounded-full animate-ping"></span>
-                 )}
-               </button>
-               <div className="w-[1px] h-4 bg-white/15 mx-1"></div>
-               <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-1.5 md:p-2 text-white/70 hover:text-[#00C4CC] transition-all relative group hover:scale-110">
-                 <GitCompare size={18} className="group-hover:rotate-45 transition-transform md:w-5 md:h-5" />
-               </button>
+          <div className="flex items-center gap-3 lg:gap-6">
+            <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/15 backdrop-blur-2xl rounded-xl md:rounded-2xl border border-white/20 shadow-sm hidden sm:flex hover:border-white/40 transition-all">
+              <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/80 hover:text-white transition-all relative group hover:scale-110">
+                <Heart size={18} className={wishlistCount > 0 ? "fill-[#FA9411] text-[#FA9411]" : "transition-transform md:w-5 md:h-5"} />
+                {wishlistCount > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#FA9411] rounded-full animate-ping"></span>
+                )}
+              </button>
+              <div className="w-[1px] h-4 bg-white/20 mx-1"></div>
+              <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-1.5 md:p-2 text-white/80 hover:text-white transition-all relative group hover:scale-110">
+                <GitCompare size={18} className="group-hover:rotate-45 transition-transform md:w-5 md:h-5 text-white/90 hover:text-[#FA9411]" />
+              </button>
             </div>
 
             <button 
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Cart"
-              className="group relative p-2 md:p-4 bg-[#C8961A] text-white hover:bg-[#B08011] hover:shadow-[0_0_25px_rgba(200,150,26,0.6)] transition-all duration-550 rounded-lg md:rounded-2xl shadow-xl active:scale-90 overflow-hidden"
+              className="group relative p-2.5 md:p-4 bg-white text-[#08047D] hover:bg-slate-50 transition-all duration-300 rounded-lg md:rounded-2xl shadow-lg active:scale-90 overflow-hidden font-black"
             >
-              <ShoppingBag size={16} className="relative z-10 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5" />
-              <motion.div 
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12"
-              />
+              <ShoppingBag size={18} className="relative z-10 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 text-[#08047D]" />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 md:-top-3 md:-right-3 w-4 h-4 md:w-6 md:h-6 bg-[#FF4F5A] text-white text-[8px] md:text-[10px] font-black flex items-center justify-center rounded-full border-[1.5px] md:border-[3px] border-[#0E121C] shadow-lg animate-pulse">
+                <span className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-5 md:h-5 bg-[#FA9411] text-white text-[8px] md:text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white shadow-md animate-pulse">
                   {cartCount}
                 </span>
               )}
@@ -585,15 +560,10 @@ export function Navbar({
 
             <button 
               onClick={() => setIsQuoteModalOpen(true)}
-              className="hidden lg:flex items-center gap-3 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] text-white hover:shadow-[0_8px_30px_rgba(200,16,46,0.5)] hover:-translate-y-0.5 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-500 active:scale-95 shadow-[0_12px_40px_rgba(200,16,46,0.3)] relative overflow-hidden border border-white/20"
+              className="hidden lg:flex items-center gap-2.5 bg-[#FA9411] text-white hover:bg-[#E08208] hover:shadow-xl hover:-translate-y-0.5 px-7 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-300 active:scale-95 shadow-md border border-[#FA9411]/40"
             >
-              <Package size={18} className="relative z-10" /> 
+              <Package size={17} className="relative z-10" /> 
               <span className="relative z-10">Enquire</span>
-              <motion.div 
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent transform -skew-x-12"
-              />
             </button>
 
             <button 
@@ -602,39 +572,33 @@ export function Navbar({
                 appExperience.triggerFeedback('tap');
               }} 
               aria-label="Open Expansive Mega Menu"
-              className="p-2 md:p-4 bg-white/95 backdrop-blur-xl text-slate-800 hover:bg-white rounded-lg md:rounded-2xl transition-all border border-white/40 hover:border-[#C8961A]/60 flex items-center justify-center cursor-pointer shadow-lg hover:scale-105 active:scale-95"
+              className="p-2 md:p-4 bg-white text-[#08047D] hover:bg-slate-50 rounded-lg md:rounded-2xl transition-all border border-white/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
             >
-              <Menu size={18} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#0E121C]" />
+              <Menu size={18} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#08047D]" />
             </button>
           </div>
         </div>
 
-        {/* Single Wave Curved Bottom Edge Design */}
+        {/* Single Wave Curved Bottom Edge Design with #FA9411 Accent */}
         <div className="absolute -bottom-[14px] sm:-bottom-[18px] left-0 right-0 w-full overflow-hidden leading-none pointer-events-none z-30">
           <svg 
             className="relative block w-full h-[14px] sm:h-[18px]" 
             viewBox="0 0 1200 40" 
             preserveAspectRatio="none"
           >
-            <defs>
-              <linearGradient id="header-single-wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#C8102E" />
-                <stop offset="50%" stopColor="#E94C36" />
-                <stop offset="100%" stopColor="#C8961A" />
-              </linearGradient>
-            </defs>
-            {/* Header dark background fill matching top bar style */}
+            {/* Header solid blue fill matching top bar style */}
             <path 
               d="M 0 0 L 1200 0 L 1200 14 C 850 -8, 350 36, 0 8 Z" 
-              fill="#0E121C" 
-              fillOpacity={isScrolled ? "0.95" : "0.98"}
+              fill="#08047D" 
+              fillOpacity="1"
             />
-            {/* Single Wave Signature Accent Line */}
+            {/* Blended gold wave accent line */}
             <path 
               d="M 0 8 C 350 36, 850 -8, 1200 14" 
               fill="none" 
-              stroke="url(#header-single-wave-gradient)" 
+              stroke="#FA9411" 
               strokeWidth="2.5" 
+              strokeOpacity="0.9"
             />
           </svg>
         </div>
@@ -659,14 +623,14 @@ export function Navbar({
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top Accent Line */}
-              <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] z-20"></div>
+              <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#08047D] via-[#E94C36] to-[#FA9411] z-20"></div>
 
               {/* Header */}
               <div className="p-6 md:p-8 border-b border-slate-100 flex items-center justify-between mt-1 relative z-10">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#C8961A] animate-pulse"></span>
-                    <h3 className="text-xs font-black uppercase tracking-[3px] text-[#C8961A]">Expansive Sourcing Catalog</h3>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FA9411] animate-pulse"></span>
+                    <h3 className="text-xs font-black uppercase tracking-[3px] text-[#FA9411]">Expansive Sourcing Catalog</h3>
                   </div>
                   <h2 className="font-display text-xl md:text-2xl font-black text-slate-900 mt-1 uppercase tracking-tight">
                     {resolvedSiteName} Catalog
@@ -680,7 +644,7 @@ export function Navbar({
                       key={`mega-nav-${item.id}`}
                       to={getLocalizedLink(item.link)}
                       onClick={() => setIsMegaMenuOpen(false)}
-                      className="text-[9px] font-black uppercase tracking-[2px] text-slate-600 hover:text-[#C8961A] transition-colors"
+                      className="text-[9px] font-black uppercase tracking-[2px] text-slate-600 hover:text-[#FA9411] transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -701,13 +665,13 @@ export function Navbar({
                 
                 {/* Search Bar within Mega Menu */}
                 <div className="max-w-2xl mx-auto relative group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#C8961A] transition-colors" size={16} />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FA9411] transition-colors" size={16} />
                   <input
                     type="text"
                     placeholder="Search catalog categories and real-time products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#C8961A]/30 focus:border-[#C8961A]/50 focus:bg-white transition-all font-semibold"
+                    className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#FA9411]/30 focus:border-[#FA9411]/50 focus:bg-white transition-all font-semibold"
                   />
                   {searchQuery && (
                     <button
@@ -729,7 +693,7 @@ export function Navbar({
                         <span className="text-xl">🏫</span>
                         <h4 className="text-[11px] font-black uppercase tracking-[2.5px] text-slate-900">School Wear</h4>
                       </div>
-                      <span className="text-[7.5px] font-black text-[#C8961A] bg-[#C8961A]/10 border border-[#C8961A]/20 px-2 py-0.5 rounded uppercase tracking-wider">Premium Grade</span>
+                      <span className="text-[7.5px] font-black text-[#FA9411] bg-[#FA9411]/10 border border-[#FA9411]/20 px-2 py-0.5 rounded uppercase tracking-wider">Premium Grade</span>
                     </div>
                     <p className="text-[9.5px] text-slate-600 font-semibold leading-relaxed">
                       Custom institutional sweaters, blazers, trousers, skirts & sportswear.
@@ -751,7 +715,7 @@ export function Navbar({
                                 }
                                 setIsMegaMenuOpen(false);
                               }}
-                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
+                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#FA9411]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
                             >
                               <div className="w-20 h-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100 relative shadow-sm">
                                 {p.imageUrl ? (
@@ -763,12 +727,12 @@ export function Navbar({
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#C8961A] transition-colors">{p.name}</h5>
-                                <p className="text-[9px] text-[#C8961A] font-black mt-0.5">
+                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#FA9411] transition-colors">{p.name}</h5>
+                                <p className="text-[9px] text-[#FA9411] font-black mt-0.5">
                                   {p.price ? formatPrice(p.price) : 'Sourcing Price'}
                                 </p>
                               </div>
-                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#C8961A] group-hover:translate-x-0.5 transition-all" />
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#FA9411] group-hover:translate-x-0.5 transition-all" />
                             </div>
                           ));
                         })()
@@ -807,7 +771,7 @@ export function Navbar({
                                 }
                                 setIsMegaMenuOpen(false);
                               }}
-                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
+                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#FA9411]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
                             >
                               <div className="w-20 h-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100 relative shadow-sm">
                                 {p.imageUrl ? (
@@ -819,12 +783,12 @@ export function Navbar({
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#C8961A] transition-colors">{p.name}</h5>
-                                <p className="text-[9px] text-[#C8961A] font-black mt-0.5">
+                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#FA9411] transition-colors">{p.name}</h5>
+                                <p className="text-[9px] text-[#FA9411] font-black mt-0.5">
                                   {p.price ? formatPrice(p.price) : 'Sourcing Price'}
                                 </p>
                               </div>
-                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#C8961A] group-hover:translate-x-0.5 transition-all" />
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#FA9411] group-hover:translate-x-0.5 transition-all" />
                             </div>
                           ));
                         })()
@@ -863,7 +827,7 @@ export function Navbar({
                                 }
                                 setIsMegaMenuOpen(false);
                               }}
-                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
+                              className="group p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-100 hover:border-[#FA9411]/30 transition-all duration-300 flex items-center gap-3 cursor-pointer"
                             >
                               <div className="w-20 h-20 rounded-xl bg-white overflow-hidden shrink-0 border border-slate-100 relative shadow-sm">
                                 {p.imageUrl ? (
@@ -875,12 +839,12 @@ export function Navbar({
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#C8961A] transition-colors">{p.name}</h5>
-                                <p className="text-[9px] text-[#C8961A] font-black mt-0.5">
+                                <h5 className="text-[10px] font-black text-slate-800 truncate uppercase tracking-wide group-hover:text-[#FA9411] transition-colors">{p.name}</h5>
+                                <p className="text-[9px] text-[#FA9411] font-black mt-0.5">
                                   {p.price ? formatPrice(p.price) : 'Sourcing Price'}
                                 </p>
                               </div>
-                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#C8961A] group-hover:translate-x-0.5 transition-all" />
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-[#FA9411] group-hover:translate-x-0.5 transition-all" />
                             </div>
                           ));
                         })()
@@ -935,7 +899,7 @@ export function Navbar({
                           }}
                           className={`flex items-center justify-between p-3 rounded-xl transition-all border text-left ${
                             isSelected
-                              ? 'bg-[#C8961A]/10 border-[#C8961A] text-[#0A1628]'
+                              ? 'bg-[#FA9411]/10 border-[#FA9411] text-[#08047D]'
                               : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-150'
                           }`}
                         >
@@ -946,7 +910,7 @@ export function Navbar({
                               <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.currency}</span>
                             </div>
                           </div>
-                          {isSelected && <Check size={12} className="text-[#C8961A] shrink-0" />}
+                          {isSelected && <Check size={12} className="text-[#FA9411] shrink-0" />}
                         </button>
                       );
                     })}
@@ -967,7 +931,7 @@ export function Navbar({
                             }}
                             className={`py-2 px-3 rounded-xl text-[9px] font-black tracking-wider uppercase text-center transition-all border ${
                               isSelected
-                                ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-md'
+                                ? 'bg-[#08047D] text-white border-[#08047D] shadow-md'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-150'
                             }`}
                           >
@@ -988,7 +952,7 @@ export function Navbar({
                     setIsMegaMenuOpen(false);
                     if (setIsQuoteModalOpen) setIsQuoteModalOpen(true);
                   }}
-                  className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#C8961A] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
+                  className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#FA9411] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
                 >
                   Request Sourcing Quote
                 </button>
@@ -1002,7 +966,7 @@ export function Navbar({
                   }}
                   className="w-full py-4 text-center text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                 >
-                  <MessageSquare size={14} className="text-[#C8961A]" />
+                  <MessageSquare size={14} className="text-[#FA9411]" />
                   Chat Sourcing Desk
                 </a>
               </div>
@@ -1018,7 +982,7 @@ export function Navbar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[150] bg-[#0E121C]/80 backdrop-blur-md lg:hidden"
+            className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-md lg:hidden"
             onClick={() => setIsMenuOpen(false)}
           >
             <motion.div 
@@ -1026,11 +990,11 @@ export function Navbar({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute left-0 top-0 bottom-0 w-full max-w-[320px] bg-[#0E121C] flex flex-col border-r border-[#C8961A]/10 shadow-[20px_0_100px_rgba(0,0,0,0.5)]"
+              className="absolute left-0 top-0 bottom-0 w-full max-w-[320px] bg-[#08047D] flex flex-col border-r border-white/20 shadow-[20px_0_100px_rgba(0,0,0,0.5)]"
               onClick={e => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="p-6 border-b border-white/5 flex items-center justify-between">
+              <div className="p-6 border-b border-white/10 flex items-center justify-between">
                 <div className="flex flex-col">
                   <div className="font-display text-base tracking-[2px] text-white uppercase font-black">
                     {resolvedSiteName}
@@ -1039,23 +1003,23 @@ export function Navbar({
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
                   aria-label="Close Mobile Menu"
-                  className="p-3 text-white/50 hover:text-[#FF4F5A] bg-white/5 rounded-2xl hover:bg-[#FF4F5A]/10 transition-all border border-white/5"
+                  className="p-3 text-white/70 hover:text-white bg-white/10 rounded-2xl hover:bg-white/20 transition-all border border-white/10"
                 >
                   <X size={20} />
                 </button>
               </div>
 
               {/* Enhanced Mobile Search */}
-              <div className="p-6 border-b border-white/5 bg-[#0E121C]/40">
+              <div className="p-6 border-b border-white/10 bg-[#050259]">
                 <div className="relative group">
-                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#C8961A]' : 'text-white/30 group-focus-within:text-[#C8961A]'}`} size={16} />
+                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-[#FA9411]' : 'text-white/30 group-focus-within:text-[#FA9411]'}`} size={16} />
                   <input 
                     type="text" 
                     placeholder="Search products..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setIsSearching(true)}
-                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/20 outline-none focus:ring-2 focus:ring-[#C8961A]/30 focus:border-[#C8961A]/50 transition-all font-medium"
+                    className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-white/20 outline-none focus:ring-2 focus:ring-[#FA9411]/30 focus:border-[#FA9411]/50 transition-all font-medium"
                   />
                   {searchQuery && (
                     <button 
@@ -1134,22 +1098,22 @@ export function Navbar({
                     }}
                     className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all group ${
                       item.highlight 
-                        ? 'bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white hover:brightness-110 shadow-lg' 
-                        : 'text-white/70 hover:bg-white/5 hover:text-white'
+                        ? 'bg-white text-[#08047D] shadow-lg font-black' 
+                        : 'text-white/80 hover:bg-white/10 hover:text-white'
                     }`}
                   >
                     {item.link ? (
                       <Link to={getLocalizedLink(item.link)} className="flex items-center gap-4 w-full">
-                        <span className={`${item.highlight ? 'text-white' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
+                        <span className={`${item.highlight ? 'text-[#08047D]' : 'text-white/70 group-hover:text-white'} transition-colors`}>{item.icon}</span>
                         <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
                       </Link>
                     ) : (
                       <div className="flex items-center gap-4 w-full text-left">
-                        <span className={`${item.highlight ? 'text-white' : 'text-[#C8961A]/50 group-hover:text-[#C8961A]'} transition-colors`}>{item.icon}</span>
+                        <span className={`${item.highlight ? 'text-[#08047D]' : 'text-white/70 group-hover:text-white'} transition-colors`}>{item.icon}</span>
                         <span className="text-sm font-bold tracking-wide uppercase">{item.name}</span>
                       </div>
                     )}
-                    <ChevronRight size={14} className={item.highlight ? 'opacity-50 text-white' : 'text-white/10 group-hover:text-[#C8961A]'} />
+                    <ChevronRight size={14} className={item.highlight ? 'text-[#08047D]' : 'text-white/30 group-hover:text-white'} />
                   </button>
                 ))}
 
@@ -1172,7 +1136,7 @@ export function Navbar({
                           }}
                           className={`flex items-center justify-between p-3 rounded-xl transition-all border text-left ${
                             isSelected
-                              ? 'bg-[#C8961A]/10 border-[#C8961A] text-white'
+                              ? 'bg-[#FA9411]/10 border-[#FA9411] text-white'
                               : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/5'
                           }`}
                         >
@@ -1183,7 +1147,7 @@ export function Navbar({
                               <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest">{c.currency}</span>
                             </div>
                           </div>
-                          {isSelected && <Check size={12} className="text-[#C8961A] shrink-0" />}
+                          {isSelected && <Check size={12} className="text-[#FA9411] shrink-0" />}
                         </button>
                       );
                     })}
@@ -1204,7 +1168,7 @@ export function Navbar({
                             }}
                             className={`py-2 px-3 rounded-xl text-[9px] font-black tracking-wider uppercase text-center transition-all border ${
                               isSelected
-                                ? 'bg-white text-[#0E121C] border-white shadow-md'
+                                ? 'bg-white text-[#04023D] border-white shadow-md'
                                 : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/5'
                             }`}
                           >
@@ -1220,9 +1184,9 @@ export function Navbar({
               {/* Footer Branding */}
               <div className="p-6 mt-auto border-t border-white/5">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
-                  <div className="text-[8px] font-black text-[#C8961A] uppercase tracking-[3px] mb-2">Request Assistance</div>
+                  <div className="text-[8px] font-black text-[#FA9411] uppercase tracking-[3px] mb-2">Request Assistance</div>
                   <div className="text-white font-bold text-xs flex items-center justify-center gap-2">
-                    <Phone size={14} className="text-[#C8961A]" />
+                    <Phone size={14} className="text-[#FA9411]" />
                     +254 792 021 795
                   </div>
                 </div>
@@ -1239,11 +1203,11 @@ export function Navbar({
           <div className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-[100]">
             <button
               onClick={() => setIsTrendingDrawerOpen(true)}
-              className="bg-gradient-to-l from-[#0E121C]/95 to-[#0E121C] border-y border-l border-white/10 text-[#C8961A] hover:text-white px-3 py-6 rounded-l-3xl shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex flex-col items-center gap-3 active:scale-95 transition-all group cursor-pointer hover:border-[#C8961A]/30 hover:pl-4.5 font-sans"
+              className="bg-gradient-to-l from-[#04023D]/95 to-[#04023D] border-y border-l border-white/10 text-[#FA9411] hover:text-white px-3 py-6 rounded-l-3xl shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex flex-col items-center gap-3 active:scale-95 transition-all group cursor-pointer hover:border-[#FA9411]/30 hover:pl-4.5 font-sans"
             >
               <span className="w-2 h-2 rounded-full bg-[#FF4F5A] animate-pulse"></span>
-              <span className="text-[9px] font-black tracking-[4px] uppercase [writing-mode:vertical-lr] select-none text-slate-300 group-hover:text-[#C8961A] transition-colors">Trending</span>
-              <ChevronRight size={14} className="rotate-180 text-[#C8961A] group-hover:-translate-x-1 transition-transform" />
+              <span className="text-[9px] font-black tracking-[4px] uppercase [writing-mode:vertical-lr] select-none text-slate-300 group-hover:text-[#FA9411] transition-colors">Trending</span>
+              <ChevronRight size={14} className="rotate-180 text-[#FA9411] group-hover:-translate-x-1 transition-transform" />
             </button>
           </div>
 
@@ -1266,17 +1230,17 @@ export function Navbar({
                   animate={{ x: 0 }}
                   exit={{ x: '100%' }}
                   transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-                  className="fixed right-0 top-0 bottom-0 w-[420px] bg-[#0E121C] border-l border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] z-[120] flex flex-col p-8 overflow-hidden font-sans"
+                  className="fixed right-0 top-0 bottom-0 w-[420px] bg-[#04023D] border-l border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] z-[120] flex flex-col p-8 overflow-hidden font-sans"
                 >
                   {/* Decorative neon top border */}
-                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#C8961A]" />
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#FA9411]" />
 
                   {/* Header */}
                   <div className="flex items-center justify-between mb-8 mt-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 rounded-full bg-[#C8961A] animate-ping"></span>
-                        <span className="text-[10px] font-black text-[#C8961A] tracking-[3px] uppercase">Live Sourcing</span>
+                        <span className="w-2 h-2 rounded-full bg-[#FA9411] animate-ping"></span>
+                        <span className="text-[10px] font-black text-[#FA9411] tracking-[3px] uppercase">Live Sourcing</span>
                       </div>
                       <h3 className="font-display text-2xl font-black text-white tracking-tight">Trending Collections</h3>
                     </div>
@@ -1289,7 +1253,7 @@ export function Navbar({
                   </div>
 
                   {/* Info alert banner */}
-                  <div className="p-4 bg-[#C8961A]/10 rounded-2xl border border-[#C8961A]/20 mb-6 flex gap-3 items-center">
+                  <div className="p-4 bg-[#FA9411]/10 rounded-2xl border border-[#FA9411]/20 mb-6 flex gap-3 items-center">
                     <span className="text-xl">🔥</span>
                     <div>
                       <p className="text-[10px] font-black text-white/90 uppercase tracking-[1.5px]">High-Volume Sourcing</p>
@@ -1304,7 +1268,7 @@ export function Navbar({
                       return (
                         <div 
                           key={`trending-drawer-${p.id}`}
-                          className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-[#C8961A]/30 transition-all duration-300 flex items-center gap-4 relative overflow-hidden"
+                          className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-[#FA9411]/30 transition-all duration-300 flex items-center gap-4 relative overflow-hidden"
                         >
                           {/* Popularity indicator overlay */}
                           <div className="absolute top-3 right-4 flex items-center gap-1.5 bg-[#FF4F5A]/10 text-[#FF4F5A] px-2 py-0.5 rounded-full border border-[#FF4F5A]/20">
@@ -1333,8 +1297,8 @@ export function Navbar({
 
                           {/* Metadata */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-black text-white truncate group-hover:text-[#C8961A] transition-colors uppercase tracking-wide leading-snug">{p.name}</p>
-                            <p className="text-[10px] text-[#C8961A] font-black tracking-widest mt-1">
+                            <p className="text-xs font-black text-white truncate group-hover:text-[#FA9411] transition-colors uppercase tracking-wide leading-snug">{p.name}</p>
+                            <p className="text-[10px] text-[#FA9411] font-black tracking-widest mt-1">
                               {p.price ? formatPrice(p.price) : 'Bulk Price'}
                             </p>
                             
@@ -1362,7 +1326,7 @@ export function Navbar({
                         setIsTrendingDrawerOpen(false);
                         if (setIsQuoteModalOpen) setIsQuoteModalOpen(true);
                       }}
-                      className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#C8961A] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
+                      className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#FA9411] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
                     >
                       Request Sourcing Quote
                     </button>
@@ -1387,9 +1351,9 @@ export function Navbar({
           >
             <defs>
               <linearGradient id="navWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#C8102E" />
+                <stop offset="0%" stopColor="#08047D" />
                 <stop offset="50%" stopColor="#E94C36" />
-                <stop offset="100%" stopColor="#C8961A" />
+                <stop offset="100%" stopColor="#FA9411" />
               </linearGradient>
             </defs>
             {/* Wave background fill matching white navbar */}
@@ -1411,24 +1375,24 @@ export function Navbar({
         <Link 
           to="/" 
           onClick={() => appExperience.triggerFeedback('tap')} 
-          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname === '/' ? 'text-[#C8102E]' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname === '/' ? 'text-[#08047D]' : 'text-slate-600 hover:text-slate-900'}`}
         >
-          <Home size={20} className={location.pathname === '/' ? 'scale-110 text-[#C8102E]' : 'opacity-80'} />
-          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname === '/' ? 'text-[#C8102E] font-black' : 'text-slate-600'}`}>Home</span>
+          <Home size={20} className={location.pathname === '/' ? 'scale-110 text-[#08047D]' : 'opacity-80'} />
+          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname === '/' ? 'text-[#08047D] font-black' : 'text-slate-600'}`}>Home</span>
           {location.pathname === '/' && (
-            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8102E] shadow-[0_0_6px_#C8102E]" />
+            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#08047D] shadow-[0_0_6px_#08047D]" />
           )}
         </Link>
 
         <Link 
           to="/product" 
           onClick={() => appExperience.triggerFeedback('tap')} 
-          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/product') ? 'text-[#C8102E]' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex-1 flex flex-col items-center py-1 gap-1 relative transition-all duration-300 ${location.pathname.startsWith('/product') ? 'text-[#08047D]' : 'text-slate-600 hover:text-slate-900'}`}
         >
-          <Package size={20} className={location.pathname.startsWith('/product') ? 'scale-110 text-[#C8102E]' : 'opacity-80'} />
-          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/product') ? 'text-[#C8102E] font-black' : 'text-slate-600'}`}>Product</span>
+          <Package size={20} className={location.pathname.startsWith('/product') ? 'scale-110 text-[#08047D]' : 'opacity-80'} />
+          <span className={`text-[9px] font-bold tracking-tighter uppercase ${location.pathname.startsWith('/product') ? 'text-[#08047D] font-black' : 'text-slate-600'}`}>Product</span>
           {location.pathname.startsWith('/product') && (
-            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#C8102E] shadow-[0_0_6px_#C8102E]" />
+            <span className="absolute bottom-0 w-1.5 h-1.5 rounded-full bg-[#08047D] shadow-[0_0_6px_#08047D]" />
           )}
         </Link>
 
@@ -1438,13 +1402,13 @@ export function Navbar({
               appExperience.triggerFeedback('success');
               setIsQuoteModalOpen(true);
             }}
-            className="w-13 h-13 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] rounded-full border-[3px] border-white flex items-center justify-center text-white shadow-[0_6px_20px_rgba(200,16,46,0.35)] active:scale-90 transition-transform relative group/quote"
+            className="w-13 h-13 bg-gradient-to-r from-[#08047D] via-[#E94C36] to-[#FA9411] rounded-full border-[3px] border-white flex items-center justify-center text-white shadow-[0_6px_20px_rgba(200,16,46,0.35)] active:scale-90 transition-transform relative group/quote"
           >
             {/* Soft backdrop pulsating glow */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] -z-10 blur-[8px] opacity-60 group-hover:opacity-100 transition-opacity animate-pulse"></div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#08047D] via-[#E94C36] to-[#FA9411] -z-10 blur-[8px] opacity-60 group-hover:opacity-100 transition-opacity animate-pulse"></div>
             <Plus size={26} className="text-white font-extrabold drop-shadow" />
           </button>
-          <span className="text-[9px] font-black tracking-tighter uppercase text-[#C8102E] mt-1 font-sans">Get Quote</span>
+          <span className="text-[9px] font-black tracking-tighter uppercase text-[#08047D] mt-1 font-sans">Get Quote</span>
         </div>
 
         <a 
@@ -1452,7 +1416,7 @@ export function Navbar({
           target="_blank" 
           rel="noopener noreferrer"
           onClick={() => appExperience.triggerFeedback('tap')}
-          className="flex-1 flex flex-col items-center py-1 gap-1 text-slate-600 hover:text-slate-900 active:text-[#C8102E] active:scale-95 transition-all text-center"
+          className="flex-1 flex flex-col items-center py-1 gap-1 text-slate-600 hover:text-slate-900 active:text-[#08047D] active:scale-95 transition-all text-center"
         >
           <MessageSquare size={20} className="opacity-80" />
           <span className="text-[9px] font-bold tracking-tighter uppercase text-slate-600">Chat</span>
@@ -1461,7 +1425,7 @@ export function Navbar({
         <a 
           href="tel:+254792021795"
           onClick={() => appExperience.triggerFeedback('tap')}
-          className="flex-1 flex flex-col items-center py-1 gap-1 text-slate-600 hover:text-slate-900 active:text-[#C8102E] active:scale-95 transition-all text-center"
+          className="flex-1 flex flex-col items-center py-1 gap-1 text-slate-600 hover:text-slate-900 active:text-[#08047D] active:scale-95 transition-all text-center"
         >
           <Phone size={20} className="opacity-80" />
           <span className="text-[9px] font-bold tracking-tighter uppercase text-slate-600">Call</span>

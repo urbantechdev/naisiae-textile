@@ -47,11 +47,11 @@ export default function PrivacyPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#C8102E] mx-auto mb-8 border border-slate-100"
+              className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center text-[#08047D] mx-auto mb-8 border border-slate-100"
             >
               <Shield size={40} />
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-display text-[#0A1628] tracking-tight leading-none mb-6 italic">Privacy Policy</h1>
+            <h1 className="text-5xl md:text-7xl font-display text-[#08047D] tracking-tight leading-none mb-6 italic">Privacy Policy</h1>
             <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[4px]">Effective Date: January 1, 2026</p>
           </div>
         </section>
@@ -60,8 +60,8 @@ export default function PrivacyPage() {
           <div className="max-w-3xl mx-auto prose prose-slate">
             <div className="space-y-12">
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 1. Data Collection
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 1. Data Collection
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   At Naisiae Textiles Limited, we collect information that helps us provide a better experience for you. This includes:
@@ -75,8 +75,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 2. How We Use Data
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 2. How We Use Data
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   Your data is used strictly for technical performance, order fulfillment, and client relationship management. We use it to:
@@ -89,9 +89,9 @@ export default function PrivacyPage() {
                 </ul>
               </div>
 
-              <div className="bg-[#0A1628] p-10 rounded-[32px] text-white">
+              <div className="bg-[#08047D] p-10 rounded-[32px] text-white">
                 <h2 className="text-2xl font-display tracking-[3px] mb-6 flex items-center gap-3">
-                  <Lock size={24} className="text-[#C8961A]" /> Security Protocol
+                  <Lock size={24} className="text-[#FA9411]" /> Security Protocol
                 </h2>
                 <p className="text-white/70 leading-relaxed text-sm font-medium">
                   We employ industry-standard encryption and security measures to protect your data from unauthorized access, alteration, or destruction. We never sell your personal information to third parties.
@@ -99,8 +99,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 3. Cookies & Tracking
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 3. Cookies & Tracking
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   Our website uses cookies to enhance navigation and understand how you interact with our platform. You can manage cookie preferences through your browser settings.
@@ -108,8 +108,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-black text-[#0A1628] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
-                  <span className="w-10 h-[2px] bg-[#C8102E]"></span> 4. Your Rights
+                <h2 className="text-2xl font-black text-[#08047D] uppercase tracking-tight mb-6 flex items-center gap-3 italic">
+                  <span className="w-10 h-[2px] bg-[#08047D]"></span> 4. Your Rights
                 </h2>
                 <p className="text-slate-600 leading-relaxed font-medium">
                   Under the Data Protection Act of Kenya, you have the right to access, rectify, or request the deletion of your personal data held by Naisiae Textiles Limited.

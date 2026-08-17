@@ -416,16 +416,16 @@ export default function SeoAudit() {
   return (
     <div className="space-y-8 pb-12">
       {/* Top Banner section */}
-      <div className="bg-gradient-to-r from-[#0E121C] to-[#1E293B] rounded-[2.5rem] p-8 lg:p-12 relative overflow-hidden text-white shadow-2xl border border-slate-800">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C8961A]/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-[#C8102E]/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="bg-gradient-to-r from-[#04023D] to-[#1E293B] rounded-[2.5rem] p-8 lg:p-12 relative overflow-hidden text-white shadow-2xl border border-slate-800">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FA9411]/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-[#08047D]/5 rounded-full blur-3xl pointer-events-none"></div>
         
         <div className="relative max-w-4xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C8961A]/10 border border-[#C8961A]/20 text-[#C8961A] text-xs font-black tracking-widest uppercase mb-2">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FA9411]/10 border border-[#FA9411]/20 text-[#FA9411] text-xs font-black tracking-widest uppercase mb-2">
             <ShieldCheck size={14} className="animate-pulse" /> Production SEO Guard
           </div>
           <h2 className="font-display text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none text-white">
-            SEO & Indexing <br /> <span className="text-[#C8961A]">Integrity Audit</span>
+            SEO & Indexing <br /> <span className="text-[#FA9411]">Integrity Audit</span>
           </h2>
           <p className="text-slate-400 text-sm md:text-base leading-relaxed font-medium max-w-3xl">
             Verify canonical tags, crawl rules, robots directives, sitemaps, and Open Graph previews across Naisiae Textiles routes. Designed for maximum production compliance with Google Merchant & Search Console.
@@ -435,7 +435,7 @@ export default function SeoAudit() {
             <button 
               onClick={runAuditScan}
               disabled={isScanning}
-              className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white hover:shadow-xl hover:shadow-[#C8102E]/20 text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-3"
+              className="px-6 py-4 rounded-2xl bg-gradient-to-r from-[#08047D] to-[#E94C36] text-white hover:shadow-xl hover:shadow-[#08047D]/20 text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-3"
             >
               <RefreshCw size={16} className={isScanning ? 'animate-spin' : ''} />
               {isScanning ? 'Auditing Metadata...' : 'Run Global SEO Scan'}
@@ -455,27 +455,27 @@ export default function SeoAudit() {
       <div className="flex flex-wrap border-b border-slate-200">
         <button 
           onClick={() => setSelectedTab('overview')}
-          className={`px-6 py-4 font-black uppercase tracking-widest text-[#0E121C] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'overview' ? 'border-[#C8961A] text-[#C8961A]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+          className={`px-6 py-4 font-black uppercase tracking-widest text-[#04023D] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'overview' ? 'border-[#FA9411] text-[#FA9411]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
         >
           <Layout size={14} /> Routes Audit Summary
         </button>
         <button 
           onClick={() => setSelectedTab('crawler')}
-          className={`px-6 py-4 font-black uppercase tracking-widest text-[#0E121C] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'crawler' ? 'border-[#C8961A] text-[#C8961A]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+          className={`px-6 py-4 font-black uppercase tracking-widest text-[#04023D] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'crawler' ? 'border-[#FA9411] text-[#FA9411]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
         >
           <Globe size={14} /> Crawler Sandbox
         </button>
         <button 
           onClick={() => setSelectedTab('google-merchant')}
-          className={`px-6 py-4 font-black uppercase tracking-widest text-[#0E121C] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'google-merchant' ? 'border-[#C8961A] text-[#C8961A]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+          className={`px-6 py-4 font-black uppercase tracking-widest text-[#04023D] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'google-merchant' ? 'border-[#FA9411] text-[#FA9411]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
         >
           <FileSpreadsheet size={14} /> Merchant Feed Validation
         </button>
         <button 
           onClick={() => setSelectedTab('pagespeed')}
-          className={`px-6 py-4 font-black uppercase tracking-widest text-[#0E121C] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'pagespeed' ? 'border-[#C8961A] text-[#C8961A]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+          className={`px-6 py-4 font-black uppercase tracking-widest text-[#04023D] border-b-2 text-[10px] transition-all flex items-center gap-2 ${selectedTab === 'pagespeed' ? 'border-[#FA9411] text-[#FA9411]' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
         >
-          <Zap size={14} className="text-[#C8961A]" /> PageSpeed Insights
+          <Zap size={14} className="text-[#FA9411]" /> PageSpeed Insights
         </button>
       </div>
 
@@ -495,7 +495,7 @@ export default function SeoAudit() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Sitemap Alignment</span>
-                  <p className="text-xl font-black text-[#0E121C] mt-0.5 mt-1 leading-none">100% Matches</p>
+                  <p className="text-xl font-black text-[#04023D] mt-0.5 mt-1 leading-none">100% Matches</p>
                 </div>
               </div>
 
@@ -505,17 +505,17 @@ export default function SeoAudit() {
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Noindex directive</span>
-                  <p className="text-xl font-black text-[#0E121C] mt-0.5 mt-1 leading-none">3 Admins Safeguarded</p>
+                  <p className="text-xl font-black text-[#04023D] mt-0.5 mt-1 leading-none">3 Admins Safeguarded</p>
                 </div>
               </div>
 
               <div className="bg-white border border-slate-100 p-6 rounded-[2rem] shadow-sm flex items-center gap-5">
-                <div className="w-12 h-12 rounded-2xl bg-[#C8961A]/5 text-[#C8961A] flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-[#FA9411]/5 text-[#FA9411] flex items-center justify-center shrink-0">
                   <TrendingUp size={24} />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Trailing Slash Standard</span>
-                  <p className="text-xl font-black text-[#0E121C] mt-0.5 mt-1 leading-none">Strict Enforce (rel=canonical)</p>
+                  <p className="text-xl font-black text-[#04023D] mt-0.5 mt-1 leading-none">Strict Enforce (rel=canonical)</p>
                 </div>
               </div>
             </div>
@@ -528,7 +528,7 @@ export default function SeoAudit() {
                   <button 
                     key={tab}
                     onClick={() => setActiveTabFilter(tab)}
-                    className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTabFilter === tab ? 'bg-white text-[#0E121C] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all ${activeTabFilter === tab ? 'bg-white text-[#04023D] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     {tab}
                   </button>
@@ -551,7 +551,7 @@ export default function SeoAudit() {
                   >
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center gap-3">
-                        <span className="font-mono text-xs font-black text-[#0E121C] bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg">
+                        <span className="font-mono text-xs font-black text-[#04023D] bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg">
                           {route.path || '/'}
                         </span>
                         <span className={`text-[8px] font-black tracking-widest uppercase px-2.5 py-1 rounded-md ${route.type === 'private' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>
@@ -614,7 +614,7 @@ export default function SeoAudit() {
             {/* Live simulator sandbox */}
             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-10 shadow-sm space-y-6">
               <div>
-                <h3 className="font-display text-xl text-[#0E121C] font-black uppercase tracking-tight">Crawler Simulator Sandbox</h3>
+                <h3 className="font-display text-xl text-[#04023D] font-black uppercase tracking-tight">Crawler Simulator Sandbox</h3>
                 <p className="text-slate-500 text-xs mt-1">Test any simulated URL pathway to inspect standard dynamic metadata insertion rules applied to the DOM layout.</p>
               </div>
 
@@ -628,12 +628,12 @@ export default function SeoAudit() {
                     placeholder="/products/?product=highschool-sweater"
                     value={customUrl}
                     onChange={(e) => setCustomUrl(e.target.value)}
-                    className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl pl-44 pr-4 py-4 text-sm text-[#0E121C] outline-none focus:ring-2 focus:ring-[#C8961A]/55 focus:border-[#C8961A]"
+                    className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl pl-44 pr-4 py-4 text-sm text-[#04023D] outline-none focus:ring-2 focus:ring-[#FA9411]/55 focus:border-[#FA9411]"
                   />
                 </div>
                 <button 
                   type="submit"
-                  className="px-6 py-4 bg-[#0E121C] hover:bg-[#1E293B] text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-md shrink-0"
+                  className="px-6 py-4 bg-[#04023D] hover:bg-[#1E293B] text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-md shrink-0"
                 >
                   Simulate Crawl
                 </button>
@@ -643,8 +643,8 @@ export default function SeoAudit() {
               {simulatedSlug ? (
                 <div className="border border-slate-100 bg-slate-50/50 rounded-[2rem] p-6 space-y-6">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <span className="text-xs font-bold text-[#0E121C]">Simulated Dom Output for: <span className="font-mono text-[#C8961A] font-extrabold">{simulatedSlug.path}</span></span>
-                    <span className={`text-[8px] font-black tracking-widest uppercase px-2.5 py-1 rounded bg-[#0E121C] text-white`}>
+                    <span className="text-xs font-bold text-[#04023D]">Simulated Dom Output for: <span className="font-mono text-[#FA9411] font-extrabold">{simulatedSlug.path}</span></span>
+                    <span className={`text-[8px] font-black tracking-widest uppercase px-2.5 py-1 rounded bg-[#04023D] text-white`}>
                       Simulated Client render
                     </span>
                   </div>
@@ -668,7 +668,7 @@ export default function SeoAudit() {
                         <div className="bg-slate-900 text-slate-300 font-mono text-[10.5px] p-4 rounded-xl space-y-1.5 border border-slate-800">
                           <p className="text-emerald-400">&lt;meta name="robots" content="{simulatedSlug.robots}" /&gt;</p>
                         </div>
-                        <p className="text-[9px] text-[#C8961A]/80 font-black mt-1 uppercase tracking-widest">
+                        <p className="text-[9px] text-[#FA9411]/80 font-black mt-1 uppercase tracking-widest">
                           🛡️ {simulatedSlug.type === 'private' ? 'Protected from google crawlers' : 'Open for crawl index listing'}
                         </p>
                       </div>
@@ -716,14 +716,14 @@ export default function SeoAudit() {
             {/* Google Merchant audit rules */}
             <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-10 shadow-sm space-y-6">
               <div>
-                <h3 className="font-display text-xl text-[#0E121C] font-black uppercase tracking-tight">Merchant Center Feed Optimization</h3>
+                <h3 className="font-display text-xl text-[#04023D] font-black uppercase tracking-tight">Merchant Center Feed Optimization</h3>
                 <p className="text-slate-500 text-xs mt-1">Google Merchant Center has strict guidelines about descriptions. Truncating descriptions protects indexing quality.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-slate-100 rounded-2xl p-5 space-y-3">
-                  <span className="text-[9px] text-[#C8102E] bg-[#C8102E]/5 px-2 py-0.5 rounded font-black tracking-widest uppercase">Target Constraint</span>
-                  <h4 className="font-bold text-sm text-[#0E121C]">Optimized Description Length (<span className="text-emerald-500">80 - 90 Chars</span>)</h4>
+                  <span className="text-[9px] text-[#08047D] bg-[#08047D]/5 px-2 py-0.5 rounded font-black tracking-widest uppercase">Target Constraint</span>
+                  <h4 className="font-bold text-sm text-[#04023D]">Optimized Description Length (<span className="text-emerald-500">80 - 90 Chars</span>)</h4>
                   <p className="text-xs text-slate-500 leading-relaxed">
                     By default, Google recommends short, descriptive titles/descriptions that describe the item without keyword stuffing or extreme fluff block. Standardizing descriptions to at most 85 characters maximizes impression count scores.
                   </p>
@@ -731,15 +731,15 @@ export default function SeoAudit() {
 
                 <div className="border border-slate-100 rounded-2xl p-5 space-y-3">
                   <span className="text-[9px] text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded font-black tracking-widest uppercase">Integration Rule</span>
-                  <h4 className="font-bold text-sm text-[#0E121C]">Active Feed Truncation Helper</h4>
+                  <h4 className="font-bold text-sm text-[#04023D]">Active Feed Truncation Helper</h4>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    We implemented a robust server and script validation helper: <span className="font-mono text-xs text-[#C8102E] bg-[#C8102E]/5 px-1 py-0.5 rounded">truncateDesc(description, 85)</span> which guarantees output stays strictly between 80-90 characters.
+                    We implemented a robust server and script validation helper: <span className="font-mono text-xs text-[#08047D] bg-[#08047D]/5 px-1 py-0.5 rounded">truncateDesc(description, 85)</span> which guarantees output stays strictly between 80-90 characters.
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[#0E121C]/5 border border-[#0E121C]/10 rounded-2xl p-6">
-                <h4 className="text-xs font-black uppercase tracking-wider text-[#0E121C] mb-4">Sample Feed Truncation Preview</h4>
+              <div className="bg-[#04023D]/5 border border-[#04023D]/10 rounded-2xl p-6">
+                <h4 className="text-xs font-black uppercase tracking-wider text-[#04023D] mb-4">Sample Feed Truncation Preview</h4>
                 
                 <div className="space-y-3">
                   <div>
@@ -755,7 +755,7 @@ export default function SeoAudit() {
 
                   <div>
                     <span className="text-[9px] font-extrabold uppercase tracking-widest text-emerald-500 block">Truncated Feed Output (85 chars)</span>
-                    <p className="text-xs text-slate-800 font-extrabold bg-[#C8961A]/5 p-3 rounded-xl border border-[#C8961A]/20 mt-1">
+                    <p className="text-xs text-slate-800 font-extrabold bg-[#FA9411]/5 p-3 rounded-xl border border-[#FA9411]/20 mt-1">
                       "Premium high-grade tailor made uniforms sourced from local mills in Nairobi. Form-re..."
                     </p>
                   </div>
@@ -778,7 +778,7 @@ export default function SeoAudit() {
               <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 lg:p-8 shadow-sm space-y-6">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                   <div>
-                    <h3 className="font-display text-2xl text-[#0E121C] font-black uppercase tracking-tight">
+                    <h3 className="font-display text-2xl text-[#04023D] font-black uppercase tracking-tight">
                       Google PageSpeed Insights Hub
                     </h3>
                     <p className="text-slate-500 text-xs mt-1">
@@ -790,13 +790,13 @@ export default function SeoAudit() {
                   <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl self-start lg:self-center border border-slate-200">
                     <button
                       onClick={() => setActiveDevice('mobile')}
-                      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeDevice === 'mobile' ? 'bg-[#0E121C] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+                      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeDevice === 'mobile' ? 'bg-[#04023D] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                       <Smartphone size={14} /> Mobile View
                     </button>
                     <button
                       onClick={() => setActiveDevice('desktop')}
-                      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeDevice === 'desktop' ? 'bg-[#0E121C] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+                      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all ${activeDevice === 'desktop' ? 'bg-[#04023D] text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
                     >
                       <Monitor size={14} /> Desktop View
                     </button>
@@ -865,7 +865,7 @@ export default function SeoAudit() {
                           <div className="flex justify-between items-start">
                             <div>
                               <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest block">First Contentful Paint (FCP)</span>
-                              <span className="text-2xl font-black text-[#0E121C] mt-1 block">{(report.fcpMs / 1000).toFixed(2)} s</span>
+                              <span className="text-2xl font-black text-[#04023D] mt-1 block">{(report.fcpMs / 1000).toFixed(2)} s</span>
                             </div>
                             <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
                               report.fcpMs < 1800 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : report.fcpMs < 3000 ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-rose-50 text-rose-600 border border-rose-100'
@@ -904,7 +904,7 @@ export default function SeoAudit() {
                           <div className="flex justify-between items-start">
                             <div>
                               <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest block">First Input Delay (FID)</span>
-                              <span className="text-2xl font-black text-[#0E121C] mt-1 block">{report.fidMs} ms</span>
+                              <span className="text-2xl font-black text-[#04023D] mt-1 block">{report.fidMs} ms</span>
                             </div>
                             <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
                               report.fidMs < 50 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : report.fidMs < 250 ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-rose-50 text-rose-600 border border-rose-100'
@@ -945,7 +945,7 @@ export default function SeoAudit() {
                         <div>
                           <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">Audit Environment Metadata</span>
                           <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
-                            Form Factor: <span className="font-mono text-[#0E121C] font-black">{activeDevice} emulation</span> • 
+                            Form Factor: <span className="font-mono text-[#04023D] font-black">{activeDevice} emulation</span> • 
                             Lighthouse Engine v3.2.0 • 
                             Loaded User-Agent: <span className="font-mono max-w-xs truncate inline-block align-bottom text-slate-500 text-[10px]">Mozilla/5.0 (HeadlessChrome/72.0)</span>
                           </p>
@@ -962,12 +962,12 @@ export default function SeoAudit() {
               </div>
 
               {/* Special Unused JS & Mobile View Optimization Panel */}
-              <div className="bg-gradient-to-r from-[#0E121C] to-[#1E293B] border border-slate-800 rounded-[2.5rem] p-6 lg:p-8 text-white space-y-6 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#C8961A]/5 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#C8102E]/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="bg-gradient-to-r from-[#04023D] to-[#1E293B] border border-slate-800 rounded-[2.5rem] p-6 lg:p-8 text-white space-y-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#FA9411]/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#08047D]/5 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="relative space-y-4">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C8961A]/10 border border-[#C8961A]/20 text-[#C8961A] text-[10px] font-black tracking-widest uppercase mb-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FA9411]/10 border border-[#FA9411]/20 text-[#FA9411] text-[10px] font-black tracking-widest uppercase mb-1">
                     <Zap size={12} className="animate-pulse" /> Code-Splitting Insights Applied
                   </div>
                   <h3 className="font-display text-xl lg:text-2xl font-black uppercase tracking-tight">
@@ -979,7 +979,7 @@ export default function SeoAudit() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-                      <span className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider block">1. Lazy Loading</span>
+                      <span className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider block">1. Lazy Loading</span>
                       <h4 className="font-bold text-sm text-white">Route-Level Code-Splitting</h4>
                       <p className="text-[11px] text-slate-400 leading-relaxed">
                         By integrating <span className="font-mono text-white bg-white/10 px-1 py-0.5 rounded">React.lazy()</span> and <span className="font-mono text-white bg-white/10 px-1 py-0.5 rounded">&lt;Suspense&gt;</span>, heavy views are downloaded sequentially only when requested.
@@ -987,7 +987,7 @@ export default function SeoAudit() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-                      <span className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider block">2. Component Splitting</span>
+                      <span className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider block">2. Component Splitting</span>
                       <h4 className="font-bold text-sm text-white">Decoupled Heavy Modals</h4>
                       <p className="text-[11px] text-slate-400 leading-relaxed">
                         The heavy overlay modals (<span className="font-mono text-white bg-white/10 px-1 py-0.5 rounded">CartModal</span>, <span className="font-mono text-white bg-white/10 px-1 py-0.5 rounded">Wishlist</span>) are loaded dynamically on demand, saving up to <b>140kb</b> of initial execution.
@@ -995,7 +995,7 @@ export default function SeoAudit() {
                     </div>
 
                     <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-                      <span className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider block">3. Localized Assets</span>
+                      <span className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider block">3. Localized Assets</span>
                       <h4 className="font-bold text-sm text-white">Precompiled Web Fonts</h4>
                       <p className="text-[11px] text-slate-400 leading-relaxed">
                         Transitioned from dynamic external layout chains to hosting optimized physical font binaries (<span className="font-mono text-white bg-white/10 px-1 py-0.5 rounded">.woff2</span>), avoiding layout shifts.
@@ -1009,7 +1009,7 @@ export default function SeoAudit() {
               <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 lg:p-8 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-display text-lg text-[#0E121C] font-black uppercase tracking-tight flex items-center gap-2">
+                    <h3 className="font-display text-lg text-[#04023D] font-black uppercase tracking-tight flex items-center gap-2">
                       <FileJson className="text-slate-400" size={18} /> Raw PageSpeed Payload Editor
                     </h3>
                     <p className="text-slate-500 text-xs mt-0.5">
@@ -1058,7 +1058,7 @@ export default function SeoAudit() {
  }
 }, null, 2));
                     }}
-                    className="px-3 py-1.5 hover:bg-slate-50 text-[10px] font-black uppercase text-[#0E121C] border border-slate-200 rounded-xl transition-all"
+                    className="px-3 py-1.5 hover:bg-slate-50 text-[10px] font-black uppercase text-[#04023D] border border-slate-200 rounded-xl transition-all"
                   >
                     Reset Preset
                   </button>
@@ -1067,7 +1067,7 @@ export default function SeoAudit() {
                 <div className="space-y-3">
                   <textarea
                     rows={8}
-                    className="w-full bg-slate-50 font-mono text-[11px] p-4 rounded-2xl border border-slate-200 outline-none text-[#0E121C] focus:ring-2 focus:ring-[#C8961A]/55 focus:border-[#C8961A] select-all leading-normal"
+                    className="w-full bg-slate-50 font-mono text-[11px] p-4 rounded-2xl border border-slate-200 outline-none text-[#04023D] focus:ring-2 focus:ring-[#FA9411]/55 focus:border-[#FA9411] select-all leading-normal"
                     value={jsonInput}
                     onChange={(e) => setJsonInput(e.target.value)}
                     placeholder="Paste PageSpeed Insights / Lighthouse API JSON..."
@@ -1083,7 +1083,7 @@ export default function SeoAudit() {
                         // Triggers state recalculation on click
                         getParsedPageSpeedData();
                       }}
-                      className="px-5 py-3 bg-[#0E121C] hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all disabled:opacity-40"
+                      className="px-5 py-3 bg-[#04023D] hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all disabled:opacity-40"
                     >
                       Update & Parse Payload
                     </button>

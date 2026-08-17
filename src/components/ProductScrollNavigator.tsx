@@ -119,7 +119,7 @@ export function ProductScrollNavigator({ sections = [] }: ProductScrollNavigator
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }}
-          className="fixed right-4 md:right-8 bottom-24 z-50 flex flex-col items-center gap-3 bg-[#0E121C]/95 backdrop-blur-md border border-[#C8961A]/30 p-2 md:p-3 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
+          className="fixed right-4 md:right-8 bottom-24 z-50 flex flex-col items-center gap-3 bg-[#04023D]/95 backdrop-blur-md border border-[#FA9411]/30 p-2 md:p-3 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
         >
           {/* Circular Scroll Progress */}
           <div className="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center" id="scroll-progress-indicator">
@@ -136,14 +136,14 @@ export function ProductScrollNavigator({ sections = [] }: ProductScrollNavigator
                 cx="50%"
                 cy="50%"
                 r="38%"
-                className="stroke-[#C8961A]"
+                className="stroke-[#FA9411]"
                 strokeWidth="2.5"
                 fill="transparent"
                 strokeDasharray="100"
                 strokeDashoffset={100 - scrollProgress}
               />
             </svg>
-            <Compass size={14} className="text-[#C8961A] animate-pulse" />
+            <Compass size={14} className="text-[#FA9411] animate-pulse" />
           </div>
 
           {/* Up & Down Scroll Action Controls */}
@@ -152,7 +152,7 @@ export function ProductScrollNavigator({ sections = [] }: ProductScrollNavigator
               onClick={scrollToPrev}
               id="scroll-action-up"
               title="Scroll Up"
-              className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-[#C8961A] hover:bg-[#C8961A]/10 active:scale-90 transition-all cursor-pointer"
+              className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-[#FA9411] hover:bg-[#FA9411]/10 active:scale-90 transition-all cursor-pointer"
             >
               <ChevronUp size={18} />
             </button>
@@ -160,7 +160,7 @@ export function ProductScrollNavigator({ sections = [] }: ProductScrollNavigator
               onClick={scrollToNext}
               id="scroll-action-down"
               title="Scroll Down"
-              className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-[#C8961A] hover:bg-[#C8961A]/10 active:scale-90 transition-all cursor-pointer"
+              className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-[#FA9411] hover:bg-[#FA9411]/10 active:scale-90 transition-all cursor-pointer"
             >
               <ChevronDown size={18} />
             </button>
@@ -180,7 +180,7 @@ export function ProductScrollNavigator({ sections = [] }: ProductScrollNavigator
                     className="group relative flex items-center justify-center w-6 h-6 cursor-pointer"
                   >
                     {/* Hover text label */}
-                    <span className="absolute right-9 bg-[#0E121C] border border-[#C8961A]/30 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xl pointer-events-none whitespace-nowrap">
+                    <span className="absolute right-9 bg-[#04023D] border border-[#FA9411]/30 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xl pointer-events-none whitespace-nowrap">
                       {sec.label}
                     </span>
 
@@ -188,8 +188,8 @@ export function ProductScrollNavigator({ sections = [] }: ProductScrollNavigator
                     <span
                       className={`rounded-full transition-all duration-300 ${
                         isActive
-                          ? 'w-2.5 h-2.5 bg-[#C8961A]'
-                          : 'w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C8961A] group-hover:scale-125'
+                          ? 'w-2.5 h-2.5 bg-[#FA9411]'
+                          : 'w-1.5 h-1.5 bg-white/20 group-hover:bg-[#FA9411] group-hover:scale-125'
                       }`}
                     />
                   </button>

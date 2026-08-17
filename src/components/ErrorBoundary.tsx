@@ -31,9 +31,9 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-[#0A1628] text-white flex flex-col items-center justify-center p-6 text-center space-y-6">
+        <div className="min-h-screen bg-[#08047D] text-white flex flex-col items-center justify-center p-6 text-center space-y-6">
           <div className="max-w-md space-y-4">
-            <h1 className="text-4xl font-black uppercase tracking-tight text-[#C8102E]">
+            <h1 className="text-4xl font-black uppercase tracking-tight text-[#08047D]">
               System Interrupted
             </h1>
             <p className="text-white/60">
@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="bg-white text-[#0A1628] px-8 py-3 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl"
+              className="bg-white text-[#08047D] px-8 py-3 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#FA9411] hover:text-white transition-all shadow-xl"
             >
               Re-initialize Session
             </button>

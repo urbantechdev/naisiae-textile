@@ -50,7 +50,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4">
-        <div className="w-8 h-8 border-2 border-[#C8961A] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-[#FA9411] border-t-transparent rounded-full animate-spin"></div>
         <p className="text-[10px] font-black uppercase tracking-widest">Accessing Secure Communication Protocols...</p>
       </div>
     );
@@ -65,18 +65,18 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
       <div className="bg-white rounded-[32px] shadow-sm border border-[#E2E8F0] overflow-hidden">
         <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between bg-gradient-to-r from-white to-[#F8FAFC]">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#0A1628] rounded-2xl flex items-center justify-center text-[#C8961A]">
+            <div className="w-12 h-12 bg-[#08047D] rounded-2xl flex items-center justify-center text-[#FA9411]">
               <Headset size={24} />
             </div>
             <div>
-              <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Direct Messaging Nexus</h3>
-              <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Configuring Real-Time Sourcing Channels</p>
+              <h3 className="text-2xl font-display text-[#08047D] tracking-wide">Direct Messaging Nexus</h3>
+              <p className="text-[10px] font-black text-[#FA9411] border-l-2 border-[#FA9411] pl-3 uppercase tracking-[3px] mt-1">Configuring Real-Time Sourcing Channels</p>
             </div>
           </div>
           <button 
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-xl disabled:opacity-50"
+            className="flex items-center gap-3 px-8 py-4 bg-[#FA9411] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#08047D] transition-all shadow-xl disabled:opacity-50"
           >
             {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Save size={18} />}
             Synchronize Settings
@@ -87,19 +87,19 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
           {/* Configuration Column */}
           <div className="space-y-10">
             <div className="space-y-6">
-              <h4 className="text-[10px] font-black uppercase tracking-[4px] text-[#0A1628] flex items-center gap-2">
-                <ShieldCheck size={14} className="text-[#C8961A]" />
+              <h4 className="text-[10px] font-black uppercase tracking-[4px] text-[#08047D] flex items-center gap-2">
+                <ShieldCheck size={14} className="text-[#FA9411]" />
                 Protocol Configuration
               </h4>
               
               <div className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl border border-slate-100">
                 <div>
-                   <p className="text-xs font-bold text-[#0A1628]">Enabled Messaging Portal</p>
+                   <p className="text-xs font-bold text-[#08047D]">Enabled Messaging Portal</p>
                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Toggle visibility of the floating chat widget</p>
                 </div>
                 <button 
                   onClick={() => setSettings({ ...settings, enabled: !settings.enabled })}
-                  className={`w-14 h-8 rounded-full relative transition-all duration-300 ${settings.enabled ? 'bg-[#C8961A]' : 'bg-slate-200'}`}
+                  className={`w-14 h-8 rounded-full relative transition-all duration-300 ${settings.enabled ? 'bg-[#FA9411]' : 'bg-slate-200'}`}
                 >
                   <div className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-all shadow-md ${settings.enabled ? 'left-7' : 'left-1'}`}></div>
                 </button>
@@ -120,8 +120,8 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
             </div>
 
             <div className="space-y-6">
-              <h4 className="text-[10px] font-black uppercase tracking-[4px] text-[#0A1628] flex items-center gap-2">
-                <Phone size={14} className="text-[#C8961A]" />
+              <h4 className="text-[10px] font-black uppercase tracking-[4px] text-[#08047D] flex items-center gap-2">
+                <Phone size={14} className="text-[#FA9411]" />
                 WhatsApp Linkage
               </h4>
               <div className="space-y-4">
@@ -132,7 +132,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
                     value={settings.whatsapp} 
                     onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
                     placeholder="e.g. 254792021795"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#C8961A] outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#FA9411] outline-none transition-all"
                   />
                 </div>
                 <div className="space-y-2">
@@ -142,7 +142,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
                     onChange={(e) => setSettings({ ...settings, message: e.target.value })}
                     placeholder="Message pre-filled in their WhatsApp..."
                     rows={4}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#C8961A] outline-none transition-all resize-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#FA9411] outline-none transition-all resize-none"
                   />
                 </div>
               </div>
@@ -152,8 +152,8 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
           {/* Visual Column */}
           <div className="space-y-10">
             <div className="space-y-6">
-              <h4 className="text-[10px] font-black uppercase tracking-[4px] text-[#0A1628] flex items-center gap-2">
-                <Zap size={14} className="text-[#C8961A]" />
+              <h4 className="text-[10px] font-black uppercase tracking-[4px] text-[#08047D] flex items-center gap-2">
+                <Zap size={14} className="text-[#FA9411]" />
                 Visual Identity
               </h4>
               <div className="space-y-4">
@@ -163,7 +163,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
                     type="text" 
                     value={settings.title} 
                     onChange={(e) => setSettings({ ...settings, title: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#C8961A] outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#FA9411] outline-none transition-all"
                   />
                 </div>
                 <div className="space-y-2">
@@ -172,7 +172,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
                     type="text" 
                     value={settings.subtitle} 
                     onChange={(e) => setSettings({ ...settings, subtitle: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#C8961A] outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-xs font-bold focus:border-[#FA9411] outline-none transition-all"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -182,7 +182,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
                       type="text" 
                       value={settings.aiLabel} 
                       onChange={(e) => setSettings({ ...settings, aiLabel: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-[10px] font-bold focus:border-[#C8961A] outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-[10px] font-bold focus:border-[#FA9411] outline-none transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -191,7 +191,7 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
                       type="text" 
                       value={settings.directLabel} 
                       onChange={(e) => setSettings({ ...settings, directLabel: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-[10px] font-bold focus:border-[#C8961A] outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-[10px] font-bold focus:border-[#FA9411] outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -199,15 +199,15 @@ export default function ChatSettings({ setToast, handleFirestoreError }: any) {
             </div>
 
             {/* Preview */}
-            <div className="p-8 bg-[#0A1628] rounded-[40px] border border-white/10 relative overflow-hidden group">
-               <div className="absolute inset-0 bg-gradient-to-br from-[#C8961A]/5 to-transparent"></div>
+            <div className="p-8 bg-[#08047D] rounded-[40px] border border-white/10 relative overflow-hidden group">
+               <div className="absolute inset-0 bg-gradient-to-br from-[#FA9411]/5 to-transparent"></div>
                <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                 <div className="w-16 h-16 rounded-2xl bg-[#C8961A] flex items-center justify-center text-white shadow-2xl">
+                 <div className="w-16 h-16 rounded-2xl bg-[#FA9411] flex items-center justify-center text-white shadow-2xl">
                     <Headset size={32} />
                  </div>
                  <div className="space-y-1">
                    <h5 className="text-white text-sm font-black uppercase tracking-[4px]">{settings.title}</h5>
-                   <p className="text-[10px] font-bold text-[#C8961A] uppercase tracking-widest opacity-80">{settings.subtitle}</p>
+                   <p className="text-[10px] font-bold text-[#FA9411] uppercase tracking-widest opacity-80">{settings.subtitle}</p>
                  </div>
                  <div className="w-full h-[1px] bg-white/10"></div>
                  <div className="flex items-center gap-2 text-white/40">

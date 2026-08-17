@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Phone, Mail, MapPin, Send, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, Instagram, Facebook, Twitter, ExternalLink, Navigation } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -98,23 +98,23 @@ export default function ContactPage() {
       />
       <div className="pt-20">
         <Breadcrumb />
-        <section className="pt-32 pb-20 px-6 bg-[#0A1628] text-white overflow-hidden relative">
+        <section className="pt-32 pb-20 px-6 bg-[#08047D] text-white overflow-hidden relative">
           <div className="max-w-7xl mx-auto relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="max-w-3xl"
             >
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#C8961A] mb-6 block font-mono">Channel Connection</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#FA9411] mb-6 block font-mono">Channel Connection</span>
               <h1 className="text-6xl md:text-8xl font-display tracking-[2px] leading-[0.9] mb-8">
-                Let's Start a <br /> <span className="text-[#C8102E]">Conversation.</span>
+                Let's Start a <br /> <span className="text-[#08047D]">Conversation.</span>
               </h1>
               <p className="text-lg text-white/60 leading-relaxed font-medium max-w-xl">
                 Whether you're looking for institutional uniforms, corporate branding, or have a custom textile project, our experts are ready to assist.
               </p>
             </motion.div>
           </div>
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#C8102E]/10 to-transparent blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#08047D]/10 to-transparent blur-3xl pointer-events-none" />
         </section>
 
         <section className="py-24 px-6">
@@ -126,7 +126,7 @@ export default function ContactPage() {
               viewport={{ once: true }}
               className="bg-white p-10 lg:p-16 rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-50"
             >
-              <h2 className="font-display text-4xl text-[#0A1628] tracking-widest mb-10">Send a direct line</h2>
+              <h2 className="font-display text-4xl text-[#08047D] tracking-widest mb-10">Send a direct line</h2>
               
             {submitStatus?.type === 'success' ? (
               <motion.div 
@@ -156,7 +156,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div className="space-y-3 max-w-md">
-                  <h3 className="font-display text-3xl text-[#0A1628] tracking-wide">Message Transmitted</h3>
+                  <h3 className="font-display text-3xl text-[#08047D] tracking-wide">Message Transmitted</h3>
                   <p className="text-xs text-slate-500 font-bold uppercase tracking-[2px] leading-relaxed">
                     Thank you! Your message was delivered successfully. Our customer support desk and team at Jogoo Rd will review your inquiry within 24 hours.
                   </p>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="John Doe"
-                      className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#C8102E]/20 outline-none transition-all"
+                      className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#08047D]/20 outline-none transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -191,7 +191,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                       placeholder=""
-                      className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#C8102E]/20 outline-none transition-all"
+                      className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#08047D]/20 outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -204,7 +204,7 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={(e) => setFormData({...formData, subject: e.target.value})}
                     placeholder="Wholesale Inquiry / Custom Order"
-                    className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#C8102E]/20 outline-none transition-all"
+                    className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#08047D]/20 outline-none transition-all"
                   />
                 </div>
 
@@ -216,7 +216,7 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={(e) => setFormData({...formData, message: e.target.value})}
                     placeholder="How can we help your institution?"
-                    className="w-full bg-slate-50 border-none rounded-3xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#C8102E]/20 outline-none transition-all resize-none"
+                    className="w-full bg-slate-50 border-none rounded-3xl px-6 py-4 text-sm font-bold focus:ring-2 focus:ring-[#08047D]/20 outline-none transition-all resize-none"
                   ></textarea>
                 </div>
 
@@ -229,7 +229,7 @@ export default function ContactPage() {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#0A1628] hover:bg-[#C8102E] text-white py-5 rounded-2xl font-black text-[12px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#0A1628]/10 active:scale-95 disabled:opacity-75"
+                  className="w-full bg-[#08047D] hover:bg-[#08047D] text-white py-5 rounded-2xl font-black text-[12px] uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#08047D]/10 active:scale-95 disabled:opacity-75"
                 >
                   {isSubmitting ? 'Transmitting...' : 'Send Message'} <Send size={18} />
                 </button>
@@ -244,36 +244,45 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <h3 className="font-display text-3xl text-[#0A1628] tracking-widest mb-8 border-b-4 border-[#C8102E] inline-block pb-2">HQ Details</h3>
+                <h3 className="font-display text-3xl text-[#08047D] tracking-widest mb-8 border-b-4 border-[#08047D] inline-block pb-2">HQ Details</h3>
                 <div className="space-y-10">
                   <div className="flex gap-6 items-start">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#C8102E] shrink-0 border border-slate-100">
+                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#08047D] shrink-0 border border-slate-100">
                       <MapPin size={28} />
                     </div>
                     <div>
                       <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Our Location</h4>
-                      <p className="text-[#0A1628] font-bold leading-relaxed">Industrial Area, Road C,<br />Nairobi, Kenya</p>
+                      <p className="text-[#08047D] font-bold leading-relaxed">Uhuru Market, Jogoo Road,<br />Nairobi, Kenya</p>
+                      <a
+                        href="https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#08047D] hover:text-[#08047D] mt-2 transition-colors group"
+                      >
+                        <span>View on Google Maps</span>
+                        <ExternalLink size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </a>
                     </div>
                   </div>
                   
                   <div className="flex gap-6 items-start">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#C8102E] shrink-0 border border-slate-100">
+                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#08047D] shrink-0 border border-slate-100">
                       <Phone size={28} />
                     </div>
                     <div>
                       <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Direct Line</h4>
-                      <p className="text-[#0A1628] font-bold">{siteSettings?.contactPhone || '+254 792 021 795'}</p>
+                      <p className="text-[#08047D] font-bold">{siteSettings?.contactPhone || '+254 792 021 795'}</p>
                       <p className="text-slate-400 text-[10px] mt-1 font-bold">MON - FRI: 8am - 5pm</p>
                     </div>
                   </div>
 
                   <div className="flex gap-6 items-start">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#C8102E] shrink-0 border border-slate-100">
+                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-[#08047D] shrink-0 border border-slate-100">
                       <Mail size={28} />
                     </div>
                     <div>
                       <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Email support</h4>
-                      <p className="text-[#0A1628] font-bold">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</p>
+                      <p className="text-[#08047D] font-bold">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</p>
                     </div>
                   </div>
                 </div>
@@ -287,7 +296,7 @@ export default function ContactPage() {
                 className="bg-emerald-500/[0.02] p-10 rounded-[40px] border border-emerald-500/10"
               >
                 <div className="flex items-center gap-2.5 mb-4">
-                  <h3 className="font-display text-2xl text-[#0A1628] tracking-widest uppercase">Google Review</h3>
+                  <h3 className="font-display text-2xl text-[#08047D] tracking-widest uppercase">Google Review</h3>
                   <div className="flex text-amber-500 gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-sm">★</span>
@@ -301,7 +310,7 @@ export default function ContactPage() {
                   href="https://g.page/r/CZb3o2nm3vRgEBM/review"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#C8961A] hover:bg-[#C8961A]/90 text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8961A]/10 active:scale-95 border border-white/10"
+                  className="w-full bg-[#FA9411] hover:bg-[#FA9411]/90 text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FA9411]/10 active:scale-95 border border-white/10"
                 >
                   <span>Leave Google Review</span>
                   <span>⭐</span>
@@ -315,7 +324,7 @@ export default function ContactPage() {
                 transition={{ delay: 0.2 }}
                 className="bg-[#F8FAFC] p-10 rounded-[40px] border border-slate-100"
               >
-                <h3 className="font-display text-2xl text-[#0A1628] tracking-widest mb-6 uppercase">Connect Sociales</h3>
+                <h3 className="font-display text-2xl text-[#08047D] tracking-widest mb-6 uppercase">Connect Sociales</h3>
                 <div className="flex gap-4">
                   {[
                     { icon: <Instagram size={20} />, link: '#' },
@@ -325,7 +334,7 @@ export default function ContactPage() {
                     <a 
                       key={idx}
                       href={social.link}
-                      className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-[#C8102E] hover:shadow-lg transition-all"
+                      className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-400 hover:text-[#08047D] hover:shadow-lg transition-all"
                     >
                       {social.icon}
                     </a>
@@ -336,15 +345,69 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* Map Placeholder */}
-        <section className="h-[500px] w-full bg-slate-100 grayscale hover:grayscale-0 transition-all duration-700 relative overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center text-slate-300 pointer-events-none">
-            <div className="text-center">
-              <MapPin size={48} className="mx-auto mb-4 opacity-20" />
-              <p className="font-display text-4xl tracking-widest opacity-20">Interactive Map Interface</p>
+        {/* Live Google Map Section */}
+        <section className="relative w-full border-t border-slate-200 bg-slate-900 overflow-hidden">
+          <div className="h-[520px] w-full relative">
+            <iframe
+              title="Uhuru Market Uniforms Google Map"
+              src="https://maps.google.com/maps?q=-1.294565,36.8611397+(Uhuru+Market+Uniforms)&t=&z=16&ie=UTF8&iwloc=B&output=embed"
+              className="w-full h-full border-0 filter contrast-[1.02]"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+
+            {/* Interactive Map Overlay Card */}
+            <div className="absolute top-6 left-6 right-6 md:right-auto md:max-w-md z-10">
+              <div className="bg-[#04023D]/95 backdrop-blur-xl border border-white/10 text-white p-6 rounded-3xl shadow-2xl shadow-black/50">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div>
+                    <span className="text-[9px] font-black uppercase tracking-[2px] text-[#FA9411] font-mono">Verified Location</span>
+                    <h3 className="font-display text-xl text-white font-bold tracking-tight mt-0.5">
+                      Uhuru Market Uniforms
+                    </h3>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-[#08047D] flex items-center justify-center shrink-0">
+                    <MapPin size={20} />
+                  </div>
+                </div>
+
+                <p className="text-xs text-white/70 leading-relaxed mb-4">
+                  Uhuru Market, Jogoo Road, Nairobi, Kenya
+                </p>
+
+                <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono mb-5 pb-4 border-b border-white/10">
+                  <span>GPS:</span>
+                  <span className="text-white/80 font-bold">-1.294565, 36.8611397</span>
+                  <span className="text-emerald-400 ml-auto flex items-center gap-1 font-sans font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    Open Mon-Sat
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2.5">
+                  <a
+                    href="https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-[#08047D] hover:bg-[#a50d26] text-white px-4 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#08047D]/20 active:scale-95"
+                  >
+                    <span>Open in Google Maps</span>
+                    <ExternalLink size={13} />
+                  </a>
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=UHURU+MARKET+UNIFORMS&destination_place_id=ChIJs07DlyMRLxARlvfjaebe9GA"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 border border-white/10 active:scale-95"
+                  >
+                    <span>Get Directions</span>
+                    <Navigation size={13} />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
-          {/* Real Google Map iframe would go here */}
         </section>
         <Footer />
       </div>

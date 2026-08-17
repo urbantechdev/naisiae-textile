@@ -7,9 +7,9 @@ interface InstitutionalWholesaleProps {
 
 export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWholesaleProps) {
   return (
-    <section className="bg-[#0A1628] overflow-hidden relative group shadow-2xl w-full border-t border-white/5">
+    <section className="bg-[#08047D] overflow-hidden relative group shadow-2xl w-full border-t border-white/5">
       <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#C8961A] via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#FA9411] via-transparent to-transparent"></div>
       </div>
       
       <div className="flex flex-col lg:flex-row items-center w-full">
@@ -19,11 +19,11 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center gap-3 text-[#C8961A] text-[9px] font-black tracking-[3px] uppercase mb-3">
-              <div className="w-6 h-[1.5px] bg-[#C8961A]"></div> Specialized Sourcing
+            <div className="flex items-center gap-3 text-[#FA9411] text-[9px] font-black tracking-[3px] uppercase mb-3">
+              <div className="w-6 h-[1.5px] bg-[#FA9411]"></div> Specialized Sourcing
             </div>
             <h2 className="font-display text-4xl lg:text-5xl text-white leading-[0.9] mb-4">
-              Uhuru Market <br/> <span className="text-[#C8961A]">Bulk Production</span>
+              Uhuru Market <br/> <span className="text-[#FA9411]">Bulk Production</span>
             </h2>
             <p className="text-white/60 text-xs lg:text-sm leading-relaxed mb-6 max-w-lg font-medium">
               High-volume Uhuru Market Uniforms production for schools and corporate institutions. The most competitive factory rates in Nairobi, Kenya with guaranteed institutional-grade quality.
@@ -32,7 +32,7 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
             <div className="flex flex-wrap gap-3">
               <button 
                 onClick={() => setIsQuoteModalOpen(true)}
-                className="px-6 lg:px-8 py-3.5 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl hover:bg-white hover:text-[#C8102E] transition-all shadow-xl active:scale-95"
+                className="px-6 lg:px-8 py-3.5 bg-[#08047D] text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl hover:bg-white hover:text-[#08047D] transition-all shadow-xl active:scale-95"
               >
                 Bulk Pricing
               </button>
@@ -49,15 +49,15 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
 
             <div className="mt-8 grid grid-cols-3 gap-4 lg:gap-8 border-t border-white/5 pt-6">
               <div>
-                <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">500k+</div>
+                <div className="text-[#FA9411] font-display text-xl lg:text-2xl leading-none mb-1">500k+</div>
                 <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Capacity</div>
               </div>
               <div>
-                <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">100+</div>
+                <div className="text-[#FA9411] font-display text-xl lg:text-2xl leading-none mb-1">100+</div>
                 <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Partners</div>
               </div>
               <div>
-                <div className="text-[#C8961A] font-display text-xl lg:text-2xl leading-none mb-1">48H</div>
+                <div className="text-[#FA9411] font-display text-xl lg:text-2xl leading-none mb-1">48H</div>
                 <div className="text-[8px] text-white/40 uppercase font-black tracking-widest leading-none">Response</div>
               </div>
             </div>
@@ -76,7 +76,7 @@ export function InstitutionalWholesale({ setIsQuoteModalOpen }: InstitutionalWho
             loading="lazy"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628] via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#08047D] via-transparent to-transparent"></div>
         </div>
       </div>
     </section>

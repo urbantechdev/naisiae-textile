@@ -100,18 +100,18 @@ export function Hero({
   
   return (
     <>
-      <section id="hero" className="relative min-h-[35vh] lg:h-[70vh] lg:min-h-[525px] flex items-center justify-center overflow-hidden bg-[#0E121C] py-4 lg:py-0">
+      <section id="hero" className="relative min-h-[35vh] lg:h-[70vh] lg:min-h-[525px] flex items-center justify-center overflow-hidden bg-[#04023D] py-4 lg:py-0">
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         
         {/* Subtle bottom shadow overlay to transition into sections below */}
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0E121C] to-transparent z-10"></div>
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#04023D] to-transparent z-10"></div>
 
         {/* Simple Soft Ambient Glow */}
-        <div className="absolute inset-0 z-[5] overflow-hidden opacity-20 pointer-events-none">
+        <div className="absolute inset-0 z-[5] overflow-hidden opacity-25 pointer-events-none">
           <motion.div 
             animate={{ opacity: [0.15, 0.35, 0.15] }}
             transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-[#C8102E]/20 to-[#C8961A]/20 blur-[120px] rounded-full"
+            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-[#08047D] to-[#FA9411] blur-[120px] rounded-full"
           />
         </div>
 
@@ -195,14 +195,14 @@ export function Hero({
         <svg viewBox="0 0 750 1000" preserveAspectRatio="none" className="w-full h-full">
           <defs>
             <linearGradient id="vertical-wave-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#C8102E" />
-              <stop offset="50%" stopColor="#E94C36" />
-              <stop offset="100%" stopColor="#C8961A" />
+              <stop offset="0%" stopColor="#08047D" />
+              <stop offset="50%" stopColor="#FA9411" />
+              <stop offset="100%" stopColor="#08047D" />
             </linearGradient>
             <linearGradient id="vertical-wave-glow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#C8102E" stopOpacity="0.75" />
-              <stop offset="50%" stopColor="#E94C36" stopOpacity="0.75" />
-              <stop offset="100%" stopColor="#C8961A" stopOpacity="0.75" />
+              <stop offset="0%" stopColor="#08047D" stopOpacity="0.75" />
+              <stop offset="50%" stopColor="#FA9411" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#08047D" stopOpacity="0.75" />
             </linearGradient>
             <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="8" result="blur" />
@@ -213,7 +213,7 @@ export function Hero({
             </filter>
           </defs>
           {/* Solid fill matching the left side's pure page bg */}
-          <path d="M 0,0 L 700,0 C 550,300 450,650 650,1000 L 0,1000 Z" className="fill-[#0E121C]" />
+          <path d="M 0,0 L 700,0 C 550,300 450,650 650,1000 L 0,1000 Z" className="fill-[#04023D]" />
           
           {/* 1. Underlying blur neon glow decorative path */}
           <path 
@@ -221,7 +221,7 @@ export function Hero({
             fill="none" 
             stroke="url(#vertical-wave-glow)" 
             strokeWidth="14" 
-            className="opacity-30" 
+            className="opacity-35" 
             filter="url(#neon-glow)"
           />
           
@@ -229,9 +229,9 @@ export function Hero({
           <path 
             d="M 703,0 C 553,300 453,650 653,1000" 
             fill="none" 
-            stroke="#C8961A" 
+            stroke="#FA9411" 
             strokeWidth="1.5" 
-            className="opacity-25" 
+            className="opacity-40" 
           />
 
           {/* 3. Main precise glowing wave outline trace */}
@@ -275,13 +275,13 @@ export function Hero({
                           {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "uhuru market" : heroImages[currentSlide].title.toLowerCase()}
                         </motion.span>
                       </span>
-                      <span className="bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A] bg-clip-text text-transparent italic inline-block relative pr-4">
+                      <span className="text-[#FA9411] italic inline-block relative pr-4">
                         {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "UNIFORMS" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
                         <motion.div 
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
                           transition={{ delay: 0.8, duration: 1 }}
-                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1.5 bg-gradient-to-r from-[#C8102E] via-[#C8961A] to-transparent origin-left"
+                          className="absolute -bottom-2 lg:-bottom-4 left-0 right-0 h-1.5 bg-[#FA9411] origin-left"
                         />
                       </span>
                     </motion.div>
@@ -290,7 +290,7 @@ export function Hero({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-white/80 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#C8961A] pl-6 lg:pl-8"
+                    className="text-white/80 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#FA9411] pl-6 lg:pl-8"
                   >
                     {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Uhuru Market Uniforms: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
@@ -302,7 +302,7 @@ export function Hero({
           <div className="hidden lg:flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
             <Link
               to="/product"
-              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:opacity-90 active:scale-95 shadow-lg flex items-center justify-center lg:min-w-[220px]"
+              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#FA9411] hover:bg-[#E08208] text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:opacity-95 active:scale-95 shadow-lg shadow-[#FA9411]/30 flex items-center justify-center lg:min-w-[220px]"
             >
               <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
                 Shop <ChevronRight size={18} className="hidden sm:block group-hover:translate-x-1 transition-transform" />
@@ -310,19 +310,19 @@ export function Hero({
             </Link>
             <button
               onClick={() => setIsCatalogueModalOpen(true)}
-              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:bg-white hover:text-[#0A1628] shadow-md flex items-center justify-center lg:min-w-[220px]"
+              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:bg-white hover:text-[#08047D] shadow-md flex items-center justify-center lg:min-w-[220px]"
             >
               <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
-                Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform" />
+                Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform text-[#FA9411]" />
               </span>
             </button>
           </div>
 
           {/* Mobile Product Highlights Row */}
           {shuffledProducts.length > 0 && (
-            <div className="hidden w-full mt-6 bg-[#0E121C]/65 border border-white/10 rounded-3xl p-4 shadow-xl backdrop-blur-xl relative text-left overflow-hidden">
+            <div className="hidden w-full mt-6 bg-[#04023D]/65 border border-white/10 rounded-3xl p-4 shadow-xl backdrop-blur-xl relative text-left overflow-hidden">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-[10px] font-black uppercase tracking-[2px] text-[#C8961A]">
+                <span className="text-[10px] font-black uppercase tracking-[2px] text-[#FA9411]">
                   ⚡ SPOTLIGHT PICKS
                 </span>
                 <button 
@@ -341,7 +341,7 @@ export function Hero({
                     <button
                       key={`highlight-mobile-${p.id}`}
                       onClick={() => setSelectedQuickViewProduct(p)}
-                      className="bg-white/5 active:bg-white/10 hover:bg-white/10 border border-white/5 hover:border-[#C8961A]/50 rounded-2xl p-2.5 flex flex-col text-left transition-all relative overflow-hidden"
+                      className="bg-white/5 active:bg-white/10 hover:bg-white/10 border border-white/5 hover:border-[#FA9411]/50 rounded-2xl p-2.5 flex flex-col text-left transition-all relative overflow-hidden"
                     >
                       <div className="w-full aspect-[4/3] bg-white rounded-xl overflow-hidden mb-2 relative shrink-0">
                         {p.imageUrl ? (
@@ -357,7 +357,7 @@ export function Hero({
                           </div>
                         )}
                         {discount > 0 && (
-                          <div className="absolute top-1.5 left-1.5 bg-[#C8102E] text-white text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider z-10 shadow-md">
+                          <div className="absolute top-1.5 left-1.5 bg-[#08047D] text-white text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider z-10 shadow-md">
                             -{discount}% OFF
                           </div>
                         )}
@@ -365,7 +365,7 @@ export function Hero({
                       <div className="min-w-0 w-full px-1">
                         <p className="text-[11px] font-bold text-white truncate leading-tight mb-1">{p.name}</p>
                         <div className="flex items-center justify-between">
-                          <p className="text-[10px] font-black text-[#C8961A] font-sans">
+                          <p className="text-[10px] font-black text-[#FA9411] font-sans">
                             {p.price ? formatPrice(p.price) : 'Bulk Price'}
                           </p>
                           <span className="text-[7px] font-bold uppercase text-white/40 bg-white/5 px-1 py-0.5 rounded leading-none shrink-0 border border-white/5">
@@ -392,7 +392,7 @@ export function Hero({
             aria-label={`Go to slide ${idx + 1}`}
             className="group relative flex flex-col items-center gap-4 py-2"
           >
-            <span className={`text-[10px] font-black transition-all ${currentSlide === idx ? 'text-[#C8961A] translate-y-0 opacity-100' : 'text-white/20 translate-y-2 opacity-0'}`}>
+            <span className={`text-[10px] font-black transition-all ${currentSlide === idx ? 'text-[#FA9411] translate-y-0 opacity-100' : 'text-white/20 translate-y-2 opacity-0'}`}>
               0{idx + 1}
             </span>
             <div className="relative w-12 h-[2.5px] bg-white/10 overflow-hidden rounded-full">
@@ -403,7 +403,7 @@ export function Hero({
                   opacity: currentSlide === idx ? 1 : 0
                 }}
                 transition={{ duration: 0.8 }}
-                className="absolute inset-0 bg-gradient-to-r from-[#C8102E] to-[#C8961A] origin-left"
+                className="absolute inset-0 bg-gradient-to-r from-[#08047D] to-[#FA9411] origin-left"
               />
             </div>
           </button>
@@ -418,8 +418,8 @@ export function Hero({
         className="hidden lg:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex-col items-center gap-3 opacity-40 hover:opacity-100 transition-opacity cursor-pointer group"
         onClick={() => document.getElementById('specialties')?.scrollIntoView({ behavior: 'smooth' })}
       >
-        <span className="text-[8px] font-black uppercase tracking-[6px] text-white group-hover:text-[#C8961A] transition-colors">Scroll To Explore</span>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-white/0 via-white/50 to-white/0 lg:group-hover:via-[#C8102E] transition-colors"></div>
+        <span className="text-[8px] font-black uppercase tracking-[6px] text-white group-hover:text-[#FA9411] transition-colors">Scroll To Explore</span>
+        <div className="w-[1px] h-12 bg-gradient-to-b from-white/0 via-white/50 to-white/0 lg:group-hover:via-[#08047D] transition-colors"></div>
       </motion.div>
 
       {/* Elegant Single Wave Partition Divider */}
@@ -427,9 +427,9 @@ export function Hero({
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[60px] md:h-[80px] lg:h-[120px]">
           <defs>
             <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#C8102E" />
+              <stop offset="0%" stopColor="#08047D" />
               <stop offset="50%" stopColor="#E94C36" />
-              <stop offset="100%" stopColor="#C8961A" />
+              <stop offset="100%" stopColor="#FA9411" />
             </linearGradient>
           </defs>
           {/* Main wave matching next section's bg-white */}
@@ -444,7 +444,7 @@ export function Hero({
     <div className="w-full px-6 py-6 md:py-8 bg-white border-b border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] relative z-20">
       <div className="w-full max-w-lg lg:max-w-2xl mx-auto group relative">
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Search className="text-slate-400 group-focus-within:text-[#C8102E] transition-all" size={20} />
+          <Search className="text-slate-400 group-focus-within:text-[#08047D] transition-all" size={20} />
         </div>
         <input 
           type="text"
@@ -453,7 +453,7 @@ export function Hero({
           onFocus={() => searchQuery.length > 1 && setShowSearchSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
           placeholder="Search school uniforms, scrubs, blazers..."
-          className="w-full bg-slate-50 border border-slate-200 rounded-full pl-14 pr-6 py-3.5 md:py-4 text-[#0E121C] text-sm md:text-base outline-none focus:ring-4 focus:ring-[#C8102E]/20 focus:border-[#C8102E]/40 transition-all placeholder:text-slate-400 shadow-md hover:shadow-lg focus:shadow-lg focus:bg-white animate-blink-maroon"
+          className="w-full bg-slate-50 border border-slate-200 rounded-full pl-14 pr-6 py-3.5 md:py-4 text-[#04023D] text-sm md:text-base outline-none focus:ring-4 focus:ring-[#08047D]/20 focus:border-[#08047D]/40 transition-all placeholder:text-slate-400 shadow-md hover:shadow-lg focus:shadow-lg focus:bg-white animate-blink-maroon"
         />
         <AnimatePresence>
           {showSearchSuggestions && searchResults.length > 0 && (
@@ -465,7 +465,7 @@ export function Hero({
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                 <span className="text-[10px] font-black tracking-[2.5px] uppercase text-slate-400">Search Results ({searchResults.length})</span>
-                <span className="text-[9px] font-bold text-[#C8961A] bg-[#C8961A]/5 border border-[#C8961A]/10 px-2 py-0.5 rounded-full uppercase">Instant Match</span>
+                <span className="text-[9px] font-bold text-[#FA9411] bg-[#FA9411]/5 border border-[#FA9411]/10 px-2 py-0.5 rounded-full uppercase">Instant Match</span>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -478,20 +478,20 @@ export function Hero({
                       setSearchQuery('');
                       setShowSearchSuggestions(false);
                     }}
-                    className="group/search bg-slate-50/50 hover:bg-white border border-slate-100/80 hover:border-[#C8102E]/30 rounded-2xl p-4 flex gap-4 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.01]"
+                    className="group/search bg-slate-50/50 hover:bg-white border border-slate-100/80 hover:border-[#08047D]/30 rounded-2xl p-4 flex gap-4 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.01]"
                   >
                     <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl bg-slate-100 p-1.5 flex items-center justify-center overflow-hidden shrink-0 border border-slate-100/50">
                       <img src={product.imageUrl} className="w-full h-full object-cover object-top rounded-lg transition-transform duration-500 group-hover/search:scale-[1.06]" alt={product.name} />
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                       <div>
-                        <span className="text-[9px] text-[#C8961A] font-black uppercase tracking-widest bg-[#C8961A]/10 px-2 py-0.5 rounded-md inline-block mb-1.5">{product.category}</span>
-                        <h4 className="text-xs sm:text-sm font-black text-[#0E121C] uppercase tracking-wide leading-snug group-hover/search:text-[#C8102E] transition-colors line-clamp-2">{product.name}</h4>
+                        <span className="text-[9px] text-[#FA9411] font-black uppercase tracking-widest bg-[#FA9411]/10 px-2 py-0.5 rounded-md inline-block mb-1.5">{product.category}</span>
+                        <h4 className="text-xs sm:text-sm font-black text-[#04023D] uppercase tracking-wide leading-snug group-hover/search:text-[#08047D] transition-colors line-clamp-2">{product.name}</h4>
                       </div>
                       
                       <div className="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
                         <span className="text-xs sm:text-sm font-black text-slate-900">{formatPrice(product.price)}</span>
-                        <span className="text-[10px] font-bold text-[#C8961A] flex items-center gap-0.5 opacity-80 group-hover/search:opacity-100 group-hover/search:translate-x-0.5 transition-all">
+                        <span className="text-[10px] font-bold text-[#FA9411] flex items-center gap-0.5 opacity-80 group-hover/search:opacity-100 group-hover/search:translate-x-0.5 transition-all">
                           Quick View <ChevronRight size={12} />
                         </span>
                       </div>

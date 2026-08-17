@@ -1500,7 +1500,7 @@ export default function AdminDashboard() {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed inset-0 z-[100] flex items-center justify-center p-6 pointer-events-none"
           >
-            <div className="bg-[#0A1628] text-white p-10 rounded-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 max-w-xl w-full pointer-events-auto relative overflow-hidden">
+            <div className="bg-[#08047D] text-white p-10 rounded-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 max-w-xl w-full pointer-events-auto relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 flex items-center gap-2">
                 <button 
                   onClick={() => setIsSoundEnabled(!isSoundEnabled)} 
@@ -1508,7 +1508,7 @@ export default function AdminDashboard() {
                   title={isSoundEnabled ? "Mute Ringer" : "Unmute Ringer"}
                 >
                   {isSoundEnabled ? (
-                    <Volume2 size={22} className="text-[#C8961A] animate-pulse" />
+                    <Volume2 size={22} className="text-[#FA9411] animate-pulse" />
                   ) : (
                     <VolumeX size={22} className="text-white/40" />
                   )}
@@ -1519,7 +1519,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="flex items-center gap-6 mb-8">
-                <div className="w-20 h-20 bg-[#C8961A] rounded-[28px] flex items-center justify-center text-white shadow-2xl shadow-[#C8961A]/20">
+                <div className="w-20 h-20 bg-[#FA9411] rounded-[28px] flex items-center justify-center text-white shadow-2xl shadow-[#FA9411]/20">
                   <motion.div
                     animate={{ 
                       rotate: [0, -10, 10, -10, 10, 0],
@@ -1549,7 +1549,7 @@ export default function AdminDashboard() {
                   "{newChatNotification.lastMessage || 'No message preview available...'}"
                 </p>
                 <div className="mt-4 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-bold text-[#C8961A]">Client</div>
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-bold text-[#FA9411]">Client</div>
                   <div className="text-[11px] text-white/40 tracking-wider">Session ID: {newChatNotification.id.replace('user_', 'ID-')}</div>
                 </div>
               </div>
@@ -1561,7 +1561,7 @@ export default function AdminDashboard() {
                     setActiveView('live-support');
                     setNewChatNotification(null);
                   }}
-                  className="flex-1 bg-white text-[#0A1628] h-16 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
+                  className="flex-1 bg-white text-[#08047D] h-16 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#FA9411] hover:text-white transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3"
                 >
                   <Headset size={18} className="animate-pulse" /> Answer & Respond
                 </button>
@@ -1574,7 +1574,7 @@ export default function AdminDashboard() {
               </div>
               
               <div className="mt-6 flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[3px] text-white/20">
-                <Zap size={10} className="text-[#C8961A]" /> Naisiae Phone Protocol Active
+                <Zap size={10} className="text-[#FA9411]" /> Naisiae Phone Protocol Active
               </div>
             </div>
           </motion.div>
@@ -1605,7 +1605,7 @@ export default function AdminDashboard() {
         </AnimatePresence>
 
       {/* Mobile Sidebar */}
-      <div className={`fixed inset-y-0 left-0 bg-[#0A1628] w-[280px] z-[70] transform transition-transform duration-300 lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 bg-[#08047D] w-[280px] z-[70] transform transition-transform duration-300 lg:hidden flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-4 border-b border-white/5 flex items-center justify-between">
            <div className="flex items-center gap-3">
              {siteSettings?.siteLogo ? (
@@ -1617,7 +1617,7 @@ export default function AdminDashboard() {
                  <span className="text-white">NT</span>
                </div>
              )}
-             <span className="font-display font-medium text-[#C8961A] tracking-widest uppercase text-sm">Admin Panel</span>
+             <span className="font-display font-medium text-[#FA9411] tracking-widest uppercase text-sm">Admin Panel</span>
            </div>
            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
              <X size={20} />
@@ -1647,16 +1647,16 @@ export default function AdminDashboard() {
       {/* Top Header */}
       <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 shrink-0 relative z-50">
         <div className="flex items-center gap-4">
-          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 hover:text-[#C8102E] hover:bg-slate-50 transition-colors rounded-lg">
+          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 hover:text-[#08047D] hover:bg-slate-50 transition-colors rounded-lg">
             <Menu size={24} />
           </button>
           
-          <h1 className="font-display text-lg tracking-[2px] leading-none pt-1 text-[#0A1628] uppercase font-black">
+          <h1 className="font-display text-lg tracking-[2px] leading-none pt-1 text-[#08047D] uppercase font-black">
             {activeView}
           </h1>
         </div>
 
-        <div className="hidden md:flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-2 border border-slate-100 focus-within:ring-2 focus-within:ring-[#C8102E]/10 transition-all flex-1 max-w-md mx-4 relative">
+        <div className="hidden md:flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-2 border border-slate-100 focus-within:ring-2 focus-within:ring-[#08047D]/10 transition-all flex-1 max-w-md mx-4 relative">
           <Search size={16} className="text-slate-300" />
           <input 
             type="text" 
@@ -1715,7 +1715,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold text-[#0A1628] truncate">{item.name}</p>
+                        <p className="text-sm font-bold text-[#08047D] truncate">{item.name}</p>
                         <span className={`text-[7px] font-black uppercase px-1 rounded-sm border ${
                           item.type === 'product' ? 'bg-slate-100 text-slate-500 border-slate-200' :
                           item.type === 'category' ? 'bg-indigo-50 text-indigo-500 border-indigo-100' :
@@ -1728,7 +1728,7 @@ export default function AdminDashboard() {
                         {item.type === 'category' ? 'Store Category' : item.category || item.tagline || 'Textile Service'}
                       </p>
                     </div>
-                    <ChevronRight size={14} className="text-slate-200 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
+                    <ChevronRight size={14} className="text-slate-200 group-hover:text-[#08047D] group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
                   </div>
                 ));
               })()}
@@ -1738,7 +1738,7 @@ export default function AdminDashboard() {
 
         <div className="flex items-center gap-4 relative">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-black text-[#0A1628] leading-none">
+            <p className="text-xs font-black text-[#08047D] leading-none">
               {auth.currentUser?.displayName || 'Administrator'}
             </p>
             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -1747,12 +1747,12 @@ export default function AdminDashboard() {
           </div>
           <button 
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-            className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[#1C3560] shadow-sm hover:border-[#C8961A]/50 transition-all overflow-hidden group"
+            className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[#050259] shadow-sm hover:border-[#FA9411]/50 transition-all overflow-hidden group"
           >
             {auth.currentUser?.photoURL ? (
               <img src={auth.currentUser.photoURL} alt="Profile" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
             ) : (
-              <div className="w-full h-full bg-[#1C3560] flex items-center justify-center text-white font-black text-sm">
+              <div className="w-full h-full bg-[#050259] flex items-center justify-center text-white font-black text-sm">
                 {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={14} />}
               </div>
             )}
@@ -1777,19 +1777,19 @@ export default function AdminDashboard() {
                         {auth.currentUser?.photoURL ? (
                           <img src={auth.currentUser.photoURL} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full bg-[#1C3560] flex items-center justify-center text-white font-bold text-lg">
+                          <div className="w-full h-full bg-[#050259] flex items-center justify-center text-white font-bold text-lg">
                             {auth.currentUser?.displayName?.charAt(0) || <UserIcon size={20} />}
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-[#0A1628] truncate">{auth.currentUser?.displayName || 'Administrator'}</p>
+                        <p className="text-sm font-bold text-[#08047D] truncate">{auth.currentUser?.displayName || 'Administrator'}</p>
                         <p className="text-[10px] text-slate-500 truncate">{auth.currentUser?.email}</p>
                       </div>
                     </div>
                   </div>
                   <div className="p-2">
-                    <button onClick={() => { setActiveView('settings'); setIsProfileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm font-bold text-slate-600 hover:text-[#0A1628] hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3">
+                    <button onClick={() => { setActiveView('settings'); setIsProfileMenuOpen(false); }} className="w-full text-left px-3 py-2 text-sm font-bold text-slate-600 hover:text-[#08047D] hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3">
                       <Settings size={16} /> Platform Settings
                     </button>
                     <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-sm font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-3 mt-1">
@@ -1843,7 +1843,7 @@ export default function AdminDashboard() {
                     label="Active Items" 
                     value={stats.activeProducts.toString()} 
                     trend={0} 
-                    icon={<Package className="text-[#C8961A]" />} 
+                    icon={<Package className="text-[#FA9411]" />} 
                     onClick={() => {
                       setProductStatusFilter('active');
                       setActiveView('products');
@@ -1879,8 +1879,8 @@ export default function AdminDashboard() {
                         <AreaChart data={chartData}>
                           <defs>
                             <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#1C3560" stopOpacity={0.1}/>
-                              <stop offset="95%" stopColor="#1C3560" stopOpacity={0}/>
+                              <stop offset="5%" stopColor="#050259" stopOpacity={0.1}/>
+                              <stop offset="95%" stopColor="#050259" stopOpacity={0}/>
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -1889,7 +1889,7 @@ export default function AdminDashboard() {
                           <Tooltip 
                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                           />
-                          <Area type="monotone" dataKey="views" stroke="#1C3560" fillOpacity={1} fill="url(#colorViews)" strokeWidth={3} />
+                          <Area type="monotone" dataKey="views" stroke="#050259" fillOpacity={1} fill="url(#colorViews)" strokeWidth={3} />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
@@ -1905,7 +1905,7 @@ export default function AdminDashboard() {
                           onClick={() => { setSelectedQuote(quote); }}
                           className="flex gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors border-b border-gray-50 last:border-0 cursor-pointer group"
                         >
-                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#1C3560] font-bold shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[#050259] font-bold shrink-0">
                             {quote.name.charAt(0)}
                           </div>
                           <div className="min-width-0 flex-1">
@@ -1915,7 +1915,7 @@ export default function AdminDashboard() {
                             </p>
                           </div>
                           <div className="text-right">
-                             <ChevronRight size={14} className="text-gray-300 group-hover:text-[#C8102E] transition-colors" />
+                             <ChevronRight size={14} className="text-gray-300 group-hover:text-[#08047D] transition-colors" />
                              <span className="text-[9px] block mt-1 text-gray-400">
                                {quote.createdAt?.toDate ? format(quote.createdAt.toDate(), 'HH:mm') : 'Recently'}
                              </span>
@@ -1923,7 +1923,7 @@ export default function AdminDashboard() {
                         </div>
                       ))}
                     </div>
-                    <button onClick={() => setActiveView('quotes')} className="mt-4 w-full py-2.5 text-xs font-bold text-[#1C3560] bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">View All Requests</button>
+                    <button onClick={() => setActiveView('quotes')} className="mt-4 w-full py-2.5 text-xs font-bold text-[#050259] bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">View All Requests</button>
                   </div>
                 </div>
 
@@ -1954,7 +1954,7 @@ export default function AdminDashboard() {
                                <ImageIcon size={24} className="text-slate-300" />
                              )}
                           </div>
-                          <div className="absolute -top-2 -left-2 w-6 h-6 bg-[#C8961A] text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-lg">
+                          <div className="absolute -top-2 -left-2 w-6 h-6 bg-[#FA9411] text-white rounded-full flex items-center justify-center text-[10px] font-black shadow-lg">
                             #{idx + 1}
                           </div>
                         </div>
@@ -1963,7 +1963,7 @@ export default function AdminDashboard() {
                           <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-tighter">{product.category}</p>
                           <div className="flex items-center gap-2 mt-1">
                              <Heart size={10} className="text-red-500 fill-red-500" />
-                             <span className="text-[10px] font-black text-[#1C3560]">{Math.floor(Math.random() * 50) + 10} Saves</span>
+                             <span className="text-[10px] font-black text-[#050259]">{Math.floor(Math.random() * 50) + 10} Saves</span>
                           </div>
                         </div>
                       </div>
@@ -2023,7 +2023,7 @@ export default function AdminDashboard() {
                         </button>
                         <button 
                           onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
-                          className="bg-[#C8102E] hover:bg-[#8B0000] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-[#B91C1C]/20 shrink-0"
+                          className="bg-[#08047D] hover:bg-[#8B0000] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-[#B91C1C]/20 shrink-0"
                         >
                           <Plus size={16} /> Add Product
                         </button>
@@ -2040,14 +2040,14 @@ export default function AdminDashboard() {
                             placeholder="Search name, category, or keywords..." 
                             value={productSearch}
                             onChange={(e) => setProductSearch(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white border border-[#E2E8F0] rounded-lg text-sm focus:ring-2 focus:ring-[#C8102E]/20 focus:border-[#C8102E] outline-none transition-all placeholder:text-[#94A3B8]"
+                            className="w-full pl-10 pr-4 py-2 bg-white border border-[#E2E8F0] rounded-lg text-sm focus:ring-2 focus:ring-[#08047D]/20 focus:border-[#08047D] outline-none transition-all placeholder:text-[#94A3B8]"
                           />
                         </div>
                         <div className="grid grid-cols-2 md:flex gap-3 w-full md:w-auto shrink-0">
                           <select 
                             value={productCategoryFilter}
                             onChange={(e) => setProductCategoryFilter(e.target.value)}
-                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20 w-full"
+                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#08047D]/20 w-full"
                           >
                             <option value="all">All Categories</option>
                             {productCategories.map(cat => (
@@ -2057,7 +2057,7 @@ export default function AdminDashboard() {
                           <select 
                             value={productStatusFilter}
                             onChange={(e) => setProductStatusFilter(e.target.value)}
-                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#C8102E]/20 w-full"
+                            className="bg-white border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#08047D]/20 w-full"
                           >
                             <option value="all">All Status</option>
                             <option value="active">Active Only</option>
@@ -2095,7 +2095,7 @@ export default function AdminDashboard() {
                             setProductMinPrice('');
                             setProductMaxPrice('');
                           }}
-                          className="ml-auto text-[10px] font-bold text-[#64748B] hover:text-[#C8102E] uppercase tracking-wider"
+                          className="ml-auto text-[10px] font-bold text-[#64748B] hover:text-[#08047D] uppercase tracking-wider"
                         >
                           Clear Filters
                         </button>
@@ -2134,7 +2134,7 @@ export default function AdminDashboard() {
                                       {(item.tags || []).slice(0, 3).map((tag: string) => (
                                         <span key={tag} className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border transition-colors ${
                                           tag.toLowerCase() === 'wholesale' 
-                                          ? 'bg-[#0A1628] text-[#C8961A] border-[#C8961A]/30' 
+                                          ? 'bg-[#08047D] text-[#FA9411] border-[#FA9411]/30' 
                                           : 'bg-slate-100 text-slate-500 border-slate-200'
                                         }`}>
                                           {tag}
@@ -2156,7 +2156,7 @@ export default function AdminDashboard() {
                                 </div>
                                 
                                 <div className="w-[150px] px-6 py-4 shrink-0">
-                                  <div className="font-extrabold text-sm text-[#0A1628]">
+                                  <div className="font-extrabold text-sm text-[#08047D]">
                                     {item.price.toLocaleString()}/-
                                     {item.oldPrice > 0 && <span className="block text-[10px] text-gray-400 line-through font-normal">{item.oldPrice.toLocaleString()}/-</span>}
                                   </div>
@@ -2213,7 +2213,7 @@ export default function AdminDashboard() {
                   </div>
                   <button 
                     onClick={() => { setEditingItem(null); setActivePromoModal(true); }}
-                    className="bg-[#C8102E] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-[#C8102E]/20"
+                    className="bg-[#08047D] text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-[#08047D]/20"
                   >
                     <Plus size={16} /> New Campaign
                   </button>
@@ -2233,7 +2233,7 @@ export default function AdminDashboard() {
                         <div className="absolute top-4 right-4 flex gap-2">
                           <button 
                             onClick={() => { setEditingItem(promo); setActivePromoModal(true); }}
-                            className="p-2 bg-white/90 text-[#1C3560] rounded-lg shadow-sm hover:bg-white transition-colors"
+                            className="p-2 bg-white/90 text-[#050259] rounded-lg shadow-sm hover:bg-white transition-colors"
                           >
                             <Edit2 size={14} />
                           </button>
@@ -2274,7 +2274,7 @@ export default function AdminDashboard() {
                                 handleFirestoreError(error, OperationType.UPDATE, `promotions/${promo.id}`);
                               }
                             }}
-                            className={`text-[10px] font-black uppercase tracking-widest ${promo.active ? 'text-red-600' : 'text-[#1C3560]'}`}
+                            className={`text-[10px] font-black uppercase tracking-widest ${promo.active ? 'text-red-600' : 'text-[#050259]'}`}
                           >
                             {promo.active ? 'Deactivate' : 'Activate'}
                           </button>
@@ -2289,7 +2289,7 @@ export default function AdminDashboard() {
                       <p className="text-xs text-slate-400 max-w-xs mx-auto mt-2">Create a new promotion to show banners for holidays, sales, or seasonal events.</p>
                       <button 
                         onClick={() => { setEditingItem(null); setActivePromoModal(true); }}
-                        className="mt-6 flex items-center gap-2 text-xs font-black text-[#1C3560] uppercase tracking-widest"
+                        className="mt-6 flex items-center gap-2 text-xs font-black text-[#050259] uppercase tracking-widest"
                       >
                         <Plus size={16} /> Create your first promo
                       </button>
@@ -2314,7 +2314,7 @@ export default function AdminDashboard() {
                     </div>
                     <button 
                       onClick={() => setIsAddUserModalOpen(true)}
-                      className="bg-[#1C3560] hover:bg-[#0A1628] text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg active:scale-95"
+                      className="bg-[#050259] hover:bg-[#08047D] text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg active:scale-95"
                     >
                       <Plus size={16} /> Add Member
                     </button>
@@ -2333,7 +2333,7 @@ export default function AdminDashboard() {
                           <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-[#1C3560] text-white flex items-center justify-center font-bold text-xs uppercase text-center flex-shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-[#050259] text-white flex items-center justify-center font-bold text-xs uppercase text-center flex-shrink-0">
                                   {user.displayName?.charAt(0) || user.email.charAt(0)}
                                 </div>
                                 <div>
@@ -2386,13 +2386,13 @@ export default function AdminDashboard() {
                 <div className="flex gap-4 mb-2">
                   <button 
                     onClick={() => setActiveTab('all')}
-                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'all' ? 'bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white shadow-lg shadow-[#C8102E]/15' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
+                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'all' ? 'bg-gradient-to-r from-[#08047D] to-[#E94C36] text-white shadow-lg shadow-[#08047D]/15' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
                   >
                     Client Quotes
                   </button>
                   <button 
                     onClick={() => setActiveTab('discounts')}
-                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'discounts' ? 'bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white shadow-lg shadow-[#C8102E]/15' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
+                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'discounts' ? 'bg-gradient-to-r from-[#08047D] to-[#E94C36] text-white shadow-lg shadow-[#08047D]/15' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
                   >
                     Bulk Discount Rules
                   </button>
@@ -2448,7 +2448,7 @@ export default function AdminDashboard() {
                                     setSelectedQuoteIds([]);
                                   }
                                 }}
-                                className="rounded border-slate-300 text-[#1C3560] focus:ring-[#1C3560]"
+                                className="rounded border-slate-300 text-[#050259] focus:ring-[#050259]"
                               />
                             </th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase tracking-wider text-[#64748B]">Client</th>
@@ -2472,7 +2472,7 @@ export default function AdminDashboard() {
                                       setSelectedQuoteIds(prev => prev.filter(id => id !== quote.id));
                                     }
                                   }}
-                                  className="rounded border-slate-300 text-[#1C3560] focus:ring-[#1C3560]"
+                                  className="rounded border-slate-300 text-[#050259] focus:ring-[#050259]"
                                 />
                               </td>
                               <td className="px-6 py-4">
@@ -2480,12 +2480,12 @@ export default function AdminDashboard() {
                                 <p className="text-[10px] text-[#64748B] tracking-wide">{quote.email}</p>
                               </td>
                               <td className="px-6 py-4">
-                                <span className="text-xs font-semibold text-[#1C3560]">{quote.service || (quote.items ? 'Store Order' : 'Custom Request')}</span>
+                                <span className="text-xs font-semibold text-[#050259]">{quote.service || (quote.items ? 'Store Order' : 'Custom Request')}</span>
                               </td>
                               <td className="px-6 py-4">
                                 <div className="flex flex-col gap-1">
                                   {quote.items ? (
-                                    <span className="text-xs font-bold text-[#0A1628]">{quote.items.length} Items · {quote.total?.toLocaleString()}/-</span>
+                                    <span className="text-xs font-bold text-[#08047D]">{quote.items.length} Items · {quote.total?.toLocaleString()}/-</span>
                                   ) : (
                                     <p className="text-[10px] text-[#64748B] line-clamp-1">{quote.details || 'No details'}</p>
                                   )}
@@ -2517,7 +2517,7 @@ export default function AdminDashboard() {
                                 <div className="flex items-center justify-end gap-2">
                                   <button 
                                     onClick={() => setSelectedQuote(quote)}
-                                    className="p-1.5 text-[#64748B] hover:text-[#1C3560] hover:bg-white rounded-lg border border-transparent hover:border-[#E2E8F0] transition-all"
+                                    className="p-1.5 text-[#64748B] hover:text-[#050259] hover:bg-white rounded-lg border border-transparent hover:border-[#E2E8F0] transition-all"
                                   >
                                     <Eye size={16} />
                                   </button>
@@ -2556,7 +2556,7 @@ export default function AdminDashboard() {
                         </div>
                         <button 
                           onClick={() => { setEditingDiscountRule(null); setIsDiscountModalOpen(true); }}
-                          className="bg-[#1C3560] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-md"
+                          className="bg-[#050259] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#08047D] transition-all shadow-md"
                         >
                           Add New Rule
                         </button>
@@ -2577,7 +2577,7 @@ export default function AdminDashboard() {
                             {discountRules.map((rule) => (
                               <tr key={rule.id} className="hover:bg-slate-50 transition-all group">
                                 <td className="px-6 py-5">
-                                  <p className="text-sm font-bold text-[#1E293B] group-hover:text-[#C8102E] transition-colors">{rule.title}</p>
+                                  <p className="text-sm font-bold text-[#1E293B] group-hover:text-[#08047D] transition-colors">{rule.title}</p>
                                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Created {rule.createdAt?.toDate ? format(rule.createdAt.toDate(), 'PP') : 'Today'}</p>
                                 </td>
                                 <td className="px-6 py-5">
@@ -2592,8 +2592,8 @@ export default function AdminDashboard() {
                                 </td>
                                 <td className="px-6 py-5">
                                   <div className="flex items-center gap-2">
-                                    <TrendingDown size={14} className="text-[#C8102E]" />
-                                    <span className="text-sm font-black text-[#C8102E]">{rule.discountPercentage}% OFF</span>
+                                    <TrendingDown size={14} className="text-[#08047D]" />
+                                    <span className="text-sm font-black text-[#08047D]">{rule.discountPercentage}% OFF</span>
                                   </div>
                                 </td>
                                 <td className="px-6 py-5">
@@ -2618,7 +2618,7 @@ export default function AdminDashboard() {
                                   <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button 
                                       onClick={() => { setEditingDiscountRule(rule); setIsDiscountModalOpen(true); }}
-                                      className="p-2 text-slate-400 hover:text-[#1C3560] hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all"
+                                      className="p-2 text-slate-400 hover:text-[#050259] hover:bg-white rounded-lg border border-transparent hover:border-slate-200 transition-all"
                                     >
                                       <Edit2 size={16} />
                                     </button>
@@ -2680,7 +2680,7 @@ export default function AdminDashboard() {
                         placeholder="Search by email or name..." 
                         value={wishlistSearch}
                         onChange={(e) => setWishlistSearch(e.target.value)}
-                        className="pl-9 pr-4 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#C8102E]/20 w-full sm:w-64"
+                        className="pl-9 pr-4 py-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#08047D]/20 w-full sm:w-64"
                       />
                     </div>
                   </div>
@@ -2689,7 +2689,7 @@ export default function AdminDashboard() {
                     {filteredWishlists.map((list) => (
                       <div key={list.id} className="bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-[#1C3560] shadow-sm">
+                          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-[#050259] shadow-sm">
                             {list.displayName?.charAt(0) || list.email?.charAt(0)}
                           </div>
                           <div>
@@ -2714,7 +2714,7 @@ export default function AdminDashboard() {
                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                             Updated {list.updatedAt?.toDate ? format(list.updatedAt.toDate(), 'PP') : 'Recently'}
                           </span>
-                          <span className="text-[10px] font-bold text-[#C8102E]">{list.items?.length || 0} Saved</span>
+                          <span className="text-[10px] font-bold text-[#08047D]">{list.items?.length || 0} Saved</span>
                         </div>
                       </div>
                     ))}
@@ -2779,7 +2779,7 @@ export default function AdminDashboard() {
                           <XAxis dataKey="name" axisLine={false} tickLine={false} />
                           <YAxis axisLine={false} tickLine={false} />
                           <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                          <Bar dataKey="views" fill="#1C3560" radius={[4, 4, 0, 0]} barSize={40} />
+                          <Bar dataKey="views" fill="#050259" radius={[4, 4, 0, 0]} barSize={40} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -2793,7 +2793,7 @@ export default function AdminDashboard() {
                           <XAxis dataKey="name" axisLine={false} tickLine={false} />
                           <YAxis axisLine={false} tickLine={false} />
                           <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                          <Line type="monotone" dataKey="quotes" stroke="#C8102E" strokeWidth={3} dot={{ r: 4, fill: '#C8102E' }} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="quotes" stroke="#08047D" strokeWidth={3} dot={{ r: 4, fill: '#08047D' }} activeDot={{ r: 6 }} />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
@@ -2802,7 +2802,7 @@ export default function AdminDashboard() {
 
                 <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] p-6">
                   <h3 className="font-bold text-gray-800 mb-6 text-sm flex items-center gap-2">
-                    <TrendingUp size={18} className="text-[#C8102E]" />
+                    <TrendingUp size={18} className="text-[#08047D]" />
                     Top 5 Trending Products (Last 30 Days)
                   </h3>
                   <div className="h-[350px]">
@@ -2815,7 +2815,7 @@ export default function AdminDashboard() {
                            cursor={{fill: '#f8fafc'}}
                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                         />
-                        <Bar dataKey="count" fill="#C8102E" radius={[0, 4, 4, 0]} barSize={32} />
+                        <Bar dataKey="count" fill="#08047D" radius={[0, 4, 4, 0]} barSize={32} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -2833,7 +2833,7 @@ export default function AdminDashboard() {
                           <h4 className="text-sm font-bold text-[#1E293B]">{cat.name}</h4>
                           <div className="mt-2 flex items-center gap-2">
                             <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div className="h-full bg-[#C8961A]" style={{ width: `${percentage || (80 - i*15)}%` }}></div>
+                              <div className="h-full bg-[#FA9411]" style={{ width: `${percentage || (80 - i*15)}%` }}></div>
                             </div>
                             <span className="text-[10px] font-bold text-[#64748B]">{percentage || (80 - i*15)}%</span>
                           </div>
@@ -2880,20 +2880,20 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-[32px] shadow-sm border border-[#E2E8F0] overflow-hidden">
                   <div className="p-8 border-b border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-white to-[#F8FAFC]">
                     <div>
-                      <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Navigation & Sourcing Controls</h3>
-                      <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Expansive Real-Time Site Structure Control</p>
+                      <h3 className="text-2xl font-display text-[#08047D] tracking-wide">Navigation & Sourcing Controls</h3>
+                      <p className="text-[10px] font-black text-[#FA9411] border-l-2 border-[#FA9411] pl-3 uppercase tracking-[3px] mt-1">Expansive Real-Time Site Structure Control</p>
                     </div>
                     {/* Sub-navigation tabs */}
                     <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start sm:self-auto shadow-inner">
                       <button 
                         onClick={() => setMegaMenuSubTab('header')}
-                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${megaMenuSubTab === 'header' ? 'bg-[#0A1628] text-white shadow-md' : 'text-slate-500 hover:text-[#0A1628]'}`}
+                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${megaMenuSubTab === 'header' ? 'bg-[#08047D] text-white shadow-md' : 'text-slate-500 hover:text-[#08047D]'}`}
                       >
                         Header Menus
                       </button>
                       <button 
                         onClick={() => setMegaMenuSubTab('catalogue')}
-                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${megaMenuSubTab === 'catalogue' ? 'bg-[#0A1628] text-white shadow-md' : 'text-slate-500 hover:text-[#0A1628]'}`}
+                        className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${megaMenuSubTab === 'catalogue' ? 'bg-[#08047D] text-white shadow-md' : 'text-slate-500 hover:text-[#08047D]'}`}
                       >
                         Sourcing Catalogue
                       </button>
@@ -2921,7 +2921,7 @@ export default function AdminDashboard() {
                                 });
                                 setActiveEditingCatalogueId('new');
                               }}
-                              className="flex items-center gap-2 px-5 py-3 bg-[#0A1628] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-md active:scale-95 cursor-pointer"
+                              className="flex items-center gap-2 px-5 py-3 bg-[#08047D] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-md active:scale-95 cursor-pointer"
                             >
                               + Add New Slide
                             </button>
@@ -2985,7 +2985,7 @@ export default function AdminDashboard() {
                                   }
                                 }
                               }}
-                              className="px-5 py-3 border border-dashed border-[#C8961A] hover:bg-[#C8961A]/5 text-[#C8961A] rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer"
+                              className="px-5 py-3 border border-dashed border-[#FA9411] hover:bg-[#FA9411]/5 text-[#FA9411] rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer"
                             >
                               Reset to Default slides
                             </button>
@@ -2996,7 +2996,7 @@ export default function AdminDashboard() {
                         {catalogueForm && (
                           <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-[35px] border border-slate-200 p-8 shadow-inner space-y-6">
                             <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                              <h5 className="font-extrabold text-sm text-[#0A1628] uppercase tracking-wider">
+                              <h5 className="font-extrabold text-sm text-[#08047D] uppercase tracking-wider">
                                 {activeEditingCatalogueId === 'new' ? '✨ Create Sourcing Slide' : '📝 Edit Sourcing Slide'}
                               </h5>
                               <button 
@@ -3018,7 +3018,7 @@ export default function AdminDashboard() {
                                     type="text"
                                     value={catalogueForm.category}
                                     onChange={e => setCatalogueForm({ ...catalogueForm, category: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none animate-none"
                                     placeholder="e.g., Primary & Secondary School Wear"
                                   />
                                 </div>
@@ -3029,7 +3029,7 @@ export default function AdminDashboard() {
                                     type="text"
                                     value={catalogueForm.title}
                                     onChange={e => setCatalogueForm({ ...catalogueForm, title: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none animate-none"
                                     placeholder="e.g., Quality School Uniforms & Essentials"
                                   />
                                 </div>
@@ -3040,7 +3040,7 @@ export default function AdminDashboard() {
                                     value={catalogueForm.description}
                                     onChange={e => setCatalogueForm({ ...catalogueForm, description: e.target.value })}
                                     rows={4}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none resize-none animate-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none resize-none animate-none"
                                     placeholder="Describe material durability, washes, thread count..."
                                   />
                                 </div>
@@ -3052,7 +3052,7 @@ export default function AdminDashboard() {
                                       type="number"
                                       value={catalogueForm.sortOrder}
                                       onChange={e => setCatalogueForm({ ...catalogueForm, sortOrder: Number(e.target.value) })}
-                                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none animate-none"
                                     />
                                   </div>
                                 </div>
@@ -3065,7 +3065,7 @@ export default function AdminDashboard() {
                                     type="text"
                                     value={catalogueForm.imageUrl}
                                     onChange={e => setCatalogueForm({ ...catalogueForm, imageUrl: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none animate-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none animate-none"
                                     placeholder="Image URL"
                                   />
                                   <div className="aspect-[4/3] rounded-xl overflow-hidden bg-black/5 border border-slate-200 flex items-center justify-center mt-2 relative">
@@ -3097,7 +3097,7 @@ export default function AdminDashboard() {
                                           setCatalogueHighlightInput('');
                                         }
                                       }}
-                                      className="px-4 py-2 bg-[#0A1628] text-white rounded-xl text-xs font-bold cursor-pointer"
+                                      className="px-4 py-2 bg-[#08047D] text-white rounded-xl text-xs font-bold cursor-pointer"
                                     >
                                       Add
                                     </button>
@@ -3105,7 +3105,7 @@ export default function AdminDashboard() {
 
                                   <div className="flex flex-wrap gap-2 mt-2">
                                     {catalogueForm.highlights?.map((spec: string, idx: number) => (
-                                      <span key={idx} className="bg-slate-200 text-[#0a1628] px-3 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-1.5 shadow-sm border border-slate-300 relative">
+                                      <span key={idx} className="bg-slate-200 text-[#08047D] px-3 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-1.5 shadow-sm border border-slate-300 relative">
                                         <span>{spec}</span>
                                         <button 
                                           onClick={() => {
@@ -3150,17 +3150,17 @@ export default function AdminDashboard() {
                         {/* List of active slides */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {cataloguePages.map((page: any) => (
-                            <div key={page.id} className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between border-t-4 border-t-[#C8102E]">
+                            <div key={page.id} className="bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between border-t-4 border-t-[#08047D]">
                               <div>
                                 <div className="flex gap-4 items-start">
                                   <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-slate-100 relative">
                                     <img src={page.imageUrl} className="w-full h-full object-cover" alt={page.title} referrerPolicy="no-referrer" />
                                   </div>
                                   <div className="space-y-1">
-                                    <span className="text-[8px] font-black uppercase text-[#C8961A] tracking-widest bg-[#C8961A]/5 px-2 py-0.5 rounded border border-[#C8961A]/10">
+                                    <span className="text-[8px] font-black uppercase text-[#FA9411] tracking-widest bg-[#FA9411]/5 px-2 py-0.5 rounded border border-[#FA9411]/10">
                                       {page.category}
                                     </span>
-                                    <h4 className="font-extrabold text-[#0A1628] text-sm line-clamp-2">{page.title}</h4>
+                                    <h4 className="font-extrabold text-[#08047D] text-sm line-clamp-2">{page.title}</h4>
                                     <p className="text-[10px] text-slate-400 font-extrabold">Slide Index: {page.sortOrder}</p>
                                   </div>
                                 </div>
@@ -3172,7 +3172,7 @@ export default function AdminDashboard() {
                                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Built-In Fabric Specs</p>
                                   <div className="flex flex-wrap gap-1.5">
                                     {page.highlights?.map((spec: string, i: number) => (
-                                      <span key={i} className="bg-slate-50 text-[#0a1628]/80 text-[9px] font-bold px-2 py-1 rounded border border-slate-100">
+                                      <span key={i} className="bg-slate-50 text-[#08047D]/80 text-[9px] font-bold px-2 py-1 rounded border border-slate-100">
                                         • {spec}
                                       </span>
                                     ))}
@@ -3186,7 +3186,7 @@ export default function AdminDashboard() {
                                     setCatalogueForm({ ...page });
                                     setActiveEditingCatalogueId(page.id);
                                   }}
-                                  className="flex-1 py-2.5 bg-[#C8961A]/10 text-[#C8961A] hover:bg-[#C8961A]/20 transition-all font-black uppercase text-[9px] tracking-wider rounded-xl text-center cursor-pointer"
+                                  className="flex-1 py-2.5 bg-[#FA9411]/10 text-[#FA9411] hover:bg-[#FA9411]/20 transition-all font-black uppercase text-[9px] tracking-wider rounded-xl text-center cursor-pointer"
                                 >
                                   Edit Content
                                 </button>
@@ -3206,7 +3206,7 @@ export default function AdminDashboard() {
                         {megaMenus.length === 0 ? (
                           <div className="py-20 text-center bg-slate-50 rounded-[40px] border-2 border-dashed border-slate-200">
                             <div className="max-w-md mx-auto space-y-6">
-                              <Zap size={48} className="mx-auto text-[#C8961A]" />
+                              <Zap size={48} className="mx-auto text-[#FA9411]" />
                               <h4 className="text-xl font-bold">No Menu Items Configured</h4>
                               <p className="text-sm text-slate-500">Initialize your navigation tree with a single click to start building your expansive menu.</p>
                               <button 
@@ -3242,7 +3242,7 @@ export default function AdminDashboard() {
                                     await handleSaveMegaMenu(menu);
                                   }
                                 }}
-                                className="bg-[#0A1628] text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
+                                className="bg-[#08047D] text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-2xl"
                               >
                                 Initialize Expansive Menu
                               </button>
@@ -3251,17 +3251,17 @@ export default function AdminDashboard() {
                         ) : (
                           <div className="grid grid-cols-1 gap-12">
                             {megaMenus.map((menu) => (
-                              <div key={menu.id} className="bg-white border border-slate-100 rounded-[40px] p-10 shadow-sm hover:shadow-xl transition-all border-l-4 border-l-[#C8961A]">
+                              <div key={menu.id} className="bg-white border border-slate-100 rounded-[40px] p-10 shadow-sm hover:shadow-xl transition-all border-l-4 border-l-[#FA9411]">
                                 <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
                                   <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-[#0A1628] rounded-2xl flex items-center justify-center text-[#C8961A]">
+                                    <div className="w-12 h-12 bg-[#08047D] rounded-2xl flex items-center justify-center text-[#FA9411]">
                                       <ChevronRight size={24} />
                                     </div>
-                                    <h4 className="font-display text-3xl tracking-widest text-[#0A1628] uppercase">{menu.name}</h4>
+                                    <h4 className="font-display text-3xl tracking-widest text-[#08047D] uppercase">{menu.name}</h4>
                                   </div>
                                   <button 
                                     onClick={() => handleSaveMegaMenu(menu)}
-                                    className="flex items-center gap-3 px-8 py-4 bg-[#C8961A] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all shadow-xl active:scale-95"
+                                    className="flex items-center gap-3 px-8 py-4 bg-[#FA9411] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#08047D] transition-all shadow-xl active:scale-95"
                                   >
                                     <Save size={18} /> Update {menu.name}
                                   </button>
@@ -3270,8 +3270,8 @@ export default function AdminDashboard() {
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                                   {/* Left: Featured Editor */}
                                   <div className="space-y-8 bg-slate-50 p-8 rounded-[32px]">
-                                    <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] mb-6 flex items-center gap-2">
-                                      <Sparkles size={14} className="text-[#C8961A]" />
+                                    <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#08047D] mb-6 flex items-center gap-2">
+                                      <Sparkles size={14} className="text-[#FA9411]" />
                                       Visual Spotlight
                                     </h5>
                                     <div className="space-y-6">
@@ -3284,7 +3284,7 @@ export default function AdminDashboard() {
                                             const updated = { ...menu, featured: { ...menu.featured, title: e.target.value } };
                                             setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                           }}
-                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#FA9411] outline-none"
                                         />
                                       </div>
                                       <div className="space-y-2">
@@ -3296,7 +3296,7 @@ export default function AdminDashboard() {
                                             const updated = { ...menu, featured: { ...menu.featured, link: e.target.value } };
                                             setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                           }}
-                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#FA9411] outline-none"
                                         />
                                       </div>
                                       <div className="space-y-2">
@@ -3315,7 +3315,7 @@ export default function AdminDashboard() {
                                             const updated = { ...menu, featured: { ...menu.featured, image: e.target.value } };
                                             setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                           }}
-                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                          className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-[#FA9411] outline-none"
                                         />
                                       </div>
                                     </div>
@@ -3324,8 +3324,8 @@ export default function AdminDashboard() {
                                   {/* Right: Expansive Column Editor */}
                                   <div className="lg:col-span-2 space-y-8">
                                     <div className="flex items-center justify-between">
-                                      <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#0A1628] flex items-center gap-2">
-                                        <Menu size={14} className="text-[#C8961A]" />
+                                      <h5 className="text-[10px] font-black uppercase tracking-[3px] text-[#08047D] flex items-center gap-2">
+                                        <Menu size={14} className="text-[#FA9411]" />
                                         Navigation Columns
                                       </h5>
                                       <button 
@@ -3336,7 +3336,7 @@ export default function AdminDashboard() {
                                           };
                                           setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                         }}
-                                        className="text-[10px] font-black text-[#C8961A] uppercase hover:underline animate-none"
+                                        className="text-[10px] font-black text-[#FA9411] uppercase hover:underline animate-none"
                                       >
                                         + Add Architecture Column
                                       </button>
@@ -3367,7 +3367,7 @@ export default function AdminDashboard() {
                                                   const updated = { ...menu, categories };
                                                   setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                                 }}
-                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#FA9411] outline-none"
                                               />
                                             </div>
                                             <div className="space-y-2">
@@ -3381,7 +3381,7 @@ export default function AdminDashboard() {
                                                   const updated = { ...menu, categories };
                                                   setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                                 }}
-                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#FA9411] outline-none"
                                               />
                                             </div>
                                             <div className="space-y-2">
@@ -3396,7 +3396,7 @@ export default function AdminDashboard() {
                                                   setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                                 }}
                                                 rows={3}
-                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#C8961A] outline-none resize-none"
+                                                className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-[#FA9411] outline-none resize-none"
                                               />
                                             </div>
                                           </div>
@@ -3446,8 +3446,8 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
                   <div className="p-8 border-b border-[#E2E8F0] flex items-center justify-between bg-gradient-to-r from-white to-[#F8FAFC]">
                     <div>
-                      <h3 className="text-2xl font-display text-[#0A1628] tracking-wide">Mega Menu Architecture</h3>
-                      <p className="text-[10px] font-black text-[#C8961A] border-l-2 border-[#C8961A] pl-3 uppercase tracking-[3px] mt-1">Configure Advanced Navigation Elements</p>
+                      <h3 className="text-2xl font-display text-[#08047D] tracking-wide">Mega Menu Architecture</h3>
+                      <p className="text-[10px] font-black text-[#FA9411] border-l-2 border-[#FA9411] pl-3 uppercase tracking-[3px] mt-1">Configure Advanced Navigation Elements</p>
                     </div>
                   </div>
                   
@@ -3497,7 +3497,7 @@ export default function AdminDashboard() {
                                 await handleSaveMegaMenu(menu);
                               }
                             }}
-                            className="bg-[#1C3560] text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-[#1C3560]/20 hover:scale-105 transition-all"
+                            className="bg-[#050259] text-white px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-[#050259]/20 hover:scale-105 transition-all"
                           >
                             Load Template Architecture
                           </button>
@@ -3508,7 +3508,7 @@ export default function AdminDashboard() {
                         {megaMenus.map((menu) => (
                           <div key={menu.id} className="bg-[#FBFCFE] border border-slate-100 rounded-[32px] p-8 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/80">
-                              <h4 className="font-display text-2xl tracking-widest text-[#0A1628]">{menu.name}</h4>
+                              <h4 className="font-display text-2xl tracking-widest text-[#08047D]">{menu.name}</h4>
                             </div>
 
                             <div className="space-y-8">
@@ -3525,7 +3525,7 @@ export default function AdminDashboard() {
                                         const updated = { ...menu, featured: { ...menu.featured, title: e.target.value } };
                                         setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                       }}
-                                      className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                      className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none"
                                     />
                                   </div>
                                   <div className="space-y-1.5">
@@ -3538,7 +3538,7 @@ export default function AdminDashboard() {
                                         setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                       }}
                                       placeholder="#"
-                                      className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                      className="w-full bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none"
                                     />
                                   </div>
                                 </div>
@@ -3564,7 +3564,7 @@ export default function AdminDashboard() {
                                         const updated = { ...menu, featured: { ...menu.featured, image: e.target.value } };
                                         setMegaMenus(megaMenus.map(m => m.id === menu.id ? updated : m));
                                       }}
-                                      className="flex-1 bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#C8961A] outline-none"
+                                      className="flex-1 bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:border-[#FA9411] outline-none"
                                     />
                                   </div>
                                 </div>
@@ -3573,7 +3573,7 @@ export default function AdminDashboard() {
                               <div className="pt-4 flex justify-end">
                                 <button 
                                   onClick={() => handleSaveMegaMenu(menu)}
-                                  className="flex items-center gap-2 px-6 py-3 bg-[#1C3560] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0A1628] transition-all"
+                                  className="flex items-center gap-2 px-6 py-3 bg-[#050259] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#08047D] transition-all"
                                 >
                                   <Save size={16} />
                                   Update Architecture
@@ -3717,7 +3717,7 @@ export default function AdminDashboard() {
             </p>
             <Link 
               to="/" 
-              className="flex items-center gap-2 text-xs font-bold text-[#1C3560] hover:text-[#C8102E] transition-all group"
+              className="flex items-center gap-2 text-xs font-bold text-[#050259] hover:text-[#08047D] transition-all group"
             >
               <Eye size={14} className="group-hover:scale-110 transition-transform" />
               View Public Site
@@ -3744,10 +3744,10 @@ export default function AdminDashboard() {
               className="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden p-8"
             >
               <div className="text-center space-y-2 mb-8">
-                <div className="w-16 h-16 bg-[#1C3560]/10 rounded-2xl flex items-center justify-center mx-auto text-[#1C3560]">
+                <div className="w-16 h-16 bg-[#050259]/10 rounded-2xl flex items-center justify-center mx-auto text-[#050259]">
                   <UserPlus size={32} />
                 </div>
-                <h3 className="text-2xl font-display tracking-wide text-[#0A1628]">Add Team Member</h3>
+                <h3 className="text-2xl font-display tracking-wide text-[#08047D]">Add Team Member</h3>
                 <p className="text-[10px] font-black text-[#64748B] uppercase tracking-[3px]">Assign Administrative Roles</p>
               </div>
 
@@ -3778,7 +3778,7 @@ export default function AdminDashboard() {
                     value={newUserEmail}
                     onChange={e => setNewUserEmail(e.target.value)}
                     placeholder=""
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm focus:border-[#C8102E] focus:bg-white outline-none transition-all font-bold"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm focus:border-[#08047D] focus:bg-white outline-none transition-all font-bold"
                   />
                 </div>
 
@@ -3789,7 +3789,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => setNewUserRole('user')}
                       className={`py-3 px-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                        newUserRole === 'user' ? 'border-[#1C3560] bg-[#1C3560]/5 text-[#1C3560]' : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                        newUserRole === 'user' ? 'border-[#050259] bg-[#050259]/5 text-[#050259]' : 'border-slate-100 text-slate-400 hover:border-slate-200'
                       }`}
                     >
                       Staff Member
@@ -3798,7 +3798,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => setNewUserRole('admin')}
                       className={`py-3 px-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${
-                        newUserRole === 'admin' ? 'border-[#C8102E] bg-[#C8102E]/5 text-[#C8102E]' : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                        newUserRole === 'admin' ? 'border-[#08047D] bg-[#08047D]/5 text-[#08047D]' : 'border-slate-100 text-slate-400 hover:border-slate-200'
                       }`}
                     >
                       Administrator
@@ -3816,7 +3816,7 @@ export default function AdminDashboard() {
                   </button>
                   <button 
                     type="submit"
-                    className="flex-1 py-4 bg-[#1C3560] hover:bg-[#0A1628] text-white rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all shadow-xl active:scale-95"
+                    className="flex-1 py-4 bg-[#050259] hover:bg-[#08047D] text-white rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all shadow-xl active:scale-95"
                   >
                     Grant Access
                   </button>
@@ -3836,7 +3836,7 @@ export default function AdminDashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setStagedProducts(null)}
-              className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
+              className="absolute inset-0 bg-[#08047D]/80 backdrop-blur-md"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -3941,7 +3941,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={handleSyncStagedProducts}
                     disabled={isImporting}
-                    className="bg-[#C8102E] hover:bg-[#A60D26] text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-lg shadow-[#C8102E]/20 transition-all disabled:opacity-50 disabled:grayscale"
+                    className="bg-[#08047D] hover:bg-[#050259] text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-lg shadow-[#08047D]/20 transition-all disabled:opacity-50 disabled:grayscale"
                   >
                     {isImporting ? (
                       <>
@@ -3983,12 +3983,12 @@ export default function AdminDashboard() {
                 <div className="w-12 h-1 bg-slate-300 rounded-full animate-pulse" />
               </div>
               <div className="px-4 py-3 md:px-6 md:py-4.5 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-display text-lg md:text-2xl font-black tracking-wide text-[#0A1628]">
+                <h3 className="font-display text-lg md:text-2xl font-black tracking-wide text-[#08047D]">
                   {editingItem ? 'Edit Product' : 'Add New Product'}
                 </h3>
                 <button 
                   onClick={() => setIsModalOpen(false)} 
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-[#0A1628] flex items-center justify-center transition-all"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-[#08047D] flex items-center justify-center transition-all"
                 >
                   <X size={16} />
                 </button>
@@ -4045,7 +4045,7 @@ export default function AdminDashboard() {
               className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
+                <h3 className="font-display text-2xl tracking-wide text-[#08047D]">
                   {editingItem ? 'Edit Campaign' : 'New Marketing Campaign'}
                 </h3>
                 <button onClick={() => setActivePromoModal(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
@@ -4094,7 +4094,7 @@ export default function AdminDashboard() {
             >
               <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-[#F8FAFC]">
                 <div>
-                  <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">Request Details</h3>
+                  <h3 className="font-display text-2xl tracking-wide text-[#08047D]">Request Details</h3>
                   <p className="text-[10px] font-black text-[#64748B] uppercase tracking-widest">{selectedQuote.id}</p>
                 </div>
                 <button onClick={() => setSelectedQuote(null)} className="text-gray-400 hover:text-black transition-colors">
@@ -4171,7 +4171,7 @@ export default function AdminDashboard() {
                                   </div>
                                 )}
                                 {item.brandingType && (
-                                  <div className="text-[9px] text-[#C8961A] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1.5">
+                                  <div className="text-[9px] text-[#FA9411] font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1.5">
                                     <span>🪡 {item.brandingType} ({item.brandingPosition})</span>
                                   </div>
                                 )}
@@ -4181,7 +4181,7 @@ export default function AdminDashboard() {
                                       <img src={item.customLogoUrl} className="w-full h-full object-contain" alt="User logo preview" />
                                       <a href={item.customLogoUrl} download={`logo_${item.customLogoName || 'brand'}`} target="_blank" rel="noreferrer" className="absolute inset-0 bg-black/40 text-white flex items-center justify-center text-[7px] font-black opacity-0 hover:opacity-100 transition-opacity">DL</a>
                                     </div>
-                                    <span className="text-[9px] text-[#0A1628] font-bold hover:underline">
+                                    <span className="text-[9px] text-[#08047D] font-bold hover:underline">
                                       <a href={item.customLogoUrl} download={item.customLogoName || 'logo'} target="_blank" rel="noreferrer">
                                         {item.customLogoName || 'Custom Logo'} (Download)
                                       </a>
@@ -4195,7 +4195,7 @@ export default function AdminDashboard() {
                           ))}
                           <tr className="bg-[#F8FAFC] font-black">
                             <td colSpan={2} className="px-4 py-3 text-right text-[#64748B] uppercase text-[10px]">Total Est. Value</td>
-                            <td className="px-4 py-3 text-right text-[#C8102E]">{selectedQuote.total?.toLocaleString()}/-</td>
+                            <td className="px-4 py-3 text-right text-[#08047D]">{selectedQuote.total?.toLocaleString()}/-</td>
                           </tr>
                         </tbody>
                       </table>
@@ -4221,13 +4221,13 @@ export default function AdminDashboard() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Client Asset</p>
-                        <p className="text-xs font-black text-[#0A1628] truncate mt-0.5">{selectedQuote.customLogoName || 'Custom Branding Logo'}</p>
+                        <p className="text-xs font-black text-[#08047D] truncate mt-0.5">{selectedQuote.customLogoName || 'Custom Branding Logo'}</p>
                         <a 
                           href={selectedQuote.customLogoUrl} 
                           download={selectedQuote.customLogoName || 'logo'} 
                           target="_blank" 
                           rel="noreferrer" 
-                          className="mt-1.5 inline-block text-[10px] font-black uppercase text-[#C8102E] hover:underline"
+                          className="mt-1.5 inline-block text-[10px] font-black uppercase text-[#08047D] hover:underline"
                         >
                           Download Brand Asset 📥
                         </a>
@@ -4241,7 +4241,7 @@ export default function AdminDashboard() {
                 {selectedQuote.email && (
                   <a 
                     href={`mailto:${selectedQuote.email}?subject=Naisiae Textile Quote Response: ${selectedQuote.id}`}
-                    className="bg-[#1C3560] hover:bg-[#0A1628] text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all"
+                    className="bg-[#050259] hover:bg-[#08047D] text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all"
                   >
                     Reply via Email
                   </a>
@@ -4276,7 +4276,7 @@ export default function AdminDashboard() {
               className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
-                <h3 className="font-display text-2xl tracking-wide text-[#0A1628]">
+                <h3 className="font-display text-2xl tracking-wide text-[#08047D]">
                   {editingDiscountRule ? 'Edit Discount Rule' : 'New Bulk Discount Rule'}
                 </h3>
                 <button onClick={() => setIsDiscountModalOpen(false)} className="text-gray-400 hover:text-black transition-colors"><X size={20} /></button>
@@ -4382,7 +4382,7 @@ function AdminSidebar({
 
   return (
     <aside 
-      className={`hidden lg:flex flex-col bg-[#0A1628] text-white transition-all duration-300 relative z-50 shadow-2xl ${isCollapsed ? 'w-20' : 'w-72'}`}
+      className={`hidden lg:flex flex-col bg-[#08047D] text-white transition-all duration-300 relative z-50 shadow-2xl ${isCollapsed ? 'w-20' : 'w-72'}`}
     >
       <div className="p-6 flex items-center justify-between border-b border-white/5 h-20 shrink-0 bg-[#070D18]">
         {!isCollapsed && (
@@ -4396,7 +4396,7 @@ function AdminSidebar({
                 <span className="text-white text-lg">NT</span>
               </div>
             )}
-            <span className="font-display font-black text-[#C8961A] tracking-[2px] uppercase text-[10px] truncate">
+            <span className="font-display font-black text-[#FA9411] tracking-[2px] uppercase text-[10px] truncate">
               Admin Portal
             </span>
           </div>
@@ -4421,12 +4421,12 @@ function AdminSidebar({
             onClick={() => setActiveView(item.id)}
             className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all relative group ${
               activeView === item.id 
-                ? 'bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white shadow-xl shadow-[#C8102E]/20' 
+                ? 'bg-gradient-to-r from-[#08047D] to-[#E94C36] text-white shadow-xl shadow-[#08047D]/20' 
                 : 'text-white/50 hover:text-white hover:bg-white/5'
             } ${isCollapsed ? 'justify-center' : ''}`}
             title={isCollapsed ? item.label : ''}
           >
-            <div className={`shrink-0 transition-transform duration-300 group-hover:scale-110 ${activeView === item.id ? 'text-[#C8961A]' : 'text-white/40'}`}>
+            <div className={`shrink-0 transition-transform duration-300 group-hover:scale-110 ${activeView === item.id ? 'text-[#FA9411]' : 'text-white/40'}`}>
               <item.icon size={20} />
             </div>
             {!isCollapsed && (
@@ -4436,18 +4436,18 @@ function AdminSidebar({
             )}
             {!isCollapsed && item.badge > 0 && (
               <span className={`ml-auto px-2 py-0.5 rounded-full text-[8px] font-black shadow-lg ${
-                activeView === item.id ? 'bg-[#C8102E] text-white' : 'bg-white/10 text-slate-400'
+                activeView === item.id ? 'bg-[#08047D] text-white' : 'bg-white/10 text-slate-400'
               }`}>
                 {item.badge}
               </span>
             )}
             {isCollapsed && item.badge > 0 && (
-              <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0A1628]" />
+              <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#08047D]" />
             )}
             {activeView === item.id && (
               <motion.div 
                 layoutId="sidebarActive"
-                className="absolute left-0 w-1 h-6 bg-[#C8961A] rounded-r-full shadow-[0_0_10px_rgba(200,150,26,0.6)]"
+                className="absolute left-0 w-1 h-6 bg-[#FA9411] rounded-r-full shadow-[0_0_10px_rgba(250, 148, 17,0.6)]"
               />
             )}
           </button>
@@ -4466,7 +4466,7 @@ function AdminSidebar({
 
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 bg-[#C8961A] text-white w-7 h-7 rounded-full flex items-center justify-center shadow-xl border-2 border-[#0A1628] hover:bg-white hover:text-[#0A1628] transition-all z-50 hover:scale-110 active:scale-95"
+        className="absolute -right-3 top-20 bg-[#FA9411] text-white w-7 h-7 rounded-full flex items-center justify-center shadow-xl border-2 border-[#08047D] hover:bg-white hover:text-[#08047D] transition-all z-50 hover:scale-110 active:scale-95"
       >
         {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
@@ -4497,12 +4497,12 @@ function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct
 
   if (!isSuperAdmin) {
     return (
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/95 backdrop-blur-md border-t border-white/5 flex items-center justify-around px-4 z-[60] pb-5">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#08047D]/95 backdrop-blur-md border-t border-white/5 flex items-center justify-around px-4 z-[60] pb-5">
         <button
           onClick={() => setActiveView('products')}
-          className={`relative flex flex-col items-center justify-center gap-1.5 w-16 h-full transition-all text-[#C8961A]`}
+          className={`relative flex flex-col items-center justify-center gap-1.5 w-16 h-full transition-all text-[#FA9411]`}
         >
-          <div className="p-2 rounded-xl bg-[#C8961A]/10 scale-110">
+          <div className="p-2 rounded-xl bg-[#FA9411]/10 scale-110">
             <Package size={22} />
           </div>
           <span className="text-[7px] font-black uppercase tracking-[1px]">Stock</span>
@@ -4512,7 +4512,7 @@ function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct
   }
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#0A1628]/98 backdrop-blur-lg border-t border-white/10 flex items-center justify-between px-6 z-[60] pb-5">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-[#08047D]/98 backdrop-blur-lg border-t border-white/10 flex items-center justify-between px-6 z-[60] pb-5">
       {/* Left Navigation Tabs */}
       <div className="flex items-center justify-around flex-1">
         {leftItems.map((item) => (
@@ -4520,15 +4520,15 @@ function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct
             key={item.id}
             onClick={() => setActiveView(item.id)}
             className={`relative flex flex-col items-center justify-center gap-1 w-14 h-full transition-all ${
-              activeView === item.id ? 'text-[#C8961A]' : 'text-white/40'
+              activeView === item.id ? 'text-[#FA9411]' : 'text-white/40'
             }`}
           >
-            <div className={`p-1.5 rounded-xl transition-all ${activeView === item.id ? 'bg-[#C8961A]/10 scale-110 text-[#C8961A]' : 'text-white/50'}`}>
+            <div className={`p-1.5 rounded-xl transition-all ${activeView === item.id ? 'bg-[#FA9411]/10 scale-110 text-[#FA9411]' : 'text-white/50'}`}>
               <item.icon size={20} />
             </div>
             <span className="text-[8px] font-bold uppercase tracking-[0.5px] scale-90">{item.label}</span>
             {item.badge > 0 && (
-              <span className="absolute top-1 right-1 bg-[#C8102E] text-white text-[7px] font-black px-1 py-0.5 rounded-full flex items-center justify-center min-w-[14px] shadow-lg border border-white/10">
+              <span className="absolute top-1 right-1 bg-[#08047D] text-white text-[7px] font-black px-1 py-0.5 rounded-full flex items-center justify-center min-w-[14px] shadow-lg border border-white/10">
                 {item.badge}
               </span>
             )}
@@ -4543,7 +4543,7 @@ function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct
             e.preventDefault();
             onAddProduct();
           }}
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(194,17,46,0.4)] hover:scale-105 active:scale-95 transition-all border-2 border-[#0A1628] focus:outline-none"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white flex items-center justify-center shadow-[0_8px_20px_rgba(194,17,46,0.4)] hover:scale-105 active:scale-95 transition-all border-2 border-[#08047D] focus:outline-none"
           title="Add New Product"
         >
           <Plus size={24} className="stroke-[3]" />
@@ -4557,15 +4557,15 @@ function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct
             key={item.id}
             onClick={() => setActiveView(item.id)}
             className={`relative flex flex-col items-center justify-center gap-1 w-14 h-full transition-all ${
-              activeView === item.id ? 'text-[#C8961A]' : 'text-white/40'
+              activeView === item.id ? 'text-[#FA9411]' : 'text-white/40'
             }`}
           >
-            <div className={`p-1.5 rounded-xl transition-all ${activeView === item.id ? 'bg-[#C8961A]/10 scale-110 text-[#C8961A]' : 'text-white/50'}`}>
+            <div className={`p-1.5 rounded-xl transition-all ${activeView === item.id ? 'bg-[#FA9411]/10 scale-110 text-[#FA9411]' : 'text-white/50'}`}>
               <item.icon size={20} />
             </div>
             <span className="text-[8px] font-bold uppercase tracking-[0.5px] scale-90">{item.label}</span>
             {item.badge > 0 && (
-              <span className="absolute top-1 right-1 bg-[#C8102E] text-white text-[7px] font-black px-1 py-0.5 rounded-full flex items-center justify-center min-w-[14px] shadow-lg border border-white/10">
+              <span className="absolute top-1 right-1 bg-[#08047D] text-white text-[7px] font-black px-1 py-0.5 rounded-full flex items-center justify-center min-w-[14px] shadow-lg border border-white/10">
                 {item.badge}
               </span>
             )}
@@ -4582,18 +4582,18 @@ function MobileNavItem({ icon, label, active, onClick, danger = false, badge = 0
       onClick={onClick}
       className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-bold text-xs uppercase tracking-widest ${
         active 
-          ? 'bg-white/10 text-[#C8961A]' 
+          ? 'bg-white/10 text-[#FA9411]' 
           : danger 
             ? 'text-red-400 hover:bg-red-900/20' 
             : 'text-slate-400 hover:bg-white/5 hover:text-white'
       }`}
     >
       <div className="flex items-center gap-3">
-        <span className={active ? 'text-[#C8961A]' : ''}>{icon}</span>
+        <span className={active ? 'text-[#FA9411]' : ''}>{icon}</span>
         <span>{label}</span>
       </div>
       {badge > 0 && (
-        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${active ? 'bg-[#C8102E] text-white' : 'bg-white/10 text-slate-300'}`}>
+        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${active ? 'bg-[#08047D] text-white' : 'bg-white/10 text-slate-300'}`}>
           {badge}
         </span>
       )}
@@ -4607,16 +4607,16 @@ function TabItem({ icon, label, active, onClick, danger = false, badge = 0 }: an
       onClick={onClick}
       className={`flex items-center gap-2 px-6 py-3 rounded-t-xl transition-all font-bold text-xs uppercase tracking-widest relative whitespace-nowrap ${
         active 
-          ? 'bg-white text-[#1C3560] shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.05)] border-t-[3px] border-[#C8102E]' 
+          ? 'bg-white text-[#050259] shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.05)] border-t-[3px] border-[#08047D]' 
           : danger 
             ? 'text-red-500 hover:bg-red-50' 
             : 'text-slate-500 hover:text-[#1E293B] hover:bg-slate-50 border-t-[3px] border-transparent'
       }`}
     >
-      <span className={active ? 'text-[#C8102E]' : ''}>{icon}</span>
+      <span className={active ? 'text-[#08047D]' : ''}>{icon}</span>
       <span>{label}</span>
       {badge > 0 && (
-        <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-black ${active ? 'bg-[#C8102E] text-white' : 'bg-slate-200 text-slate-500'}`}>
+        <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-black ${active ? 'bg-[#08047D] text-white' : 'bg-slate-200 text-slate-500'}`}>
           {badge}
         </span>
       )}
@@ -4680,7 +4680,7 @@ function SortableImage({ url, index, onRemove, disabled }: any) {
         <div 
           {...attributes} 
           {...listeners}
-          className="absolute top-1.5 left-1.5 bg-white/95 p-1.5 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-slate-600 hover:text-[#1C3560] shadow-md z-10"
+          className="absolute top-1.5 left-1.5 bg-white/95 p-1.5 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing text-slate-600 hover:text-[#050259] shadow-md z-10"
         >
           <GripVertical size={14} />
         </div>
@@ -5121,9 +5121,9 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
 
   const renderCoreProfile = () => (
     <div className="space-y-6 animate-in fade-in duration-300">
-      <div className="bg-gradient-to-r from-[#0A1628] to-[#1C3560] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#0A1628]/10">
+      <div className="bg-gradient-to-r from-[#08047D] to-[#050259] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#08047D]/10">
         <div className="bg-white/10 p-2.5 rounded-2xl shrink-0">
-          <Sparkles className="text-[#C8961A]" size={20} />
+          <Sparkles className="text-[#FA9411]" size={20} />
         </div>
         <div>
           <h4 className="text-xs font-black uppercase tracking-wider">Core Identity & Category</h4>
@@ -5187,7 +5187,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase text-[#475569] tracking-wider ml-1 flex items-center gap-1.5">
-            Name <span className="text-[#C8102E]">*</span>
+            Name <span className="text-[#08047D]">*</span>
           </label>
           <input 
             required 
@@ -5195,7 +5195,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
             value={formData.name}
             onChange={e => setFormData({...formData, name: e.target.value})}
             disabled={disableNonPriceFields}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-2xl px-4.5 py-3 text-sm font-semibold focus:bg-white focus:border-[#C8102E] focus:ring-4 focus:ring-[#C8102E]/10 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed placeholder:text-slate-300" 
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-2xl px-4.5 py-3 text-sm font-semibold focus:bg-white focus:border-[#08047D] focus:ring-4 focus:ring-[#08047D]/10 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed placeholder:text-slate-300" 
           />
         </div>
         <div className="space-y-2">
@@ -5204,7 +5204,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
             value={formData.category}
             onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
             disabled={disableNonPriceFields}
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-2xl px-4.5 py-3 text-sm font-semibold focus:bg-white focus:border-[#C8102E] focus:ring-4 focus:ring-[#C8102E]/10 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-2xl px-4.5 py-3 text-sm font-semibold focus:bg-white focus:border-[#08047D] focus:ring-4 focus:ring-[#08047D]/10 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed"
           >
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -5220,7 +5220,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               value={formData.subCategory}
               onChange={e => setFormData({...formData, subCategory: e.target.value})}
               disabled={disableNonPriceFields}
-              className="w-full bg-white border border-[#E2E8F0] hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#C8102E]"
+              className="w-full bg-white border border-[#E2E8F0] hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#08047D]"
             >
               <option value="">Select Item Type...</option>
               {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
@@ -5230,7 +5230,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               value={formData.subCategory}
               onChange={e => setFormData({...formData, subCategory: e.target.value})}
               disabled={disableNonPriceFields}
-              className="w-full bg-white border border-[#E2E8F0] hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#C8102E]"
+              className="w-full bg-white border border-[#E2E8F0] hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#08047D]"
             />
           </div>
           <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest mt-1 ml-1">Assures quick product filters like Sweaters, Trousers, or Blazers for parents.</p>
@@ -5241,7 +5241,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
       <div className="space-y-2">
         <div className="flex justify-between items-center px-1">
           <label className="text-[10px] font-black uppercase text-[#475569] tracking-wider flex items-center gap-1">
-            Short Description <span className="text-[#C8102E]">*</span>
+            Short Description <span className="text-[#08047D]">*</span>
           </label>
           {!disableNonPriceFields && (
             <button
@@ -5251,7 +5251,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all ${
                 isGeneratingDescription || !formData.name 
                   ? 'text-slate-300 cursor-not-allowed' 
-                  : 'text-[#C9961F] hover:text-[#C8102E]'
+                  : 'text-[#C9961F] hover:text-[#08047D]'
               }`}
             >
               <BrainCircuit size={13} className={isGeneratingDescription ? "animate-pulse" : ""} />
@@ -5266,7 +5266,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
           value={formData.description}
           onChange={e => setFormData({...formData, description: e.target.value})}
           disabled={disableNonPriceFields}
-          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-2xl px-4.5 py-3 text-sm font-semibold focus:bg-white focus:border-[#C8102E] focus:ring-4 focus:ring-[#C8102E]/10 outline-none transition-all resize-none disabled:opacity-75 disabled:cursor-not-allowed placeholder:text-slate-300" 
+          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-2xl px-4.5 py-3 text-sm font-semibold focus:bg-white focus:border-[#08047D] focus:ring-4 focus:ring-[#08047D]/10 outline-none transition-all resize-none disabled:opacity-75 disabled:cursor-not-allowed placeholder:text-slate-300" 
         />
       </div>
     </div>
@@ -5277,7 +5277,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
       {!collapseWizardGuide && (
         <div className="bg-gradient-to-r from-[#0C1523] to-[#1D325E] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#0C1523]/10">
           <div className="bg-white/10 p-2.5 rounded-2xl shrink-0">
-            <Camera className="text-[#C8961A]" size={20} />
+            <Camera className="text-[#FA9411]" size={20} />
           </div>
           <div>
             <h4 className="text-xs font-black uppercase tracking-wider">Product Gallery & Media</h4>
@@ -5289,7 +5289,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
       <div 
         className={`p-6 rounded-3xl border-2 transition-all duration-300 relative group/dropzone ${
           isDraggingOver 
-            ? 'border-[#C8102E] bg-[#C8102E]/5 scale-[0.99] border-dashed ring-4 ring-[#C8102E]/10' 
+            ? 'border-[#08047D] bg-[#08047D]/5 scale-[0.99] border-dashed ring-4 ring-[#08047D]/10' 
             : 'border-slate-200 bg-slate-50/20 border-dashed hover:bg-slate-50/50'
         }`}
         onDragOver={handleDragOver}
@@ -5337,7 +5337,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   )}
                 </button>
               )}
-              <label className="cursor-pointer flex items-center gap-2 bg-[#1C3560] hover:bg-[#0A1628] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95">
+              <label className="cursor-pointer flex items-center gap-2 bg-[#050259] hover:bg-[#08047D] text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95">
                 <Upload size={12} /> Add Images
                 <input 
                   type="file" 
@@ -5354,7 +5354,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
 
         {uploading && (
           <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm animate-pulse mb-4">
-            <div className="w-4 h-4 border-2 border-t-transparent border-[#C8102E] rounded-full animate-spin"></div>
+            <div className="w-4 h-4 border-2 border-t-transparent border-[#08047D] rounded-full animate-spin"></div>
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Uploading local photo assets to Naisiae Storage...</span>
           </div>
         )}
@@ -5382,8 +5382,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
           </DndContext>
           
           {!disableNonPriceFields && (
-            <label className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-all bg-white group hover:border-[#1C3560] hover:shadow-sm ${isDraggingOver ? 'border-[#C8102E] bg-white' : 'border-slate-200'}`}>
-              <Plus size={18} className="text-slate-300 group-hover:text-[#1C3560] transition-colors" />
+            <label className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 cursor-pointer transition-all bg-white group hover:border-[#050259] hover:shadow-sm ${isDraggingOver ? 'border-[#08047D] bg-white' : 'border-slate-200'}`}>
+              <Plus size={18} className="text-slate-300 group-hover:text-[#050259] transition-colors" />
               <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Upload Files</span>
               <input 
                 type="file" 
@@ -5398,11 +5398,11 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
         </div>
 
         {isDraggingOver && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl pointer-events-none border-2 border-[#C8102E] animate-in fade-in duration-205">
-            <div className="w-14 h-14 rounded-full bg-[#C8102E] flex items-center justify-center text-white shadow-lg animate-bounce">
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl pointer-events-none border-2 border-[#08047D] animate-in fade-in duration-205">
+            <div className="w-14 h-14 rounded-full bg-[#08047D] flex items-center justify-center text-white shadow-lg animate-bounce">
               <Upload size={24} />
             </div>
-            <p className="mt-3 text-[11px] font-black text-[#C8102E] uppercase tracking-widest">Drop elements here</p>
+            <p className="mt-3 text-[11px] font-black text-[#08047D] uppercase tracking-widest">Drop elements here</p>
           </div>
         )}
       </div>
@@ -5423,7 +5423,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
                 });
               }}
-              className="flex-1 bg-white border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm font-semibold focus:border-[#C8102E] outline-none animate-none" 
+              className="flex-1 bg-white border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm font-semibold focus:border-[#08047D] outline-none animate-none" 
             />
             {formData.imageUrl && (
               <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-slate-200 shrink-0">
@@ -5440,7 +5440,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="bg-gradient-to-r from-[#0E1321] to-[#1E305D] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#0E1321]/10">
         <div className="bg-white/10 p-2.5 rounded-2xl shrink-0">
-          <Coins className="text-[#C8961A]" size={20} />
+          <Coins className="text-[#FA9411]" size={20} />
         </div>
         <div>
           <h4 className="text-xs font-black uppercase tracking-wider">Value, Buying Modes & Stock</h4>
@@ -5500,7 +5500,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               className={`flex items-center gap-1 text-[10px] font-black uppercase tracking-widest transition-all ${
                 isSuggestingPrice || !formData.name 
                   ? 'text-slate-300 cursor-not-allowed' 
-                  : 'text-[#C8961A] hover:text-[#C8102E]'
+                  : 'text-[#FA9411] hover:text-[#08047D]'
               }`}
             >
               <Sparkles size={12} className={isSuggestingPrice ? "animate-spin" : ""} />
@@ -5514,7 +5514,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               placeholder="0"
               value={formData.price}
               onChange={e => setFormData({...formData, price: e.target.value === '' ? '' : Number(e.target.value)})}
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#C8102E] focus:bg-white transition-all pl-12" 
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm font-bold focus:border-[#08047D] focus:bg-white transition-all pl-12" 
             />
             <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-400 tracking-wider">KES</div>
           </div>
@@ -5530,7 +5530,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
         >
           <div className="bg-amber-100 p-2 rounded-xl text-amber-700 h-fit shrink-0"><Sparkles size={16} /></div>
           <div>
-            <span className="text-[9px] font-extrabold text-[#C8961A] uppercase tracking-widest block mb-1">Competitive Smart Pricing</span>
+            <span className="text-[9px] font-extrabold text-[#FA9411] uppercase tracking-widest block mb-1">Competitive Smart Pricing</span>
             <p className="text-slate-600 text-[10.5px] font-semibold leading-relaxed">{pricingReasoning}</p>
           </div>
         </motion.div>
@@ -5539,7 +5539,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-2">
         {/* Wholesale bulk Price */}
         <div className="space-y-1.5 p-4 bg-orange-50/25 border border-orange-100 rounded-2xl">
-          <label className="text-[9.5px] font-extrabold uppercase text-[#C8102E] tracking-widest ml-0.5 block">Wholesale Price</label>
+          <label className="text-[9.5px] font-extrabold uppercase text-[#08047D] tracking-widest ml-0.5 block">Wholesale Price</label>
           <div className="relative mt-1">
             <input 
               type="number" 
@@ -5561,7 +5561,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               placeholder="e.g. 1500"
               value={formData.oldPrice}
               onChange={e => setFormData({...formData, oldPrice: e.target.value === '' ? '' : Number(e.target.value)})}
-              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:border-[#C8102E]" 
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:border-[#08047D]" 
             />
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[7.5px] font-black text-slate-400 tracking-wider">OLD</div>
           </div>
@@ -5575,7 +5575,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
             placeholder="Available items count"
             value={formData.stock}
             onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:border-[#C8102E] mt-1" 
+            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold focus:border-[#08047D] mt-1" 
           />
         </div>
       </div>
@@ -5586,7 +5586,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="bg-gradient-to-r from-[#0C1420] to-[#1C325B] text-white p-5 rounded-3xl flex items-start gap-4 shadow-md shadow-[#0C1420]/10">
         <div className="bg-white/10 p-2.5 rounded-2xl shrink-0">
-          <Palette className="text-[#C8961A]" size={20} />
+          <Palette className="text-[#FA9411]" size={20} />
         </div>
         <div>
           <h4 className="text-xs font-black uppercase tracking-wider">SKU Variants & Organization</h4>
@@ -5607,7 +5607,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm ${
                 showVariantForm 
                   ? 'bg-red-50 text-red-650 border border-red-100 hover:bg-red-100' 
-                  : 'bg-[#1C3560] text-white hover:bg-[#0A1628]'
+                  : 'bg-[#050259] text-white hover:bg-[#08047D]'
               }`}
             >
               {showVariantForm ? <X size={12} /> : <Plus size={12} />}
@@ -5627,7 +5627,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     key={`${color.name}-${idx}`}
                     type="button"
                     onClick={() => quickAddColor(color.name)}
-                    className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-[#C8961A] hover:shadow-sm transition-all text-[9.5px] font-black text-slate-853 uppercase tracking-tighter"
+                    className="flex items-center gap-1.5 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-[#FA9411] hover:shadow-sm transition-all text-[9.5px] font-black text-slate-853 uppercase tracking-tighter"
                   >
                     <div className="w-2.5 h-2.5 rounded-full border border-slate-200 shrink-0" style={{ backgroundColor: color.hex }} />
                     {color.name}
@@ -5651,7 +5651,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                         variants: [...prev.variants, { id: Date.now().toString() + Math.random(), type: 'Size', value: size, price: 0, stock: 0, imageUrl: formData.imageUrl }]
                       }));
                     }}
-                    className="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-[#1C3560] rounded-xl text-[9.5px] font-black text-slate-700 uppercase transition-all flex items-center gap-1.5"
+                    className="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-[#050259] rounded-xl text-[9.5px] font-black text-slate-700 uppercase transition-all flex items-center gap-1.5"
                   >
                     {size} <Plus size={8} className="text-slate-400 font-black" />
                   </button>
@@ -5679,7 +5679,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                       onClick={() => setNewVariant({...newVariant, type: t})}
                       className={`py-2 rounded-lg text-[9.5px] font-black uppercase tracking-wider border transition-all ${
                         newVariant.type === t 
-                          ? 'bg-[#1C3560] text-white border-[#1C3560] shadow-sm' 
+                          ? 'bg-[#050259] text-white border-[#050259] shadow-sm' 
                           : 'bg-slate-50 text-slate-400 border-slate-100'
                       }`}
                     >
@@ -5695,7 +5695,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   placeholder="e.g. Navy Blue, XXL"
                   value={newVariant.value}
                   onChange={e => setNewVariant({...newVariant, value: e.target.value})}
-                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#C8102E]"
+                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#08047D]"
                 />
               </div>
             </div>
@@ -5709,7 +5709,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     type="number"
                     value={newVariant.price}
                     onChange={e => setNewVariant({...newVariant, price: e.target.value === '' ? '' : parseFloat(e.target.value)})}
-                    className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-6 pr-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#C8102E]"
+                    className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl pl-6 pr-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#08047D]"
                     placeholder="0"
                   />
                 </div>
@@ -5720,7 +5720,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   type="number"
                   value={newVariant.stock}
                   onChange={e => setNewVariant({...newVariant, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#C8102E]"
+                  className="w-full bg-slate-50 border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm font-bold outline-none focus:border-[#08047D]"
                   placeholder="0"
                 />
               </div>
@@ -5734,7 +5734,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   type="button"
                   onClick={() => setNewVariant({...newVariant, imageUrl: ''})}
                   className={`shrink-0 w-12 h-12 rounded-xl border flex flex-col items-center justify-center gap-0.5 transition-all ${
-                    !newVariant.imageUrl ? 'border-[#C8102E] bg-red-50 text-[#C8102E]' : 'border-slate-150 text-slate-300'
+                    !newVariant.imageUrl ? 'border-[#08047D] bg-red-50 text-[#08047D]' : 'border-slate-150 text-slate-300'
                   }`}
                 >
                   <Ban size={12} />
@@ -5746,7 +5746,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     type="button"
                     onClick={() => setNewVariant({...newVariant, imageUrl: url})}
                     className={`shrink-0 w-12 h-12 rounded-xl border transition-all overflow-hidden p-0.5 ${
-                      newVariant.imageUrl === url ? 'border-[#C8102E] bg-red-50 ring-2 ring-red-500/20' : 'border-transparent opacity-60'
+                      newVariant.imageUrl === url ? 'border-[#08047D] bg-red-50 ring-2 ring-red-500/20' : 'border-transparent opacity-60'
                     }`}
                   >
                     <img src={url} className="w-full h-full object-cover rounded-lg bg-white" alt={`Quick Gallery ${i}`} />
@@ -5758,7 +5758,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
             <button 
               type="button"
               onClick={addVariant}
-              className="w-full py-2.5 bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-[#08047D] text-white text-[10px] font-black uppercase tracking-[2px] rounded-xl flex items-center justify-center gap-2"
             >
               <CheckCircle2 size={12} /> Add SKU Variant
             </button>
@@ -5775,7 +5775,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               <motion.div 
                 layout
                 key={v.id} 
-                className="flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl group transition-all hover:border-[#C8102E] shadow-sm"
+                className="flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl group transition-all hover:border-[#08047D] shadow-sm"
               >
                 <div className="flex items-center gap-3">
                   <div className="relative shrink-0">
@@ -5786,7 +5786,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                         <ImageIcon size={14} />
                       </div>
                     )}
-                    <span className="absolute -top-1.5 -right-1.5 bg-[#C8102E] text-white text-[6px] font-black px-1.5 py-0.5 rounded-md border border-white uppercase">
+                    <span className="absolute -top-1.5 -right-1.5 bg-[#08047D] text-white text-[6px] font-black px-1.5 py-0.5 rounded-md border border-white uppercase">
                       {v.type}
                     </span>
                   </div>
@@ -5831,7 +5831,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
         <div className="flex flex-wrap gap-1.5 min-h-[30px]">
           {formData.tags.map((tag: string) => (
             <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C2112E] to-[#E94C36] text-white text-[9px] font-black px-2.5 py-1.5 rounded-lg shadow-sm">
-              <Package size={9} className="text-[#C8961A] shrink-0" />
+              <Package size={9} className="text-[#FA9411] shrink-0" />
               #{tag}
               {!disableNonPriceFields && (
                 <button 
@@ -5857,7 +5857,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                 value={currentTag}
                 onChange={e => setCurrentTag(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base md:text-sm font-bold focus:border-[#C8102E] outline-none" 
+                className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base md:text-sm font-bold focus:border-[#08047D] outline-none" 
               />
               <button 
                 type="button" 
@@ -5905,7 +5905,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
             value={formData.badge}
             onChange={e => setFormData({...formData, badge: e.target.value})}
             disabled={disableNonPriceFields}
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:border-[#C8102E]"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold focus:border-[#08047D]"
           >
             {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
           </select>
@@ -5966,7 +5966,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               appExperience.triggerHaptic('light');
               appExperience.playSound('tap');
             }}
-            className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all relative z-10 text-center ${useWizard ? 'text-[#0A1628] bg-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all relative z-10 text-center ${useWizard ? 'text-[#08047D] bg-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
             ✨ Wizard
           </button>
@@ -5977,7 +5977,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               appExperience.triggerHaptic('light');
               appExperience.playSound('tap');
             }}
-            className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all relative z-10 text-center ${!useWizard ? 'text-[#0A1628] bg-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all relative z-10 text-center ${!useWizard ? 'text-[#08047D] bg-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
             📋 Classic Form
           </button>
@@ -5992,7 +5992,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                 appExperience.triggerHaptic('light');
                 appExperience.playSound('tap');
               }}
-              className="flex items-center gap-1.5 text-[9px] font-black uppercase text-slate-500 hover:text-[#C8102E] transition-all bg-slate-50 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+              className="flex items-center gap-1.5 text-[9px] font-black uppercase text-slate-500 hover:text-[#08047D] transition-all bg-slate-50 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-sm"
             >
               {collapseWizardGuide ? "📖 Expand Help" : "🧘 Collapse"}
             </button>
@@ -6004,7 +6004,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
       {useWizard && (
         collapseWizardGuide ? (
           <div className="bg-slate-50 border-b border-slate-100 px-4 py-1.5 sticky top-0 z-20 shrink-0 flex items-center justify-between gap-3">
-            <span className="text-[9px] font-black uppercase text-[#0A1628] truncate">
+            <span className="text-[9px] font-black uppercase text-[#08047D] truncate">
               {activeStep + 1}. {steps[activeStep].title}
             </span>
             <div className="flex items-center gap-2 shrink-0">
@@ -6020,23 +6020,23 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     }}
                     className={`w-3.5 h-1.5 rounded-full transition-all duration-300 ${
                       idx === activeStep 
-                        ? 'bg-[#C8102E] scale-y-110' 
+                        ? 'bg-[#08047D] scale-y-110' 
                         : idx < activeStep 
-                          ? 'bg-[#0A1628]/60 hover:bg-[#0A1628]' 
+                          ? 'bg-[#08047D]/60 hover:bg-[#08047D]' 
                           : 'bg-slate-205 hover:bg-slate-300'
                     }`}
                     title={`Jump to Step ${idx + 1}`}
                   />
                 ))}
               </div>
-              <span className="text-[9px] font-black text-[#C8102E] shrink-0">{activeStep + 1}/{steps.length}</span>
+              <span className="text-[9px] font-black text-[#08047D] shrink-0">{activeStep + 1}/{steps.length}</span>
             </div>
           </div>
         ) : (
           <div className="bg-slate-55 border-b border-slate-100 px-6 py-4 sticky top-0 z-20 shrink-0">
             <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-500 tracking-wider mb-2">
-              <span className="text-[#0A1628]">{steps[activeStep].title}</span>
-              <span className="text-[#C8102E]">Step {activeStep + 1} of {steps.length}</span>
+              <span className="text-[#08047D]">{steps[activeStep].title}</span>
+              <span className="text-[#08047D]">Step {activeStep + 1} of {steps.length}</span>
             </div>
             <div className="grid grid-cols-4 gap-2">
               {steps.map((step, idx) => (
@@ -6052,16 +6052,16 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                 >
                   <div className={`h-1.5 rounded-full transition-all duration-300 ${
                     idx === activeStep 
-                      ? 'bg-[#C8102E]' 
+                      ? 'bg-[#08047D]' 
                       : idx < activeStep 
-                        ? 'bg-[#0A1628]/70 group-hover:bg-[#0A1628]' 
+                        ? 'bg-[#08047D]/70 group-hover:bg-[#08047D]' 
                         : 'bg-slate-200 group-hover:bg-slate-300'
                   }`} />
                   <span className={`hidden md:block text-[8.5px] font-black uppercase tracking-tight mt-1 transition-all ${
                     idx === activeStep 
-                      ? 'text-[#C8102E]' 
+                      ? 'text-[#08047D]' 
                       : idx < activeStep 
-                        ? 'text-[#0A1628]/70' 
+                        ? 'text-[#08047D]/70' 
                         : 'text-slate-400'
                   }`}>
                     {step.title}
@@ -6084,10 +6084,10 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
           {/* Main Form Fields */}
           <div className="md:col-span-7 space-y-4 md:space-y-5">
             {useWizard && !collapseWizardGuide && (
-              <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
-                <Sparkles className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+              <div className="bg-[#050259]/5 border border-[#050259]/10 p-4 rounded-2xl flex items-start gap-3">
+                <Sparkles className="text-[#FA9411] shrink-0 mt-0.5" size={16} />
                 <div>
-                  <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Core Profile & Categorization</h4>
+                  <h4 className="text-xs font-black text-[#08047D] uppercase tracking-wide">Core Profile & Categorization</h4>
                   <p className="text-[10px] text-slate-500 font-medium">Specify the name, category and write a summary. You can use the AI assistant to draft these automagically!</p>
                 </div>
               </div>
@@ -6102,7 +6102,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
                   disabled={disableNonPriceFields}
-                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed" 
                 />
               </div>
               <div className="space-y-1.5">
@@ -6111,7 +6111,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   value={formData.category}
                   onChange={e => setFormData({...formData, category: e.target.value, subCategory: ''})}
                   disabled={disableNonPriceFields}
-                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {productCategories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -6127,7 +6127,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     value={formData.subCategory}
                     onChange={e => setFormData({...formData, subCategory: e.target.value})}
                     disabled={disableNonPriceFields}
-                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     <option value="">Select Item Type...</option>
                     {uniformSubCategories.map(sc => <option key={sc} value={sc}>{sc}</option>)}
@@ -6137,7 +6137,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     value={formData.subCategory}
                     onChange={e => setFormData({...formData, subCategory: e.target.value})}
                     disabled={disableNonPriceFields}
-                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   />
                 </div>
                 <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 ml-1">Helps customers find specific items like sweaters or trousers faster.</p>
@@ -6153,7 +6153,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     type="button"
                     onClick={handleGenerateDescription}
                     disabled={isGeneratingDescription}
-                    className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+                    className="flex items-center gap-1.5 text-[9px] font-black text-[#FA9411] hover:text-[#08047D] transition-colors uppercase tracking-widest disabled:opacity-50"
                   >
                     <BrainCircuit size={12} className={isGeneratingDescription ? "animate-pulse" : ""} />
                     {isGeneratingDescription ? "Thinking..." : "AI Generate Description"}
@@ -6166,7 +6166,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                 value={formData.description}
                 onChange={e => setFormData({...formData, description: e.target.value})}
                 disabled={disableNonPriceFields}
-                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
+                className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors resize-none disabled:opacity-70 disabled:cursor-not-allowed" 
               ></textarea>
             </div>
           </div>
@@ -6235,10 +6235,10 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
           {/* Sourcing and pricing inputs on left */}
           <div className="md:col-span-7 space-y-4 md:space-y-5">
             {useWizard && !collapseWizardGuide && (
-              <div className="bg-[#1C3560]/5 border border-[#1C3560]/10 p-4 rounded-2xl flex items-start gap-3">
-                <Coins className="text-[#C8961A] shrink-0 mt-0.5" size={16} />
+              <div className="bg-[#050259]/5 border border-[#050259]/10 p-4 rounded-2xl flex items-start gap-3">
+                <Coins className="text-[#FA9411] shrink-0 mt-0.5" size={16} />
                 <div>
-                  <h4 className="text-xs font-black text-[#0A1628] uppercase tracking-wide">Value, Pricing & Logistics</h4>
+                  <h4 className="text-xs font-black text-[#08047D] uppercase tracking-wide">Value, Pricing & Logistics</h4>
                   <p className="text-[10px] text-slate-500 font-medium">Configure fixed retail prices, wholesale margins, old price comparisons (for sales/discounts), and baseline inventory stock.</p>
                 </div>
               </div>
@@ -6283,7 +6283,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                       type="button"
                       onClick={handleSuggestPrice}
                       disabled={isSuggestingPrice}
-                      className="flex items-center gap-1.5 text-[9px] font-black text-[#C8961A] hover:text-[#C8102E] transition-colors uppercase tracking-widest disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-[9px] font-black text-[#FA9411] hover:text-[#08047D] transition-colors uppercase tracking-widest disabled:opacity-50"
                     >
                       <Sparkles size={12} className={isSuggestingPrice ? "animate-pulse" : ""} />
                       {isSuggestingPrice ? "Analyzing..." : "Suggest Price"}
@@ -6295,7 +6295,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                       required 
                       value={formData.price}
                       onChange={e => setFormData({...formData, price: e.target.value === '' ? '' : Number(e.target.value)})}
-                      className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                      className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors" 
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
                   </div>
@@ -6323,7 +6323,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                       type="number" 
                       value={formData.oldPrice}
                       onChange={e => setFormData({...formData, oldPrice: e.target.value === '' ? '' : Number(e.target.value)})}
-                      className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                      className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors" 
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest pointer-events-none">/-</div>
                   </div>
@@ -6335,7 +6335,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     type="number" 
                     value={formData.stock}
                     onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors" 
                   />
                 </div>
               </div>
@@ -6356,7 +6356,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                         imageUrls: url ? [url, ...formData.imageUrls.filter(u => u !== formData.imageUrl)] : formData.imageUrls
                       });
                     }}
-                    className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                    className="flex-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-3 text-base md:text-sm focus:border-[#08047D] outline-none transition-colors" 
                   />
                   <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center text-xl overflow-hidden border border-slate-200">
                     {formData.imageUrl ? <img src={formData.imageUrl} className="w-full h-full object-cover object-top" alt="Current Product Image" /> : <ImageIcon size={20} className="text-slate-300" />}
@@ -6416,8 +6416,8 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                 
                 <div className="flex flex-wrap gap-2 mb-4 min-h-[32px]">
                   {formData.tags.map((tag: string) => (
-                    <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#C8102E] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
-                      <Package size={10} className="text-[#C8961A]" />
+                    <span key={tag} className="flex items-center gap-1.5 bg-gradient-to-r from-[#08047D] to-[#E94C36] text-white text-[10px] font-black px-2.5 py-1.5 rounded-lg group shadow-sm">
+                      <Package size={10} className="text-[#FA9411]" />
                       {tag}
                       {!disableNonPriceFields && (
                         <button 
@@ -6448,7 +6448,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                         value={currentTag}
                         onChange={e => setCurrentTag(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                        className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors shadow-inner" 
+                        className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#08047D] outline-none transition-colors shadow-inner" 
                       />
                       <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
                     </div>
@@ -6476,7 +6476,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                           className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-all ${
                             formData.tags.includes(sTag) 
                               ? 'bg-slate-200 border-slate-300 text-slate-400 cursor-not-allowed' 
-                              : 'bg-white border-slate-200 text-slate-500 hover:border-[#C8102E] hover:text-[#C8102E] shadow-sm active:scale-95'
+                              : 'bg-white border-slate-200 text-slate-500 hover:border-[#08047D] hover:text-[#08047D] shadow-sm active:scale-95'
                           }`}
                         >
                           {sTag}
@@ -6499,7 +6499,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     value={formData.badge}
                     onChange={e => setFormData({...formData, badge: e.target.value})}
                     disabled={disableNonPriceFields}
-                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#08047D] outline-none transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {badges.map(b => <option key={b} value={b}>{b || 'None'}</option>)}
                   </select>
@@ -6535,7 +6535,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                             setFormData({ ...formData, tags: [...new Set([...formData.tags, 'Wholesale'])] });
                           }
                         }}
-                        className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#0A1628]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        className={`w-12 h-6 rounded-full transition-all relative ${formData.tags.includes('Wholesale') ? 'bg-[#08047D]' : 'bg-slate-300'} ${disableNonPriceFields ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
                         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.tags.includes('Wholesale') ? 'left-7' : 'left-1'}`}></div>
                       </button>
@@ -6577,7 +6577,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   appExperience.triggerHaptic('success');
                   appExperience.playSound('success');
                 }}
-                className="h-12 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-[#1C3560]/10"
+                className="h-12 bg-gradient-to-r from-[#08047D] to-[#050259] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-[#050259]/10"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -6623,7 +6623,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               appExperience.triggerHaptic('success');
               appExperience.playSound('success');
             }}
-            className="w-full h-12 md:h-14 bg-gradient-to-r from-[#0A1628] to-[#1C3560] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl md:rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1C3560]/20"
+            className="w-full h-12 md:h-14 bg-gradient-to-r from-[#08047D] to-[#050259] hover:scale-[1.01] active:scale-[0.99] text-white rounded-xl md:rounded-2xl font-black text-sm uppercase tracking-[3px] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#050259]/20"
           >
             {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Save size={18} /> Save & Synchronize</>}
           </button>
@@ -6648,7 +6648,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
               className="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden p-8"
             >
               <div className="flex justify-between items-center mb-6">
-                <h4 className="text-xl font-display text-[#0A1628]">Import from Web</h4>
+                <h4 className="text-xl font-display text-[#08047D]">Import from Web</h4>
                 <button onClick={() => setIsUrlModalOpen(false)} className="text-slate-400 hover:text-red-500 transition-colors">
                   <X size={20} />
                 </button>
@@ -6664,7 +6664,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && resolveImageUrl()}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#C8102E] focus:bg-white outline-none transition-all pr-12"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm font-medium focus:border-[#08047D] focus:bg-white outline-none transition-all pr-12"
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300">
                     <LinkIcon size={18} />
@@ -6681,7 +6681,7 @@ function ProductForm({ initialData, onSubmit, setToast, productCategories, isMob
                   <button 
                     type="button"
                     onClick={resolveImageUrl}
-                    className="flex-1 py-4 rounded-2xl bg-[#C8102E] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#A00000] shadow-xl shadow-[#C8102E]/20 transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-4 rounded-2xl bg-[#08047D] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#050259] shadow-xl shadow-[#08047D]/20 transition-all flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 size={14} />
                     Sync Asset
@@ -6867,7 +6867,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
       {/* Logos Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="space-y-6">
-          <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px] border-b border-slate-100 pb-2">Primary Assets</h4>
+          <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-[3px] border-b border-slate-100 pb-2">Primary Assets</h4>
           
           <div className="space-y-4">
             <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
@@ -6899,7 +6899,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                         safeSave(formData, true);
                       }}
                       placeholder="https://..."
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#08047D] outline-none transition-all"
                     />
                   </div>
                   <label className="inline-block px-3 py-1.5 bg-white border border-slate-200 text-[9px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-slate-100 transition-all">
@@ -6930,7 +6930,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                         safeSave(formData, true);
                       }}
                       placeholder="https://..."
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#08047D] outline-none transition-all"
                     />
                   </div>
                   <label className="inline-block px-3 py-1.5 bg-white border border-slate-200 text-[9px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-slate-100 transition-all">
@@ -6969,7 +6969,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                         safeSave(formData, true);
                       }}
                       placeholder="https://..."
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-[10px] font-bold focus:border-[#08047D] outline-none transition-all"
                     />
                   </div>
                   <label className="inline-block px-3 py-1.5 bg-white border border-slate-200 text-[9px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-slate-100 transition-all">
@@ -6983,7 +6983,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
         </div>
 
         <div className="space-y-6">
-          <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px] border-b border-slate-100 pb-2">Site Metadata</h4>
+          <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-[3px] border-b border-slate-100 pb-2">Site Metadata</h4>
           
           <div className="space-y-4">
             <div className="space-y-1.5">
@@ -6992,7 +6992,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.siteName}
                 onChange={e => setFormData({ ...formData, siteName: e.target.value })}
                 onBlur={e => onSave(formData)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
                 placeholder="e.g. Naisiae Textiles Limited" 
               />
             </div>
@@ -7003,7 +7003,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.siteTagline}
                 onChange={e => setFormData({ ...formData, siteTagline: e.target.value })}
                 onBlur={e => onSave(formData)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
                 placeholder="e.g. Naisiae Textiles Limited" 
               />
             </div>
@@ -7015,7 +7015,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
         </div>
 
         <div className="space-y-6">
-          <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px] border-b border-slate-100 pb-2">Contact & Social</h4>
+          <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-[3px] border-b border-slate-100 pb-2">Contact & Social</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
@@ -7024,7 +7024,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.contactPhone}
                 onChange={e => setFormData({ ...formData, contactPhone: e.target.value })}
                 onBlur={e => onSave(formData)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
                 placeholder="+254 ..." 
               />
             </div>
@@ -7034,7 +7034,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.contactEmail}
                 onChange={e => setFormData({ ...formData, contactEmail: e.target.value })}
                 onBlur={e => onSave(formData)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
                 placeholder="info@..." 
               />
             </div>
@@ -7044,7 +7044,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.contactAddress}
                 onChange={e => setFormData({ ...formData, contactAddress: e.target.value })}
                 onBlur={e => onSave(formData)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
                 placeholder="Shop location ..." 
               />
             </div>
@@ -7056,13 +7056,13 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
       <div className="space-y-6 pt-6 border-t border-slate-100">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px]">Homepage Hero Slider</h4>
+            <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-[3px]">Homepage Hero Slider</h4>
             <p className="text-[10px] text-slate-500">Manage the high-impact banners displayed at the top of the home page.</p>
           </div>
           <button 
             type="button"
             onClick={addHeroSlide}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1C3560] text-white text-[10px] font-black uppercase tracking-wider rounded-xl hover:bg-[#0A1628] transition-all shadow-md active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 bg-[#050259] text-white text-[10px] font-black uppercase tracking-wider rounded-xl hover:bg-[#08047D] transition-all shadow-md active:scale-95"
           >
             <Plus size={14} /> Add New Slide
           </button>
@@ -7158,7 +7158,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                   >
                     <Trash2 size={16} />
                   </button>
-                  <div className="absolute bottom-4 left-4 bg-[#C8961A]/90 backdrop-blur text-white text-[10px] font-black px-2 py-1 rounded-lg">
+                  <div className="absolute bottom-4 left-4 bg-[#FA9411]/90 backdrop-blur text-white text-[10px] font-black px-2 py-1 rounded-lg">
                     Slide #{idx + 1}
                   </div>
                 </div>
@@ -7181,13 +7181,13 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                           }
                         }}
                         onBlur={() => autoResolveImage(slide.url, 'url', idx)}
-                        className={`w-full bg-slate-50 border rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8102E] outline-none transition-all ${hasError ? 'border-red-300' : 'border-slate-100'}`}
+                        className={`w-full bg-slate-50 border rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#08047D] outline-none transition-all ${hasError ? 'border-red-300' : 'border-slate-100'}`}
                         placeholder="https://images.unsplash.com/..."
                       />
                       {slide.url && (
                         <button 
                           onClick={() => resetHeroSlideImage(idx)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#C8102E]"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#08047D]"
                           title="Reset to default"
                         >
                           <X size={14} />
@@ -7200,7 +7200,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                   <input 
                     value={slide.title}
                     onChange={e => updateHeroSlide(idx, 'title', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     placeholder="e.g. QUALITY SCHOOL UNIFORMS"
                   />
                 </div>
@@ -7209,7 +7209,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                   <input 
                     value={slide.subtitle}
                     onChange={e => updateHeroSlide(idx, 'subtitle', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     placeholder="e.g. QUALITY THAT LASTS ALL YEAR"
                   />
                 </div>
@@ -7218,16 +7218,16 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                   <input 
                     value={slide.link || ''}
                     onChange={e => updateHeroSlide(idx, 'link', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     placeholder="e.g. /category/uniforms or https://..."
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider">Video URL (Optional - Overrides Image)</label>
+                  <label className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider">Video URL (Optional - Overrides Image)</label>
                   <input 
                     value={slide.videoUrl || ''}
                     onChange={e => updateHeroSlide(idx, 'videoUrl', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#C8961A] outline-none transition-all placeholder:text-slate-300"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold focus:bg-white focus:border-[#FA9411] outline-none transition-all placeholder:text-slate-300"
                     placeholder="https://.../video.mp4"
                   />
                 </div>
@@ -7243,7 +7243,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
               <button 
                 type="button"
                 onClick={addHeroSlide}
-                className="px-6 py-2 bg-white border border-slate-200 text-[#1C3560] text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all shadow-sm active:scale-95"
+                className="px-6 py-2 bg-white border border-slate-200 text-[#050259] text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all shadow-sm active:scale-95"
               >
                 Add Your First Slide
               </button>
@@ -7254,7 +7254,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
 
       {/* Database Maintenance Utilities */}
       <div className="space-y-6 pt-6 border-t border-slate-100">
-        <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px]">System Maintenance</h4>
+        <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-[3px]">System Maintenance</h4>
         <div className="flex flex-wrap gap-4">
           <button 
             type="button"
@@ -7262,7 +7262,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
               try {
                 await onSave(formData);
                 const notification = document.createElement('div');
-                notification.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#0A1628] text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-xs uppercase tracking-widest animate-in fade-in slide-in-from-bottom-4 duration-300';
+                notification.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#08047D] text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-xs uppercase tracking-widest animate-in fade-in slide-in-from-bottom-4 duration-300';
                 notification.innerText = '✨ Hero Slider Synchronized Successfully';
                 document.body.appendChild(notification);
                 setTimeout(() => {
@@ -7273,7 +7273,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 setToast({ message: 'Failed to save settings.', type: 'error' });
               }
             }}
-            className="flex items-center gap-3 px-8 py-3.5 bg-[#C8961A] text-white text-[10px] font-black uppercase tracking-[2px] rounded-2xl hover:bg-[#A67D15] transition-all shadow-xl shadow-[#C8961A]/20 active:scale-95 group"
+            className="flex items-center gap-3 px-8 py-3.5 bg-[#FA9411] text-white text-[10px] font-black uppercase tracking-[2px] rounded-2xl hover:bg-[#A67D15] transition-all shadow-xl shadow-[#FA9411]/20 active:scale-95 group"
           >
             <Save size={16} className="group-hover:rotate-12 transition-transform" />
             Synchronize Slider to Homepage
@@ -7296,7 +7296,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
       <div className="space-y-6 pt-6 border-t border-slate-100">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h4 className="text-[11px] font-black uppercase text-[#C8102E] tracking-[3px]">Social Sharing & SEO (Open Graph)</h4>
+            <h4 className="text-[11px] font-black uppercase text-[#08047D] tracking-[3px]">Social Sharing & SEO (Open Graph)</h4>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Configure sharing previews for social media platforms</p>
           </div>
           <button
@@ -7320,7 +7320,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 type: 'success' 
               });
             }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#C8961A] to-[#A67D15] hover:from-[#A67D15] hover:to-[#C8961A] text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-md hover:scale-105 active:scale-95 group self-start sm:self-auto"
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#FA9411] to-[#A67D15] hover:from-[#A67D15] hover:to-[#FA9411] text-white text-[10px] font-black uppercase tracking-wider rounded-xl transition-all shadow-md hover:scale-105 active:scale-95 group self-start sm:self-auto"
           >
             <Sparkles size={14} className="group-hover:animate-spin" />
             Autopick Any Product for Sharing
@@ -7351,7 +7351,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                   }}
                   className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border transition-all flex items-center gap-2 ${
                     formData.sharingTitle === prod.name 
-                      ? 'bg-[#0A1628] text-white border-[#0A1628] shadow-sm' 
+                      ? 'bg-[#08047D] text-white border-[#08047D] shadow-sm' 
                       : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
                   }`}
                 >
@@ -7373,7 +7373,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.sharingTitle}
                 onChange={e => setFormData({ ...formData, sharingTitle: e.target.value })}
                 onBlur={e => safeSave({ ...formData, sharingTitle: e.target.value }, true)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
               />
             </div>
             <div className="space-y-1.5">
@@ -7383,7 +7383,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                 value={formData.sharingDescription}
                 onChange={e => setFormData({ ...formData, sharingDescription: e.target.value })}
                 onBlur={e => safeSave({ ...formData, sharingDescription: e.target.value }, true)}
-                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+                className="w-full bg-white border border-[#E2E8F0] rounded-xl px-4 py-3 text-sm focus:border-[#08047D] outline-none transition-colors" 
               />
             </div>
           </div>
@@ -7409,7 +7409,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
                     safeSave({ ...formData, sharingImage: val }, true);
                   }}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[11px] focus:bg-white focus:border-[#C8102E] outline-none transition-all font-bold" 
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[11px] focus:bg-white focus:border-[#08047D] outline-none transition-all font-bold" 
                 />
               </div>
 
@@ -7437,7 +7437,7 @@ function SettingsForm({ initialData, onSave, setToast, products, handleSeedSampl
       <div className="flex justify-end pt-8 mt-12 border-t border-slate-100">
         <button 
           onClick={() => safeSave(formData)}
-          className="px-10 py-5 bg-gradient-to-r from-[#0A1628] to-[#1C3560] text-white rounded-3xl font-black text-xs uppercase tracking-[3px] transition-all hover:scale-[1.05] active:scale-[0.98] shadow-2xl shadow-[#1C3560]/30 flex items-center gap-4 group"
+          className="px-10 py-5 bg-gradient-to-r from-[#08047D] to-[#050259] text-white rounded-3xl font-black text-xs uppercase tracking-[3px] transition-all hover:scale-[1.05] active:scale-[0.98] shadow-2xl shadow-[#050259]/30 flex items-center gap-4 group"
         >
           <Save size={20} className="group-hover:rotate-12 transition-transform" />
           Save & Synchronize All Settings
@@ -7478,7 +7478,7 @@ function DiscountRuleForm({ initialData, onSubmit, setToast }: any) {
           required 
           value={formData.title}
           onChange={e => setFormData({ ...formData, title: e.target.value })}
-          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
           placeholder="e.g. Bulk Order Savior" 
         />
       </div>
@@ -7544,7 +7544,7 @@ function DiscountRuleForm({ initialData, onSubmit, setToast }: any) {
       <button 
         type="submit" 
         disabled={loading}
-        className="w-full bg-[#1C3560] text-white py-4 rounded-2xl font-black uppercase text-[12px] tracking-[2px] transition-all transform active:scale-95 shadow-xl shadow-[#1C3560]/20 mt-4 disabled:opacity-50"
+        className="w-full bg-[#050259] text-white py-4 rounded-2xl font-black uppercase text-[12px] tracking-[2px] transition-all transform active:scale-95 shadow-xl shadow-[#050259]/20 mt-4 disabled:opacity-50"
       >
         {loading ? 'Processing...' : (initialData ? 'Update Rule' : 'Create Rule')}
       </button>
@@ -7605,7 +7605,7 @@ function PromotionForm({ initialData, onSubmit, setToast }: any) {
           required 
           value={formData.title}
           onChange={e => setFormData({ ...formData, title: e.target.value })}
-          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors font-bold" 
+          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#08047D] outline-none transition-colors font-bold" 
           placeholder="e.g. Back to School 2026" 
         />
       </div>
@@ -7616,7 +7616,7 @@ function PromotionForm({ initialData, onSubmit, setToast }: any) {
           rows={2}
           value={formData.subtitle}
           onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#C8102E] outline-none transition-colors" 
+          className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm focus:border-[#08047D] outline-none transition-colors" 
           placeholder="Get 20% off on all school sweaters..." 
         />
       </div>
@@ -7703,11 +7703,11 @@ function PromotionForm({ initialData, onSubmit, setToast }: any) {
                  value={formData.imageUrl}
                  onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
                  placeholder="https://images.unsplash.com/promo-image..."
-                 className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs focus:border-[#C8102E] outline-none transition-colors font-bold" 
+                 className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs focus:border-[#08047D] outline-none transition-colors font-bold" 
                />
              </div>
              <div>
-               <label className="inline-block px-4 py-2 bg-[#1C3560] text-white text-[10px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-[#0A1628] transition-all focus-within:ring-2 focus-within:ring-[#1C3560] focus-within:ring-offset-2">
+               <label className="inline-block px-4 py-2 bg-[#050259] text-white text-[10px] font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-[#08047D] transition-all focus-within:ring-2 focus-within:ring-[#050259] focus-within:ring-offset-2">
                  {uploading ? 'Uploading...' : 'Or Upload File Instead'}
                  <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={uploading} />
                </label>
@@ -7720,7 +7720,7 @@ function PromotionForm({ initialData, onSubmit, setToast }: any) {
       <button 
         type="submit" 
         disabled={loading || uploading}
-        className="w-full bg-[#C8102E] text-white py-4 rounded-2xl font-black uppercase text-[12px] tracking-[2px] transition-all transform active:scale-95 shadow-xl shadow-[#C8102E]/20 mt-4 disabled:opacity-50"
+        className="w-full bg-[#08047D] text-white py-4 rounded-2xl font-black uppercase text-[12px] tracking-[2px] transition-all transform active:scale-95 shadow-xl shadow-[#08047D]/20 mt-4 disabled:opacity-50"
       >
         {loading ? 'Processing...' : (initialData ? 'Update Campaign' : 'Launch Campaign')}
       </button>

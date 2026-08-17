@@ -32,7 +32,7 @@ export default function ShippingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-[#0A1628]">
+    <div className="min-h-screen bg-white text-[#08047D]">
       <Navbar 
         wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
@@ -42,7 +42,7 @@ export default function ShippingPage() {
       />
       <div className="pt-20">
         <Breadcrumb />
-        <section className="relative h-[60vh] bg-[#0A1628] flex items-center justify-center overflow-hidden">
+        <section className="relative h-[60vh] bg-[#08047D] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
           </div>
@@ -50,7 +50,7 @@ export default function ShippingPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-full text-[#C8961A] text-[10px] font-black tracking-[4px] uppercase mb-8"
+              className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-full text-[#FA9411] text-[10px] font-black tracking-[4px] uppercase mb-8"
             >
               <Truck size={16} /> Logistics & Delivery
             </motion.div>
@@ -60,7 +60,7 @@ export default function ShippingPage() {
               transition={{ delay: 0.1 }}
               className="font-display text-7xl md:text-9xl text-white tracking-[2px] leading-none mb-6"
             >
-              Swift <span className="text-[#C8102E]">Fulfillment.</span>
+              Swift <span className="text-[#08047D]">Fulfillment.</span>
             </motion.h1>
           </div>
         </section>
@@ -101,9 +101,9 @@ export default function ShippingPage() {
                       <div key={idx} className="p-8 bg-slate-50 rounded-[32px] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-300">
                         <div className="flex justify-between items-start mb-6">
                           <h3 className="font-bold text-xl uppercase tracking-tighter">{method.title}</h3>
-                          <span className="text-[10px] font-black text-[#C8102E] bg-[#C8102E]/5 px-3 py-1 rounded-full uppercase">{method.price}</span>
+                          <span className="text-[10px] font-black text-[#08047D] bg-[#08047D]/5 px-3 py-1 rounded-full uppercase">{method.price}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-[#C8961A] text-[10px] font-black uppercase tracking-widest mb-4">
+                        <div className="flex items-center gap-2 text-[#FA9411] text-[10px] font-black uppercase tracking-widest mb-4">
                           <Clock size={12} /> {method.time}
                         </div>
                         <p className="text-xs text-slate-500 leading-relaxed font-medium">{method.desc}</p>
@@ -112,20 +112,20 @@ export default function ShippingPage() {
                   </div>
                 </div>
 
-                <div className="p-12 bg-[#0A1628] rounded-[40px] text-white overflow-hidden relative">
+                <div className="p-12 bg-[#08047D] rounded-[40px] text-white overflow-hidden relative">
                   <div className="relative z-10 grid md:grid-cols-2 gap-12">
                     <div>
                       <h3 className="font-display text-4xl tracking-widest mb-6">Global Wholesale</h3>
                       <p className="text-white/60 text-sm leading-relaxed mb-8">
                         We export high-quality Kenyan textiles worldwide. For international institutional orders, we coordinate via seafreight or airfreight with full customs documentation support.
                       </p>
-                      <button className="flex items-center gap-3 text-[#C8961A] text-[10px] font-black uppercase tracking-[3px] border-b border-[#C8961A]/30 pb-1 hover:text-white transition-colors">
+                      <button className="flex items-center gap-3 text-[#FA9411] text-[10px] font-black uppercase tracking-[3px] border-b border-[#FA9411]/30 pb-1 hover:text-white transition-colors">
                         International Quote <Globe size={14} />
                       </button>
                     </div>
                     <div className="flex items-center justify-center">
                       <div className="w-full aspect-square bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center backdrop-blur-sm">
-                        <Truck size={100} className="text-[#C8102E] opacity-50" />
+                        <Truck size={100} className="text-[#08047D] opacity-50" />
                       </div>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export default function ShippingPage() {
                         placeholder="Order ID" 
                         className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs font-bold focus:bg-white/10 outline-none transition-all"
                       />
-                      <button className="absolute right-2 top-2 bottom-2 bg-[#C8102E] px-4 rounded-xl text-[10px] font-black uppercase">Track</button>
+                      <button className="absolute right-2 top-2 bottom-2 bg-[#08047D] px-4 rounded-xl text-[10px] font-black uppercase">Track</button>
                     </div>
                   </div>
                 </div>
@@ -158,9 +158,9 @@ export default function ShippingPage() {
                       { step: "04", title: "Last Mile", desc: "Door-to-door delivery completion." }
                     ].map((item, idx) => (
                       <div key={idx} className="flex gap-4">
-                        <span className="text-[#C8961A] font-black text-xs pt-1">{item.step}</span>
+                        <span className="text-[#FA9411] font-black text-xs pt-1">{item.step}</span>
                         <div>
-                          <h4 className="text-xs font-black uppercase text-[#0A1628]">{item.title}</h4>
+                          <h4 className="text-xs font-black uppercase text-[#08047D]">{item.title}</h4>
                           <p className="text-[10px] text-slate-400 font-medium">{item.desc}</p>
                         </div>
                       </div>

@@ -102,7 +102,7 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
+              className="absolute inset-0 bg-[#08047D]/80 backdrop-blur-md"
             />
             
             <motion.div
@@ -121,7 +121,7 @@ export function InactivityHandler({ children }: { children: React.ReactNode }) {
                   You have been inactive for a while. For your security, you will be logged out automatically in:
                 </p>
                 
-                <div className="text-6xl font-black text-[#C8102E] mb-10 font-mono tracking-tighter">
+                <div className="text-6xl font-black text-[#08047D] mb-10 font-mono tracking-tighter">
                   00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}
                 </div>
 

@@ -447,8 +447,8 @@ export default function HomePage() {
 
   useEffect(() => {
     if (siteSettings) {
-      const siteTitle = siteSettings.sharingTitle || 'Uhuru Market Uniforms';
-      const description = siteSettings.sharingDescription || 'Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.';
+      const siteTitle = 'Uhuru Market Uniforms';
+      const description = 'Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.';
       const sharingImage = siteSettings.sharingImage || siteSettings.siteLogo || 'https://i.pinimg.com/736x/23/58/e9/2358e909cae32ba6cc99627364ac14c3.jpg';
 
       document.title = siteTitle;
@@ -536,9 +536,9 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-[#0A1628]">
+    <div className="min-h-screen bg-white font-sans text-[#08047D]">
       {/* Screen Reader and Crawler SEO Identifier */}
-      <h1 className="sr-only">Uhuru Market Uniforms</h1>
+      <h1 className="sr-only">Uhuru Market Uniforms | Naisiae Textiles</h1>
       {/* Top Promotion Bar & Navbar */}
       <Navbar 
         wishlistCount={wishlist.length}
@@ -619,11 +619,11 @@ export default function HomePage() {
       </div>
 
       {/* High-Tech 3D Simulator Promo Block */}
-      <section className="py-12 px-4 sm:py-20 bg-[#0A1628] text-white overflow-hidden relative border-t border-b border-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-[#C8102E]/20 via-transparent to-[#C8961A]/10 opacity-70"></div>
+      <section className="py-12 px-4 sm:py-20 bg-[#08047D] text-white overflow-hidden relative border-t border-b border-slate-900">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-[#08047D]/20 via-transparent to-[#FA9411]/10 opacity-70"></div>
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
           <div className="max-w-2xl text-center lg:text-left">
-            <span className="text-[10px] font-black tracking-[4px] uppercase text-[#C8961A] bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/20 inline-block mb-3">
+            <span className="text-[10px] font-black tracking-[4px] uppercase text-[#FA9411] bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/20 inline-block mb-3">
               Interactive 3D Configurator
             </span>
             <h2 className="text-3xl sm:text-5xl font-display font-medium tracking-tight leading-tight">
@@ -635,7 +635,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <button 
                 onClick={() => navigate('/simulator')}
-                className="px-8 py-3.5 bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+                className="px-8 py-3.5 bg-gradient-to-r from-[#08047D] to-[#FA9411] hover:opacity-95 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
               >
                 Launch Customizer ⚡
               </button>
@@ -664,8 +664,8 @@ export default function HomePage() {
               <div className="h-44 sm:h-56 bg-slate-900/60 rounded-2xl flex items-center justify-center border border-white/5 relative overflow-hidden my-4">
                 {/* Visual mockup drawing */}
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className="w-16 h-16 bg-[#C8102E] rounded-full flex items-center justify-center text-white text-3xl shadow-lg border border-white/10">🏫</div>
-                  <span className="text-[10px] font-black tracking-widest uppercase mt-4 text-[#C8961A]">Naisiae Textiles Simulator</span>
+                  <div className="w-16 h-16 bg-[#08047D] rounded-full flex items-center justify-center text-white text-3xl shadow-lg border border-white/10">🏫</div>
+                  <span className="text-[10px] font-black tracking-widest uppercase mt-4 text-[#FA9411]">Naisiae Textiles Simulator</span>
                   <p className="text-[8.5px] text-white/60 font-medium uppercase mt-1">Configure Collars & Sleeves in Real Time</p>
                 </div>
                 {/* Floating bubbles representing colors */}
@@ -677,15 +677,15 @@ export default function HomePage() {
               </div>
               
               <div className="grid grid-cols-3 gap-2">
-                <div className="bg-[#0A1628]/60 p-2 rounded-lg border border-white/5">
+                <div className="bg-[#08047D]/60 p-2 rounded-lg border border-white/5">
                   <span className="text-[7px] text-white/40 block font-bold uppercase">Fabric Weight</span>
                   <span className="text-[9px] font-black text-white">280 GSM</span>
                 </div>
-                <div className="bg-[#0A1628]/60 p-2 rounded-lg border border-white/5">
+                <div className="bg-[#08047D]/60 p-2 rounded-lg border border-white/5">
                   <span className="text-[7px] text-white/40 block font-bold uppercase">Composition</span>
-                  <span className="text-[9px] font-black text-[#C8961A]">Wool/Poly</span>
+                  <span className="text-[9px] font-black text-[#FA9411]">Wool/Poly</span>
                 </div>
-                <div className="bg-[#0A1628]/60 p-2 rounded-lg border border-white/5">
+                <div className="bg-[#08047D]/60 p-2 rounded-lg border border-white/5">
                   <span className="text-[7px] text-white/40 block font-bold uppercase">Pilling Resistance</span>
                   <span className="text-[9px] font-black text-emerald-400">Class 4.5</span>
                 </div>
@@ -707,10 +707,10 @@ export default function HomePage() {
       <section className="py-16 sm:py-24 bg-white border-t border-slate-100 px-4 sm:px-8">
         <div className="max-w-[1440px] mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="text-xs font-black tracking-[4px] uppercase text-[#C8102E] bg-red-50 border border-red-100 px-3.5 py-1.5 rounded-full inline-block">
+            <span className="text-xs font-black tracking-[4px] uppercase text-[#08047D] bg-red-50 border border-red-100 px-3.5 py-1.5 rounded-full inline-block">
               Client Feedback
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium tracking-tight text-[#0A1628] mt-4 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-medium tracking-tight text-[#08047D] mt-4 leading-tight">
               Trusted by Parents & Institutions
             </h2>
             <p className="text-slate-500 text-xs sm:text-sm font-bold uppercase mt-3 tracking-wider">
@@ -719,7 +719,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#C8961A]/20 transition-all duration-300">
+            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#FA9411]/20 transition-all duration-300">
               <div>
                 <div className="flex text-amber-400 gap-1 mb-4">
                   {Array(5).fill(0).map((_, i) => <Star key={i} size={14} className="fill-current" />)}
@@ -729,15 +729,15 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="mt-6 flex items-center gap-3 border-t border-slate-200/40 pt-4">
-                <div className="w-9 h-9 rounded-full bg-[#0A1628] text-white font-black text-[10px] flex items-center justify-center tracking-wider">MR</div>
+                <div className="w-9 h-9 rounded-full bg-[#08047D] text-white font-black text-[10px] flex items-center justify-center tracking-wider">MR</div>
                 <div>
                   <h4 className="text-[10px] font-black uppercase text-slate-800">Mr. Ronald Kiprop</h4>
-                  <span className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Principal, Hillcrest Academy</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[#FA9411]">Principal, Hillcrest Academy</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#C8102E]/20 transition-all duration-300">
+            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#08047D]/20 transition-all duration-300">
               <div>
                 <div className="flex text-amber-400 gap-1 mb-4">
                   {Array(5).fill(0).map((_, i) => <Star key={i} size={14} className="fill-current" />)}
@@ -747,15 +747,15 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="mt-6 flex items-center gap-3 border-t border-slate-200/40 pt-4">
-                <div className="w-9 h-9 rounded-full bg-[#C8102E] text-white font-black text-[10px] flex items-center justify-center tracking-wider">MW</div>
+                <div className="w-9 h-9 rounded-full bg-[#08047D] text-white font-black text-[10px] flex items-center justify-center tracking-wider">MW</div>
                 <div>
                   <h4 className="text-[10px] font-black uppercase text-slate-800">Mama Wanjiku</h4>
-                  <span className="text-[8px] font-black uppercase tracking-widest text-[#C8102E]">Verified Parent Buyer, Nairobi</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[#08047D]">Verified Parent Buyer, Nairobi</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#C8961A]/20 transition-all duration-300">
+            <div className="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-inner flex flex-col justify-between group hover:border-[#FA9411]/20 transition-all duration-300">
               <div>
                 <div className="flex text-amber-400 gap-1 mb-4">
                   {Array(5).fill(0).map((_, i) => <Star key={i} size={14} className="fill-current" />)}
@@ -765,10 +765,10 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="mt-6 flex items-center gap-3 border-t border-slate-200/40 pt-4">
-                <div className="w-9 h-9 rounded-full bg-[#0A1628] text-white font-black text-[10px] flex items-center justify-center tracking-wider">DK</div>
+                <div className="w-9 h-9 rounded-full bg-[#08047D] text-white font-black text-[10px] flex items-center justify-center tracking-wider">DK</div>
                 <div>
                   <h4 className="text-[10px] font-black uppercase text-slate-800">Dr. Kevin Omwamba</h4>
-                  <span className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Sports Dir, Nairobi Technical</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-[#FA9411]">Sports Dir, Nairobi Technical</span>
                 </div>
               </div>
             </div>
@@ -780,10 +780,10 @@ export default function HomePage() {
       <section className="bg-slate-50 border-t border-slate-200 py-20 px-6 lg:px-12" id="seo-authority">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold tracking-widest text-[#C8102E] uppercase bg-red-50 px-3 py-1 rounded-full border border-red-100 font-sans">
+            <span className="text-xs font-bold tracking-widest text-[#08047D] uppercase bg-red-50 px-3 py-1 rounded-full border border-red-100 font-sans">
               East Africa's Ultimate Sourcing Hub
             </span>
-            <h2 className="text-3xl md:text-4xl font-sans font-medium tracking-tight text-[#0A1628] mt-4 mb-6">
+            <h2 className="text-3xl md:text-4xl font-sans font-medium tracking-tight text-[#08047D] mt-4 mb-6">
               Uhuru Market Uniform Sourcing & Manufacturing Authority
             </h2>
             <p className="text-slate-600 font-sans leading-relaxed text-sm md:text-base">
@@ -795,15 +795,24 @@ export default function HomePage() {
             {/* Card 1: Uhuru Market Uniforms */}
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-[#C8102E] mb-6 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-[#08047D] mb-6 group-hover:scale-105 transition-transform">
                   <MapPin size={24} />
                 </div>
-                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                <h3 className="text-xl font-medium text-[#08047D] mb-3 font-sans">
                   Uhuru Market Uniforms Hub
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
                   Operating directly from Uhuru Market along Jogoo Road, Nairobi, we are the authentic epicentre of custom-tailored institutional apparel in Kenya, offering live material validation and transparent local production.
                 </p>
+                <a
+                  href="https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#08047D] hover:text-[#08047D] transition-colors mb-2"
+                >
+                  <span>Find Us on Google Maps</span>
+                  <span className="text-sm">↗</span>
+                </a>
               </div>
               <div className="text-xs font-mono text-slate-400">#UhuruMarketUniforms</div>
             </div>
@@ -811,10 +820,10 @@ export default function HomePage() {
             {/* Card 2: School Uniform Supplier */}
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-[#C8961A] mb-6 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-[#FA9411] mb-6 group-hover:scale-105 transition-transform">
                   <Package size={24} />
                 </div>
-                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                <h3 className="text-xl font-medium text-[#08047D] mb-3 font-sans">
                   Premier School Uniform Supplier
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
@@ -830,7 +839,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-105 transition-transform">
                   <Scissors size={24} />
                 </div>
-                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                <h3 className="text-xl font-medium text-[#08047D] mb-3 font-sans">
                   Direct School Uniform Manufacturer
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
@@ -846,7 +855,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6 group-hover:scale-105 transition-transform">
                   <Star size={24} />
                 </div>
-                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                <h3 className="text-xl font-medium text-[#08047D] mb-3 font-sans">
                   Best Uniform Shop Experience
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
@@ -862,7 +871,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-105 transition-transform">
                   <ShieldCheck size={24} />
                 </div>
-                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                <h3 className="text-xl font-medium text-[#08047D] mb-3 font-sans">
                   Cheap & Affordable Uniform Solutions
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
@@ -878,7 +887,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-105 transition-transform">
                   <CheckCircle2 size={24} />
                 </div>
-                <h3 className="text-xl font-medium text-[#0A1628] mb-3 font-sans">
+                <h3 className="text-xl font-medium text-[#08047D] mb-3 font-sans">
                   Wholesale Price Uniform Supply
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans mb-4">
@@ -891,13 +900,13 @@ export default function HomePage() {
           
           {/* FAQ Accordion block specifically matching search variations */}
           <div className="mt-16 bg-white rounded-3xl p-8 md:p-12 border border-slate-100 shadow-sm">
-            <h3 className="text-2xl font-sans font-medium text-[#0A1628] mb-8 text-center">
+            <h3 className="text-2xl font-sans font-medium text-[#08047D] mb-8 text-center">
               Frequently Asked Questions (Sourcing FAQ)
             </h3>
             
             <div className="space-y-6 max-w-4xl mx-auto">
               <div className="border-b border-slate-100 pb-6">
-                <h4 className="text-base font-semibold text-[#0A1628] mb-2 font-sans">
+                <h4 className="text-base font-semibold text-[#08047D] mb-2 font-sans">
                   Where is the best uniform shop for bulk school uniform procurement in Nairobi?
                 </h4>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans">
@@ -906,7 +915,7 @@ export default function HomePage() {
               </div>
               
               <div className="border-b border-slate-100 pb-6">
-                <h4 className="text-base font-semibold text-[#0A1628] mb-2 font-sans">
+                <h4 className="text-base font-semibold text-[#08047D] mb-2 font-sans">
                   How can you guarantee cheap or affordable uniform rates without compromising material quality?
                 </h4>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans">
@@ -915,7 +924,7 @@ export default function HomePage() {
               </div>
 
               <div>
-                <h4 className="text-base font-semibold text-[#0A1628] mb-2 font-sans">
+                <h4 className="text-base font-semibold text-[#08047D] mb-2 font-sans">
                   Do you serve as a wholesale price uniform partner outside of Nairobi?
                 </h4>
                 <p className="text-slate-500 text-sm leading-relaxed font-sans">
@@ -938,9 +947,9 @@ export default function HomePage() {
             exit={{ y: 100, opacity: 0 }}
             className="fixed bottom-24 lg:bottom-10 left-1/2 -translate-x-1/2 z-[60] w-full max-w-2xl px-4"
           >
-            <div className="bg-[#0A1628] rounded-3xl p-4 shadow-2xl border border-white/10 flex items-center justify-between gap-6 backdrop-blur-xl">
+            <div className="bg-[#08047D] rounded-3xl p-4 shadow-2xl border border-white/10 flex items-center justify-between gap-6 backdrop-blur-xl">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#C8961A] rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-[#C8961A]/20">
+                <div className="w-12 h-12 bg-[#FA9411] rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-[#FA9411]/20">
                   <GitCompare size={24} />
                 </div>
                 <div>
@@ -972,7 +981,7 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => setIsCompareModalOpen(true)}
-                  className="bg-white text-[#0A1628] px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#C8961A] hover:text-white transition-all shadow-xl active:scale-95"
+                  className="bg-white text-[#08047D] px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#FA9411] hover:text-white transition-all shadow-xl active:scale-95"
                 >
                   Compare Now
                 </button>
@@ -994,7 +1003,7 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsCompareModalOpen(false)}
-              className="absolute inset-0 bg-[#0A1628]/95 backdrop-blur-md"
+              className="absolute inset-0 bg-[#08047D]/95 backdrop-blur-md"
             ></motion.div>
             
             <motion.div 
@@ -1005,10 +1014,10 @@ export default function HomePage() {
             >
               <div className="p-6 lg:p-12 border-b flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-3 text-[#C8961A] text-[9px] lg:text-[10px] font-black tracking-[4px] uppercase mb-2">
+                  <div className="flex items-center gap-3 text-[#FA9411] text-[9px] lg:text-[10px] font-black tracking-[4px] uppercase mb-2">
                     <GitCompare size={14} className="lg:w-4 lg:h-4" /> Technical Analysis
                   </div>
-                  <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl text-[#0A1628] tracking-tight leading-none">Side-by-Side Comparison</h2>
+                  <h2 className="font-display text-2xl sm:text-3xl lg:text-5xl text-[#08047D] tracking-tight leading-none">Side-by-Side Comparison</h2>
                 </div>
                 <button 
                   onClick={() => setIsCompareModalOpen(false)}
@@ -1034,8 +1043,8 @@ export default function HomePage() {
                           <Package size={48} className="text-slate-200" />
                         )}
                       </div>
-                      <h4 className="font-bold text-lg text-[#0A1628] mb-2 leading-tight px-2">{item.name}</h4>
-                      <div className="text-[10px] font-black text-[#C8961A] uppercase tracking-widest mb-4">{item.category}</div>
+                      <h4 className="font-bold text-lg text-[#08047D] mb-2 leading-tight px-2">{item.name}</h4>
+                      <div className="text-[10px] font-black text-[#FA9411] uppercase tracking-widest mb-4">{item.category}</div>
                     </div>
                   ))}
 
@@ -1054,7 +1063,7 @@ export default function HomePage() {
                     Unit Price
                   </div>
                   {compareList.map((item, idx) => (
-                    <div key={`${item.id}-price-${idx}`} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#C8102E]">
+                    <div key={`${item.id}-price-${idx}`} className="py-8 border-t border-slate-100 text-center font-black text-2xl text-[#08047D]">
                       {formatPrice(item.price)}
                     </div>
                   ))}
@@ -1098,7 +1107,7 @@ export default function HomePage() {
                     <div key={`${item.id}-action-${idx}`} className="pt-12 text-center">
                       <button 
                         onClick={() => { addToCart(item); setIsCompareModalOpen(false); }}
-                        className="w-full max-w-[180px] bg-[#0A1628] hover:bg-[#C8102E] text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[2px] transition-all"
+                        className="w-full max-w-[180px] bg-[#08047D] hover:bg-[#08047D] text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[2px] transition-all"
                       >
                         Add to Cart
                       </button>
@@ -1138,12 +1147,12 @@ export default function HomePage() {
               className="relative w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col lg:flex-row max-h-[92vh] sm:max-h-[88vh] z-10 shadow-2xl border border-slate-100 backdrop-blur-md my-auto"
             >
               {/* Premium top thin visual balance stripe */}
-              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C8961A] via-[#C8102E] to-[#7D2AE8] z-[60]" />
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#FA9411] via-[#08047D] to-[#7D2AE8] z-[60]" />
 
               {/* Close Button */}
               <button 
                 onClick={() => handleCloseQuickView()}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-[60] w-9 h-9 sm:w-10 sm:h-10 bg-white/95 border border-slate-200/80 hover:border-slate-300 rounded-full flex items-center justify-center text-slate-800 hover:text-[#C8102E] transition-all shadow-md active:scale-95"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-[60] w-9 h-9 sm:w-10 sm:h-10 bg-white/95 border border-slate-200/80 hover:border-slate-300 rounded-full flex items-center justify-center text-slate-800 hover:text-[#08047D] transition-all shadow-md active:scale-95"
                 aria-label="Close"
               >
                 <X size={18} className="stroke-[2.5]" />
@@ -1173,7 +1182,7 @@ export default function HomePage() {
                           <motion.div 
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className={`absolute z-30 flex items-center justify-center p-1 bg-white/95 backdrop-blur-[2px] rounded-xl border-2 border-dashed border-[#C8961A]/50 shadow-xl transition-all duration-500 hover:scale-110 pointer-events-auto ${
+                            className={`absolute z-30 flex items-center justify-center p-1 bg-white/95 backdrop-blur-[2px] rounded-xl border-2 border-dashed border-[#FA9411]/50 shadow-xl transition-all duration-500 hover:scale-110 pointer-events-auto ${
                               brandingPosition === 'Left Chest' ? 'top-[35%] left-[33%] w-10 h-10' :
                               brandingPosition === 'Right Chest' ? 'top-[35%] right-[33%] w-10 h-10' :
                               brandingPosition === 'Center Chest' ? 'top-[42%] left-[48%] -translate-x-1/2 w-14 h-14' :
@@ -1188,7 +1197,7 @@ export default function HomePage() {
                                 brandingType === 'Embroidery' ? 'contrast-[1.05] brightness-[1.02] [filter:drop-shadow(0_1.5px_1.5px_rgba(0,0,0,0.15))] font-serif outline-transparent' : 'mix-blend-multiply'
                               }`} 
                             />
-                            <div className="absolute -top-2.5 -right-2 bg-[#C8961A] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                            <div className="absolute -top-2.5 -right-2 bg-[#FA9411] text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                               {brandingType === 'Embroidery' ? 'Stitch' : 'Print'}
                             </div>
                           </motion.div>
@@ -1199,7 +1208,7 @@ export default function HomePage() {
                 })()}
                 
                 {selectedQuickViewProduct.badge && (
-                  <span className="absolute top-4 sm:top-6 left-4 sm:left-6 bg-gradient-to-r from-[#FF4F5A] to-[#C8961A] text-white text-[9px] sm:text-[10px] font-black px-3 py-1.5 rounded-full tracking-[2px] uppercase shadow-md z-20">
+                  <span className="absolute top-4 sm:top-6 left-4 sm:left-6 bg-gradient-to-r from-[#FF4F5A] to-[#FA9411] text-white text-[9px] sm:text-[10px] font-black px-3 py-1.5 rounded-full tracking-[2px] uppercase shadow-md z-20">
                     {selectedQuickViewProduct.badge}
                   </span>
                 )}
@@ -1209,7 +1218,7 @@ export default function HomePage() {
               <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-hidden flex-1">
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-thin">
                   <div className="mb-4">
-                    <h2 className="font-sans text-2xl lg:text-3.5xl font-black text-[#0E121C] tracking-tight leading-tight mb-3">
+                    <h2 className="font-sans text-2xl lg:text-3.5xl font-black text-[#04023D] tracking-tight leading-tight mb-3">
                       {selectedQuickViewProduct.name}
                     </h2>
                     
@@ -1221,10 +1230,10 @@ export default function HomePage() {
                         </span>
                         <div className="flex items-center gap-2.5">
                           {(selectedQuickViewProduct.priceType === 'wholesale' || selectedQuickViewProduct.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase()))) ? (
-                            <span className="text-xl lg:text-2xl font-black bg-gradient-to-r from-[#C2102E] to-[#C8961A] bg-clip-text text-transparent uppercase tracking-tight">Price on Inquiry</span>
+                            <span className="text-xl lg:text-2xl font-black bg-gradient-to-r from-[#08047D] to-[#FA9411] bg-clip-text text-transparent uppercase tracking-tight">Price on Inquiry</span>
                           ) : (
                             <>
-                              <span className="text-2xl lg:text-3xl font-black text-[#0e121c] tracking-tight">{formatPrice(selectedQuickViewProduct.price)}</span>
+                              <span className="text-2xl lg:text-3xl font-black text-[#04023D] tracking-tight">{formatPrice(selectedQuickViewProduct.price)}</span>
                               {selectedQuickViewProduct.oldPrice && (
                                 <span className="text-xs lg:text-sm text-slate-400 line-through decoration-slate-300">{formatPrice(selectedQuickViewProduct.oldPrice)}</span>
                               )}
@@ -1253,7 +1262,7 @@ export default function HomePage() {
                           <div className="flex justify-between items-center mb-0.5">
                             <label className="text-[10px] font-black uppercase text-slate-405 tracking-wider">{type}</label>
                             {selectedVariants[type] && (
-                              <span className="text-[10px] font-extrabold text-[#C8961A] tracking-wider uppercase bg-[#C8961A]/5 px-2 py-0.5 rounded-md">{selectedVariants[type]}</span>
+                              <span className="text-[10px] font-extrabold text-[#FA9411] tracking-wider uppercase bg-[#FA9411]/5 px-2 py-0.5 rounded-md">{selectedVariants[type]}</span>
                             )}
                           </div>
                           <div className="flex flex-wrap gap-2">
@@ -1267,7 +1276,7 @@ export default function HomePage() {
                                   onClick={() => setSelectedVariants(prev => ({ ...prev, [type]: opt.value }))}
                                   className={`relative flex items-center justify-center transition-all cursor-pointer ${
                                     isColor 
-                                      ? `w-9 h-9 rounded-full border-2 ${isSelected ? 'border-[#C8961A] scale-105 shadow-md shadow-[#C8961A]/15' : 'border-slate-200/70 hover:border-slate-450 bg-white'}`
+                                      ? `w-9 h-9 rounded-full border-2 ${isSelected ? 'border-[#FA9411] scale-105 shadow-md shadow-[#FA9411]/15' : 'border-slate-200/70 hover:border-slate-450 bg-white'}`
                                       : `px-3.5 py-2 rounded-xl border text-[10px] font-bold uppercase tracking-wider ${isSelected ? 'bg-slate-900 border-slate-900 text-white font-black shadow-sm' : 'bg-white text-slate-650 border-slate-200 hover:border-slate-300'}`
                                   }`}
                                 >
@@ -1281,7 +1290,7 @@ export default function HomePage() {
                                     opt.value
                                   )}
                                   {isSelected && isColor && (
-                                    <div className="absolute -top-1 -right-1 bg-[#C8961A] text-white rounded-full p-0.5 shadow-md">
+                                    <div className="absolute -top-1 -right-1 bg-[#FA9411] text-white rounded-full p-0.5 shadow-md">
                                       <CheckCircle2 size={9} className="stroke-[3]" fill="currentColor" />
                                     </div>
                                   )}
@@ -1303,7 +1312,7 @@ export default function HomePage() {
                           <button 
                             type="button"
                             onClick={() => setInquiryUnits(Math.max(1, inquiryUnits - 1))}
-                            className="w-8 h-8 flex items-center justify-center text-slate-505 hover:text-[#C8102E] transition-all bg-white border border-slate-100 rounded-lg hover:shadow-sm"
+                            className="w-8 h-8 flex items-center justify-center text-slate-505 hover:text-[#08047D] transition-all bg-white border border-slate-100 rounded-lg hover:shadow-sm"
                           >
                             <Minus size={11} className="stroke-[3]" />
                           </button>
@@ -1317,7 +1326,7 @@ export default function HomePage() {
                           <button 
                             type="button"
                             onClick={() => setInquiryUnits(inquiryUnits + 1)}
-                            className="w-8 h-8 flex items-center justify-center text-slate-505 hover:text-[#C8102E] transition-all bg-white border border-slate-100 rounded-lg hover:shadow-sm"
+                            className="w-8 h-8 flex items-center justify-center text-slate-505 hover:text-[#08047D] transition-all bg-white border border-slate-100 rounded-lg hover:shadow-sm"
                           >
                             <Plus size={11} className="stroke-[3]" />
                           </button>
@@ -1337,7 +1346,7 @@ export default function HomePage() {
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5">
                       <div className="flex items-center justify-between shadow-sm bg-white border border-slate-100 p-2 px-3 rounded-xl">
                         <label className="text-[10px] font-black uppercase tracking-wide text-slate-800 flex items-center gap-1.5">
-                          <Scissors size={13} className="text-[#C8961A]"/> Custom Branding
+                          <Scissors size={13} className="text-[#FA9411]"/> Custom Branding
                         </label>
                         <span className="text-[8px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full uppercase tracking-widest select-none">Config Active</span>
                       </div>
@@ -1356,7 +1365,7 @@ export default function HomePage() {
                             onClick={() => setBrandingType(type.id)}
                             className={`flex flex-col items-center justify-center p-2 rounded-xl border text-[9px] font-extrabold uppercase tracking-wide transition-all cursor-pointer ${
                               brandingType === type.id 
-                                ? 'bg-[#0E121C] border-[#0E121C] text-white shadow-md shadow-slate-900/15 scale-[1.03]' 
+                                ? 'bg-[#04023D] border-[#04023D] text-white shadow-md shadow-slate-900/15 scale-[1.03]' 
                                 : 'bg-white border-slate-200 text-slate-550 hover:border-slate-350'
                             }`}
                           >
@@ -1375,11 +1384,11 @@ export default function HomePage() {
                           {/* Sizing & Location select drop down */}
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1">
-                              <label className="text-[8px] font-black uppercase tracking-widest text-[#C8961A]">Position Path</label>
+                              <label className="text-[8px] font-black uppercase tracking-widest text-[#FA9411]">Position Path</label>
                               <select 
                                 value={brandingPosition}
                                 onChange={(e) => setBrandingPosition(e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#C8961A]/50 transition-all cursor-pointer h-9 shadow-inner-sm"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-wide outline-none focus:border-[#FA9411]/50 transition-all cursor-pointer h-9 shadow-inner-sm"
                               >
                                 <option>Left Chest</option>
                                 <option>Right Chest</option>
@@ -1401,7 +1410,7 @@ export default function HomePage() {
                             <label className="text-[8px] font-black uppercase tracking-widest text-slate-400">Upload Corporate Logo</label>
                             
                             {!customLogoUrl ? (
-                              <label className="border-2 border-dashed border-slate-200 hover:border-[#C8961A] bg-white rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50 group">
+                              <label className="border-2 border-dashed border-slate-200 hover:border-[#FA9411] bg-white rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-slate-50 group">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -1420,7 +1429,7 @@ export default function HomePage() {
                                     }
                                   }}
                                 />
-                                <ImageIcon size={18} className="text-slate-400 group-hover:text-[#C8961A] transition-colors mb-1 group-hover:scale-110 duration-200" />
+                                <ImageIcon size={18} className="text-slate-400 group-hover:text-[#FA9411] transition-colors mb-1 group-hover:scale-110 duration-200" />
                                 <span className="text-[9px] font-extrabold text-slate-600 uppercase tracking-widest">Select files or image</span>
                                 <span className="text-[8px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">Vector, PDF, PNG or JPG</span>
                               </label>
@@ -1441,7 +1450,7 @@ export default function HomePage() {
                                     setCustomLogoUrl('');
                                     setCustomLogoName('');
                                   }}
-                                  className="p-1.5 text-slate-400 hover:text-[#C8102E] hover:bg-red-50 rounded-lg transition-all"
+                                  className="p-1.5 text-slate-400 hover:text-[#08047D] hover:bg-red-50 rounded-lg transition-all"
                                   title="Clear File"
                                 >
                                   <Trash2 size={13} />
@@ -1460,7 +1469,7 @@ export default function HomePage() {
                           placeholder="Provide custom labels, pocket count, specific yarn grade levels, fitting adjustments, or color specifications..."
                           value={inquiryCustomization}
                           onChange={(e) => setInquiryCustomization(e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#C8961A] transition-all h-20 resize-none shadow-inner-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold placeholder:text-slate-300 outline-none focus:bg-white focus:border-[#FA9411] transition-all h-20 resize-none shadow-inner-sm"
                         />
                       </div>
                     )}
@@ -1476,13 +1485,13 @@ export default function HomePage() {
                         </span>
                       </summary>
                       <div className="p-4 text-slate-600 text-xs leading-relaxed border-t border-slate-100 bg-white space-y-3">
-                        <div className="font-semibold italic text-slate-700 border-l-3 border-[#C8961A] pl-3">
+                        <div className="font-semibold italic text-slate-700 border-l-3 border-[#FA9411] pl-3">
                           {selectedQuickViewProduct.description || "Tailored institutional apparel woven from durable poly-cotton blend with reinforced seams for long-term wear."}
                         </div>
                         
                         <div className="grid grid-cols-2 gap-3 pt-1">
                           <div className="space-y-1">
-                            <h4 className="text-[9px] font-black uppercase text-[#C8961A] tracking-wider">Reinforced Quality</h4>
+                            <h4 className="text-[9px] font-black uppercase text-[#FA9411] tracking-wider">Reinforced Quality</h4>
                             <div className="space-y-0.5 text-slate-500 font-bold">
                               <p>• Anti-pilling combed fibers</p>
                               <p>• Heavy cotton poly blends</p>
@@ -1490,7 +1499,7 @@ export default function HomePage() {
                             </div>
                           </div>
                           <div className="space-y-1">
-                            <h4 className="text-[9px] font-black uppercase text-[#C8102E] tracking-wider">Care Standards</h4>
+                            <h4 className="text-[9px] font-black uppercase text-[#08047D] tracking-wider">Care Standards</h4>
                             <div className="space-y-0.5 text-slate-500 font-bold">
                               <p>• Machine wash up to 60°C</p>
                               <p>• Locked fabric colors</p>
@@ -1523,14 +1532,14 @@ export default function HomePage() {
                       <div className="p-4 bg-white border-t border-slate-100">
                         <div className="grid grid-cols-2 gap-3.5">
                           <div className="flex items-center gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                            <div className="text-[#C8961A] shrink-0"><ShieldCheck size={16} /></div>
+                            <div className="text-[#FA9411] shrink-0"><ShieldCheck size={16} /></div>
                             <div>
                               <p className="text-[9px] font-black uppercase text-slate-400">Quality</p>
                               <p className="text-[10px] font-black text-slate-800">Double Stitched</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                            <div className="text-[#C2102E] shrink-0"><Calendar size={16} /></div>
+                            <div className="text-[#08047D] shrink-0"><Calendar size={16} /></div>
                             <div>
                               <p className="text-[9px] font-black uppercase text-slate-400">Logistics</p>
                               <p className="text-[10px] font-black text-slate-800">7-14 Days Dispatch</p>
@@ -1555,7 +1564,7 @@ export default function HomePage() {
                               <div key={review.id} className="pb-3 border-b border-slate-100 last:border-0 last:pb-0">
                                 <div className="flex items-center justify-between mb-1">
                                   <div className="flex items-center gap-1.5">
-                                    <div className="w-5 h-5 rounded-full bg-slate-100 text-[#C8961A] flex items-center justify-center font-black text-[8px] uppercase border border-slate-200">
+                                    <div className="w-5 h-5 rounded-full bg-slate-100 text-[#FA9411] flex items-center justify-center font-black text-[8px] uppercase border border-slate-200">
                                       {review.userName.charAt(0)}
                                     </div>
                                     <span className="text-[8px] font-black uppercase text-slate-800 tracking-wider font-sans">{review.userName}</span>
@@ -1582,7 +1591,7 @@ export default function HomePage() {
                         {/* Leave review submission card */}
                         <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
                           <h4 className="text-[9px] font-black uppercase tracking-[2px] text-slate-800 mb-2 flex items-center gap-1.5">
-                            <Star size={10} className="text-[#C8961A]" /> Leave active review
+                            <Star size={10} className="text-[#FA9411]" /> Leave active review
                           </h4>
                           {reviewSubmitted ? (
                             <motion.div 
@@ -1617,14 +1626,14 @@ export default function HomePage() {
                                   placeholder="Purchaser Name / Institution" 
                                   value={reviewForm.userName}
                                   onChange={e => setReviewForm(prev => ({ ...prev, userName: e.target.value }))}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-[#C8961A] font-semibold shadow-inner-sm"
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-[#FA9411] font-semibold shadow-inner-sm"
                                 />
                                 <textarea 
                                   placeholder="Provide textile review comments..." 
                                   required
                                   value={reviewForm.comment}
                                   onChange={e => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#C8961A] font-semibold h-16 resize-none shadow-inner-sm"
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#FA9411] font-semibold h-16 resize-none shadow-inner-sm"
                                 ></textarea>
                               </div>
                               <button 
@@ -1652,8 +1661,8 @@ export default function HomePage() {
                         onClick={() => toggleCompare(selectedQuickViewProduct)}
                         className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
                           compareList.find(i => i.id === selectedQuickViewProduct.id) 
-                            ? "bg-[#C8961A]/10 border-[#C8961A]/30 text-[#C8961A]" 
-                            : "border-slate-200 text-slate-500 hover:border-[#C8961A] hover:text-[#C8961A] bg-slate-50"
+                            ? "bg-[#FA9411]/10 border-[#FA9411]/30 text-[#FA9411]" 
+                            : "border-slate-200 text-slate-500 hover:border-[#FA9411] hover:text-[#FA9411] bg-slate-50"
                         }`}
                         title="Compare Specs"
                         type="button"
@@ -1665,8 +1674,8 @@ export default function HomePage() {
                         onClick={() => toggleWishlist(selectedQuickViewProduct)}
                         className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
                           wishlist.find(i => i.id === selectedQuickViewProduct.id) 
-                            ? "bg-red-50 border-red-200 text-[#C2102E]" 
-                            : "border-slate-200 text-slate-500 hover:border-red-400 hover:text-[#C2102E] bg-slate-50"
+                            ? "bg-red-50 border-red-200 text-[#08047D]" 
+                            : "border-slate-200 text-slate-500 hover:border-red-400 hover:text-[#08047D] bg-slate-50"
                         }`}
                         title="Wishlist"
                         type="button"
@@ -1732,7 +1741,7 @@ export default function HomePage() {
                             handleCloseQuickView();
                             setIsCartOpen(true);
                           }}
-                          className="w-10 h-10 sm:w-11 sm:h-11 bg-[#0E121C] hover:bg-slate-800 text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer"
+                          className="w-10 h-10 sm:w-11 sm:h-11 bg-[#04023D] hover:bg-slate-800 text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer"
                           type="button"
                           title="Add to Cart"
                         >
@@ -1764,7 +1773,7 @@ export default function HomePage() {
                             handleCloseQuickView(true);
                             navigate('/checkout');
                           }}
-                          className="flex-1 bg-[#C2102E] hover:bg-[#A80B23] text-white h-10 sm:h-11 rounded-xl font-bold text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer min-w-0"
+                          className="flex-1 bg-[#08047D] hover:bg-[#050259] text-white h-10 sm:h-11 rounded-xl font-bold text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 cursor-pointer min-w-0"
                           type="button"
                           title="Buy Now"
                         >
@@ -1808,7 +1817,7 @@ export default function HomePage() {
                   setShowPromoModal(false);
                   sessionStorage.setItem(`promo_${activeModalPromo.id}`, 'true');
                 }}
-                className="absolute top-4 right-4 md:top-6 md:right-6 z-30 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-[#0A1628] hover:bg-white/40 transition-all flex items-center justify-center shadow-lg md:shadow-none"
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-30 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-[#08047D] hover:bg-white/40 transition-all flex items-center justify-center shadow-lg md:shadow-none"
                 aria-label="Close"
               >
                 <X size={20} />
@@ -1818,18 +1827,18 @@ export default function HomePage() {
                 {activeModalPromo.imageUrl ? (
                   <img src={activeModalPromo.imageUrl} className="w-full h-full object-cover" alt={activeModalPromo.title} />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#0A1628] to-[#1C3560] flex items-center justify-center">
-                    <Megaphone size={60} className="text-[#C8961A]/20 md:w-20 md:h-20" />
+                  <div className="w-full h-full bg-gradient-to-br from-[#08047D] to-[#050259] flex items-center justify-center">
+                    <Megaphone size={60} className="text-[#FA9411]/20 md:w-20 md:h-20" />
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden"></div>
               </div>
 
               <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-14 flex flex-col justify-center bg-white overflow-y-auto scroll-hide">
-                <div className="flex items-center gap-3 text-[#C8961A] text-[9px] lg:text-[10px] font-black tracking-[4px] uppercase mb-4 md:mb-6">
+                <div className="flex items-center gap-3 text-[#FA9411] text-[9px] lg:text-[10px] font-black tracking-[4px] uppercase mb-4 md:mb-6">
                   <Megaphone size={12} className="md:w-[14px]" /> Seasonal Offer
                 </div>
-                <h3 className="font-display text-3xl sm:text-4xl lg:text-6xl text-[#0A1628] tracking-wider leading-none mb-4 md:mb-6">
+                <h3 className="font-display text-3xl sm:text-4xl lg:text-6xl text-[#08047D] tracking-wider leading-none mb-4 md:mb-6">
                   {activeModalPromo.title}
                 </h3>
                 <p className="text-slate-500 text-base lg:text-lg mb-6 md:mb-10 leading-relaxed font-medium">
@@ -1842,7 +1851,7 @@ export default function HomePage() {
                       setShowPromoModal(false);
                       sessionStorage.setItem(`promo_${activeModalPromo.id}`, 'true');
                     }}
-                    className="bg-[#C8102E] hover:bg-[#8B0000] text-white px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-[2px] md:tracking-[3px] transition-all transform hover:scale-105 shadow-xl shadow-[#C8102E]/20 text-center"
+                    className="bg-[#08047D] hover:bg-[#8B0000] text-white px-8 md:px-10 py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] md:text-xs tracking-[2px] md:tracking-[3px] transition-all transform hover:scale-105 shadow-xl shadow-[#08047D]/20 text-center"
                   >
                     {activeModalPromo.buttonText}
                   </Link>

@@ -196,7 +196,7 @@ export function CatalogSection({
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-6 right-6 z-50 bg-[#0A1628] text-white px-6 py-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-3"
+            className="fixed bottom-6 right-6 z-50 bg-[#08047D] text-white px-6 py-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-3"
           >
             <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xs">✓</div>
             <span className="text-xs font-black tracking-wide uppercase">{toastMessage}</span>
@@ -207,10 +207,10 @@ export function CatalogSection({
       {/* Modern High-Conversion Header */}
       <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-8 gap-6 border-b border-slate-100 pb-6">
         <div>
-          <div className="flex items-center gap-2.5 text-[#C8961A] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
-            <div className="w-7 h-0.5 bg-[#C8961A]"></div> Retail Storefront
+          <div className="flex items-center gap-2.5 text-[#FA9411] text-[10px] font-extrabold tracking-[5px] uppercase mb-2">
+            <div className="w-7 h-0.5 bg-[#FA9411]"></div> Retail Storefront
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl tracking-tight leading-none text-[#0E121C]">
+          <h2 className="font-display text-4xl sm:text-5xl tracking-tight leading-none text-[#04023D]">
             {activeTab === 'all' ? 'Quality Uniform Shop' : `${activeTab}`}
           </h2>
           
@@ -227,7 +227,7 @@ export function CatalogSection({
                   }}
                   className={`whitespace-nowrap text-xs font-black uppercase tracking-[2px] px-4 py-2 rounded-xl transition-all ${
                     isSelected 
-                      ? 'bg-[#C8102E] text-white shadow-lg' 
+                      ? 'bg-[#08047D] text-white shadow-lg' 
                       : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
                   }`}
                 >
@@ -243,7 +243,7 @@ export function CatalogSection({
                 onClick={() => setActiveSubCategory(null)}
                 className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
                   !activeSubCategory 
-                    ? 'bg-[#0A1628] text-white border-transparent' 
+                    ? 'bg-[#08047D] text-white border-transparent' 
                     : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                 }`}
               >
@@ -255,8 +255,8 @@ export function CatalogSection({
                   onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
                   className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
                     activeSubCategory === subCat 
-                      ? 'bg-[#C8961A] text-white border-[#C8961A]' 
-                      : 'bg-white text-slate-500 border-slate-100 hover:border-[#C8961A]/30'
+                      ? 'bg-[#FA9411] text-white border-[#FA9411]' 
+                      : 'bg-white text-slate-500 border-slate-100 hover:border-[#FA9411]/30'
                   }`}
                 >
                   {subCat}
@@ -272,18 +272,18 @@ export function CatalogSection({
             onClick={toggleBgRemover}
             className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border shadow-sm ${
               isBgRemoverActive 
-                ? 'bg-gradient-to-r from-[#C2102E]/5 to-[#C8961A]/5 text-[#C8961A] border-[#C8961A]/40' 
+                ? 'bg-gradient-to-r from-[#08047D]/5 to-[#FA9411]/5 text-[#FA9411] border-[#FA9411]/40' 
                 : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'
             }`}
             title="Toggle background removal for catalog visuals"
           >
-            <span className={`w-2 h-2 rounded-full ${isBgRemoverActive ? 'bg-[#C8961A] animate-pulse' : 'bg-slate-300'}`}></span>
+            <span className={`w-2 h-2 rounded-full ${isBgRemoverActive ? 'bg-[#FA9411] animate-pulse' : 'bg-slate-300'}`}></span>
             ✨ Smart BG Clean
           </button>
 
           <button 
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="lg:hidden px-4 py-2.5 bg-[#0A1628] text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 shadow-sm"
+            className="lg:hidden px-4 py-2.5 bg-[#08047D] text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 shadow-sm"
           >
             <Filter size={12} />
             Filters & Sorting
@@ -297,8 +297,8 @@ export function CatalogSection({
         {/* Desktop Sidebar Filter Panel */}
         <div className="hidden lg:block w-[280px] shrink-0 bg-white border border-slate-100 rounded-3xl p-6 shadow-sm sticky top-28">
           <div className="flex items-center gap-2.5 border-b border-slate-100 pb-4 mb-6">
-            <SlidersHorizontal size={16} className="text-[#C8102E]" />
-            <span className="text-xs font-black uppercase tracking-widest text-[#0E121C]">Catalog Filters</span>
+            <SlidersHorizontal size={16} className="text-[#08047D]" />
+            <span className="text-xs font-black uppercase tracking-widest text-[#04023D]">Catalog Filters</span>
           </div>
 
           {/* Search bar inside Sidebar */}
@@ -309,7 +309,7 @@ export function CatalogSection({
               placeholder="Filter by keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-[#C8961A] rounded-xl text-[10px] font-bold uppercase tracking-wider outline-none focus:bg-white transition-all shadow-inner"
+              className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-[#FA9411] rounded-xl text-[10px] font-bold uppercase tracking-wider outline-none focus:bg-white transition-all shadow-inner"
             />
             {searchQuery && (
               <button 
@@ -352,12 +352,12 @@ export function CatalogSection({
                   onClick={() => setSelectedPriceRange(range.id)}
                   className={`w-full text-left px-3 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-between border ${
                     selectedPriceRange === range.id 
-                      ? 'bg-[#C8961A]/5 border-[#C8961A]/40 text-[#C8961A]' 
+                      ? 'bg-[#FA9411]/5 border-[#FA9411]/40 text-[#FA9411]' 
                       : 'bg-white border-transparent text-slate-500 hover:bg-slate-50'
                   }`}
                 >
                   <span>{range.label}</span>
-                  {selectedPriceRange === range.id && <span className="w-1.5 h-1.5 rounded-full bg-[#C8961A]"></span>}
+                  {selectedPriceRange === range.id && <span className="w-1.5 h-1.5 rounded-full bg-[#FA9411]"></span>}
                 </button>
               ))}
             </div>
@@ -375,8 +375,8 @@ export function CatalogSection({
                     onClick={() => setSelectedMaterialFilter(isSelected ? null : tag)}
                     className={`px-2.5 py-1.5 rounded-lg text-[8.5px] font-black uppercase tracking-wider transition-all border ${
                       isSelected 
-                        ? 'bg-[#C8102E] text-white border-transparent' 
-                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-[#C8961A]'
+                        ? 'bg-[#08047D] text-white border-transparent' 
+                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-[#FA9411]'
                     }`}
                   >
                     #{tag}
@@ -387,13 +387,13 @@ export function CatalogSection({
           </div>
 
           {/* Direct Shop Contact card */}
-          <div className="p-4 bg-gradient-to-br from-[#0A1628] to-[#122B4A] rounded-2xl text-white">
+          <div className="p-4 bg-gradient-to-br from-[#08047D] to-[#1714B8] rounded-2xl text-white">
             <span className="text-[8px] font-black uppercase tracking-widest text-amber-400">Jogoo Road Factory</span>
             <p className="text-[11px] font-extrabold mt-1">Need a custom sizing or bulk embroidery quote?</p>
             <div className="mt-4 flex flex-col gap-2">
               <a 
                 href="tel:+254792021795" 
-                className="w-full py-2 bg-white text-[#0A1628] text-center text-[9px] font-black uppercase rounded-lg hover:bg-amber-400 transition-colors"
+                className="w-full py-2 bg-white text-[#08047D] text-center text-[9px] font-black uppercase rounded-lg hover:bg-amber-400 transition-colors"
               >
                 Call Factory 📞
               </a>
@@ -468,7 +468,7 @@ export function CatalogSection({
                           onClick={() => setSelectedPriceRange(range.id)}
                           className={`px-3 py-2.5 rounded-lg text-[9px] font-black uppercase border text-center ${
                             selectedPriceRange === range.id 
-                              ? 'bg-[#C8961A] text-white border-transparent' 
+                              ? 'bg-[#FA9411] text-white border-transparent' 
                               : 'bg-white border-slate-200 text-slate-500'
                           }`}
                         >
@@ -481,7 +481,7 @@ export function CatalogSection({
 
                 <button 
                   onClick={() => setShowMobileFilters(false)}
-                  className="w-full bg-[#C8102E] text-white text-center py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest mt-12"
+                  className="w-full bg-[#08047D] text-white text-center py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest mt-12"
                 >
                   Apply & See Results
                 </button>
@@ -537,16 +537,16 @@ export function CatalogSection({
                               referrerPolicy="no-referrer" 
                             />
                           ) : (
-                            <Package size={45} className="text-[#C8961A]/10" />
+                            <Package size={45} className="text-[#FA9411]/10" />
                           )}
                           
                           {/* Top Badges */}
                           {product.badge ? (
-                            <span className="absolute top-2.5 left-2.5 bg-[#C8102E] text-white text-[7.5px] sm:text-[9px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase shadow-md z-10">
+                            <span className="absolute top-2.5 left-2.5 bg-[#08047D] text-white text-[7.5px] sm:text-[9px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase shadow-md z-10">
                               {product.badge}
                             </span>
                           ) : (
-                            <span className="absolute top-2.5 left-2.5 bg-[#0A1628] text-white text-[7.5px] sm:text-[9px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase shadow-md z-10">
+                            <span className="absolute top-2.5 left-2.5 bg-[#08047D] text-white text-[7.5px] sm:text-[9px] font-black px-2.5 py-1 rounded-md tracking-wider uppercase shadow-md z-10">
                               Verified ✓
                             </span>
                           )}
@@ -556,10 +556,10 @@ export function CatalogSection({
                             <button 
                               onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
                               className={`w-8 h-8 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all ${
-                                wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "text-slate-400 hover:text-[#C8102E]"
+                                wishlist.find(i => i.id === product.id) ? "text-[#08047D]" : "text-slate-400 hover:text-[#08047D]"
                               }`}
                             >
-                              <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-[#C8102E]" : ""} />
+                              <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-[#08047D]" : ""} />
                             </button>
                           </div>
 
@@ -567,7 +567,7 @@ export function CatalogSection({
                           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-center items-center gap-2 z-10">
                             <button
                               onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                              className="w-9 h-9 rounded-full bg-white/95 hover:bg-white text-[#0A1628] flex items-center justify-center shadow-lg backdrop-blur-md border border-white/30 active:scale-95 transition-all"
+                              className="w-9 h-9 rounded-full bg-white/95 hover:bg-white text-[#08047D] flex items-center justify-center shadow-lg backdrop-blur-md border border-white/30 active:scale-95 transition-all"
                               title="View Specs & HD Details"
                             >
                               <Eye size={16} />
@@ -594,11 +594,11 @@ export function CatalogSection({
                                 onProductTap?.();
                                 setSelectedQuickViewProduct(product);
                               }}
-                              className="font-extrabold text-[12px] sm:text-[14px] leading-tight text-[#0E121C] group-hover:text-[#C8102E] transition-colors line-clamp-2 mb-1.5 cursor-pointer"
+                              className="font-extrabold text-[12px] sm:text-[14px] leading-tight text-[#04023D] group-hover:text-[#08047D] transition-colors line-clamp-2 mb-1.5 cursor-pointer"
                             >
                               {product.name}
                             </h3>
-                            <div className="text-[8.5px] font-black text-[#C8961A] tracking-wider uppercase mb-3">{product.category}</div>
+                            <div className="text-[8.5px] font-black text-[#FA9411] tracking-wider uppercase mb-3">{product.category}</div>
                             
                             {/* Sizing selection directly on the card */}
                             <div className="mt-3">
@@ -616,7 +616,7 @@ export function CatalogSection({
                                     }}
                                     className={`w-6 h-6 shrink-0 rounded-md text-[8px] font-black flex items-center justify-center transition-all border ${
                                       activeSize === sz 
-                                        ? 'bg-[#0E121C] text-white border-transparent' 
+                                        ? 'bg-[#04023D] text-white border-transparent' 
                                         : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
                                     }`}
                                   >
@@ -643,7 +643,7 @@ export function CatalogSection({
                                     style={{ backgroundColor: col.hex }}
                                     className={`w-4 h-4 rounded-full border relative transition-all ${
                                       activeColor === col.name 
-                                        ? 'ring-2 ring-offset-1 ring-[#C8102E] scale-110' 
+                                        ? 'ring-2 ring-offset-1 ring-[#08047D] scale-110' 
                                         : 'border-slate-200 opacity-80 hover:opacity-100'
                                     }`}
                                     title={col.name}
@@ -661,7 +661,7 @@ export function CatalogSection({
                           <div className="mt-5 pt-3.5 border-t border-slate-50 flex items-center justify-between gap-2">
                             <div className="flex flex-col">
                               <span className="text-[7.5px] font-black text-slate-400 uppercase tracking-widest leading-none">Base Cost</span>
-                              <span className="text-sm sm:text-base font-black text-[#C8102E] mt-1">{formatPrice(product.price)}</span>
+                              <span className="text-sm sm:text-base font-black text-[#08047D] mt-1">{formatPrice(product.price)}</span>
                             </div>
 
                             <div className="flex items-center gap-1.5">
@@ -674,7 +674,7 @@ export function CatalogSection({
                               </button>
                               <button 
                                 onClick={(e) => handleAddToCart(e, product)}
-                                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#C8102E] hover:bg-[#A80B23] text-white flex items-center justify-center active:scale-95 transition-all shadow-md shadow-red-100"
+                                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#08047D] hover:bg-[#050259] text-white flex items-center justify-center active:scale-95 transition-all shadow-md shadow-red-100"
                                 title="Add to Cart"
                               >
                                 <ShoppingCart size={15} />
@@ -696,10 +696,10 @@ export function CatalogSection({
                                 wrapperClassName="w-full h-full"
                               />
                             ) : (
-                              <Package size={50} className="text-[#C8961A]/20" />
+                              <Package size={50} className="text-[#FA9411]/20" />
                             )}
                             
-                            <span className="absolute top-3 left-3 bg-[#0A1628] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">
+                            <span className="absolute top-3 left-3 bg-[#08047D] text-white text-[9px] font-black px-2.5 py-1 rounded tracking-widest uppercase shadow-md z-10">
                               DIRECT SPEC
                             </span>
                             
@@ -707,7 +707,7 @@ export function CatalogSection({
                               <button 
                                 onClick={() => toggleWishlist(product)}
                                 className={`w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md transition-colors ${
-                                  wishlist.find(i => i.id === product.id) ? "text-[#C8102E]" : "hover:text-[#C8102E] text-slate-400"
+                                  wishlist.find(i => i.id === product.id) ? "text-[#08047D]" : "hover:text-[#08047D] text-slate-400"
                                 }`}
                               >
                                 <Heart size={14} className={wishlist.find(i => i.id === product.id) ? "fill-current" : ""} />
@@ -717,12 +717,12 @@ export function CatalogSection({
                           
                           <div className="p-4 bg-slate-50/50 flex-grow flex flex-col justify-between">
                             <div>
-                              <div className="text-[9px] text-[#C8961A] font-bold tracking-widest uppercase mb-1">{product.category}</div>
-                              <h3 className="font-extrabold text-[#0E121C] text-sm leading-snug line-clamp-2">{product.name}</h3>
+                              <div className="text-[9px] text-[#FA9411] font-bold tracking-widest uppercase mb-1">{product.category}</div>
+                              <h3 className="font-extrabold text-[#04023D] text-sm leading-snug line-clamp-2">{product.name}</h3>
                             </div>
                             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Single Unit</span>
-                              <span className="text-base font-black text-[#C8102E]">{formatPrice(product.price)}</span>
+                              <span className="text-base font-black text-[#08047D]">{formatPrice(product.price)}</span>
                             </div>
                           </div>
                         </div>
@@ -731,7 +731,7 @@ export function CatalogSection({
                         <div className="w-full md:w-7/12 p-4 sm:p-5 flex flex-col justify-between bg-white relative">
                           <button 
                             onClick={(e) => { e.stopPropagation(); setExpandedProductId(null); }}
-                            className="absolute right-3 top-3 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#C8102E] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
+                            className="absolute right-3 top-3 w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 hover:text-[#08047D] border border-slate-200/60 flex items-center justify-center text-slate-500 transition-all shadow-sm active:scale-95"
                             title="Collapse details view"
                           >
                             <X size={15} />
@@ -750,12 +750,12 @@ export function CatalogSection({
 
                               {/* Multi-tier Wholesale Pricing Table */}
                               <div>
-                                <h4 className="text-[9px] font-black text-[#C8961A] uppercase tracking-widest mb-1.5">Wholesale Price List (Direct)</h4>
+                                <h4 className="text-[9px] font-black text-[#FA9411] uppercase tracking-widest mb-1.5">Wholesale Price List (Direct)</h4>
                                 <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                                   {pricingTiers.map((tier, idx) => (
                                     <div key={idx} className="text-center">
                                       <span className="text-[7.5px] text-slate-400 font-extrabold block uppercase">{tier.qty}</span>
-                                      <span className="font-extrabold text-[#0E121C] text-[10px]">{formatPrice(tier.price)}</span>
+                                      <span className="font-extrabold text-[#04023D] text-[10px]">{formatPrice(tier.price)}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -765,11 +765,11 @@ export function CatalogSection({
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <span className="text-[8px] font-black text-slate-400 uppercase block mb-1">Selected Size</span>
-                                  <span className="inline-block bg-slate-50 border border-slate-100 text-[#0E121C] text-[10px] font-black px-2.5 py-1 rounded-md">{activeSize}</span>
+                                  <span className="inline-block bg-slate-50 border border-slate-100 text-[#04023D] text-[10px] font-black px-2.5 py-1 rounded-md">{activeSize}</span>
                                 </div>
                                 <div>
                                   <span className="text-[8px] font-black text-slate-400 uppercase block mb-1">Selected Color</span>
-                                  <span className="inline-block bg-slate-50 border border-slate-100 text-[#0E121C] text-[10px] font-black px-2.5 py-1 rounded-md">{activeColor}</span>
+                                  <span className="inline-block bg-slate-50 border border-slate-100 text-[#04023D] text-[10px] font-black px-2.5 py-1 rounded-md">{activeColor}</span>
                                 </div>
                               </div>
                             </div>
@@ -782,7 +782,7 @@ export function CatalogSection({
                                 setExpandedProductId(null);
                                 navigate('/checkout');
                               }}
-                              className="w-full bg-gradient-to-r from-[#C2102E] to-[#C8961A] hover:opacity-95 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all text-center shadow-md flex items-center justify-center gap-1.5 active:scale-95"
+                              className="w-full bg-gradient-to-r from-[#08047D] to-[#FA9411] hover:opacity-95 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all text-center shadow-md flex items-center justify-center gap-1.5 active:scale-95"
                               title="Secure checkout"
                             >
                               Buy Selected Right Now ⚡
@@ -791,7 +791,7 @@ export function CatalogSection({
                             <div className="grid grid-cols-2 gap-2">
                               <button 
                                 onClick={(e) => { e.stopPropagation(); onProductTap?.(); setSelectedQuickViewProduct(product); }}
-                                className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
+                                className="bg-slate-50 border border-slate-200 hover:border-[#04023D]/30 text-[#04023D] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
                               >
                                 <MessageSquare size={13} strokeWidth={2.5} />
                                 Enquire ✉️
@@ -799,7 +799,7 @@ export function CatalogSection({
                               <a 
                                 href="tel:+254792021795"
                                 onClick={(e) => e.stopPropagation()}
-                                className="bg-slate-50 border border-slate-200 hover:border-[#0E121C]/30 text-[#0E121C] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
+                                className="bg-slate-50 border border-slate-200 hover:border-[#04023D]/30 text-[#04023D] py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all text-center flex items-center justify-center gap-1.5 active:scale-95"
                               >
                                 <Phone size={13} strokeWidth={2.5} />
                                 Call Now 📞
@@ -825,7 +825,7 @@ export function CatalogSection({
             <div className="mt-16 flex justify-center">
               <button 
                 onClick={() => setShowAllFeatured(!showAllFeatured)}
-                className="px-12 py-5 bg-gradient-to-r from-[#0A1628] via-[#C8102E] to-[#C8961A] text-white hover:opacity-90 transition-all rounded-full flex items-center gap-4 text-[11px] font-black uppercase tracking-[3px] shadow-[0_4px_16px_rgba(200,150,26,0.25)] active:scale-95 cursor-pointer"
+                className="px-12 py-5 bg-gradient-to-r from-[#08047D] via-[#08047D] to-[#FA9411] text-white hover:opacity-90 transition-all rounded-full flex items-center gap-4 text-[11px] font-black uppercase tracking-[3px] shadow-[0_4px_16px_rgba(250, 148, 17,0.25)] active:scale-95 cursor-pointer"
               >
                 {showAllFeatured ? 'Show Less' : 'View More Products'} 
                 <ChevronRight size={16} className={`transition-transform duration-500 ${showAllFeatured ? '-rotate-90' : 'rotate-90'}`} />

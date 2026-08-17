@@ -110,10 +110,10 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
       {/* Mobile App Top Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-xl font-black text-[#0A1628] uppercase tracking-wide">Sourcing Checkout</h1>
+          <h1 className="text-xl font-black text-[#08047D] uppercase tracking-wide">Sourcing Checkout</h1>
           <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">Secure Sourcing Gateway</p>
         </div>
-        <div className="bg-[#C8102E]/10 text-[#C8102E] text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
+        <div className="bg-[#08047D]/10 text-[#08047D] text-[10px] font-black px-2.5 py-1 rounded-full uppercase">
           Bulk Sourcing
         </div>
       </div>
@@ -121,12 +121,12 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
       {/* Steps Horizontal indicator bar */}
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm mb-6">
         <div className="flex justify-between items-center text-[9px] font-black uppercase text-slate-400 tracking-wider mb-2">
-          <span className="text-[#0A1628]">
+          <span className="text-[#08047D]">
             {activeCheckoutStep === 0 && "Step 1: Lead Details"}
             {activeCheckoutStep === 1 && "Step 2: Sourcing Mode"}
             {activeCheckoutStep === 2 && "Step 3: Review Order"}
           </span>
-          <span className="text-[#C8102E]">{activeCheckoutStep + 1} of 3</span>
+          <span className="text-[#08047D]">{activeCheckoutStep + 1} of 3</span>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {[0, 1, 2].map((idx) => (
@@ -146,9 +146,9 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
             >
               <div className={`h-full rounded-full transition-all duration-300 ${
                 idx === activeCheckoutStep 
-                  ? 'bg-[#C8102E]' 
+                  ? 'bg-[#08047D]' 
                   : idx < activeCheckoutStep 
-                    ? 'bg-[#0A1628]' 
+                    ? 'bg-[#08047D]' 
                     : 'bg-slate-200'
               }`} />
             </button>
@@ -195,7 +195,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                     </div>
                     <div>
                       <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Active Profile</span>
-                      <span className="text-xs font-black text-[#0A1628] uppercase block mt-0.5">{currentUser.displayName}</span>
+                      <span className="text-xs font-black text-[#08047D] uppercase block mt-0.5">{currentUser.displayName}</span>
                     </div>
                   </div>
                   <button
@@ -215,8 +215,8 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
               {/* Personal details card */}
               <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
                 <div className="flex items-center gap-2 border-b border-slate-50 pb-3">
-                  <User className="text-[#C8961A]" size={16} />
-                  <h3 className="text-xs font-black text-[#0A1628] uppercase tracking-wider">Procurement Lead Details</h3>
+                  <User className="text-[#FA9411]" size={16} />
+                  <h3 className="text-xs font-black text-[#08047D] uppercase tracking-wider">Procurement Lead Details</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -228,7 +228,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. Grace Wambui"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     />
                     {errors.name && <p className="text-red-500 text-[10px] font-bold mt-0.5">{errors.name}</p>}
                   </div>
@@ -241,7 +241,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
                       placeholder="e.g. grace@school.ac.ke"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     />
                     {errors.email && <p className="text-red-500 text-[10px] font-bold mt-0.5">{errors.email}</p>}
                   </div>
@@ -254,7 +254,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="e.g. 0712345678"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     />
                     {errors.phone && <p className="text-red-500 text-[10px] font-bold mt-0.5">{errors.phone}</p>}
                   </div>
@@ -266,7 +266,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       value={formData.institution}
                       onChange={e => setFormData({ ...formData, institution: e.target.value })}
                       placeholder="e.g. Kenya High School"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#C8102E] outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#08047D] outline-none transition-all"
                     />
                   </div>
 
@@ -277,13 +277,13 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       value={formData.details}
                       onChange={e => setFormData({ ...formData, details: e.target.value })}
                       placeholder="Logo colors, branding positions, custom measurements..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#C8102E] outline-none resize-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold focus:bg-white focus:border-[#08047D] outline-none resize-none transition-all"
                     />
                   </div>
 
                   {/* Delivery Mode Selection Card */}
                   <div className="pt-3 border-t border-slate-100 space-y-3">
-                    <label className="text-[9px] font-black uppercase text-[#0A1628] tracking-[1px] block">
+                    <label className="text-[9px] font-black uppercase text-[#08047D] tracking-[1px] block">
                       🚚 Sourcing Delivery Option
                     </label>
                     <div className="flex flex-col gap-2">
@@ -296,7 +296,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                         }}
                         className={`p-3.5 rounded-2xl border text-left transition-all relative ${
                           deliveryMethod === 'pickup'
-                            ? 'bg-amber-500/5 border-[#C8961A] text-[#0A1628]'
+                            ? 'bg-amber-500/5 border-[#FA9411] text-[#08047D]'
                             : 'bg-white border-slate-200 text-slate-500'
                         }`}
                       >
@@ -318,7 +318,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                         }}
                         className={`p-3.5 rounded-2xl border text-left transition-all relative ${
                           deliveryMethod === 'nairobi'
-                            ? 'bg-green-500/5 border-green-500 text-[#0A1628]'
+                            ? 'bg-green-500/5 border-green-500 text-[#08047D]'
                             : 'bg-white border-slate-200 text-slate-500'
                         }`}
                       >
@@ -340,7 +340,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                         }}
                         className={`p-3.5 rounded-2xl border text-left transition-all relative ${
                           deliveryMethod === 'other'
-                            ? 'bg-blue-500/5 border-blue-500 text-[#0A1628]'
+                            ? 'bg-blue-500/5 border-blue-500 text-[#08047D]'
                             : 'bg-white border-slate-200 text-slate-500'
                         }`}
                       >
@@ -371,8 +371,8 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
               {/* Checkout Sourcing Method choices */}
               <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
                 <div className="flex items-center gap-2 border-b border-slate-50 pb-3">
-                  <Truck className="text-[#C8961A]" size={16} />
-                  <h3 className="text-xs font-black text-[#0A1628] uppercase tracking-wider">Choose Sourcing Method</h3>
+                  <Truck className="text-[#FA9411]" size={16} />
+                  <h3 className="text-xs font-black text-[#08047D] uppercase tracking-wider">Choose Sourcing Method</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -386,12 +386,12 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                     }}
                     className={`p-4 rounded-2xl border-2 text-left transition-all ${
                       checkoutMethod === 'rfq'
-                        ? 'border-[#C8961A] bg-[#C8961A]/5 ring-4 ring-[#C8961A]/5'
+                        ? 'border-[#FA9411] bg-[#FA9411]/5 ring-4 ring-[#FA9411]/5'
                         : 'border-slate-100 hover:border-slate-200'
                     }`}
                   >
                     <span className="text-xl mb-1.5 block">📋</span>
-                    <h4 className="text-[10px] font-black uppercase text-[#0A1628] tracking-wider">RFQ Check</h4>
+                    <h4 className="text-[10px] font-black uppercase text-[#08047D] tracking-wider">RFQ Check</h4>
                     <p className="text-[8px] text-slate-400 mt-1 font-semibold leading-normal">Submit a quotation request. Finalize billing via WhatsApp.</p>
                   </button>
 
@@ -410,7 +410,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                     }`}
                   >
                     <span className="text-xl mb-1.5 block">💚</span>
-                    <h4 className="text-[10px] font-black uppercase text-[#0A1628] tracking-wider">M-Pesa Log</h4>
+                    <h4 className="text-[10px] font-black uppercase text-[#08047D] tracking-wider">M-Pesa Log</h4>
                     <p className="text-[8px] text-slate-400 mt-1 font-semibold leading-normal">Record mobile payment to queue orders immediately.</p>
                   </button>
                 </div>
@@ -455,7 +455,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
 
                       <div className="flex justify-between items-center text-[11px] border-t border-slate-200/50 pt-2 text-slate-500 font-bold">
                         <span>Expected Pay:</span>
-                        <span className="font-mono text-xs text-[#0A1628] font-black">
+                        <span className="font-mono text-xs text-[#08047D] font-black">
                           Ksh {(mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal).toLocaleString()}/-
                         </span>
                       </div>
@@ -467,7 +467,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       </div>
                       
                       <div>
-                        <span className="text-[8px] font-black text-[#C8961A] tracking-[2px] uppercase block mb-1">Safaricom Lipa na M-Pesa</span>
+                        <span className="text-[8px] font-black text-[#FA9411] tracking-[2px] uppercase block mb-1">Safaricom Lipa na M-Pesa</span>
                         <h4 className="text-xs font-black text-white uppercase tracking-wide">M-Pesa Express STK Push</h4>
                         <p className="text-[9px] text-slate-300 font-semibold leading-normal mt-1">
                           Our automated gateway will trigger an instant PIN prompt on your Safaricom mobile line.
@@ -510,7 +510,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                           <div className="relative w-12 h-12 flex items-center justify-center">
                             <div className="absolute inset-0 border-2 border-slate-700 rounded-full"></div>
                             <div className="absolute inset-0 border-2 border-t-[#3BB348] rounded-full animate-spin"></div>
-                            <span className="text-xs font-black font-mono text-[#C8961A]">{stkCountdown}s</span>
+                            <span className="text-xs font-black font-mono text-[#FA9411]">{stkCountdown}s</span>
                           </div>
                           <p className="text-[10px] font-black text-amber-400 uppercase tracking-wider">PIN Prompt sent to {stkPhoneNumber}</p>
                           <p className="text-[9px] text-slate-300 leading-normal max-w-[220px]">
@@ -521,7 +521,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
 
                       {stkPushState === 'verifying' && (
                         <div className="py-4 flex flex-col items-center justify-center text-center space-y-2">
-                          <div className="w-8 h-8 border-2 border-[#C8961A] border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-8 h-8 border-2 border-[#FA9411] border-t-transparent rounded-full animate-spin"></div>
                           <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest animate-pulse">Verifying M-Pesa Receipt...</p>
                           <p className="text-[8px] text-slate-400">Querying Safaricom payment logs for confirmation code...</p>
                         </div>
@@ -577,8 +577,8 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
               {/* Order Sourcing item review lists */}
               <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
                 <div className="flex items-center gap-2 border-b border-slate-50 pb-3">
-                  <ShoppingBag className="text-[#C8961A]" size={16} />
-                  <h3 className="text-xs font-black text-[#0A1628] uppercase tracking-wider">Review Sourcing Items</h3>
+                  <ShoppingBag className="text-[#FA9411]" size={16} />
+                  <h3 className="text-xs font-black text-[#08047D] uppercase tracking-wider">Review Sourcing Items</h3>
                 </div>
 
                 <div className="space-y-2.5 max-h-[250px] overflow-y-auto pr-1">
@@ -589,7 +589,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                           <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.name} />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-[11px] font-black text-[#0A1628] truncate uppercase">{item.name}</h4>
+                          <h4 className="text-[11px] font-black text-[#08047D] truncate uppercase">{item.name}</h4>
                           <p className="text-[9px] text-slate-400 font-extrabold mt-0.5">{formatPrice(item.price)} each</p>
                         </div>
                       </div>
@@ -635,9 +635,9 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                       <span>-{formatPrice(discountAmount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-[11px] font-black uppercase tracking-wider text-[#0A1628] border-t border-slate-50 pt-2">
+                  <div className="flex justify-between text-[11px] font-black uppercase tracking-wider text-[#08047D] border-t border-slate-50 pt-2">
                     <span>Total Order:</span>
-                    <span className="text-[#C8961A] text-xs">{formatPrice(cartTotal)}</span>
+                    <span className="text-[#FA9411] text-xs">{formatPrice(cartTotal)}</span>
                   </div>
                 </div>
               </div>
@@ -660,7 +660,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
         <div className="fixed bottom-0 inset-x-0 bg-white border-t border-slate-150 p-4 z-40 shadow-[0_-8px_24px_rgba(0,0,0,0.06)] flex items-center justify-between gap-4 pb-safe">
           <div>
             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Sourcing Total</span>
-            <span className="text-base font-black text-[#0A1628] tabular-nums block">
+            <span className="text-base font-black text-[#08047D] tabular-nums block">
               {formatPrice(checkoutMethod === 'mpesa' && mpesaPaymentOption === 'deposit' ? Math.round(cartTotal * 0.5) : cartTotal)}
             </span>
             {checkoutMethod === 'mpesa' && mpesaPaymentOption === 'deposit' && (
@@ -694,7 +694,7 @@ export const CheckoutMobileWizard: React.FC<CheckoutMobileWizardProps> = ({
                     appExperience.triggerHaptic('error');
                   }
                 }}
-                className="h-11 px-5.5 bg-gradient-to-r from-[#0A1628] to-[#1C3560] text-white rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-md flex items-center justify-center gap-1"
+                className="h-11 px-5.5 bg-gradient-to-r from-[#08047D] to-[#050259] text-white rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-md flex items-center justify-center gap-1"
               >
                 Next Step <ArrowRight size={11} />
               </button>

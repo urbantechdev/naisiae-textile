@@ -293,7 +293,7 @@ export default function FabricGalleryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#0A1628] pb-12">
+    <div className="min-h-screen bg-[#FDFCFB] font-sans text-[#08047D] pb-12">
       {/* Navbar with central context integrations */}
       <Navbar 
         wishlistCount={wishlistCount}
@@ -309,8 +309,8 @@ export default function FabricGalleryPage() {
       {/* Hero Header with Naisiae Signature Typography */}
       <section className="pt-24 pb-12 px-6">
         <div className="max-w-[1440px] mx-auto text-center">
-          <h1 className="font-display text-6xl md:text-[8rem] text-[#0A1628] leading-[0.8] tracking-tighter mb-8 uppercase italic">
-            Textile <span className="text-white/0 stroke-text font-black" style={{ WebkitTextStroke: '2px #0A1628' }}>Gallery</span>
+          <h1 className="font-display text-6xl md:text-[8rem] text-[#08047D] leading-[0.8] tracking-tighter mb-8 uppercase italic">
+            Textile <span className="text-white/0 stroke-text font-black" style={{ WebkitTextStroke: '2px #08047D' }}>Gallery</span>
           </h1>
           <p className="text-slate-400 max-w-2xl mx-auto text-xs md:text-sm uppercase font-black tracking-[4px] leading-relaxed">
             Explore Uhuru Market's physical raw materials. Use our virtual macro lens to inspect composition, weave architecture, and playground durability ratings.
@@ -327,10 +327,10 @@ export default function FabricGalleryPage() {
           {/* Controls Bento Panel */}
           <div className="bg-white rounded-[2.5rem] border border-slate-200/85 p-6 md:p-8 shadow-sm space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#0A1628]/5 flex items-center justify-center text-[#0A1628]">
+              <div className="w-8 h-8 rounded-full bg-[#08047D]/5 flex items-center justify-center text-[#08047D]">
                 <Sliders size={16} />
               </div>
-              <h2 className="text-sm font-black uppercase tracking-[2.5px] text-[#0A1628]">Textile Filters</h2>
+              <h2 className="text-sm font-black uppercase tracking-[2.5px] text-[#08047D]">Textile Filters</h2>
             </div>
 
             {/* Filter 1: Blend / Textile Type */}
@@ -354,8 +354,8 @@ export default function FabricGalleryPage() {
                     }}
                     className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all border ${
                       activeFilter === item.id 
-                        ? 'bg-[#0A1628] text-white border-[#0A1628]' 
-                        : 'bg-slate-50 text-slate-500 hover:text-[#0A1628] border-slate-200'
+                        ? 'bg-[#08047D] text-white border-[#08047D]' 
+                        : 'bg-slate-50 text-slate-500 hover:text-[#08047D] border-slate-200'
                     }`}
                   >
                     {item.label}
@@ -383,8 +383,8 @@ export default function FabricGalleryPage() {
                     }}
                     className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all border ${
                       activeSuitability === item.id 
-                        ? 'bg-[#C8102E] text-white border-[#C8102E]' 
-                        : 'bg-slate-50 text-slate-500 hover:text-[#C8102E] border-slate-200'
+                        ? 'bg-[#08047D] text-white border-[#08047D]' 
+                        : 'bg-slate-50 text-slate-500 hover:text-[#08047D] border-slate-200'
                     }`}
                   >
                     {item.label}
@@ -411,8 +411,8 @@ export default function FabricGalleryPage() {
                     }}
                     className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all border ${
                       weightFilter === item.id 
-                        ? 'bg-[#C8961A] text-white border-[#C8961A]' 
-                        : 'bg-slate-50 text-slate-500 hover:text-[#C8961A] border-slate-200'
+                        ? 'bg-[#FA9411] text-white border-[#FA9411]' 
+                        : 'bg-slate-50 text-slate-500 hover:text-[#FA9411] border-slate-200'
                     }`}
                   >
                     {item.label}
@@ -439,7 +439,7 @@ export default function FabricGalleryPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between px-2">
               <span className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Available Samples ({filteredSamples.length})</span>
-              <span className="text-[9px] font-bold text-[#C8961A] uppercase tracking-widest">Naisiae Certified Standards</span>
+              <span className="text-[9px] font-bold text-[#FA9411] uppercase tracking-widest">Naisiae Certified Standards</span>
             </div>
 
             {filteredSamples.length === 0 ? (
@@ -461,8 +461,8 @@ export default function FabricGalleryPage() {
                     }}
                     className={`group p-4 bg-white border rounded-3xl transition-all cursor-pointer flex items-center gap-4 ${
                       selectedFabric.id === sample.id 
-                        ? 'ring-2 ring-[#0A1628] border-transparent shadow-md' 
-                        : 'border-slate-200 hover:border-[#0A1628]/40 shadow-sm'
+                        ? 'ring-2 ring-[#08047D] border-transparent shadow-md' 
+                        : 'border-slate-200 hover:border-[#08047D]/40 shadow-sm'
                     }`}
                   >
                     {/* Small Texture Crop */}
@@ -473,14 +473,14 @@ export default function FabricGalleryPage() {
                         className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" 
                         referrerPolicy="no-referrer"
                       />
-                      <div className="absolute inset-0 bg-[#0A1628]/5 mix-blend-multiply"></div>
+                      <div className="absolute inset-0 bg-[#08047D]/5 mix-blend-multiply"></div>
                     </div>
 
                     {/* Metadata summary */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-xs font-black text-[#0A1628] uppercase truncate group-hover:text-[#C8102E] transition-colors tracking-wide">{sample.name}</h3>
-                        <span className="text-[8px] font-black text-[#C8961A] uppercase shrink-0 bg-[#C8961A]/10 px-2 py-0.5 rounded-full tracking-wider">{sample.gsm} GSM</span>
+                        <h3 className="text-xs font-black text-[#08047D] uppercase truncate group-hover:text-[#08047D] transition-colors tracking-wide">{sample.name}</h3>
+                        <span className="text-[8px] font-black text-[#FA9411] uppercase shrink-0 bg-[#FA9411]/10 px-2 py-0.5 rounded-full tracking-wider">{sample.gsm} GSM</span>
                       </div>
                       <p className="text-[10px] text-slate-400 font-bold truncate mt-1 leading-snug">{sample.typeName}</p>
                       <div className="flex flex-wrap gap-1.5 mt-2">
@@ -508,17 +508,17 @@ export default function FabricGalleryPage() {
           <div className="bg-white rounded-[3.5rem] border border-slate-200/85 overflow-hidden shadow-sm relative">
             
             {/* Signature Top Accent */}
-            <div className="h-1.5 bg-gradient-to-r from-[#C8102E] via-[#E94C36] to-[#C8961A]" />
+            <div className="h-1.5 bg-gradient-to-r from-[#08047D] via-[#E94C36] to-[#FA9411]" />
             
             {/* Header Details */}
             <div className="p-8 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <span className="text-[9px] font-black text-[#C8961A] uppercase tracking-[3px]">{selectedFabric.typeName}</span>
-                <h2 className="font-display text-3xl font-black text-[#0A1628] uppercase tracking-tight mt-1">{selectedFabric.name}</h2>
+                <span className="text-[9px] font-black text-[#FA9411] uppercase tracking-[3px]">{selectedFabric.typeName}</span>
+                <h2 className="font-display text-3xl font-black text-[#08047D] uppercase tracking-tight mt-1">{selectedFabric.name}</h2>
               </div>
               <button
                 onClick={() => handleRequestSwatch(selectedFabric)}
-                className="self-start md:self-auto bg-[#0A1628] hover:bg-[#C8102E] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg shadow-[#0A1628]/10 active:scale-95"
+                className="self-start md:self-auto bg-[#08047D] hover:bg-[#08047D] text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] transition-all flex items-center gap-2 shadow-lg shadow-[#08047D]/10 active:scale-95"
               >
                 <Plus size={14} /> Request Free Swatch
               </button>
@@ -563,7 +563,7 @@ export default function FabricGalleryPage() {
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
-                        className="absolute w-24 h-24 rounded-full border-2 border-[#C8961A] bg-white shadow-2xl z-20 pointer-events-none overflow-hidden"
+                        className="absolute w-24 h-24 rounded-full border-2 border-[#FA9411] bg-white shadow-2xl z-20 pointer-events-none overflow-hidden"
                         style={{
                           left: `${loupePos.x}%`,
                           top: `${loupePos.y}%`,
@@ -613,7 +613,7 @@ export default function FabricGalleryPage() {
                         key={idx}
                         onClick={() => setSelectedColorIndex(idx)}
                         className={`w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center relative ${
-                          selectedColorIndex === idx ? 'border-[#0A1628] scale-110 shadow-md' : 'border-slate-200 hover:border-slate-400'
+                          selectedColorIndex === idx ? 'border-[#08047D] scale-110 shadow-md' : 'border-slate-200 hover:border-slate-400'
                         }`}
                         title={color.name}
                       >
@@ -675,15 +675,15 @@ export default function FabricGalleryPage() {
                 <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 grid grid-cols-2 gap-4 text-[10px] font-semibold text-slate-600">
                   <div>
                     <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Raw Composition</p>
-                    <p className="text-[#0A1628] font-bold uppercase tracking-wider">{selectedFabric.composition}</p>
+                    <p className="text-[#08047D] font-bold uppercase tracking-wider">{selectedFabric.composition}</p>
                   </div>
                   <div>
                     <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Standard Cut Width</p>
-                    <p className="text-[#0A1628] font-bold uppercase tracking-wider">{selectedFabric.width}</p>
+                    <p className="text-[#08047D] font-bold uppercase tracking-wider">{selectedFabric.width}</p>
                   </div>
                   <div className="col-span-2 pt-2 border-t border-slate-200/50">
                     <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Loom Weave Pattern</p>
-                    <p className="text-[#0A1628] font-bold uppercase tracking-wider">{selectedFabric.weaveType}</p>
+                    <p className="text-[#08047D] font-bold uppercase tracking-wider">{selectedFabric.weaveType}</p>
                   </div>
                 </div>
 
@@ -712,7 +712,7 @@ export default function FabricGalleryPage() {
                       setMicroscopeMode('texture');
                     }}
                     className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all ${
-                      microscopeMode === 'texture' ? 'bg-[#00C4CC] text-[#0E121C]' : 'text-slate-400 hover:text-white'
+                      microscopeMode === 'texture' ? 'bg-[#00C4CC] text-[#04023D]' : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     High-Res Scan
@@ -724,7 +724,7 @@ export default function FabricGalleryPage() {
                       if (zoomLevel < 12) setZoomLevel(15); // Auto zoom in to see threads
                     }}
                     className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all ${
-                      microscopeMode === 'threads' ? 'bg-[#00C4CC] text-[#0E121C]' : 'text-slate-400 hover:text-white'
+                      microscopeMode === 'threads' ? 'bg-[#00C4CC] text-[#04023D]' : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     Fiber Grid
@@ -784,7 +784,7 @@ export default function FabricGalleryPage() {
                         <linearGradient id="tinted-fiber" x1="0%" y1="0%" x2="100%" y2="0%">
                           <stop offset="0%" stopColor="#1C2833" />
                           <stop offset="40%" stopColor={selectedFabric.colors[selectedColorIndex]?.hex || '#AED6F1'} />
-                          <stop offset="100%" stopColor="#0E121C" />
+                          <stop offset="100%" stopColor="#04023D" />
                         </linearGradient>
                       </defs>
 
@@ -926,12 +926,12 @@ export default function FabricGalleryPage() {
               {/* Suitability guidelines */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-slate-700">
-                  <Layers size={14} className="text-[#C8961A]" />
+                  <Layers size={14} className="text-[#FA9411]" />
                   <h4 className="text-[10px] font-black uppercase tracking-[2px]">Institution Suitability & Compliances</h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {selectedFabric.suitability.map((suit, index) => (
-                    <span key={index} className="px-3 py-1.5 bg-white border border-slate-200 text-[#0A1628] font-bold text-[9px] uppercase tracking-widest rounded-xl shadow-sm">
+                    <span key={index} className="px-3 py-1.5 bg-white border border-slate-200 text-[#08047D] font-bold text-[9px] uppercase tracking-widest rounded-xl shadow-sm">
                       ✓ {suit}
                     </span>
                   ))}
@@ -944,13 +944,13 @@ export default function FabricGalleryPage() {
               {/* Maintenance instructions */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-slate-700">
-                  <Info size={14} className="text-[#C8102E]" />
+                  <Info size={14} className="text-[#08047D]" />
                   <h4 className="text-[10px] font-black uppercase tracking-[2px]">Loom Maintenance & Lifespan Rules</h4>
                 </div>
                 <ul className="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-wide">
                   {selectedFabric.careInstructions.map((instruction, index) => (
                     <li key={index} className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#C8102E]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#08047D]" />
                       {instruction}
                     </li>
                   ))}
@@ -962,11 +962,11 @@ export default function FabricGalleryPage() {
           </div>
 
           {/* Sourcing Call To Action block */}
-          <div className="p-8 bg-gradient-to-r from-[#0E121C] to-[#1F2937] text-white rounded-[3.5rem] border border-white/5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#C8961A]/10 to-transparent rounded-full pointer-events-none" />
+          <div className="p-8 bg-[#04023D] text-white rounded-[3.5rem] border border-white/5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FA9411]/10 to-transparent rounded-full pointer-events-none" />
             
             <div className="space-y-2 max-w-lg relative z-10">
-              <span className="text-[8px] font-black text-[#C8961A] uppercase tracking-[3px]">Institutional Orders</span>
+              <span className="text-[8px] font-black text-[#FA9411] uppercase tracking-[3px]">Institutional Orders</span>
               <h3 className="font-display text-2xl font-black uppercase tracking-wide">Custom Dyed Batches & Tenders</h3>
               <p className="text-slate-400 text-xs font-semibold leading-relaxed">
                 Need a specific fabric colorway or a high-volume custom knit pattern? Visit our Nairobi workshop along Jogoo Road or request a bulk manufacturing estimate. Min. 50 units.
@@ -978,7 +978,7 @@ export default function FabricGalleryPage() {
                 appExperience.triggerFeedback('success');
                 setIsQuoteModalOpen(true);
               }}
-              className="bg-gradient-to-r from-[#C8102E] to-[#C8961A] text-white hover:shadow-[0_4px_25px_rgba(200,16,46,0.4)] px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all shrink-0 self-start md:self-auto active:scale-95"
+              className="bg-gradient-to-r from-[#08047D] to-[#FA9411] text-white hover:shadow-[0_4px_25px_rgba(200,16,46,0.4)] px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all shrink-0 self-start md:self-auto active:scale-95"
             >
               Enquire About Fabric Dyeing
             </button>

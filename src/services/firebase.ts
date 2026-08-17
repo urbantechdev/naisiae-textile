@@ -15,9 +15,9 @@ if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey === "REPL
       const root = document.getElementById('root');
       if (root && root.innerHTML.includes('Uhuru Market')) {
         root.innerHTML = `
-          <div style="min-height: 100vh; background: #0A1628; color: white; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; font-family: sans-serif;">
+          <div style="min-height: 100vh; background: #08047D; color: white; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; font-family: sans-serif;">
             <div>
-              <h1 style="color: #C8102E;">Configuration Error</h1>
+              <h1 style="color: #08047D;">Configuration Error</h1>
               <p>Firebase credentials not found. If this is a fresh Vercel deployment, ensure you have synced your project secrets.</p>
             </div>
           </div>

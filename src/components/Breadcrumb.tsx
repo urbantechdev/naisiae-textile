@@ -124,7 +124,7 @@ export function Breadcrumb() {
         <Link 
           to="/" 
           id="breadcrumb-home-link"
-          className="flex items-center gap-1 hover:text-[#C8961A] transition-colors py-0.5"
+          className="flex items-center gap-1 hover:text-[#FA9411] transition-colors py-0.5"
         >
           <Home size={14} className="shrink-0" />
           <span>Home</span>
@@ -137,14 +137,14 @@ export function Breadcrumb() {
             <React.Fragment key={item.path}>
               <ChevronRight size={12} className="text-white/20 shrink-0" />
               {isLast ? (
-                <span id={`breadcrumb-leaf-${index}`} className="text-[#C8961A] font-black truncate max-w-[200px] md:max-w-xs">
+                <span id={`breadcrumb-leaf-${index}`} className="text-[#FA9411] font-black truncate max-w-[200px] md:max-w-xs">
                   {item.name}
                 </span>
               ) : (
                 <Link 
                   to={item.path} 
                   id={`breadcrumb-link-${index}`}
-                  className="hover:text-[#C8961A] transition-colors truncate max-w-[200px]"
+                  className="hover:text-[#FA9411] transition-colors truncate max-w-[200px]"
                 >
                   {item.name}
                 </Link>

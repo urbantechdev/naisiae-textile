@@ -162,7 +162,7 @@ export default function BlogPage() {
   };
 
   return (
-    <div id="blog-root-container" className="min-h-screen bg-[#0E121C] text-white flex flex-col font-sans">
+    <div id="blog-root-container" className="min-h-screen bg-[#04023D] text-white flex flex-col font-sans">
       <Navbar 
         wishlistCount={wishlistCount}
         setIsWishlistOpen={setIsWishlistOpen}
@@ -206,11 +206,11 @@ export default function BlogPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-4 text-white/50 text-xs font-mono">
-                <span className="bg-[#C8961A]/10 text-[#C8961A] border border-[#C8961A]/20 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest">
+                <span className="bg-[#FA9411]/10 text-[#FA9411] border border-[#FA9411]/20 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest">
                   {selectedPost.category}
                 </span>
-                <span className="flex items-center gap-1.5"><Calendar size={12} className="text-[#C8102E]" /> {selectedPost.date}</span>
-                <span className="flex items-center gap-1.5"><Clock size={12} className="text-[#C8961A]" /> {selectedPost.readTime}</span>
+                <span className="flex items-center gap-1.5"><Calendar size={12} className="text-[#08047D]" /> {selectedPost.date}</span>
+                <span className="flex items-center gap-1.5"><Clock size={12} className="text-[#FA9411]" /> {selectedPost.readTime}</span>
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-black uppercase leading-tight md:leading-none tracking-tight text-white pr-6">
@@ -226,7 +226,7 @@ export default function BlogPage() {
                 </div>
                 <button
                   onClick={() => handleShare(selectedPost)}
-                  className="flex items-center gap-2 text-white/60 hover:text-[#C8961A] text-xs font-mono bg-white/5 hover:bg-white/10 px-4 py-2 border border-white/5 transition-all rounded-xl"
+                  className="flex items-center gap-2 text-white/60 hover:text-[#FA9411] text-xs font-mono bg-white/5 hover:bg-white/10 px-4 py-2 border border-white/5 transition-all rounded-xl"
                 >
                   <Share2 size={12} /> Share Article
                 </button>
@@ -238,7 +238,7 @@ export default function BlogPage() {
               {selectedPost.content.split('\n\n').map((para, idx) => {
                 if (para.startsWith('###')) {
                   return (
-                    <h3 key={idx} className="text-lg md:text-xl font-black uppercase tracking-wider text-[#C8961A] pt-4">
+                    <h3 key={idx} className="text-lg md:text-xl font-black uppercase tracking-wider text-[#FA9411] pt-4">
                       {para.replace('###', '').trim()}
                     </h3>
                   );
@@ -269,14 +269,14 @@ export default function BlogPage() {
             className="flex flex-col flex-1"
           >
             {/* Header section */}
-            <section className="relative overflow-hidden pt-36 pb-20 bg-gradient-to-b from-[#162032] to-[#0E121C] border-b border-white/5">
-              <div className="absolute inset-0 bg-[#0E121C]/40 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(199,16,46,0.15),transparent_80%)]"></div>
+            <section className="relative overflow-hidden pt-36 pb-20 bg-gradient-to-b from-[#162032] to-[#04023D] border-b border-white/5">
+              <div className="absolute inset-0 bg-[#04023D]/40 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(199,16,46,0.15),transparent_80%)]"></div>
               <div className="relative max-w-7xl mx-auto px-6 text-center">
-                <span className="text-[#C8961A] text-xs font-black uppercase tracking-[4px] bg-[#C8961A]/10 px-4 py-1.5 rounded-full inline-block mb-4 border border-[#C8961A]/20">
+                <span className="text-[#FA9411] text-xs font-black uppercase tracking-[4px] bg-[#FA9411]/10 px-4 py-1.5 rounded-full inline-block mb-4 border border-[#FA9411]/20">
                   Naisiae Sync Protocols
                 </span>
                 <h1 className="text-4xl md:text-5xl lg:text-7xl uppercase font-display font-black tracking-tighter text-white mb-6">
-                  Logbook <span className="font-sans text-[#C8102E] font-medium tracking-normal lowercase italic">& guides</span>
+                  Logbook <span className="font-sans text-[#08047D] font-medium tracking-normal lowercase italic">& guides</span>
                 </h1>
                 <p className="max-w-2xl mx-auto text-white/70 text-base md:text-lg font-light leading-relaxed">
                   Industrial sourcing recommendations, fabric specification breakdowns, and guides for Kenyan school boards, clinics, and businesses.
@@ -293,7 +293,7 @@ export default function BlogPage() {
                     onClick={() => setActiveCategory(cat)}
                     className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-all duration-300 ${
                       activeCategory === cat
-                        ? 'bg-[#C8102E] text-white border-[#C8102E] shadow-md scale-105'
+                        ? 'bg-[#08047D] text-white border-[#08047D] shadow-md scale-105'
                         : 'bg-white/5 text-white/50 border-white/5 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -321,7 +321,7 @@ export default function BlogPage() {
                         width={400}
                         height={250}
                       />
-                      <span className="absolute bottom-4 left-4 bg-[#0E121C]/90 text-[#C8961A] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded bg-slate-900 border border-white/10">
+                      <span className="absolute bottom-4 left-4 bg-[#04023D]/90 text-[#FA9411] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded bg-slate-900 border border-white/10">
                         {post.category}
                       </span>
                     </div>
@@ -329,11 +329,11 @@ export default function BlogPage() {
                     {/* Meta info */}
                     <div className="p-8 flex flex-col flex-1 text-left space-y-4">
                       <div className="flex items-center gap-4 text-white/40 text-[10px] font-mono leading-none">
-                        <span className="flex items-center gap-1"><Calendar size={10} className="text-[#C8102E]" /> {post.date}</span>
-                        <span className="flex items-center gap-1"><Clock size={10} className="text-[#C8961A]" /> {post.readTime}</span>
+                        <span className="flex items-center gap-1"><Calendar size={10} className="text-[#08047D]" /> {post.date}</span>
+                        <span className="flex items-center gap-1"><Clock size={10} className="text-[#FA9411]" /> {post.readTime}</span>
                       </div>
 
-                      <h3 className="text-lg font-black uppercase leading-tight tracking-wide text-white group-hover:text-[#C8961A] transition-colors line-clamp-2 md:min-h-[44px]">
+                      <h3 className="text-lg font-black uppercase leading-tight tracking-wide text-white group-hover:text-[#FA9411] transition-colors line-clamp-2 md:min-h-[44px]">
                         {post.title}
                       </h3>
 
@@ -349,11 +349,11 @@ export default function BlogPage() {
                           }}
                           className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white font-black uppercase tracking-wider group/link font-mono cursor-pointer transition-colors"
                         >
-                          Read Post <ArrowRight size={14} className="text-[#C8102E] group-hover/link:translate-x-1.5 transition-transform" />
+                          Read Post <ArrowRight size={14} className="text-[#08047D] group-hover/link:translate-x-1.5 transition-transform" />
                         </button>
                         <button
                           onClick={() => handleShare(post)}
-                          className="text-white/30 hover:text-[#C8961A] transition-colors p-1"
+                          className="text-white/30 hover:text-[#FA9411] transition-colors p-1"
                         >
                           <Share2 size={14} />
                         </button>
@@ -374,7 +374,7 @@ export default function BlogPage() {
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 20, x: '-50%' }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-[#C8961A] text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-xs font-black uppercase tracking-widest flex items-center gap-3 border border-white/15"
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-[#FA9411] text-white px-6 py-4 rounded-xl shadow-2xl z-50 text-xs font-black uppercase tracking-widest flex items-center gap-3 border border-white/15"
           >
             <BookOpen size={16} /> {toastMessage}
           </motion.div>

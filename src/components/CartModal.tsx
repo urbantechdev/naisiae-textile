@@ -53,7 +53,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-[#0A1628]/80 backdrop-blur-md"
+            className="absolute inset-0 bg-[#08047D]/80 backdrop-blur-md"
             onClick={onClose}
           />
 
@@ -69,11 +69,11 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
               {/* Header Interface */}
               <div className="p-4 sm:p-8 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
                 <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#0A1628] rounded-xl sm:rounded-2xl flex items-center justify-center text-[#C8961A]">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#08047D] rounded-xl sm:rounded-2xl flex items-center justify-center text-[#FA9411]">
                     <ShoppingBag size={18} className="sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <h2 className="text-xs sm:text-sm font-black uppercase tracking-[2px] sm:tracking-[3px] text-[#0A1628]">Your Cart</h2>
+                    <h2 className="text-xs sm:text-sm font-black uppercase tracking-[2px] sm:tracking-[3px] text-[#08047D]">Your Cart</h2>
                     <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
                       {cart.length} {cart.length === 1 ? 'Item' : 'Items'} Selected
                     </p>
@@ -93,7 +93,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                 <div className="px-4 sm:px-8 py-3 sm:py-4 bg-slate-50 border-b border-slate-100">
                   <div className="flex items-center justify-between mb-1.5 sm:mb-2">
                     <div className="flex items-center gap-2">
-                      <Truck size={13} className={remainingForFreeShipping === 0 ? 'text-green-500' : 'text-[#C8961A]'} />
+                      <Truck size={13} className={remainingForFreeShipping === 0 ? 'text-green-500' : 'text-[#FA9411]'} />
                       <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-700">
                         {remainingForFreeShipping === 0 
                           ? 'You qualify for Free Shipping!' 
@@ -106,7 +106,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${progressToFreeShipping}%` }}
-                      className={`h-full rounded-full transition-all duration-1000 ${remainingForFreeShipping === 0 ? 'bg-green-500' : 'bg-[#C8961A]'}`}
+                      className={`h-full rounded-full transition-all duration-1000 ${remainingForFreeShipping === 0 ? 'bg-green-500' : 'bg-[#FA9411]'}`}
                     />
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                         onClose();
                         navigate('/products');
                       }}
-                      className="px-6 py-3 sm:px-8 sm:py-4 bg-[#0A1628] text-white rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[10px] uppercase tracking-[2px] sm:tracking-[3px] hover:bg-[#C8102E] transition-all shadow-xl shadow-[#0A1628]/10 active:scale-95"
+                      className="px-6 py-3 sm:px-8 sm:py-4 bg-[#08047D] text-white rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[10px] uppercase tracking-[2px] sm:tracking-[3px] hover:bg-[#08047D] transition-all shadow-xl shadow-[#08047D]/10 active:scale-95"
                     >
                       Shop Featured Collection
                     </button>
@@ -146,7 +146,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex gap-3.5 sm:gap-5 p-3.5 sm:p-5 bg-white rounded-2xl sm:rounded-[2rem] border border-slate-100 relative group transition-all hover:border-[#C8961A]/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]"
+                        className="flex gap-3.5 sm:gap-5 p-3.5 sm:p-5 bg-white rounded-2xl sm:rounded-[2rem] border border-slate-100 relative group transition-all hover:border-[#FA9411]/30 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]"
                       >
                         {/* Product Thumbnail Asset */}
                         <div className="w-16 h-16 sm:w-24 sm:h-24 bg-slate-50 rounded-xl sm:rounded-[1.2rem] overflow-hidden border border-slate-100 shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
@@ -161,12 +161,12 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                         {/* Content Management Blocks */}
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                           <div className="space-y-1">
-                            <h4 className="text-[11px] sm:text-xs font-black uppercase tracking-wide text-[#0A1628] truncate pr-8 group-hover:text-[#C8102E] transition-colors">
+                            <h4 className="text-[11px] sm:text-xs font-black uppercase tracking-wide text-[#08047D] truncate pr-8 group-hover:text-[#08047D] transition-colors">
                               {item.name}
                             </h4>
                             <div className="flex flex-wrap gap-1 sm:gap-2">
                               {item.selectedVariants && Object.entries(item.selectedVariants).map(([type, value]) => (
-                                <span key={type} className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-[#C8961A] bg-[#C8961A]/5 px-1.5 sm:px-2 py-0.5 rounded-full border border-[#C8961A]/10">
+                                <span key={type} className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-[#FA9411] bg-[#FA9411]/5 px-1.5 sm:px-2 py-0.5 rounded-full border border-[#FA9411]/10">
                                   {type}: {value}
                                 </span>
                               ))}
@@ -178,7 +178,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                             {/* Logo Customization details inside Shopping Cart */}
                             {item.brandingType && (
                               <div className="pt-1.5 flex flex-col gap-1 border-t border-slate-50 mt-1">
-                                <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-[#C8961A] flex items-center gap-1">
+                                <span className="text-[7.5px] sm:text-[8px] font-black uppercase tracking-wider text-[#FA9411] flex items-center gap-1">
                                   🪡 {item.brandingType} ({item.brandingPosition})
                                 </span>
                                 {item.customLogoUrl && (
@@ -205,17 +205,17 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                               >
                                 <Minus size={9} />
                               </button>
-                              <span className="px-2 sm:px-3 text-[10px] sm:text-[11px] font-black text-[#0A1628] tabular-nums min-w-[20px] text-center">{item.quantity}</span>
+                              <span className="px-2 sm:px-3 text-[10px] sm:text-[11px] font-black text-[#08047D] tabular-nums min-w-[20px] text-center">{item.quantity}</span>
                               <button 
                                 onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedVariants)} 
-                                className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-400 hover:text-[#C8961A] transition-all"
+                                className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-md hover:bg-white text-slate-400 hover:text-[#FA9411] transition-all"
                                 aria-label="Increase Quantity"
                               >
                                 <Plus size={9} />
                               </button>
                             </div>
                             
-                            <span className="text-xs font-black text-[#0A1628] tabular-nums">
+                            <span className="text-xs font-black text-[#08047D] tabular-nums">
                               {formatPrice(item.price * item.quantity)}
                             </span>
                           </div>
@@ -236,7 +236,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                     <div className="pt-3.5 border-t border-slate-50">
                       {!appliedPromo ? (
                         <form onSubmit={handleApplyPromo} className="relative group">
-                          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#C8961A] transition-colors">
+                          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FA9411] transition-colors">
                             <Tag size={13} />
                           </div>
                           <input 
@@ -244,11 +244,11 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                             placeholder="Enter Promo Code (e.g. UHURU10)" 
                             value={promoInput}
                             onChange={(e) => setPromoInput(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl py-3.5 pl-9.5 pr-20 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider focus:bg-white focus:border-[#C8961A]/30 focus:ring-4 focus:ring-[#C8961A]/5 outline-none transition-all placeholder:text-slate-300"
+                            className="w-full bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl py-3.5 pl-9.5 pr-20 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider focus:bg-white focus:border-[#FA9411]/30 focus:ring-4 focus:ring-[#FA9411]/5 outline-none transition-all placeholder:text-slate-300"
                           />
                           <button 
                             type="submit"
-                            className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0A1628] text-white rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest hover:bg-[#C8102E] transition-all active:scale-95 shadow-lg shadow-[#0A1628]/10"
+                            className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#08047D] text-white rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest hover:bg-[#08047D] transition-all active:scale-95 shadow-lg shadow-[#08047D]/10"
                           >
                             Apply
                           </button>
@@ -308,8 +308,8 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                     </div>
                     <div className="h-[1px] w-full bg-slate-100"></div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] sm:text-[11px] font-black text-[#0A1628] uppercase tracking-[1.5px] sm:tracking-[2px]">Total Payable</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0A1628] tracking-tight tabular-nums">
+                      <span className="text-[10px] sm:text-[11px] font-black text-[#08047D] uppercase tracking-[1.5px] sm:tracking-[2px]">Total Payable</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#08047D] tracking-tight tabular-nums">
                         {formatPrice(cartTotal)}
                       </span>
                     </div>
@@ -321,17 +321,17 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                         onClose();
                         navigate('/checkout');
                       }}
-                      className="w-full flex items-center justify-center gap-3 sm:gap-4 py-4 sm:py-5 bg-[#0A1628] text-white rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] hover:bg-[#C8102E] transition-all shadow-2xl shadow-[#0A1628]/20 group active:scale-[0.98]"
+                      className="w-full flex items-center justify-center gap-3 sm:gap-4 py-4 sm:py-5 bg-[#08047D] text-white rounded-xl sm:rounded-2xl font-black text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] hover:bg-[#08047D] transition-all shadow-2xl shadow-[#08047D]/20 group active:scale-[0.98]"
                     >
                       Initialize Secure Checkout 
-                      <div className="p-0.5 sm:p-1 bg-white/10 rounded group-hover:bg-white group-hover:text-[#C8102E] transition-all">
+                      <div className="p-0.5 sm:p-1 bg-white/10 rounded group-hover:bg-white group-hover:text-[#08047D] transition-all">
                         <ArrowRight size={11} className="sm:w-3 sm:h-3" />
                       </div>
                     </button>
                     
                     <button 
                       onClick={onClose}
-                      className="w-full py-3 text-slate-400 font-black text-[8px] sm:text-[9px] uppercase tracking-[2px] sm:tracking-[3px] hover:text-[#0A1628] transition-colors"
+                      className="w-full py-3 text-slate-400 font-black text-[8px] sm:text-[9px] uppercase tracking-[2px] sm:tracking-[3px] hover:text-[#08047D] transition-colors"
                     >
                       ← Continue Sourcing Fabrics
                     </button>
