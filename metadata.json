@@ -1,6 +1,6 @@
 {
-  "name": "Uhuru Market Uniforms",
-  "description": "Naisiae Textiles operates as the ultimate school uniform supplier and school uniform manufacturer located directly at Uhuru Market along Jogoo Road, Nairobi.",
+  "name": "Naisiae ERP - School Uniforms & Multi-Branch Enterprise Management",
+  "description": "Secure, multi-branch ERP system for Naisia Textiles featuring real-time inventory synchronization, POS, quotations, invoices, receipts, KRA eTIMS tax compliance, and financial management.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["Firebase Integration", "Admin Dashboard", "Analytics", "E-commerce", "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
