@@ -185,7 +185,17 @@ service cloud.firestore {
     }
 
     match /quotes/{id} {
-      allow create: if isValidQuote(incoming());
+      allow create: if true;
+      allow read, write: if isAdmin();
+    }
+
+    match /orders/{id} {
+      allow create: if true;
+      allow read, write: if isAdmin();
+    }
+
+    match /pos_orders/{id} {
+      allow create: if true;
       allow read, write: if isAdmin();
     }
 

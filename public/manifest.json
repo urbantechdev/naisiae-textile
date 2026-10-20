@@ -1,0 +1,27 @@
+{
+  "name": "Naisiae Textiles POS & Catalog",
+  "short_name": "Naisiae POS",
+  "description": "Naisiae Textiles official School Uniform & Garment POS system at Uhuru Market, Nairobi.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#08047D",
+  "theme_color": "#08047D",
+  "categories": ["business", "shopping", "productivity"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
