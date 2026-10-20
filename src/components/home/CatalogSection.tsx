@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare, Filter, SlidersHorizontal, Star, ShoppingCart, Check, Eye } from 'lucide-react';
+import { Search, ChevronRight, Heart, Package, X, Phone, MessageSquare, Star, ShoppingCart, Check, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalization } from '../../context/LocalizationContext';
 import { LazyImage } from '../LazyImage';
@@ -50,12 +50,8 @@ export function CatalogSection({
   const { formatPrice } = useLocalization();
   const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   
-  // Local E-commerce filter states
-  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
-  const [selectedSizeFilter, setSelectedSizeFilter] = useState<string | null>(null);
-  const [selectedMaterialFilter, setSelectedMaterialFilter] = useState<string | null>(null);
+  // Local E-commerce sort & selection states
   const [sortBy, setSortBy] = useState<string>('featured');
-  const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Card Variant selections stored by product ID
@@ -118,28 +114,11 @@ export function CatalogSection({
     ];
   };
 
-  // Client-side Filter, Sort and Selection pipeline
+  // Client-side Sort and Selection pipeline
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...displayProducts];
 
-    // 1. Price Range filter
-    if (selectedPriceRange !== 'all') {
-      result = result.filter(p => {
-        if (selectedPriceRange === 'under1000') return p.price < 1000;
-        if (selectedPriceRange === '1000to2500') return p.price >= 1000 && p.price <= 2500;
-        if (selectedPriceRange === 'above2500') return p.price > 2500;
-        return true;
-      });
-    }
-
-    // 2. Material/Fabric property tag filter
-    if (selectedMaterialFilter) {
-      result = result.filter(p => 
-        p.tags?.some((t: string) => t.toLowerCase().includes(selectedMaterialFilter.toLowerCase()))
-      );
-    }
-
-    // 3. Sorting pipeline
+    // Sorting pipeline
     if (sortBy === 'priceAsc') {
       result.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'priceDesc') {
@@ -159,7 +138,7 @@ export function CatalogSection({
     }
 
     return result;
-  }, [displayProducts, selectedPriceRange, selectedMaterialFilter, sortBy]);
+  }, [displayProducts, sortBy]);
 
   // Quick action adding to shopping cart with micro-toast notice
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
@@ -211,63 +190,24 @@ export function CatalogSection({
             <div className="w-7 h-0.5 bg-[#FA9411]"></div> Retail Storefront
           </div>
           <h2 className="font-display text-4xl sm:text-5xl tracking-tight leading-none text-[#04023D]">
-            {activeTab === 'all' ? 'Quality Uniform Shop' : `${activeTab}`}
+            Quality Uniform Shop
           </h2>
-          
-          {/* Main Category Filter Horizontal Bar */}
-          <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-4 overflow-x-auto pb-2 hide-scrollbar">
-            {['all', 'School Uniforms', 'College Wear', 'Corporate Wear', 'Sports Kits'].map((tab, idx) => {
-              const isSelected = activeTab.toLowerCase() === tab.toLowerCase();
-              return (
-                <button
-                  key={`${tab}-${idx}`}
-                  onClick={() => {
-                     setActiveTab(tab);
-                     setActiveSubCategory(null);
-                  }}
-                  className={`whitespace-nowrap text-xs font-black uppercase tracking-[2px] px-4 py-2 rounded-xl transition-all ${
-                    isSelected 
-                      ? 'bg-[#08047D] text-white shadow-lg' 
-                      : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300'
-                  }`}
-                >
-                  {tab === 'all' ? 'All Uniforms' : tab}
-                </button>
-              );
-            })}
-          </div>
-
-          {activeTab === 'School Uniforms' && uniformSubCategories.length > 0 && (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setActiveSubCategory(null)}
-                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
-                  !activeSubCategory 
-                    ? 'bg-[#08047D] text-white border-transparent' 
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                All School Uniforms
-              </button>
-              {uniformSubCategories.map((subCat, idx) => (
-                <button
-                  key={`${subCat}-${idx}`}
-                  onClick={() => setActiveSubCategory(activeSubCategory === subCat ? null : subCat)}
-                  className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all border shrink-0 ${
-                    activeSubCategory === subCat 
-                      ? 'bg-[#FA9411] text-white border-[#FA9411]' 
-                      : 'bg-white text-slate-500 border-slate-100 hover:border-[#FA9411]/30'
-                  }`}
-                >
-                  {subCat}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Search and Extra controllers */}
+        {/* Sorting and Clean Visual controllers */}
         <div className="flex flex-wrap items-center gap-3">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-[10px] font-black uppercase tracking-wider text-slate-700 outline-none cursor-pointer shadow-sm transition-all"
+          >
+            <option value="featured">🔥 Featured</option>
+            <option value="priceAsc">📈 Price: Low to High</option>
+            <option value="priceDesc">📉 Price: High to Low</option>
+            <option value="rating">⭐️ Top Rated</option>
+            <option value="discount">🏷️ On Sale</option>
+          </select>
+
           <button
             onClick={toggleBgRemover}
             className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border shadow-sm ${
@@ -280,219 +220,12 @@ export function CatalogSection({
             <span className={`w-2 h-2 rounded-full ${isBgRemoverActive ? 'bg-[#FA9411] animate-pulse' : 'bg-slate-300'}`}></span>
             ✨ Smart BG Clean
           </button>
-
-          <button 
-            onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="lg:hidden px-4 py-2.5 bg-[#08047D] text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 shadow-sm"
-          >
-            <Filter size={12} />
-            Filters & Sorting
-          </button>
         </div>
       </div>
 
-      {/* Main E-commerce Layout: Sidebar (Left) + Products Grid (Right) */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        
-        {/* Desktop Sidebar Filter Panel */}
-        <div className="hidden lg:block w-[280px] shrink-0 bg-white border border-slate-100 rounded-3xl p-6 shadow-sm sticky top-28">
-          <div className="flex items-center gap-2.5 border-b border-slate-100 pb-4 mb-6">
-            <SlidersHorizontal size={16} className="text-[#08047D]" />
-            <span className="text-xs font-black uppercase tracking-widest text-[#04023D]">Catalog Filters</span>
-          </div>
-
-          {/* Search bar inside Sidebar */}
-          <div className="relative mb-6">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-            <input 
-              type="text"
-              placeholder="Filter by keyword..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-[#FA9411] rounded-xl text-[10px] font-bold uppercase tracking-wider outline-none focus:bg-white transition-all shadow-inner"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500"
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Section: Sort Order */}
-          <div className="mb-6">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Sort Results</h4>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full p-3 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-[10px] font-black uppercase tracking-wider text-slate-700 outline-none cursor-pointer focus:bg-white"
-            >
-              <option value="featured">🔥 Featured Best Seller</option>
-              <option value="priceAsc">📈 Price: Low to High</option>
-              <option value="priceDesc">📉 Price: High to Low</option>
-              <option value="rating">⭐️ Top Rated (Reviews)</option>
-              <option value="discount">🏷️ Best Active Discount</option>
-            </select>
-          </div>
-
-          {/* Filter Section: Price range */}
-          <div className="mb-6">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Price Bracket</h4>
-            <div className="space-y-2">
-              {[
-                { id: 'all', label: 'All Price Brackets' },
-                { id: 'under1000', label: 'Under KES 1,000' },
-                { id: '1000to2500', label: 'KES 1,000 - 2,500' },
-                { id: 'above2500', label: 'Above KES 2,500' }
-              ].map(range => (
-                <button
-                  key={range.id}
-                  onClick={() => setSelectedPriceRange(range.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-between border ${
-                    selectedPriceRange === range.id 
-                      ? 'bg-[#FA9411]/5 border-[#FA9411]/40 text-[#FA9411]' 
-                      : 'bg-white border-transparent text-slate-500 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>{range.label}</span>
-                  {selectedPriceRange === range.id && <span className="w-1.5 h-1.5 rounded-full bg-[#FA9411]"></span>}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Filter Section: Fabric Quality Materials */}
-          <div className="mb-6">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Fabric Properties</h4>
-            <div className="flex flex-wrap gap-1.5">
-              {['Wool', 'Gabardine', 'Cotton', 'Polyester', 'Acrylic', 'Twill'].map(tag => {
-                const isSelected = selectedMaterialFilter === tag;
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => setSelectedMaterialFilter(isSelected ? null : tag)}
-                    className={`px-2.5 py-1.5 rounded-lg text-[8.5px] font-black uppercase tracking-wider transition-all border ${
-                      isSelected 
-                        ? 'bg-[#08047D] text-white border-transparent' 
-                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-[#FA9411]'
-                    }`}
-                  >
-                    #{tag}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Direct Shop Contact card */}
-          <div className="p-4 bg-gradient-to-br from-[#08047D] to-[#1714B8] rounded-2xl text-white">
-            <span className="text-[8px] font-black uppercase tracking-widest text-amber-400">Jogoo Road Factory</span>
-            <p className="text-[11px] font-extrabold mt-1">Need a custom sizing or bulk embroidery quote?</p>
-            <div className="mt-4 flex flex-col gap-2">
-              <a 
-                href="tel:+254792021795" 
-                className="w-full py-2 bg-white text-[#08047D] text-center text-[9px] font-black uppercase rounded-lg hover:bg-amber-400 transition-colors"
-              >
-                Call Factory 📞
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Filter Drawer Drawer UI */}
-        <AnimatePresence>
-          {showMobileFilters && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden flex justify-end"
-            >
-              <motion.div 
-                initial={{ x: 100 }}
-                animate={{ x: 0 }}
-                exit={{ x: 100 }}
-                className="w-5/6 max-w-sm h-full bg-white p-6 shadow-2xl overflow-y-auto flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-800 flex items-center gap-2">
-                      <SlidersHorizontal size={14} /> Shop Options
-                    </span>
-                    <button onClick={() => setShowMobileFilters(false)} className="p-2 text-slate-400 hover:text-red-500">
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  {/* Search inside mobile drawer */}
-                  <div className="relative mb-6">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                    <input 
-                      type="text"
-                      placeholder="Keyword Search..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-extrabold uppercase outline-none"
-                    />
-                  </div>
-
-                  {/* Sort mobile */}
-                  <div className="mb-6">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Sort</h4>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase text-slate-700 outline-none"
-                    >
-                      <option value="featured">🔥 Featured best seller</option>
-                      <option value="priceAsc">📈 Price: Low to High</option>
-                      <option value="priceDesc">📉 Price: High to Low</option>
-                      <option value="rating">⭐️ Top Rated</option>
-                    </select>
-                  </div>
-
-                  {/* Price mobile */}
-                  <div className="mb-6">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Price</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { id: 'all', label: 'All prices' },
-                        { id: 'under1000', label: 'Under 1k' },
-                        { id: '1000to2500', label: '1k - 2.5k' },
-                        { id: 'above2500', label: 'Above 2.5k' }
-                      ].map(range => (
-                        <button
-                          key={range.id}
-                          onClick={() => setSelectedPriceRange(range.id)}
-                          className={`px-3 py-2.5 rounded-lg text-[9px] font-black uppercase border text-center ${
-                            selectedPriceRange === range.id 
-                              ? 'bg-[#FA9411] text-white border-transparent' 
-                              : 'bg-white border-slate-200 text-slate-500'
-                          }`}
-                        >
-                          {range.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => setShowMobileFilters(false)}
-                  className="w-full bg-[#08047D] text-white text-center py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest mt-12"
-                >
-                  Apply & See Results
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Dynamic Product Grid */}
-        <div className="flex-grow w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+      {/* Full-width Product Grid */}
+      <div className="w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
             {filteredAndSortedProducts.length > 0 ? (
               filteredAndSortedProducts.slice(0, showAllFeatured ? undefined : 12).map((product) => {
                 const isExpanded = expandedProductId === product.id;
@@ -511,10 +244,10 @@ export function CatalogSection({
                     key={product.id}
                     layout
                     whileHover={isExpanded ? undefined : { y: -6 }}
-                    className={`group bg-white rounded-[24px] overflow-hidden shadow-sm flex transition-all duration-300 ${
+                    className={`group bg-white rounded-[24px] overflow-hidden flex transition-all duration-300 ${
                       isExpanded 
-                        ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white" 
-                        : "flex-row sm:flex-col hover:shadow-xl w-full"
+                        ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 shadow-[0_25px_60px_-10px_rgba(8,4,125,0.28)] border-2 border-[#08047D]/35 bg-white" 
+                        : "flex-row sm:flex-col shadow-[0_10px_30px_-5px_rgba(8,4,125,0.18),0_4px_12px_-2px_rgba(8,4,125,0.12)] hover:shadow-[0_22px_45px_-8px_rgba(8,4,125,0.32),0_8px_20px_-4px_rgba(8,4,125,0.2)] border border-[#08047D]/15 hover:border-[#08047D]/40 w-full"
                     }`}
                   >
                     {!isExpanded ? (
@@ -833,7 +566,6 @@ export function CatalogSection({
             </div>
           )}
         </div>
-      </div>
     </section>
   );
 }

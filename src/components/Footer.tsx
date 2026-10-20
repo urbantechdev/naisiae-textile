@@ -1,6 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Mail, Fingerprint, Award, MapPin, Clock, ShieldCheck } from 'lucide-react';
+import { 
+  Phone, 
+  Mail, 
+  Fingerprint, 
+  Award, 
+  MapPin, 
+  Clock, 
+  ShieldCheck, 
+  Star, 
+  ArrowUpRight,
+  Sparkles,
+  ChevronRight
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
 
@@ -8,295 +20,402 @@ export function Footer() {
   const { siteSettings } = useCart();
   const { currentCountry } = useLocalization();
 
-  const rawSiteName = siteSettings?.siteName || 'Uhuru Market Uniforms';
-  let rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
-  if (rawSiteTagline === 'Naisiae Textiles') {
-    rawSiteTagline = currentCountry.phone;
-  }
-  const isReversed = (
-    (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
-    (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
-  );
-  const resolvedSiteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
-  const resolvedSiteTagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
+  const brandName = siteSettings?.siteName || 'Naisiae Textiles';
+  const brandTagline = siteSettings?.siteTagline || 'Uhuru Market, Nairobi';
+  const contactPhone = siteSettings?.contactPhone || '+254 792 021 795';
+  const contactEmail = siteSettings?.contactEmail || 'support@naisiaetextiles.com';
 
   return (
-    <footer className="bg-[#F1E6F7] text-slate-700 pt-20 pb-32 md:pb-20 px-6 border-t border-[#08047D]/10">
-      {/* Verified Manufacturer Trust Banner */}
-      <div className="max-w-[1440px] mx-auto mb-16 border border-[#08047D]/10 bg-white/85 backdrop-blur-sm rounded-3xl p-6 sm:p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-8 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FA9411]/15 border border-[#FA9411]/30 flex items-center justify-center text-[#FA9411] shrink-0 shadow-sm">
-            <Award size={30} />
-          </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="text-[10px] font-black tracking-[2px] text-[#FA9411] uppercase">Government Audited</span>
-              <span className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded-full px-2.5 py-0.5 text-[8px] font-black uppercase tracking-wider flex items-center gap-1.5 font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Verified Manufacturer
-              </span>
-            </div>
-            <h3 className="text-[#08047D] font-display text-lg md:text-xl font-black tracking-tight mt-1.5">
-              Uhuru Market Textiles Certification
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed mt-1 max-w-2xl font-medium">
-              Uhuru Market Uniforms is officially certified and registered as a premium garment and school uniform manufacturer at Uhuru Market along Jogoo Road, Nairobi. Over 15 years of technical tailoring legacy.
-            </p>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 xl:gap-8 w-full xl:w-auto border-t xl:border-t-0 xl:border-l border-[#08047D]/10 pt-6 xl:pt-0 xl:pl-8 shrink-0">
-          <a
-            href="https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z/data=!4m10!1m2!2m1!1suhuru+market+uniforms!3m6!1s0x182f114397c34eb3:0x60f4dee669a3f796!8m2!3d-1.294565!4d36.8611397!15sChV1aHVydSBtYXJrZXQgdW5pZm9ybXNaFyIVdWh1cnUgbWFya2V0IHVuaWZvcm1zkgENdW5pZm9ybV9zdG9yZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMXpNRTFJUWtaaVZFWXdaRlpTYjFKRWJFaFZXR00wVGxaR1ZGa3hSUkFC4AEA-gEECAAQMQ!16s%2Fg%2F11z6sydbxv"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 group hover:opacity-100 transition-opacity"
-            title="View UHURU MARKET UNIFORMS on Google Maps"
-          >
-            <div className="w-8 h-8 rounded-lg bg-[#08047D]/10 group-hover:bg-[#08047D] group-hover:text-white flex items-center justify-center text-[#08047D] shrink-0 transition-colors">
-              <MapPin size={16} />
-            </div>
-            <div>
-              <div className="text-[8px] font-black text-slate-500 uppercase tracking-wider group-hover:text-[#FA9411] transition-colors flex items-center gap-1">
-                Production Facility
-                <span className="text-[7px]">↗</span>
-              </div>
-              <div className="text-[#08047D] text-xs font-bold group-hover:text-[#FA9411] transition-colors">Uhuru Market, Nairobi</div>
-            </div>
-          </a>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-[#FA9411] shrink-0">
-              <Clock size={16} />
-            </div>
-            <div>
-              <div className="text-[8px] font-black text-slate-500 uppercase tracking-wider">Experience</div>
-              <div className="text-slate-900 text-xs font-bold">15+ Years Active Legacy</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-              <ShieldCheck size={16} />
-            </div>
-            <div>
-              <div className="text-[8px] font-black text-slate-500 uppercase tracking-wider">Quality Standard</div>
-              <div className="text-slate-900 text-xs font-bold">100% Quality Inspected</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <footer className="relative bg-[#04023D] text-slate-300 pt-16 pb-28 md:pb-16 px-6 lg:px-12 border-t border-white/10 overflow-hidden font-sans">
+      {/* Subtle ambient lighting glow */}
+      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-[#08047D]/40 to-transparent pointer-events-none" />
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-[#FA9411]/10 blur-[130px] rounded-full pointer-events-none" />
 
-      {/* Google Business Review CTA Banner */}
-      <div className="max-w-[1440px] mx-auto mb-16 border border-emerald-500/20 bg-white/90 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 shrink-0">
-            <span className="text-xl">⭐</span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black tracking-[2px] text-emerald-700 uppercase">Customer Feedback</span>
-              <div className="flex text-amber-500 gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-3 h-3 fill-current" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
+      <div className="relative z-10 max-w-[1440px] mx-auto">
+        {/* Top Engagement & Verified Trust Row (Modern Dual Cards) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+          {/* Card 1: Google Verified Reviews */}
+          <div className="bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-amber-400/40 rounded-3xl p-6 sm:p-7 transition-all duration-300 backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 group shadow-lg">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/25 flex items-center justify-center text-amber-400 shrink-0 text-xl shadow-inner">
+                ⭐
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex text-amber-400 gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={13} className="fill-current" />
+                    ))}
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+                    5.0 Verified Rating
+                  </span>
+                </div>
+                <h3 className="text-white font-display text-base sm:text-lg font-black tracking-tight">
+                  Pleased with {brandName}?
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed max-w-md mt-0.5">
+                  Your feedback empowers local garment craftsmanship at Uhuru Market, Nairobi.
+                </p>
               </div>
             </div>
-            <h3 className="text-slate-900 font-display text-base font-bold tracking-tight mt-1">
-              Pleased with Uhuru Market Uniforms? Leave us a Google Review
-            </h3>
-            <p className="text-xs text-slate-600 leading-relaxed max-w-2xl mt-0.5 font-medium">
-              Your reviews support local manufacturing at Uhuru Market, Nairobi. Please take 30 seconds to support us by leaving a 5-star Google review!
-            </p>
+            <a 
+              href="https://g.page/r/CZb3o2nm3vRgEBM/review" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-5 py-3 bg-[#FA9411] hover:bg-[#E08208] text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all active:scale-95 shrink-0 flex items-center justify-center gap-2 shadow-md shadow-[#FA9411]/20 group-hover:translate-x-0.5"
+            >
+              <span>Write a Review</span>
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
+
+          {/* Card 2: Certified Uhuru Market Manufacturing Facility */}
+          <div className="bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-[#FA9411]/40 rounded-3xl p-6 sm:p-7 transition-all duration-300 backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 group shadow-lg">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#08047D] border border-white/20 flex items-center justify-center text-[#FA9411] shrink-0 shadow-inner">
+                <Award size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Verified Manufacturer
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 hidden sm:inline">• 15+ Years Legacy</span>
+                </div>
+                <h3 className="text-white font-display text-base sm:text-lg font-black tracking-tight">
+                  Jogoo Road Production Workshop
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed max-w-md mt-0.5">
+                  Direct factory wholesale rates, computer embroidery, and rapid nationwide courier logistics.
+                </p>
+              </div>
+            </div>
+            <a 
+              href="https://www.google.com/maps/place/UHURU+MARKET+UNIFORMS/@-1.294565,36.8611397,15z" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-5 py-3 bg-white/10 hover:bg-white hover:text-[#08047D] text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all active:scale-95 shrink-0 flex items-center justify-center gap-2 border border-white/20 shadow-sm"
+            >
+              <span>Get Directions</span>
+              <MapPin size={14} className="text-[#FA9411]" />
+            </a>
           </div>
         </div>
-        <a 
-          href="https://g.page/r/CZb3o2nm3vRgEBM/review" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="px-6 py-3 bg-[#FA9411] hover:bg-[#E08208] text-white font-black text-[11px] uppercase tracking-widest rounded-2xl transition-all active:scale-95 shrink-0 flex items-center gap-2 shadow-md"
-        >
-          <span>Write a Google Review</span>
-          <span>→</span>
-        </a>
-      </div>
 
-      <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16 px-4">
-        {/* Column 1: Brand Info */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="overflow-hidden shrink-0">
+        {/* Main 5-Column Modern Navigation Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-16">
+          {/* Column 1: Brand Info & Quick Direct Contacts (4 columns) */}
+          <div className="sm:col-span-2 lg:col-span-4 flex flex-col pr-0 lg:pr-6">
+            <Link to="/" className="inline-flex items-center gap-3.5 group mb-5">
               {siteSettings?.siteLogo ? (
-                <img src={siteSettings.siteLogo} alt={resolvedSiteName} className="w-14 h-14 object-contain" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+                <img 
+                  src={siteSettings.siteLogo} 
+                  alt={brandName} 
+                  className="w-12 h-12 object-contain rounded-xl" 
+                  loading="lazy" 
+                  decoding="async" 
+                  referrerPolicy="no-referrer" 
+                />
               ) : (
-                <div className="w-12 h-12 flex items-center justify-center font-black text-xs text-white bg-[#08047D] rounded-xl relative shadow-md overflow-hidden select-none font-display">
-                  <span>UM</span>
+                <div className="w-11 h-11 flex items-center justify-center font-display font-black text-xs text-white bg-gradient-to-br from-[#08047D] to-[#120B8A] border border-white/20 rounded-xl relative shadow-md overflow-hidden select-none">
+                  <span>NT</span>
                   <div className="absolute bottom-0 inset-x-0 h-1 bg-[#FA9411]"></div>
                 </div>
               )}
-            </div>
-            <div className="leading-tight text-left">
-              <div className="font-display text-2xl tracking-tight uppercase font-black text-[#08047D]">
-                {resolvedSiteName}
+              <div>
+                <span className="font-display text-2xl font-black tracking-tight uppercase text-white block group-hover:text-amber-400 transition-colors">
+                  {brandName}
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-[2.5px] text-[#FA9411] block">
+                  {brandTagline}
+                </span>
               </div>
-              <div className="text-[10px] tracking-[2px] text-[#FA9411] uppercase font-bold">
-                {resolvedSiteTagline}
-              </div>
-            </div>
-          </div>
-          <p className="text-sm leading-relaxed max-w-sm mb-4 text-slate-600 font-medium">
-            Established at the heart of Nairobi, <strong className="text-slate-900">{resolvedSiteName}</strong> is your trusted partner for high-quality school uniforms, custom knitwear, and industrial branding.
-          </p>
-          <div className="text-[11px] text-slate-500 italic max-w-xs font-medium">
-            Serving schools across East & Central Africa from our specialized workshop at Uhuru Market.
-          </div>
-        </div>
+            </Link>
 
-        {/* Column 2: Company Links */}
-        <div className="text-center md:text-left">
-          <h4 className="font-display text-base tracking-[2px] uppercase text-[#08047D] border-b-2 border-[#FA9411] pb-1.5 mb-6 inline-block md:block font-black">Company</h4>
-          <ul className="space-y-4 text-sm font-bold text-slate-700">
-            <li><Link to="/about" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">About Us</Link></li>
-            <li><Link to="/services" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Services</Link></li>
-            <li><Link to="/portfolio" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Our Portfolio</Link></li>
-            <li><Link to="/careers" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Careers</Link></li>
-            <li><Link to="/contact" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Contact Us</Link></li>
-          </ul>
-        </div>
+            <p className="text-xs text-slate-400 leading-relaxed font-normal mb-6 max-w-sm">
+              Naisiae Textiles operates as Nairobi&apos;s leading high-performance school uniform manufacturer and corporate apparel supplier, crafting custom institutional garments directly from Uhuru Market along Jogoo Road.
+            </p>
 
-        {/* Column 3: Solutions & Tools */}
-        <div className="text-center md:text-left">
-           <h4 className="font-display text-base tracking-[2px] uppercase text-[#08047D] border-b-2 border-[#FA9411] pb-1.5 mb-6 inline-block md:block font-black">Explore</h4>
-           <ul className="space-y-4 text-sm font-bold text-slate-700">
-            <li><Link to="/uniform-simulator" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Uniform Simulator</Link></li>
-            <li><Link to="/categories" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Product Categories</Link></li>
-            <li><Link to="/textiles" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Fabric Gallery</Link></li>
-            <li><Link to="/wholesale" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Wholesale Supply</Link></li>
-            <li><Link to="/faq" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-3">Help & FAQ</Link></li>
-          </ul>
-        </div>
+            {/* Quick Contact Micro-Cards */}
+            <div className="space-y-3 max-w-sm">
+              <a 
+                href={`tel:${contactPhone.replace(/\s+/g, '')}`} 
+                className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all text-xs text-slate-300 group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-[#FA9411]/15 text-[#FA9411] flex items-center justify-center shrink-0 group-hover:bg-[#FA9411] group-hover:text-white transition-colors">
+                  <Phone size={14} />
+                </div>
+                <div>
+                  <div className="text-[8px] font-black uppercase tracking-widest text-slate-500">Factory Call Line</div>
+                  <div className="font-bold text-white group-hover:text-amber-400 transition-colors">{contactPhone}</div>
+                </div>
+              </a>
 
-        {/* Column 4: Regional Hubs (SEO optimized for targets) */}
-        <div className="text-center md:text-left">
-           <h4 className="font-display text-base tracking-[2px] uppercase text-[#08047D] border-b-2 border-[#FA9411] pb-1.5 mb-6 inline-block md:block font-black">Regional Hubs</h4>
-           <ul className="space-y-4 text-sm font-bold text-slate-700">
-            <li>
-              <Link to="/" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
-                <img src="https://flagcdn.com/w40/ke.png" alt="Kenya Flag" className="w-5 h-3.5 object-cover rounded-sm border border-slate-300 group-hover:border-[#FA9411] transition-colors shrink-0" referrerPolicy="no-referrer" />
-                <span>Kenya (Nairobi HQ)</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/tanzania" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
-                <img src="https://flagcdn.com/w40/tz.png" alt="Tanzania Flag" className="w-5 h-3.5 object-cover rounded-sm border border-slate-300 group-hover:border-[#FA9411] transition-colors shrink-0" referrerPolicy="no-referrer" />
-                <span>Tanzania Hub</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/dr-congo" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
-                <img src="https://flagcdn.com/w40/cd.png" alt="DR Congo Flag" className="w-5 h-3.5 object-cover rounded-sm border border-slate-300 group-hover:border-[#FA9411] transition-colors shrink-0" referrerPolicy="no-referrer" />
-                <span>DR Congo Hub</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/uganda" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
-                <img src="https://flagcdn.com/w40/ug.png" alt="Uganda Flag" className="w-5 h-3.5 object-cover rounded-sm border border-slate-300 group-hover:border-[#FA9411] transition-colors shrink-0" referrerPolicy="no-referrer" />
-                <span>Uganda Hub</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/ethiopia" className="hover:text-[#08047D] transition-colors flex items-center justify-center md:justify-start gap-2.5 group">
-                <img src="https://flagcdn.com/w40/et.png" alt="Ethiopia Flag" className="w-5 h-3.5 object-cover rounded-sm border border-slate-300 group-hover:border-[#FA9411] transition-colors shrink-0" referrerPolicy="no-referrer" />
-                <span>Ethiopia Hub</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
+              <a 
+                href={`mailto:${contactEmail}`} 
+                className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all text-xs text-slate-300 group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                  <Mail size={14} />
+                </div>
+                <div className="truncate">
+                  <div className="text-[8px] font-black uppercase tracking-widest text-slate-500">Official Inquiries</div>
+                  <div className="font-bold text-white group-hover:text-emerald-400 transition-colors truncate">{contactEmail}</div>
+                </div>
+              </a>
 
-        {/* Column 5: Contact Info */}
-        <div className="text-center md:text-left">
-          <h4 className="font-display text-base tracking-[2px] uppercase text-[#08047D] border-b-2 border-[#FA9411] pb-1.5 mb-6 inline-block md:block font-black">Contact</h4>
-          <div className="space-y-6 flex flex-col items-center md:items-start">
-            <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[#08047D]/10 flex items-center justify-center text-[#FA9411] group-hover:bg-[#08047D] group-hover:text-white transition-all shadow-sm"><Phone size={18} /></div>
-              <div className="text-left">
-                <div className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Phone</div>
-                <div className="text-[#08047D] font-bold text-sm">{siteSettings?.contactPhone || '+254 792 021 795'}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 group cursor-pointer">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[#08047D]/10 flex items-center justify-center text-[#FA9411] group-hover:bg-[#08047D] group-hover:text-white transition-all shadow-sm"><Mail size={18} /></div>
-              <div className="text-left">
-               <div className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Email</div>
-               <div className="text-[#08047D] font-bold text-sm truncate max-w-[150px]">{siteSettings?.contactEmail || 'support@naisiaetextiles.com'}</div>
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-xs text-slate-300">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0">
+                  <Clock size={14} />
+                </div>
+                <div>
+                  <div className="text-[8px] font-black uppercase tracking-widest text-slate-500">Workshop Hours</div>
+                  <div className="font-bold text-white">Mon – Sat: 8:00 AM – 6:00 PM</div>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Column 2: Apparel & Uniforms (2 columns) */}
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-black uppercase tracking-[2.5px] text-white border-b border-white/10 pb-2.5 mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FA9411]"></span>
+              Apparel
+            </h4>
+            <ul className="space-y-3 text-xs text-slate-400">
+              <li>
+                <Link to="/product" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  Primary Uniforms
+                </Link>
+              </li>
+              <li>
+                <Link to="/product" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  Secondary Uniforms
+                </Link>
+              </li>
+              <li>
+                <Link to="/product" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  College & Campus Wear
+                </Link>
+              </li>
+              <li>
+                <Link to="/product" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  Corporate Wear & Blazers
+                </Link>
+              </li>
+              <li>
+                <Link to="/product" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  Medical Scrubs & Coats
+                </Link>
+              </li>
+              <li>
+                <Link to="/product" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  Sports Kits & Tracksuits
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Manufacturing & Tools (2 columns) */}
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-black uppercase tracking-[2.5px] text-white border-b border-white/10 pb-2.5 mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              Manufacturing
+            </h4>
+            <ul className="space-y-3 text-xs text-slate-400">
+              <li>
+                <Link to="/uniform-simulator" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  3D Uniform Simulator
+                </Link>
+              </li>
+              <li>
+                <Link to="/wholesale" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  Wholesale Bulk Supply
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  Computerized Embroidery
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  Screen Printing & Badging
+                </Link>
+              </li>
+              <li>
+                <Link to="/textiles" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  Fabric & Swatch Gallery
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-emerald-400 transition-colors" />
+                  Product Categories
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Company & Support (2 columns) */}
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-black uppercase tracking-[2.5px] text-white border-b border-white/10 pb-2.5 mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              Company
+            </h4>
+            <ul className="space-y-3 text-xs text-slate-400">
+              <li>
+                <Link to="/about" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-white transition-colors" />
+                  About Our Factory
+                </Link>
+              </li>
+              <li>
+                <Link to="/portfolio" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-white transition-colors" />
+                  Client Portfolio
+                </Link>
+              </li>
+              <li>
+                <Link to="/services" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-white transition-colors" />
+                  Tailoring Services
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-white transition-colors" />
+                  Help Center & FAQ
+                </Link>
+              </li>
+              <li>
+                <Link to="/careers" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-white transition-colors" />
+                  Careers & Tailoring
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                  <ChevronRight size={12} className="text-slate-600 group-hover:text-white transition-colors" />
+                  Contact Workshop
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 5: Regional Hubs (2 columns) */}
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-black uppercase tracking-[2.5px] text-white border-b border-white/10 pb-2.5 mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              Regional Hubs
+            </h4>
+            <ul className="space-y-3 text-xs text-slate-400">
+              <li>
+                <Link to="/" className="hover:text-white transition-colors flex items-center gap-2.5 group">
+                  <img src="https://flagcdn.com/w40/ke.png" alt="Kenya Flag" className="w-4 h-3 object-cover rounded-sm border border-white/20 shrink-0" referrerPolicy="no-referrer" />
+                  <span className="group-hover:text-white transition-colors font-medium">Kenya (Nairobi HQ)</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/tanzania" className="hover:text-white transition-colors flex items-center gap-2.5 group">
+                  <img src="https://flagcdn.com/w40/tz.png" alt="Tanzania Flag" className="w-4 h-3 object-cover rounded-sm border border-white/20 shrink-0" referrerPolicy="no-referrer" />
+                  <span className="group-hover:text-white transition-colors font-medium">Tanzania Hub</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/dr-congo" className="hover:text-white transition-colors flex items-center gap-2.5 group">
+                  <img src="https://flagcdn.com/w40/cd.png" alt="DR Congo Flag" className="w-4 h-3 object-cover rounded-sm border border-white/20 shrink-0" referrerPolicy="no-referrer" />
+                  <span className="group-hover:text-white transition-colors font-medium">DR Congo Hub</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/uganda" className="hover:text-white transition-colors flex items-center gap-2.5 group">
+                  <img src="https://flagcdn.com/w40/ug.png" alt="Uganda Flag" className="w-4 h-3 object-cover rounded-sm border border-white/20 shrink-0" referrerPolicy="no-referrer" />
+                  <span className="group-hover:text-white transition-colors font-medium">Uganda Hub</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/ethiopia" className="hover:text-white transition-colors flex items-center gap-2.5 group">
+                  <img src="https://flagcdn.com/w40/et.png" alt="Ethiopia Flag" className="w-4 h-3 object-cover rounded-sm border border-white/20 shrink-0" referrerPolicy="no-referrer" />
+                  <span className="group-hover:text-white transition-colors font-medium">Ethiopia Hub</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div className="max-w-[1440px] mx-auto px-8 pt-10 border-t border-[#08047D]/10 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest gap-6 sm:gap-2 text-slate-600">
-        <div className="flex flex-col md:flex-row items-center gap-3 md:gap-6 order-2 md:order-1 text-center md:text-left">
-          <div className="flex items-center gap-2">
-            <span>© 2026 {resolvedSiteName}. All rights reserved.</span>
+
+        {/* Sub-Footer Bar */}
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-slate-400">
+          {/* Left: Copyright & Admin Fingerprint */}
+          <div className="flex flex-wrap items-center gap-3 text-center md:text-left">
+            <span>© 2026 {brandName}. All rights reserved.</span>
             <Link 
               to="/admin" 
-              className="inline-flex items-center justify-center ml-1.5 p-1 rounded-md text-slate-400 hover:text-[#FA9411] hover:bg-white transition-all duration-300 hover:scale-[1.15] active:scale-90 group cursor-pointer" 
+              className="inline-flex items-center justify-center p-1 rounded-md text-slate-500 hover:text-amber-400 hover:bg-white/10 transition-all duration-300 group" 
               title="Secure Console"
             >
-              <Fingerprint size={12} className="transition-transform duration-500 group-hover:rotate-45" />
+              <Fingerprint size={13} className="transition-transform duration-500 group-hover:rotate-45" />
             </Link>
           </div>
-          <a 
-            href="https://urbantechdev.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="hover:text-[#08047D] transition-all duration-300 flex items-center gap-3 group border-l border-[#08047D]/10 pl-6 ml-6 hidden md:flex opacity-100"
-          >
-            <span className="text-[8px] font-black uppercase tracking-widest text-[#FA9411]">Developed by</span>
-            <div className="flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
-              <svg className="h-4 w-auto fill-none stroke-[#08047D]" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="16 18 22 12 16 6" />
-                <polyline points="8 6 2 12 8 18" />
-              </svg>
-              <span className="font-mono text-[9px] font-black tracking-[2px] text-slate-800">URBAN<span className="text-[#FA9411]">TECH</span></span>
-            </div>
-          </a>
-          {/* Mobile version */}
-          <a 
-            href="https://urbantechdev.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="md:hidden transition-all mt-4 flex flex-col items-center gap-2 opacity-100"
-          >
-            <span className="text-[8px] uppercase tracking-widest font-black text-[#FA9411]">Developed by </span>
-            <div className="flex items-center gap-1.5 opacity-90">
-              <svg className="h-3.5 w-auto fill-none stroke-[#08047D]" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="16 18 22 12 16 6" />
-                <polyline points="8 6 2 12 8 18" />
-              </svg>
-              <span className="font-mono text-[8px] font-black tracking-[2px] text-slate-800">URBAN<span className="text-[#FA9411]">TECH</span></span>
-            </div>
-          </a>
-        </div>
-        <div className="flex flex-col items-center md:items-end gap-3 order-1 md:order-2">
-          {/* Secure payment options visual row for Google Merchant Center crawler */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 md:gap-2 mb-1">
-            <span className="text-[8px] font-black text-slate-500 tracking-[1.5px] uppercase mr-1 hidden sm:inline">Accepted Payments:</span>
-            <span className="bg-white text-slate-700 px-2 py-0.5 rounded text-[8px] font-mono border border-slate-200 font-extrabold shadow-sm select-none">M-PESA</span>
-            <span className="bg-white text-slate-700 px-2 py-0.5 rounded text-[8px] font-mono border border-slate-200 font-extrabold shadow-sm select-none">VISA</span>
-            <span className="bg-white text-slate-700 px-2 py-0.5 rounded text-[8px] font-mono border border-slate-200 font-extrabold shadow-sm select-none">MASTERCARD</span>
-            <span className="bg-white text-slate-700 px-2 py-0.5 rounded text-[8px] font-mono border border-slate-200 font-extrabold shadow-sm select-none">EFT/BANK</span>
+
+          {/* Center: Accepted Payments Modern Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="text-[9px] font-black text-slate-500 tracking-wider uppercase mr-1 hidden sm:inline">Accepted:</span>
+            <span className="bg-emerald-500/15 text-emerald-400 px-2.5 py-0.5 rounded-md text-[9px] font-mono border border-emerald-500/30 font-extrabold select-none">
+              M-PESA
+            </span>
+            <span className="bg-white/[0.06] text-slate-200 px-2.5 py-0.5 rounded-md text-[9px] font-mono border border-white/15 font-extrabold select-none">
+              VISA
+            </span>
+            <span className="bg-white/[0.06] text-slate-200 px-2.5 py-0.5 rounded-md text-[9px] font-mono border border-white/15 font-extrabold select-none">
+              MASTERCARD
+            </span>
+            <span className="bg-white/[0.06] text-slate-200 px-2.5 py-0.5 rounded-md text-[9px] font-mono border border-white/15 font-extrabold select-none">
+              EFT / BANK
+            </span>
           </div>
-          <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6 gap-y-2">
-            <Link to="/policy" className="hover:text-[#08047D] transition-colors font-bold text-[10px] md:text-[10px] uppercase">Privacy</Link>
-            <Link to="/terms" className="hover:text-[#08047D] transition-colors font-bold text-[10px] md:text-[10px] uppercase">Terms</Link>
-            <Link to="/shipping" className="hover:text-[#08047D] transition-colors font-bold text-[10px] md:text-[10px] uppercase">Shipping</Link>
-            <Link to="/returns" className="hover:text-[#08047D] transition-colors font-bold text-[10px] md:text-[10px] uppercase">Returns</Link>
-            <Link to="/contact" className="hover:text-[#08047D] transition-colors font-bold text-[10px] md:text-[10px] uppercase">Contact</Link>
+
+          {/* Right: Policies & Credits */}
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <Link to="/policy" className="hover:text-white transition-colors font-bold uppercase tracking-wider">
+              Privacy
+            </Link>
+            <Link to="/terms" className="hover:text-white transition-colors font-bold uppercase tracking-wider">
+              Terms
+            </Link>
+            <Link to="/shipping" className="hover:text-white transition-colors font-bold uppercase tracking-wider">
+              Shipping
+            </Link>
+            <Link to="/returns" className="hover:text-white transition-colors font-bold uppercase tracking-wider">
+              Returns
+            </Link>
+            <a 
+              href="https://urbantechdev.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-slate-500 group pl-2 border-l border-white/10"
+            >
+              <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">By</span>
+              <span className="font-mono text-[9px] font-black tracking-wider text-slate-300 group-hover:text-amber-400 transition-colors">
+                URBAN<span className="text-[#FA9411]">TECH</span>
+              </span>
+            </a>
           </div>
         </div>
       </div>
-
     </footer>
   );
 }

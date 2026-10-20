@@ -23,13 +23,16 @@ import {
   ChevronDown,
   Star,
   Wind,
-  Sparkles
+  Sparkles,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../services/firebase';
 import { useCart } from '../context/CartContext';
+import { useFullscreen } from '../context/FullscreenContext';
 import { SEED_URLS } from '../constants/seedData';
 import { appExperience } from '../utils/haptics';
 import { useLocalization, COUNTRIES } from '../context/LocalizationContext';
@@ -64,10 +67,10 @@ const DEFAULT_MEGA_MENUS = [
 ];
 
 interface NavbarProps {
-  wishlistCount: number;
+  wishlistCount?: number;
   compareCount?: number;
-  isMenuOpen: boolean;
-  setIsMenuOpen: (open: boolean) => void;
+  isMenuOpen?: boolean;
+  setIsMenuOpen?: (open: boolean) => void;
   setIsWishlistOpen?: (open: boolean) => void;
   setIsQuoteModalOpen?: (open: boolean) => void;
   setIsCompareModalOpen?: (open: boolean) => void;
@@ -75,14 +78,19 @@ interface NavbarProps {
 }
 
 export function Navbar({ 
-  wishlistCount,
+  wishlistCount: propWishlistCount,
   compareCount = 0,
-  isMenuOpen,
-  setIsMenuOpen,
+  isMenuOpen: propIsMenuOpen,
+  setIsMenuOpen: propSetIsMenuOpen,
   setIsCompareModalOpen,
   setSelectedQuickViewProduct
-}: NavbarProps) {
-  const { cartCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
+}: NavbarProps = {}) {
+  const { cartCount, wishlistCount: contextWishlistCount, setIsCartOpen, setIsWishlistOpen, setIsQuoteModalOpen } = useCart();
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
+  const [internalMenuOpen, setInternalMenuOpen] = useState(false);
+  const isMenuOpen = propIsMenuOpen !== undefined ? propIsMenuOpen : internalMenuOpen;
+  const setIsMenuOpen = propSetIsMenuOpen || setInternalMenuOpen;
+  const wishlistCount = propWishlistCount !== undefined ? propWishlistCount : contextWishlistCount;
   const navigate = useNavigate();
   const location = useLocation();
   const { currentCountry, currentLanguage, changeCountry, changeLanguage, t, formatPrice } = useLocalization();
@@ -116,30 +124,6 @@ export function Navbar({
   const [services, setServices] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [chatSettings, setChatSettings] = useState<any>(null);
-  const [isTrendingDrawerOpen, setIsTrendingDrawerOpen] = useState(false);
-  const [isTrayMinimized, setIsTrayMinimized] = useState(() => {
-    try {
-      return localStorage.getItem('sourcing_picks_minimized') === 'true';
-    } catch {
-      return false;
-    }
-  });
-
-  const handleMinimize = (min: boolean) => {
-    setIsTrayMinimized(min);
-    try {
-      localStorage.setItem('sourcing_picks_minimized', String(min));
-    } catch (e) {
-      console.warn(e);
-    }
-  };
-
-  const seasonalPicks = React.useMemo(() => {
-    const wholesale = products.filter(p => 
-      p.tags?.some((t: string) => ['wholesale', 'bulk', 'corporate', 'popular', 'hot', 'featured'].includes(t.toLowerCase()))
-    );
-    return (wholesale.length >= 3 ? wholesale : products).slice(0, 5);
-  }, [products]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -215,17 +199,10 @@ export function Navbar({
     };
   }, []);
 
-  const rawSiteName = siteSettings?.siteName || 'Uhuru Market Uniforms';
-  let rawSiteTagline = siteSettings?.siteTagline || 'Naisiae Textiles';
-  if (rawSiteTagline === 'Naisiae Textiles') {
-    rawSiteTagline = currentCountry.phone;
-  }
-  const isReversed = (
-    (rawSiteName.toLowerCase().includes('naisiae') || rawSiteName.toLowerCase().includes('naisiate')) &&
-    (rawSiteTagline.toLowerCase().includes('uhuru') || rawSiteTagline.toLowerCase().includes('market'))
-  );
-  const resolvedSiteName = isReversed ? rawSiteTagline.trim() : rawSiteName.trim();
-  const resolvedSiteTagline = isReversed ? rawSiteName.trim() : rawSiteTagline.trim();
+  const rawSiteName = siteSettings?.siteName || 'Naisiae Textiles';
+  let rawSiteTagline = siteSettings?.siteTagline || 'Uhuru Market, Nairobi';
+  const resolvedSiteName = rawSiteName.trim();
+  const resolvedSiteTagline = rawSiteTagline.trim();
 
   const searchResults = React.useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -483,6 +460,31 @@ export function Navbar({
             : 'py-0'
         }`}
       >
+        {/* Futuristic Left-to-Right Laser Scanner Effect */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10 select-none">
+          {/* Subtle scanning grid texture overlay */}
+          <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#FA9411_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+          {/* Primary Vertical Laser Beam Sweep (Full Height) */}
+          <div className="animate-header-scanner absolute top-0 bottom-0 left-0 w-44 sm:w-64 flex items-center justify-center pointer-events-none">
+            {/* Luminous soft amber/gold sweep aura */}
+            <div className="absolute inset-y-0 w-full bg-gradient-to-r from-transparent via-[#FA9411]/25 to-transparent blur-md"></div>
+            {/* Secondary bright core aura */}
+            <div className="absolute inset-y-0 w-16 sm:w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent blur-sm"></div>
+            {/* Center razor-sharp vertical laser line */}
+            <div className="relative h-full w-[2px] bg-gradient-to-b from-[#FA9411] via-white to-[#FA9411] shadow-[0_0_12px_#FA9411,0_0_24px_#FA9411,0_0_6px_#ffffff]"></div>
+            {/* Laser emitter flare dots at top and bottom */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#FA9411,0_0_14px_#FA9411]"></div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#FA9411,0_0_14px_#FA9411]"></div>
+          </div>
+
+          {/* Top Edge Laser Scan Tracer */}
+          <div className="animate-header-scanner-fast absolute top-0 left-0 h-[2.5px] w-56 sm:w-80 bg-gradient-to-r from-transparent via-[#FA9411] via-white to-transparent shadow-[0_0_10px_#FA9411,0_0_20px_#FA9411] pointer-events-none"></div>
+
+          {/* Bottom Edge Laser Scan Tracer */}
+          <div className="animate-header-scanner absolute bottom-0 left-0 h-[2.5px] w-64 sm:w-96 bg-gradient-to-r from-transparent via-[#FA9411] via-[#FFE082] to-transparent shadow-[0_0_12px_#FA9411,0_0_24px_#FA9411] pointer-events-none"></div>
+        </div>
+
         <div className={`relative z-20 max-w-[1440px] mx-auto px-2.5 sm:px-4 md:px-6 lg:px-20 flex items-center justify-between gap-2 md:gap-12 transition-all duration-700 ${isScrolled ? 'h-14 sm:h-20 md:h-24' : 'h-16 sm:h-24 md:h-32'}`}>
           {/* Brand Identity */}
           <Link to="/" className="group flex items-center gap-2 md:gap-4 shrink-0">
@@ -530,29 +532,61 @@ export function Navbar({
             })}
           </nav>
 
-          {/* Action Hub */}
-          <div className="flex items-center gap-3 lg:gap-6">
-            <div className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-white/15 backdrop-blur-2xl rounded-xl md:rounded-2xl border border-white/20 shadow-sm hidden sm:flex hover:border-white/40 transition-all">
-              <button onClick={() => setIsWishlistOpen(true)} aria-label="Open Wishlist" className="p-1.5 md:p-2 text-white/80 hover:text-white transition-all relative group hover:scale-110">
-                <Heart size={18} className={wishlistCount > 0 ? "fill-[#FA9411] text-[#FA9411]" : "transition-transform md:w-5 md:h-5"} />
+          {/* Action Hub - Pure Icon Controls to Maximize Space */}
+          <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 lg:gap-3.5">
+            <div className="flex items-center gap-1 md:gap-1.5 px-2 sm:px-2.5 md:px-3 py-1.5 md:py-2.5 bg-white/15 backdrop-blur-2xl rounded-lg md:rounded-2xl border border-white/20 shadow-sm hidden sm:flex hover:border-white/40 transition-all">
+              <button 
+                onClick={() => setIsWishlistOpen(true)} 
+                aria-label="Open Wishlist" 
+                title="Wishlist"
+                className="p-1 md:p-1.5 text-white/80 hover:text-white transition-all relative group hover:scale-110"
+              >
+                <Heart size={18} className={wishlistCount > 0 ? "fill-[#FA9411] text-[#FA9411]" : "transition-transform sm:w-4.5 sm:h-4.5 md:w-5 md:h-5"} />
                 {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-[#FA9411] rounded-full animate-ping"></span>
+                  <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-[#FA9411] rounded-full animate-ping"></span>
                 )}
               </button>
-              <div className="w-[1px] h-4 bg-white/20 mx-1"></div>
-              <button onClick={() => setIsCompareModalOpen?.(true)} aria-label="Open Comparison" className="p-1.5 md:p-2 text-white/80 hover:text-white transition-all relative group hover:scale-110">
-                <GitCompare size={18} className="group-hover:rotate-45 transition-transform md:w-5 md:h-5 text-white/90 hover:text-[#FA9411]" />
+              <div className="w-[1px] h-4 bg-white/20 mx-0.5"></div>
+              <button 
+                onClick={() => setIsCompareModalOpen?.(true)} 
+                aria-label="Open Comparison" 
+                title="Compare Products"
+                className="p-1 md:p-1.5 text-white/80 hover:text-white transition-all relative group hover:scale-110"
+              >
+                <GitCompare size={18} className="group-hover:rotate-45 transition-transform sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-white/90 hover:text-[#FA9411]" />
               </button>
             </div>
+
+            {/* Kiosk Fullscreen Mode Toggle */}
+            <button
+              onClick={() => {
+                appExperience.triggerFeedback('tap');
+                toggleFullscreen();
+              }}
+              aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+              title={isFullscreen ? "Exit Fullscreen Kiosk Mode (F11 / Esc)" : "Full Screen Kiosk Mode (F11)"}
+              className={`p-2 sm:p-2.5 md:p-3.5 lg:p-4 rounded-lg md:rounded-2xl transition-all shadow-md active:scale-90 flex items-center justify-center cursor-pointer ${
+                isFullscreen 
+                  ? 'bg-[#FA9411] text-white hover:bg-[#E08208]' 
+                  : 'bg-white/15 text-white hover:bg-white/25 border border-white/20'
+              }`}
+            >
+              {isFullscreen ? (
+                <Minimize2 size={18} className="sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 text-white" />
+              ) : (
+                <Maximize2 size={18} className="sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 text-white" />
+              )}
+            </button>
 
             <button 
               onClick={() => setIsCartOpen(true)}
               aria-label="Open Shopping Cart"
-              className="group relative p-2.5 md:p-4 bg-white text-[#08047D] hover:bg-slate-50 transition-all duration-300 rounded-lg md:rounded-2xl shadow-lg active:scale-90 overflow-hidden font-black"
+              title="Shopping Cart"
+              className="group relative p-2 sm:p-2.5 md:p-3.5 lg:p-4 bg-white text-[#08047D] hover:bg-slate-50 transition-all duration-300 rounded-lg md:rounded-2xl shadow-lg active:scale-90 flex items-center justify-center font-black"
             >
               <ShoppingBag size={18} className="relative z-10 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 text-[#08047D]" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-5 md:h-5 bg-[#FA9411] text-white text-[8px] md:text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white shadow-md animate-pulse">
+                <span className="absolute -top-1 -right-1 md:-top-1.5 md:-right-1.5 w-4 h-4 md:w-5 md:h-5 bg-[#FA9411] text-white text-[8px] md:text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white shadow-md animate-pulse">
                   {cartCount}
                 </span>
               )}
@@ -560,21 +594,27 @@ export function Navbar({
 
             <button 
               onClick={() => setIsQuoteModalOpen(true)}
-              className="hidden lg:flex items-center gap-2.5 bg-[#FA9411] text-white hover:bg-[#E08208] hover:shadow-xl hover:-translate-y-0.5 px-7 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[3px] transition-all duration-300 active:scale-95 shadow-md border border-[#FA9411]/40"
+              aria-label="Request Quote & Enquiry"
+              title="Request Quote / Enquiry"
+              className="group relative p-2 sm:p-2.5 md:p-3.5 lg:p-4 bg-[#FA9411] text-white hover:bg-[#E08208] transition-all duration-300 rounded-lg md:rounded-2xl shadow-lg active:scale-90 flex items-center justify-center border border-[#FA9411]/40 hover:scale-105"
             >
-              <Package size={17} className="relative z-10" /> 
-              <span className="relative z-10">Enquire</span>
+              <Package size={18} className="relative z-10 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 text-white transition-transform group-hover:scale-110" />
             </button>
 
             <button 
               onClick={() => {
-                setIsMegaMenuOpen(true);
+                if (window.innerWidth < 1024) {
+                  setIsMenuOpen(true);
+                } else {
+                  setIsMegaMenuOpen(true);
+                }
                 appExperience.triggerFeedback('tap');
               }} 
-              aria-label="Open Expansive Mega Menu"
-              className="p-2 md:p-4 bg-white text-[#08047D] hover:bg-slate-50 rounded-lg md:rounded-2xl transition-all border border-white/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
+              aria-label="Open Menu"
+              title="Navigation Menu"
+              className="p-2 sm:p-2.5 md:p-3.5 lg:p-4 bg-white text-[#08047D] hover:bg-slate-50 rounded-lg md:rounded-2xl transition-all border border-white/40 flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95"
             >
-              <Menu size={18} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-[#08047D]" />
+              <Menu size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#08047D]" />
             </button>
           </div>
         </div>
@@ -1195,150 +1235,6 @@ export function Navbar({
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Mobile & Desktop Sourcing Highlights - Enhanced visual structure */}
-      {seasonalPicks.length >= 2 && (
-        <>
-          {/* Desktop Floating Trending Drawer Trigger - Fixed on the right margin */}
-          <div className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-[100]">
-            <button
-              onClick={() => setIsTrendingDrawerOpen(true)}
-              className="bg-gradient-to-l from-[#04023D]/95 to-[#04023D] border-y border-l border-white/10 text-[#FA9411] hover:text-white px-3 py-6 rounded-l-3xl shadow-[0_15px_35px_rgba(0,0,0,0.6)] flex flex-col items-center gap-3 active:scale-95 transition-all group cursor-pointer hover:border-[#FA9411]/30 hover:pl-4.5 font-sans"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#FF4F5A] animate-pulse"></span>
-              <span className="text-[9px] font-black tracking-[4px] uppercase [writing-mode:vertical-lr] select-none text-slate-300 group-hover:text-[#FA9411] transition-colors">Trending</span>
-              <ChevronRight size={14} className="rotate-180 text-[#FA9411] group-hover:-translate-x-1 transition-transform" />
-            </button>
-          </div>
-
-          {/* Desktop Right Sidebar Drawer for Trending & Hot-Sourced Goods */}
-          <AnimatePresence>
-            {isTrendingDrawerOpen && (
-              <>
-                {/* Backdrop with elegant blur */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setIsTrendingDrawerOpen(false)}
-                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110]"
-                />
-
-                {/* Sidebar drawer content */}
-                <motion.div
-                  initial={{ x: '100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: '100%' }}
-                  transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-                  className="fixed right-0 top-0 bottom-0 w-[420px] bg-[#04023D] border-l border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] z-[120] flex flex-col p-8 overflow-hidden font-sans"
-                >
-                  {/* Decorative neon top border */}
-                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#C21A30] via-[#E94C36] to-[#FA9411]" />
-
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-8 mt-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 rounded-full bg-[#FA9411] animate-ping"></span>
-                        <span className="text-[10px] font-black text-[#FA9411] tracking-[3px] uppercase">Live Sourcing</span>
-                      </div>
-                      <h3 className="font-display text-2xl font-black text-white tracking-tight">Trending Collections</h3>
-                    </div>
-                    <button
-                      onClick={() => setIsTrendingDrawerOpen(false)}
-                      className="p-3 text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-full border border-white/5 active:scale-90 transition-all cursor-pointer"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  {/* Info alert banner */}
-                  <div className="p-4 bg-[#FA9411]/10 rounded-2xl border border-[#FA9411]/20 mb-6 flex gap-3 items-center">
-                    <span className="text-xl">🔥</span>
-                    <div>
-                      <p className="text-[10px] font-black text-white/90 uppercase tracking-[1.5px]">High-Volume Sourcing</p>
-                      <p className="text-slate-400 text-[11px] font-bold">These high-grade items hold current production priority.</p>
-                    </div>
-                  </div>
-
-                  {/* Sourced List */}
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin">
-                    {seasonalPicks.map((p, idx) => {
-                      const popularityScore = 90 + (p.name ? (p.name.length % 10) : idx);
-                      return (
-                        <div 
-                          key={`trending-drawer-${p.id}`}
-                          className="group p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 hover:border-[#FA9411]/30 transition-all duration-300 flex items-center gap-4 relative overflow-hidden"
-                        >
-                          {/* Popularity indicator overlay */}
-                          <div className="absolute top-3 right-4 flex items-center gap-1.5 bg-[#FF4F5A]/10 text-[#FF4F5A] px-2 py-0.5 rounded-full border border-[#FF4F5A]/20">
-                            <span className="relative flex h-1.5 w-1.5">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF4F5A] opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#FF4F5A]"></span>
-                            </span>
-                            <span className="text-[7.5px] font-black tracking-wide">{popularityScore}% DEMAND</span>
-                          </div>
-
-                          {/* Rank Index */}
-                          <div className="text-2xl font-black italic select-none bg-gradient-to-br from-white/30 to-white/5 bg-clip-text text-transparent w-8 text-center">
-                            0{idx + 1}
-                          </div>
-
-                          {/* Image Thumbnail */}
-                          <div className="w-16 h-16 rounded-xl bg-white overflow-hidden shrink-0 border border-white/10 relative">
-                            {p.imageUrl ? (
-                              <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover object-top p-0.5" referrerPolicy="no-referrer" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-slate-800">
-                                <Package size={16} className="text-white/20" />
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Metadata */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-black text-white truncate group-hover:text-[#FA9411] transition-colors uppercase tracking-wide leading-snug">{p.name}</p>
-                            <p className="text-[10px] text-[#FA9411] font-black tracking-widest mt-1">
-                              {p.price ? formatPrice(p.price) : 'Bulk Price'}
-                            </p>
-                            
-                            <div className="flex items-center gap-2 mt-2">
-                              <button
-                                onClick={() => {
-                                  if (setSelectedQuickViewProduct) setSelectedQuickViewProduct(p);
-                                  setIsTrendingDrawerOpen(false);
-                                }}
-                                className="text-[9px] font-black text-slate-300 hover:text-white uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-md border border-white/5 transition-all text-left"
-                              >
-                                Quick View
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Footer Quote CTA */}
-                  <div className="mt-auto pt-6 border-t border-white/5">
-                    <button
-                      onClick={() => {
-                        setIsTrendingDrawerOpen(false);
-                        if (setIsQuoteModalOpen) setIsQuoteModalOpen(true);
-                      }}
-                      className="w-full py-4 text-center text-white bg-gradient-to-r from-[#C21A30] to-[#FA9411] hover:brightness-110 active:scale-[0.98] rounded-2xl text-[10px] font-black uppercase tracking-[3px] shadow-[0_10px_30px_rgba(200,16,46,0.3)] transition-all cursor-pointer"
-                    >
-                      Request Sourcing Quote
-                    </button>
-                  </div>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-
-
-        </>
-      )}
 
       {/* Mobile Bottom Navigation - Shared across all pages */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-xl flex items-center justify-between px-2 py-1.5 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.08)] border-t border-slate-200/80">

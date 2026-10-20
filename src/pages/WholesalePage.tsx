@@ -397,10 +397,10 @@ function WholesaleCard({ product, addToCart, toggleWishlist, isWishlisted, onPre
   return (
     <motion.div 
       layout
-      className={`group relative flex animate-blink-orange ${
+      className={`group relative flex ${
         isExpanded 
-          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white p-5" 
-          : "flex-row md:flex-col hover:shadow-xl bg-white rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
+          ? "flex-col col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 shadow-[0_25px_60px_-10px_rgba(8,4,125,0.28)] border-2 border-[#08047D]/35 bg-white p-5" 
+          : "flex-row md:flex-col shadow-[0_10px_30px_-5px_rgba(8,4,125,0.18),0_4px_12px_-2px_rgba(8,4,125,0.12)] hover:shadow-[0_22px_45px_-8px_rgba(8,4,125,0.32),0_8px_20px_-4px_rgba(8,4,125,0.2)] border border-[#08047D]/15 hover:border-[#08047D]/40 bg-white rounded-[24px] md:rounded-[32px] p-3 md:p-5 transition-all duration-300"
       }`}
     >
       {!isExpanded ? (

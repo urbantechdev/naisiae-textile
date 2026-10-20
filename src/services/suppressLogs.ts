@@ -24,6 +24,11 @@ export const isBenignMessage = (...args: any[]): boolean => {
 
     const str = combinedText.toLowerCase();
     return (
+      str.includes('could not establish connection') ||
+      str.includes('receiving end does not exist') ||
+      str.includes('the message port closed') ||
+      str.includes('message port closed') ||
+      str.includes('resizeobserver loop') ||
       str.includes('disconnecting idle stream') ||
       str.includes('timed out waiting for new targets') ||
       str.includes('grpcconnection rpc') ||
@@ -50,11 +55,12 @@ console.warn = function (...args: any[]) {
   originalWarn.apply(console, args);
 };
 
-// Handle unhandled promise rejections and global browser window error events for benign Firestore events
+// Handle unhandled promise rejections and global browser window error events for benign browser/extension/Firestore events
 if (typeof window !== 'undefined') {
   window.addEventListener('unhandledrejection', (event) => {
     if (isBenignMessage(event.reason)) {
       event.preventDefault();
+      event.stopImmediatePropagation?.();
       event.stopPropagation();
     }
   }, true);
@@ -62,6 +68,7 @@ if (typeof window !== 'undefined') {
   window.addEventListener('error', (event) => {
     if (isBenignMessage(event.error || event.message)) {
       event.preventDefault();
+      event.stopImmediatePropagation?.();
       event.stopPropagation();
     }
   }, true);

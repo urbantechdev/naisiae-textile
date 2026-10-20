@@ -110,8 +110,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return (window as any).__PRELOADED_SETTINGS__;
     }
     return {
-      siteName: 'Uhuru Market Uniforms',
-      siteTagline: 'Naisiae Textiles',
+      siteName: 'Naisiae Textiles',
+      siteTagline: 'Uhuru Market, Nairobi',
       heroImages: [
         {
           url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1920&auto=format&fit=crop',

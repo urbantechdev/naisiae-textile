@@ -31,7 +31,10 @@ import {
   Info,
   Eye,
   Zap,
-  Mail
+  Mail,
+  Ruler,
+  Layers,
+  GraduationCap
 } from 'lucide-react';
 import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -40,6 +43,8 @@ import { ImageZoomViewer } from '../components/ImageZoomViewer';
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
+import { KenyaSizingMatrixModal } from '../components/KenyaSizingMatrixModal';
+import { enrichProductWithPriceMaster, SIZE_CATEGORIES, EDUCATION_SECTORS } from '../constants/uniformPriceMaster';
 
 export default function ProductsPage() {
   const { 
@@ -61,6 +66,10 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSizeCategory, setSelectedSizeCategory] = useState('all');
+  const [selectedSector, setSelectedSector] = useState('All');
+  const [selectedGender, setSelectedGender] = useState('All');
+  const [isSizingGuideOpen, setIsSizingGuideOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [priceRange, setPriceRange] = useState<number>(10000);
   const [onlyWholesale, setOnlyWholesale] = useState(false);
@@ -86,11 +95,11 @@ export default function ProductsPage() {
   const [embroideryOption, setEmbroideryOption] = useState('none'); // 'none', 'embroidery', 'printing'
   const [embroideryPosition, setEmbroideryPosition] = useState('Chest');
 
-  // Load products dynamically from Firestore
+  // Load products dynamically from Firestore and enrich with Kenya Uniform Price Master
   useEffect(() => {
     const q = query(collection(db, 'products'), where('active', '==', true), limit(500));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const unsorted = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const unsorted = snapshot.docs.map(doc => enrichProductWithPriceMaster({ id: doc.id, ...doc.data() }));
       setProducts(unsorted.sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0)));
     });
     return () => unsubscribe();
@@ -102,6 +111,17 @@ export default function ProductsPage() {
     products.forEach(p => {
       if (p.category) {
         counts[p.category] = (counts[p.category] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [products]);
+
+  // Compute Size Category counts
+  const sizeCategoriesWithCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: products.length };
+    SIZE_CATEGORIES.forEach(sc => {
+      if (sc.id !== 'all') {
+        counts[sc.id] = products.filter(p => p.sizeCategory === sc.id).length;
       }
     });
     return counts;
@@ -145,28 +165,38 @@ export default function ProductsPage() {
       const nameMatch = p.name?.toLowerCase().includes(searchQuery.toLowerCase());
       const catMatch = p.category?.toLowerCase().includes(searchQuery.toLowerCase());
       const descMatch = p.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesSearch = nameMatch || catMatch || descMatch;
+      const sizeMatch = p.typicalSizes?.toLowerCase().includes(searchQuery.toLowerCase());
+      const skuMatch = p.skuPrefix?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = nameMatch || catMatch || descMatch || sizeMatch || skuMatch;
 
       // 2. Category selection
       const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
 
-      // 3. Wholesale Filter
+      // 3. Size Category selection
+      const matchesSizeCategory = selectedSizeCategory === 'all' || p.sizeCategory === selectedSizeCategory;
+
+      // 4. Sector selection
+      const matchesSector = selectedSector === 'All' || p.educationSector?.toLowerCase() === selectedSector.toLowerCase();
+
+      // 5. Gender selection
+      const matchesGender = selectedGender === 'All' || p.gender === selectedGender || p.gender === 'Unisex';
+
+      // 6. Wholesale Filter
       const isProductWholesale = p.priceType === 'wholesale' || p.tags?.some((t: string) => 
         ['wholesale', 'bulk', 'corporate'].includes(t.toLowerCase())
       );
       const matchesWholesale = !onlyWholesale || isProductWholesale;
 
-      // 4. Tag selection
+      // 7. Tag selection
       const matchesTag = !activeTag || p.tags?.some((t: string) => t.toLowerCase() === activeTag.toLowerCase());
 
-      // 5. Price Limit
-      // If wholesale or quote required, we don't strictly apply maximum price limit to hide it unless it fits
+      // 8. Price Limit
       const priceVal = Number(p.price) || 0;
       const matchesPrice = priceVal <= priceRange || priceVal === 0 || isProductWholesale;
 
-      return matchesSearch && matchesCategory && matchesWholesale && matchesTag && matchesPrice;
+      return matchesSearch && matchesCategory && matchesSizeCategory && matchesSector && matchesGender && matchesWholesale && matchesTag && matchesPrice;
     });
-  }, [products, searchQuery, selectedCategory, onlyWholesale, activeTag, priceRange]);
+  }, [products, searchQuery, selectedCategory, selectedSizeCategory, selectedSector, selectedGender, onlyWholesale, activeTag, priceRange]);
 
   // Sorting Logic
   const sortedAndFilteredProducts = useMemo(() => {
@@ -186,6 +216,9 @@ export default function ProductsPage() {
   // Reset all filters convenience button
   const handleClearFilters = () => {
     setSelectedCategory('all');
+    setSelectedSizeCategory('all');
+    setSelectedSector('All');
+    setSelectedGender('All');
     setSearchQuery('');
     setOnlyWholesale(false);
     setActiveTag(null);
@@ -355,7 +388,7 @@ export default function ProductsPage() {
       </div>
 
       {/* MOBILE STICKY TOP FILTER & SEARCH BAR */}
-      <div className="lg:hidden bg-white border-b border-slate-200 sticky top-[60px] z-30 shadow-xs px-3 py-2.5 space-y-2">
+      <div className="lg:hidden bg-white border-b border-slate-200 sticky top-[78px] sm:top-[98px] z-30 shadow-xs px-3 py-2.5 space-y-2 mt-20 sm:mt-28">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <input 
@@ -604,6 +637,42 @@ export default function ProductsPage() {
               </div>
             </div>
 
+            {/* Size Categories & Grades Filter */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+                <h4 className="text-[10px] font-black uppercase tracking-[3px] text-slate-400">Size Categories</h4>
+                <button
+                  type="button"
+                  onClick={() => setIsSizingGuideOpen(true)}
+                  className="text-[9.5px] font-bold text-[#FA9411] hover:underline flex items-center gap-1"
+                >
+                  <Ruler size={11} /> Guide
+                </button>
+              </div>
+              <div className="space-y-1">
+                {SIZE_CATEGORIES.map(sc => {
+                  const isSel = selectedSizeCategory === sc.id;
+                  const count = sizeCategoriesWithCounts[sc.id] ?? 0;
+                  return (
+                    <button
+                      key={sc.id}
+                      onClick={() => setSelectedSizeCategory(sc.id)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-all text-xs font-bold ${
+                        isSel 
+                          ? 'bg-[#FA9411] text-white shadow-xs' 
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-[#08047D]'
+                      }`}
+                    >
+                      <span className="line-clamp-1">{sc.name}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono ${isSel ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Wholesale vs Retail Toggle */}
             <div className="space-y-3 pb-4">
               <h4 className="text-[10px] font-black uppercase tracking-[3px] text-slate-400">Order Channel</h4>
@@ -788,7 +857,7 @@ export default function ProductsPage() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: Math.min(index * 0.05, 0.4) }}
-                      className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative animate-blink-orange"
+                      className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_10px_30px_-5px_rgba(8,4,125,0.18),0_4px_12px_-2px_rgba(8,4,125,0.12)] hover:shadow-[0_22px_45px_-8px_rgba(8,4,125,0.32),0_8px_20px_-4px_rgba(8,4,125,0.2)] border border-[#08047D]/15 hover:border-[#08047D]/40 transition-all duration-300 flex flex-col h-full relative"
                     >
                       {/* Badge Display */}
                       <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 flex flex-col gap-1 sm:gap-1.5 items-start">
@@ -1169,6 +1238,13 @@ export default function ProductsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Kenya Uniform Sizing Matrix & Measurement Guide Modal */}
+      <KenyaSizingMatrixModal
+        isOpen={isSizingGuideOpen}
+        onClose={() => setIsSizingGuideOpen(false)}
+        onSelectCategory={(catId) => setSelectedSizeCategory(catId)}
+      />
 
       <Footer />
     </div>

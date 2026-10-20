@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck, ShieldCheck, Tag, Ticket } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLocalization } from '../context/LocalizationContext';
 
 interface CartModalProps {
@@ -11,6 +11,13 @@ interface CartModalProps {
 }
 
 export function CartModal({ isOpen, onClose }: CartModalProps) {
+  const location = useLocation();
+  const isPosHomePage = location.pathname === '/' || /^\/(ke|kenya|tz|ug|et|tanzania|congo|drc|uganda|ethiopia)(\/home)?\/?$/.test(location.pathname);
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+
+  if (isOpen && isPosHomePage && isDesktop) {
+    return null;
+  }
   const { 
     cart, 
     updateQuantity, 

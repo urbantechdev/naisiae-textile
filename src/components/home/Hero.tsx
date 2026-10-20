@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ChevronRight, Scissors, RefreshCw, Package, Wind, Sparkles, Feather } from 'lucide-react';
+import { Search, ChevronRight, Scissors, RefreshCw, Package, Wind, Sparkles, Feather, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useLocalization } from '../../context/LocalizationContext';
@@ -97,6 +97,16 @@ export function Hero({
 
   const videoUrl = heroImages[currentSlide]?.videoUrl;
   const showVideo = !isMobile && videoUrl && !videoErrorSlides[currentSlide] && !isNonEmbeddableUrl(videoUrl);
+  
+  const handleScrollToProducts = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const target = document.getElementById('products') || document.getElementById('catalog');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.hash = '#products';
+    }
+  };
   
   return (
     <>
@@ -248,7 +258,7 @@ export function Hero({
       <div className="relative z-30 w-full h-full max-w-[1440px] mx-auto px-6 lg:px-24 flex flex-col lg:flex-row items-center lg:justify-between pt-10 sm:pt-14 pb-8 lg:py-0 gap-4 lg:gap-10">
         <div className="max-w-xl lg:max-w-[750px] w-full flex flex-col gap-4 lg:gap-8 order-1 lg:order-1">
 
-          <div className="hidden lg:flex min-h-[160px] sm:min-h-[200px] lg:min-h-[240px] flex-col justify-center">
+          <div className="flex min-h-[140px] sm:min-h-[180px] lg:min-h-[240px] flex-col justify-center">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentSlide}
@@ -256,14 +266,14 @@ export function Hero({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="space-y-4 lg:space-y-6"
+                className="space-y-3 sm:space-y-4 lg:space-y-6"
               >
-                <div className="space-y-4 lg:space-y-6 relative z-10">
+                <div className="space-y-3 sm:space-y-4 lg:space-y-6 relative z-10">
                     <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="font-display font-black text-4xl md:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
+                      className="font-display font-black text-3xl sm:text-5xl lg:text-7xl text-white leading-[0.9] tracking-[-0.04em]"
                     >
                       <span className="block overflow-hidden">
                         <motion.span 
@@ -272,11 +282,11 @@ export function Hero({
                           transition={{ duration: 0.8 }}
                           className="block lowercase font-[Comfortaa] lg:mb-2"
                         >
-                          {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "uhuru market" : heroImages[currentSlide].title.toLowerCase()}
+                          {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "naisiae" : heroImages[currentSlide].title.toLowerCase()}
                         </motion.span>
                       </span>
                       <span className="text-[#FA9411] italic inline-block relative pr-4">
-                        {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "UNIFORMS" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
+                        {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "TEXTILES" : (heroImages[currentSlide]?.subtitle ? heroImages[currentSlide].subtitle.split(' ').slice(-2).join(' ') : 'SOLUTIONS')}
                         <motion.div 
                           initial={{ scaleX: 0 }}
                           animate={{ scaleX: 1 }}
@@ -290,16 +300,16 @@ export function Hero({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-white/80 max-w-xl text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#FA9411] pl-6 lg:pl-8"
+                    className="text-white/80 max-w-xl text-xs sm:text-base lg:text-lg leading-relaxed font-light tracking-wide italic border-l-2 border-[#FA9411] pl-4 sm:pl-6 lg:pl-8"
                   >
-                    {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Uhuru Market Uniforms: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
+                    {currentSlide === 0 || !heroImages[currentSlide]?.title || heroImages[currentSlide]?.title === 'CRAFTING' ? "Naisiae Textiles: The leading high-performance uniform manufacturer at Uhuru Market, Nairobi." : (heroImages[currentSlide]?.subtitle || "Precision tailoring for educational, medical, and corporate sectors across Kenya.")}
                   </motion.p>
                 </div>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="hidden lg:flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full">
+          <div className="flex flex-row items-center gap-3 sm:gap-4 lg:gap-6 pt-2 w-full max-w-md lg:max-w-none">
             <Link
               to="/product"
               className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-[#FA9411] hover:bg-[#E08208] text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:opacity-95 active:scale-95 shadow-lg shadow-[#FA9411]/30 flex items-center justify-center lg:min-w-[220px]"
@@ -308,14 +318,15 @@ export function Hero({
                 Shop <ChevronRight size={18} className="hidden sm:block group-hover:translate-x-1 transition-transform" />
               </span>
             </Link>
-            <button
-              onClick={() => setIsCatalogueModalOpen(true)}
-              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:bg-white hover:text-[#08047D] shadow-md flex items-center justify-center lg:min-w-[220px]"
+            <a
+              href="#products"
+              onClick={handleScrollToProducts}
+              className="flex-1 lg:flex-none group relative px-6 sm:px-10 lg:px-12 py-4 sm:py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-xl sm:rounded-2xl transition-all duration-300 hover:bg-white hover:text-[#08047D] shadow-md flex items-center justify-center lg:min-w-[220px] cursor-pointer"
             >
               <span className="relative z-10 text-[9px] sm:text-[10px] lg:text-[11px] font-black uppercase tracking-[2px] sm:tracking-[4px] flex items-center gap-2 sm:gap-3">
-                Catalog <Scissors size={18} className="hidden sm:block group-hover:rotate-12 transition-transform text-[#FA9411]" />
+                Product <ShoppingBag size={18} className="hidden sm:block group-hover:scale-110 transition-transform text-[#FA9411]" />
               </span>
-            </button>
+            </a>
           </div>
 
           {/* Mobile Product Highlights Row */}
@@ -478,7 +489,7 @@ export function Hero({
                       setSearchQuery('');
                       setShowSearchSuggestions(false);
                     }}
-                    className="group/search bg-slate-50/50 hover:bg-white border border-slate-100/80 hover:border-[#08047D]/30 rounded-2xl p-4 flex gap-4 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] hover:scale-[1.01]"
+                    className="group/search bg-white border border-[#08047D]/15 hover:border-[#08047D]/40 rounded-2xl p-4 flex gap-4 transition-all duration-300 cursor-pointer shadow-[0_8px_20px_-4px_rgba(8,4,125,0.14)] hover:shadow-[0_16px_32px_-6px_rgba(8,4,125,0.25)] hover:scale-[1.01]"
                   >
                     <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl bg-slate-100 p-1.5 flex items-center justify-center overflow-hidden shrink-0 border border-slate-100/50">
                       <img src={product.imageUrl} className="w-full h-full object-cover object-top rounded-lg transition-transform duration-500 group-hover/search:scale-[1.06]" alt={product.name} />

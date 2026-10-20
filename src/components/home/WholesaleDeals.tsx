@@ -165,10 +165,10 @@ export function WholesaleDeals({
                    key={product.id}
                    layout
                    whileHover={isExpanded ? undefined : { y: -6 }}
-                   className={`group bg-white rounded-[24px] overflow-hidden shadow-sm flex transition-all duration-300 ${
+                   className={`group bg-white rounded-[24px] overflow-hidden flex transition-all duration-300 ${
                      isExpanded 
-                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 shadow-[0_30px_70px_rgba(0,0,0,0.15)] bg-white" 
-                       : "flex-row sm:flex-col hover:shadow-xl w-full"
+                       ? "flex-col col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 shadow-[0_25px_60px_-10px_rgba(8,4,125,0.28)] border-2 border-[#08047D]/35 bg-white" 
+                       : "flex-row sm:flex-col shadow-[0_10px_30px_-5px_rgba(8,4,125,0.18),0_4px_12px_-2px_rgba(8,4,125,0.12)] hover:shadow-[0_22px_45px_-8px_rgba(8,4,125,0.32),0_8px_20px_-4px_rgba(8,4,125,0.2)] border border-[#08047D]/15 hover:border-[#08047D]/40 w-full"
                    }`}
                 >
                   {!isExpanded ? (
