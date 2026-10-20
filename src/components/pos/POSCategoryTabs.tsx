@@ -125,6 +125,36 @@ export function POSCategoryTabs({
         </div>
       </div>
 
+      {/* Quick Category Chips for Fast 1-Tap Mobile Swiping */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
+        {categories.map((cat) => {
+          const isActive = activeCategory.toLowerCase() === cat.id.toLowerCase();
+          return (
+            <button
+              key={`chip-${cat.id}`}
+              type="button"
+              onClick={() => {
+                appExperience.triggerFeedback('tap');
+                onSelectCategory(cat.id);
+                onSelectSubCategory(null);
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 active:scale-95 ${
+                isActive
+                  ? 'bg-[#08047D] text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <span>{cat.name}</span>
+              {cat.count !== undefined && (
+                <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                  {cat.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
       {/* 2. Official Kenya Size Categories Row */}
       {onSelectSizeCategory && (
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">

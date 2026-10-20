@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   LayoutDashboard, 
+  ShoppingBag,
   Package, 
   Users, 
   MessageSquare, 
@@ -56,6 +57,7 @@ import { ContentManager } from '../components/admin/ContentManager';
 import ChatSettings from '../components/admin/ChatSettings';
 import ChatWorkspace from '../components/admin/ChatWorkspace';
 import SeoAudit from '../components/admin/SeoAudit';
+import { OrdersQueueManager } from '../components/admin/OrdersQueueManager';
 import { 
   collection, 
   addDoc, 
@@ -242,6 +244,8 @@ export default function AdminDashboard() {
   const [services, setServices] = useState<any[]>([]);
   const [portfolio, setPortfolio] = useState<any[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
+  const [posOrders, setPosOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>(null);
@@ -375,6 +379,7 @@ export default function AdminDashboard() {
       : (Number(p.stock) || 0);
     return totalStock <= 5;
   }).length;
+  const queuedOrdersCount = orders.filter(o => o.status === 'queued' || !o.status).length;
 
   useEffect(() => {
     // Real-time products
@@ -552,6 +557,19 @@ export default function AdminDashboard() {
       handleFirestoreError(error, OperationType.GET, 'catalogue_pages');
     });
 
+    // Real-time Orders Queue
+    const unsubscribeOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
+      const ords = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+      const sortedOrders = ords.sort((a: any, b: any) => {
+        const dateA = a.createdAt?.seconds || (a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0);
+        const dateB = b.createdAt?.seconds || (b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0);
+        return dateB - dateA;
+      });
+      setOrders(sortedOrders);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'orders');
+    });
+
     // Fetch Analytics for Top Products (Last 30 Days)
     const fetchTopProducts = async () => {
       try {
@@ -624,6 +642,7 @@ export default function AdminDashboard() {
       unsubscribeDiscountRules();
       unsubscribeReviews();
       unsubscribeCataloguePages();
+      unsubscribeOrders();
     };
   }, []);
 
@@ -1585,7 +1604,7 @@ export default function AdminDashboard() {
         setActiveView={setActiveView}
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
-        badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+        badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount, queuedOrdersCount }}
         handleLogout={handleLogout}
         siteLogo={siteSettings?.siteLogo}
       />
@@ -1625,6 +1644,7 @@ export default function AdminDashboard() {
         </div>
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
           {isSuperAdmin && <MobileNavItem active={activeView === 'overview'} onClick={() => { setActiveView('overview'); setIsMobileMenuOpen(false); }} icon={<LayoutDashboard size={18} />} label="Overview" />}
+          {isSuperAdmin && <MobileNavItem active={activeView === 'orders'} onClick={() => { setActiveView('orders'); setIsMobileMenuOpen(false); }} icon={<ShoppingBag size={18} />} label="Orders Queue" badge={queuedOrdersCount} />}
           <MobileNavItem active={activeView === 'products'} onClick={() => { setActiveView('products'); setIsMobileMenuOpen(false); }} icon={<Package size={18} />} label="Products" badge={lowStockProductsCount} />
           {isSuperAdmin && (
             <>
@@ -1925,6 +1945,75 @@ export default function AdminDashboard() {
                     </div>
                     <button onClick={() => setActiveView('quotes')} className="mt-4 w-full py-2.5 text-xs font-bold text-[#050259] bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">View All Requests</button>
                   </div>
+                </div>
+
+                {/* Incoming Orders Live Queue */}
+                <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] p-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold">
+                        <ShoppingBag size={20} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-gray-800">Incoming Orders Live Queue</h3>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                            {orders.filter(o => o.status === 'queued' || !o.status).length} Queued
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-0.5">Real-time orders placed via POS Till and Online Store</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setActiveView('orders')}
+                      className="px-4 py-2 rounded-xl bg-[#08047D] hover:bg-[#050259] text-white text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 self-start sm:self-auto shadow-md cursor-pointer"
+                    >
+                      <span>Open Full Orders Queue</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+
+                  {orders.length === 0 ? (
+                    <div className="p-8 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                      <p className="text-xs font-bold text-slate-500">No orders queued yet.</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">When orders are made in the POS checkout or online store, they will appear here live.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                      {orders.slice(0, 6).map((ord) => (
+                        <div
+                          key={ord.id}
+                          onClick={() => setActiveView('orders')}
+                          className="p-4 rounded-xl border border-slate-200 hover:border-[#08047D] hover:shadow-sm bg-slate-50/40 hover:bg-white transition-all cursor-pointer group"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-mono text-xs font-black text-slate-900 group-hover:text-[#08047D]">
+                              #{ord.orderNumber || ord.id.slice(0, 8)}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
+                              ord.status === 'queued' || !ord.status
+                                ? 'bg-amber-100 text-amber-800'
+                                : ord.status === 'preparing'
+                                ? 'bg-blue-100 text-blue-800'
+                                : ord.status === 'ready'
+                                ? 'bg-purple-100 text-purple-800'
+                                : 'bg-emerald-100 text-emerald-800'
+                            }`}>
+                              {ord.status || 'queued'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-bold text-slate-700 truncate">{ord.customerName || 'Walk-in Customer'}</span>
+                            <span className="font-black text-slate-900 font-mono">KES {(ord.total || 0).toLocaleString()}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+                            <span>{ord.type === 'pos' ? '🏪 POS Till' : '🌐 Online'} · {ord.items?.length || 0} items</span>
+                            <span>{ord.paymentMethod?.toLowerCase().includes('mpesa') ? '🟢 M-Pesa' : '💵 Cash'}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Top Products Integration */}
@@ -2372,6 +2461,21 @@ export default function AdminDashboard() {
                     </table>
                   </div>
                 </div>
+              </motion.div>
+            )}
+
+            {activeView === 'orders' && (
+              <motion.div 
+                key="orders"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <OrdersQueueManager 
+                  orders={orders}
+                  setToast={setToast}
+                />
               </motion.div>
             )}
 
@@ -4334,7 +4438,7 @@ export default function AdminDashboard() {
       <AdminBottomNav 
         activeView={activeView}
         setActiveView={setActiveView}
-        badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount }}
+        badges={{ lowStockProductsCount, newQuotesCount, pendingReviewsCount, queuedOrdersCount }}
         chats={chats}
         onAddProduct={() => { setEditingItem(null); setIsModalOpen(true); }}
       />
@@ -4360,6 +4464,7 @@ function AdminSidebar({
   ].includes(auth.currentUser.email) : false;
   const navItems = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'orders', label: 'Orders Queue', icon: ShoppingBag, badge: badges.queuedOrdersCount },
     { id: 'products', label: 'Inventory', icon: Package, badge: badges.lowStockProductsCount },
     { id: 'categories', label: 'Categories', icon: Filter },
     { id: 'services', label: 'Services', icon: Sparkles },
@@ -4487,11 +4592,11 @@ function AdminBottomNav({ activeView, setActiveView, badges, chats, onAddProduct
 
   const leftItems = [
     { id: 'overview', label: 'Dash', icon: LayoutDashboard },
-    { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
+    { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: badges.queuedOrdersCount },
   ];
 
   const rightItems = [
-    { id: 'live-support', label: 'Chat', icon: Headset, badge: activeChatCount },
+    { id: 'products', label: 'Stock', icon: Package, badge: badges.lowStockProductsCount },
     { id: 'quotes', label: 'Quotes', icon: MessageSquare, badge: badges.newQuotesCount },
   ];
 

@@ -28,6 +28,7 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { CheckoutMobileWizard } from '../components/CheckoutMobileWizard';
+import { AnimateStkPushModal } from '../components/pos/AnimateStkPushModal';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
 import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
@@ -131,6 +132,8 @@ export default function CheckoutPage() {
   const deliveryFee = deliveryMethod === 'nairobi' ? 300 : 0;
   const finalCartTotal = cartTotal + deliveryFee;
 
+  const [isCenteredStkModalOpen, setIsCenteredStkModalOpen] = useState(false);
+
   const handleInitiateStkPush = async () => {
     const cleanPhone = stkPhoneNumber.trim();
     if (!cleanPhone) {
@@ -140,38 +143,20 @@ export default function CheckoutPage() {
     
     appExperience.triggerHaptic('light');
     appExperience.playSound('tap');
-    setStkPushState('sending');
-    
-    await delay(1500);
-    setStkPushState('pending_pin');
-    setStkCountdown(15);
-    
-    // Simulate countdown
-    const timer = setInterval(() => {
-      setStkCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    
-    await delay(6000);
-    clearInterval(timer);
-    setStkPushState('verifying');
-    
-    await delay(1500);
-    // Generate a beautiful uppercase 10-character M-Pesa transaction code
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = 'STK';
-    for (let i = 0; i < 7; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    setIsCenteredStkModalOpen(true);
+  };
+
+  const handleCenterStkSuccess = (code: string) => {
     setMpesaRefCode(code);
     setStkPushState('completed');
+    setIsCenteredStkModalOpen(false);
     appExperience.triggerHaptic('success');
     appExperience.playSound('success');
+  };
+
+  const handleCenterStkCancel = () => {
+    setIsCenteredStkModalOpen(false);
+    setStkPushState('idle');
   };
 
   const handleSmsPaste = (text: string) => {
@@ -463,6 +448,40 @@ export default function CheckoutPage() {
 
       const docRef = await addDoc(collection(db, 'quotes'), quoteData);
       setSubmittedQuoteData({ ...quoteData, id: docRef.id });
+
+      // Queue in unified admin orders queue
+      try {
+        await addDoc(collection(db, 'orders'), {
+          orderNumber: `ORD-${Date.now().toString().slice(-6)}`,
+          type: 'online',
+          source: 'Online Web Store',
+          status: 'queued',
+          customerName: formData.name,
+          customerEmail: formData.email,
+          customerPhone: formData.phone,
+          institution: formData.institution || '',
+          deliveryMethod: deliveryMethod,
+          shippingCountry: formData.shippingCountry,
+          shippingCity: formData.shippingCity,
+          shippingAddress: formData.shippingAddress,
+          items: quoteData.items,
+          subtotal: cartSubtotal,
+          discount: discountAmount,
+          deliveryFee: deliveryFee,
+          total: finalCartTotal,
+          paymentMethod: checkoutMethod === 'mpesa' ? 'M-Pesa Express' : 'Standard RFQ Inquiry',
+          paymentStatus: checkoutMethod === 'mpesa' ? 'verified' : 'inquiry',
+          mpesaTransactionCode: checkoutMethod === 'mpesa' ? mpesaRefCode.trim().toUpperCase() : null,
+          mpesaAmountPaid: quoteData.mpesaAmountPaid || 0,
+          quoteId: docRef.id,
+          notes: formData.details || '',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.warn('Could not queue to orders (non-blocking):', err);
+      }
+
       setSuccess(true);
       clearCart();
       window.scrollTo(0, 0);
@@ -1503,6 +1522,16 @@ export default function CheckoutPage() {
         </div>
         </div>
       )}
+      
+      {/* Centered Animated STK Push Modal */}
+      <AnimateStkPushModal
+        isOpen={isCenteredStkModalOpen}
+        phoneNumber={stkPhoneNumber || formData.phone}
+        amount={mpesaPaymentOption === 'deposit' ? Math.round(finalCartTotal * 0.5) : finalCartTotal}
+        ticketNumber={`ONL-${Date.now().toString().slice(-4)}`}
+        onSuccess={handleCenterStkSuccess}
+        onCancel={handleCenterStkCancel}
+      />
       
       <Footer />
     </div>

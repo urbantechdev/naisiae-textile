@@ -34,7 +34,7 @@ export interface POSSaleRecord {
   discount: number;
   tax: number;
   total: number;
-  paymentMethod: 'cash' | 'mpesa' | 'card' | 'credit';
+  paymentMethod: string;
   amountTendered?: number;
   changeDue?: number;
   paymentRef?: string;

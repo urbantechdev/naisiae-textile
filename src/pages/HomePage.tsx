@@ -27,6 +27,11 @@ import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
 
 // POS Components
 import { POSHeader } from '../components/pos/POSHeader';
+import { POSMobileAppHeader } from '../components/pos/POSMobileAppHeader';
+import { MobileAppDock } from '../components/pos/MobileAppDock';
+import { MobileCartFloatingBar } from '../components/pos/MobileCartFloatingBar';
+import { MobileAppDrawer } from '../components/pos/MobileAppDrawer';
+import { MobileInstallPrompt } from '../components/MobileInstallPrompt';
 import { POSCategoryTabs } from '../components/pos/POSCategoryTabs';
 import { POSProductCard } from '../components/pos/POSProductCard';
 import { POSCheckoutCart } from '../components/pos/POSCheckoutCart';
@@ -77,6 +82,7 @@ export default function HomePage() {
   const [activeGender, setActiveGender] = useState<string>('All');
   const [isSizingGuideOpen, setIsSizingGuideOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [isCatalogExpanded, setIsCatalogExpanded] = useState(false);
 
   // POS Modals state
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
@@ -85,6 +91,7 @@ export default function HomePage() {
   const [isCustomItemOpen, setIsCustomItemOpen] = useState(false);
   const [isHeldOrdersOpen, setIsHeldOrdersOpen] = useState(false);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Customer profile for active ticket
   const [customer, setCustomer] = useState<POSCustomerInfo>({
@@ -346,8 +353,35 @@ export default function HomePage() {
     clearCart();
     setCustomer({ name: 'Walk-in Customer', phone: '', type: 'walk-in' });
 
-    // Record transaction in Firestore (silent async)
+    // Queue transaction into unified Admin 'orders' collection
     try {
+      addDoc(collection(db, 'orders'), {
+        orderNumber: sale.ticketNumber,
+        type: 'pos',
+        source: 'Uhuru Market Stall 4B (POS Till 01)',
+        status: 'queued',
+        customerName: sale.customerName || 'Walk-in Customer',
+        customerPhone: sale.customerPhone || '',
+        customerType: sale.customerType || 'Retail',
+        items: sale.items,
+        subtotal: sale.subtotal,
+        discount: sale.discount,
+        tax: sale.tax,
+        total: sale.total,
+        paymentMethod: sale.paymentMethod,
+        paymentRef: sale.paymentRef || null,
+        paymentStatus: 'paid',
+        amountTendered: sale.amountTendered,
+        changeDue: sale.changeDue,
+        cashier: sale.cashier,
+        station: sale.station,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }).catch(err => {
+        console.warn('Could not queue to orders collection:', err);
+      });
+
+      // Also preserve legacy pos_orders
       addDoc(collection(db, 'pos_orders'), {
         ...sale,
         createdAt: serverTimestamp()
@@ -374,65 +408,74 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans select-none antialiased text-slate-800">
-      {/* 1. Restored Authentic Header Bar Design */}
-      <Navbar 
-        wishlistCount={wishlistCount}
-        setIsWishlistOpen={setIsWishlistOpen}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        setIsQuoteModalOpen={setIsQuoteModalOpen}
-        setIsCompareModalOpen={setIsCompareModalOpen}
-        setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+      {/* 1. Desktop Navbar (hidden on mobile) */}
+      <div className="hidden lg:block">
+        <Navbar 
+          wishlistCount={wishlistCount}
+          setIsWishlistOpen={setIsWishlistOpen}
+          isMenuOpen={isMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
+          setIsQuoteModalOpen={setIsQuoteModalOpen}
+          setIsCompareModalOpen={setIsCompareModalOpen}
+          setSelectedQuickViewProduct={setSelectedQuickViewProduct}
+        />
+      </div>
+
+      {/* 2. Dedicated Native Mobile App Header (< lg screens) */}
+      <POSMobileAppHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onSimulateBarcodeScan={handleSimulateBarcodeScan}
+        onOpenCustomItem={() => setIsCustomItemOpen(true)}
+        onOpenHeldOrders={() => setIsHeldOrdersOpen(true)}
+        heldCount={heldOrders.length}
+        customer={customer}
+        onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
+        totalProductsCount={products.length}
       />
 
-      {/* 2. Main POS Workspace with safe offset for the fixed Navbar */}
-      <main className="flex-1 max-w-[1780px] w-full mx-auto px-3 sm:px-4 lg:px-6 pt-28 sm:pt-40 md:pt-48 lg:pt-52 pb-24 lg:pb-8 flex flex-col">
-        {/* POS Action Toolbar: Search, Barcode, View Mode, Custom Item, Held Orders */}
-        <POSHeader
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onOpenCustomItem={() => setIsCustomItemOpen(true)}
-          onOpenHeldOrders={() => setIsHeldOrdersOpen(true)}
-          heldCount={heldOrders.length}
-          onSimulateBarcodeScan={handleSimulateBarcodeScan}
-          viewMode={viewMode}
-          onToggleViewMode={setViewMode}
-          totalProductsCount={products.length}
-        />
-
-        {/* Mobile Tab Switcher (< lg) */}
-        <div className="lg:hidden mb-3 bg-white p-1 rounded-2xl border border-slate-200/90 shadow-xs flex">
-          <button 
-            type="button"
-            onClick={() => { appExperience.triggerFeedback('tap'); setMobileView('catalog'); }}
-            className={`flex-1 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
-              mobileView === 'catalog' 
-                ? 'bg-[#08047D] text-white shadow-xs' 
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ShoppingBag size={14} />
-            <span>Catalog ({filteredProducts.length})</span>
-          </button>
-          <button 
-            type="button"
-            onClick={() => { appExperience.triggerFeedback('tap'); setMobileView('cart'); }}
-            className={`flex-1 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
-              mobileView === 'cart' 
-                ? 'bg-[#08047D] text-white shadow-xs' 
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ShoppingBag size={14} />
-            <span>Ticket ({cart.length}) · {formatPrice(cartTotal)}</span>
-          </button>
+      {/* 3. Main POS Workspace with responsive safe offset */}
+      <main className="flex-1 max-w-[1780px] w-full mx-auto px-2.5 sm:px-4 lg:px-6 pt-24 sm:pt-28 lg:pt-52 pb-safe-dock lg:pb-8 flex flex-col">
+        {/* Desktop POS Action Toolbar */}
+        <div className="hidden lg:block">
+          <POSHeader
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onOpenCustomItem={() => setIsCustomItemOpen(true)}
+            onOpenHeldOrders={() => setIsHeldOrdersOpen(true)}
+            heldCount={heldOrders.length}
+            onSimulateBarcodeScan={handleSimulateBarcodeScan}
+            viewMode={viewMode}
+            onToggleViewMode={setViewMode}
+            totalProductsCount={products.length}
+          />
         </div>
+
+        {/* Mobile View: Back to catalog bar if viewing cart */}
+        {mobileView === 'cart' && (
+          <div className="lg:hidden mb-3 bg-white px-3.5 py-2.5 rounded-2xl border border-slate-200/90 shadow-xs flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                appExperience.triggerFeedback('tap');
+                setMobileView('catalog');
+              }}
+              className="flex items-center gap-1.5 text-xs font-black text-[#08047D] hover:underline"
+            >
+              <ArrowRight size={14} className="rotate-180 text-[#FA9411]" />
+              <span>Back to Uniform Catalog</span>
+            </button>
+            <span className="text-[11px] font-black uppercase text-slate-500">
+              Active Ticket ({cart.length})
+            </span>
+          </div>
+        )}
 
         {/* POS 2-Column Split: Left = Catalog (66%), Right = Checkout Cart (34%) */}
         <div className="flex-1 flex flex-col lg:flex-row gap-4 sm:gap-5 items-start">
           
           {/* Left Column: POS Category Filters & Products */}
-          <section className={`w-full lg:w-[62%] xl:w-[66%] 2xl:w-[69%] flex flex-col ${
+          <section className={`w-full lg:w-[58%] xl:w-[60%] 2xl:w-[63%] flex flex-col ${
             mobileView === 'cart' ? 'hidden lg:flex' : 'flex'
           }`}>
             {/* Fast Category Pills & Subcategories */}
@@ -473,7 +516,7 @@ export default function HomePage() {
               </div>
             ) : viewMode === 'list' ? (
               <div className="space-y-2">
-                {filteredProducts.map(product => (
+                {(isCatalogExpanded ? filteredProducts : filteredProducts.slice(0, 12)).map(product => (
                   <POSProductCard
                     key={product.id}
                     product={product}
@@ -498,7 +541,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5">
-                {filteredProducts.map(product => (
+                {(isCatalogExpanded ? filteredProducts : filteredProducts.slice(0, 12)).map(product => (
                   <POSProductCard
                     key={product.id}
                     product={product}
@@ -522,10 +565,25 @@ export default function HomePage() {
                 ))}
               </div>
             )}
+
+            {filteredProducts.length > 12 && (
+              <div className="mt-4 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    appExperience.triggerFeedback('tap');
+                    setIsCatalogExpanded(!isCatalogExpanded);
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <span>{isCatalogExpanded ? 'Collapse Rows (Show Less)' : `Show More Products (${filteredProducts.length - 12} more)`}</span>
+                </button>
+              </div>
+            )}
           </section>
 
           {/* Right Column: Dedicated Sticky POS Checkout Cart */}
-          <aside className={`w-full lg:w-[38%] xl:w-[34%] 2xl:w-[31%] lg:sticky lg:top-[144px] lg:h-[calc(100vh-164px)] flex flex-col ${
+          <aside className={`w-full lg:w-[42%] xl:w-[40%] 2xl:w-[37%] lg:sticky lg:top-[144px] lg:h-[calc(100vh-164px)] flex flex-col ${
             mobileView === 'catalog' ? 'hidden lg:flex' : 'flex'
           }`}>
             <POSCheckoutCart
@@ -759,6 +817,39 @@ export default function HomePage() {
         onClose={() => setIsSizingGuideOpen(false)}
         onSelectCategory={(catId) => setActiveSizeCategory(catId)}
       />
+
+      {/* 9. Floating Mobile Cart Summary Bar (When in catalog on mobile) */}
+      <MobileCartFloatingBar
+        isVisible={mobileView === 'catalog'}
+        cartCount={cartCount}
+        cartTotal={cartTotal}
+        onOpenCart={() => {
+          appExperience.triggerFeedback('tap');
+          setMobileView('cart');
+        }}
+      />
+
+      {/* 10. Native Mobile Bottom Navigation Dock */}
+      <MobileAppDock
+        activeView={mobileView}
+        onSwitchView={setMobileView}
+        cartCount={cartCount}
+        cartTotal={cartTotal}
+        heldCount={heldOrders.length}
+        onOpenAppDrawer={() => setIsMobileDrawerOpen(true)}
+        onOpenHeldOrders={() => setIsHeldOrdersOpen(true)}
+        onTriggerScan={handleSimulateBarcodeScan}
+      />
+
+      {/* 11. Native Mobile App Drawer (Sheet) */}
+      <MobileAppDrawer
+        isOpen={isMobileDrawerOpen}
+        onClose={() => setIsMobileDrawerOpen(false)}
+        onOpenSizingGuide={() => setIsSizingGuideOpen(true)}
+      />
+
+      {/* 12. PWA Mobile App Installation Prompt */}
+      <MobileInstallPrompt />
     </div>
   );
 }
