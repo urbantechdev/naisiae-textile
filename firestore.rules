@@ -71,7 +71,7 @@ service cloud.firestore {
 
     function isValidProduct(data) {
       return data.keys().hasAll(['name', 'category', 'price']) &&
-             data.keys().size() <= 25 &&
+             data.keys().size() <= 35 &&
              data['name'] is string && data['name'].size() <= 200 &&
              data['category'] is string && data['category'].size() <= 100 &&
              data['price'] is number && data['price'] >= 0 &&
@@ -132,7 +132,7 @@ service cloud.firestore {
       allow create: if isAdmin() && isValidId(id) && isValidProduct(incoming());
       allow update: if isAdmin() && isValidProduct(incoming()) && (
         // Action: Update details
-        incoming().diff(existing()).affectedKeys().hasAny(['name', 'category', 'price', 'description', 'active', 'imageUrl', 'badge', 'tags', 'oldPrice', 'sortOrder', 'updatedAt'])
+        incoming().diff(existing()).affectedKeys().hasAny(['name', 'category', 'price', 'description', 'active', 'imageUrl', 'imageUrls', 'badge', 'tags', 'oldPrice', 'sortOrder', 'updatedAt'])
       );
       allow delete: if isAdmin();
     }
