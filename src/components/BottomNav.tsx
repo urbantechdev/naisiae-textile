@@ -209,17 +209,17 @@ export function BottomNav() {
 
           {/* 3. Center Highlight: Elevated Floating Pay with M-Pesa Button (Floats above all other buttons) */}
           <div className="relative -mt-8 z-40 flex items-center justify-center shrink-0">
-            {/* Ambient emerald glowing halo */}
-            <div className="absolute -inset-2 rounded-full bg-emerald-500/50 blur-xl animate-pulse pointer-events-none"></div>
+            {/* Ambient amber glowing halo */}
+            <div className="absolute -inset-2 rounded-full bg-amber-500/50 blur-xl animate-pulse pointer-events-none"></div>
 
-            {/* Glowing gold/emerald rim light */}
-            <div className="absolute -inset-1 rounded-full bg-gradient-to-b from-[#FFE082] via-emerald-400 to-emerald-600 opacity-95 blur-[1.5px] pointer-events-none"></div>
+            {/* Glowing gold/amber rim light */}
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-b from-[#FFE082] via-amber-400 to-amber-600 opacity-95 blur-[1.5px] pointer-events-none"></div>
 
             <button
               onClick={handleOpenPhoneModal}
               aria-label="Pay with M-Pesa"
               title="Pay with M-Pesa"
-              className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-700 via-emerald-500 to-emerald-400 text-white shadow-[0_14px_32px_rgba(5,150,105,0.6),0_4px_14px_rgba(0,0,0,0.22)] ring-4 ring-white active:scale-90 hover:scale-105 transition-all duration-300 flex items-center justify-center cursor-pointer group"
+              className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-amber-400 text-white shadow-[0_14px_32px_rgba(217,119,6,0.6),0_4px_14px_rgba(0,0,0,0.22)] ring-4 ring-white active:scale-90 hover:scale-105 transition-all duration-300 flex items-center justify-center cursor-pointer group"
             >
               {/* Top glass gloss highlight */}
               <div className="absolute inset-x-3 top-2 h-4 rounded-t-full bg-gradient-to-b from-white/45 to-transparent pointer-events-none"></div>
