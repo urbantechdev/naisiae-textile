@@ -500,9 +500,6 @@ export function Navbar({
               <span className="font-display text-lg sm:text-2xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-700 leading-tight text-white group-hover:text-white/90 drop-shadow-sm">
                 {resolvedSiteName}
               </span>
-              <span className="hidden md:inline text-[10px] md:text-[11px] font-bold tracking-widest text-[#FA9411] uppercase select-none -mt-0.5">
-                Powered by Urbantechdev
-              </span>
             </div>
           </Link>
 
