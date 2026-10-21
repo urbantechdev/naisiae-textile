@@ -47,6 +47,7 @@ const WishlistModal = lazy(() => import('./components/WishlistModal').then(modul
 const QuoteModal = lazy(() => import('./components/QuoteModal').then(module => ({ default: module.QuoteModal })));
 const CatalogueModal = lazy(() => import('./components/CatalogueModal').then(module => ({ default: module.CatalogueModal })));
 const FloatingChat = lazy(() => import('./components/FloatingChat').then(module => ({ default: module.FloatingChat })));
+const BottomNav = lazy(() => import('./components/BottomNav').then(module => ({ default: module.BottomNav })));
 const GlobalToast = lazy(() => import('./components/GlobalToast').then(module => ({ default: module.GlobalToast })));
 
 // Dynamic SEO Engine to enforce branding permanently across all routes
@@ -507,6 +508,7 @@ function AppContent({ isAdmin, loading }: any) {
         <QuoteModal />
         <CatalogueModal />
         {!isAdminRoute && !isPosRoute && <FloatingChat />}
+        {!isAdminRoute && <BottomNav />}
         <GlobalToast />
       </Suspense>
     </InactivityHandler>

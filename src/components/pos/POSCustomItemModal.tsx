@@ -78,7 +78,7 @@ export function POSCustomItemModal({ isOpen, onClose, onAddItem }: POSCustomItem
           initial={{ scale: 0.94, opacity: 0, y: 15 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.94, opacity: 0, y: 15 }}
-          className="relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col border border-slate-200"
+          className="relative w-full h-[100dvh] sm:h-auto sm:max-w-lg bg-white rounded-none sm:rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col border-0 sm:border border-slate-200"
         >
           {/* Header */}
           <div className="p-4 sm:p-5 bg-gradient-to-r from-[#08047D] to-[#04023D] text-white flex items-center justify-between">

@@ -71,7 +71,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="w-full sm:w-screen sm:max-w-md bg-white sm:rounded-l-[2rem] shadow-[-20px_0_50px_rgba(0,0,0,0.15)] flex flex-col relative overflow-hidden"
+              className="w-full h-[100dvh] bg-white sm:w-screen sm:max-w-md sm:h-auto sm:rounded-l-[2rem] shadow-[-20px_0_50px_rgba(0,0,0,0.15)] flex flex-col relative overflow-hidden"
             >
               {/* Header Interface */}
               <div className="p-4 sm:p-8 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">

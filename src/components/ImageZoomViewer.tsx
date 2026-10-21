@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ZoomIn, ZoomOut, RotateCcw, X, Maximize2, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { Search, ZoomIn, ZoomOut, RotateCcw, X, Maximize2, ChevronLeft, ChevronRight, Eye, Plus } from 'lucide-react';
 
 interface ImageZoomViewerProps {
   src: string;
@@ -11,6 +11,7 @@ interface ImageZoomViewerProps {
   className?: string;
   aspectRatio?: string;
   objectFit?: 'contain' | 'cover';
+  onAddImage?: () => void;
 }
 
 export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
@@ -21,7 +22,8 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
   overlayChildren,
   className = '',
   aspectRatio = 'aspect-square',
-  objectFit = 'contain'
+  objectFit = 'contain',
+  onAddImage
 }) => {
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -162,8 +164,8 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
         </div>
       </div>
 
-      {/* Gallery Thumbnails Carousel */}
-      {allImages.length > 1 && (
+      {/* Gallery Thumbnails Carousel & Add Photo Action */}
+      {(allImages.length > 1 || onAddImage) && (
         <div className="flex items-center gap-2 mt-3 max-w-full overflow-x-auto scrollbar-hide py-1 px-1">
           {allImages.map((url, idx) => (
             <button
@@ -182,6 +184,21 @@ export const ImageZoomViewer: React.FC<ImageZoomViewerProps> = ({
               <img src={url} className="w-full h-full object-cover" alt={`${alt} view ${idx + 1}`} />
             </button>
           ))}
+
+          {onAddImage && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddImage();
+              }}
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-dashed border-[#FA9411]/60 hover:border-[#FA9411] bg-amber-50/60 hover:bg-amber-100/70 text-[#FA9411] transition-all shrink-0 flex flex-col items-center justify-center gap-0.5 cursor-pointer shadow-xs active:scale-95 group/add"
+              title="Add more images to product"
+            >
+              <Plus size={18} className="group-hover/add:scale-110 transition-transform text-[#FA9411]" />
+              <span className="text-[9px] font-black uppercase tracking-wider leading-none text-[#FA9411]">Add</span>
+            </button>
+          )}
         </div>
       )}
 

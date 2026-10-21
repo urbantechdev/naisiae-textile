@@ -34,12 +34,15 @@ import {
   Mail,
   Ruler,
   Layers,
-  GraduationCap
+  GraduationCap,
+  Camera,
+  ImagePlus
 } from 'lucide-react';
 import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { LazyImage } from '../components/LazyImage';
 import { ImageZoomViewer } from '../components/ImageZoomViewer';
+import { AddProductImageModal } from '../components/AddProductImageModal';
 import { useCart } from '../context/CartContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { GoogleMerchantSchema } from '../components/GoogleMerchantSchema';
@@ -94,6 +97,7 @@ export default function ProductsPage() {
   const [brandingText, setBrandingText] = useState('');
   const [embroideryOption, setEmbroideryOption] = useState('none'); // 'none', 'embroidery', 'printing'
   const [embroideryPosition, setEmbroideryPosition] = useState('Chest');
+  const [isAddImageModalOpen, setIsAddImageModalOpen] = useState(false);
 
   // Load products dynamically from Firestore and enrich with Kenya Uniform Price Master
   useEffect(() => {
@@ -1023,42 +1027,84 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      {/* QUICK VIEW & DETAILED CUSTOMIZATION OVERLAY DIALOG */}
+      {/* QUICK VIEW & DETAILED CUSTOMIZATION OVERLAY DIALOG (Full screen on mobile with floating bottom add button) */}
       <AnimatePresence>
         {selectedProduct && (
-          <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-[200] flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+          <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-[200] flex items-center justify-center p-0 lg:p-4 overflow-hidden">
             <GoogleMerchantSchema product={selectedProduct} currency={currentCountry.currency} />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden w-full max-w-4xl shadow-2xl border border-slate-100 flex flex-col lg:flex-row relative max-h-[92vh] sm:max-h-[88vh] my-auto"
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 20 }}
+              className="bg-white rounded-none lg:rounded-3xl overflow-hidden w-full h-[100dvh] lg:h-auto max-w-none lg:max-w-4xl shadow-2xl border-0 lg:border lg:border-slate-100 flex flex-col lg:flex-row relative lg:max-h-[88vh] my-0 lg:my-auto"
             >
-              {/* Close Button */}
+              {/* Mobile Top Navigation Bar */}
+              <div className="lg:hidden sticky top-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between shrink-0 shadow-sm">
+                <button 
+                  type="button"
+                  onClick={() => setSelectedProduct(null)}
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-transform active:scale-90"
+                  aria-label="Close product preview"
+                >
+                  <X size={18} />
+                </button>
+                <div className="flex items-center gap-1.5 truncate max-w-[200px]">
+                  <span className="text-[10.5px] font-black uppercase tracking-wider text-[#08047D] bg-[#08047D]/10 px-2.5 py-0.5 rounded-full truncate">
+                    {selectedProduct.category || 'Product Preview'}
+                  </span>
+                </div>
+                <div className="text-sm font-black text-[#08047D] font-mono">
+                  {formatPrice(computedProductPrice)}
+                </div>
+              </div>
+
+              {/* Desktop Close Button */}
               <button 
+                type="button"
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/95 border border-slate-200 hover:bg-slate-200 text-slate-700 hover:text-black flex items-center justify-center transition-colors shadow-lg active:scale-95"
+                className="hidden lg:flex absolute top-3 right-3 sm:top-4 sm:right-4 z-50 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/95 border border-slate-200 hover:bg-slate-200 text-slate-700 hover:text-black items-center justify-center transition-colors shadow-lg active:scale-95"
+                aria-label="Close product preview"
               >
                 <X size={18} />
               </button>
 
               {/* Left Column: Product Info & Image gallery indicator */}
-              <div className="w-full lg:w-1/2 bg-slate-50 p-3 sm:p-6 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-r border-slate-100 shrink-0 max-h-[38vh] lg:max-h-none overflow-hidden">
+              <div className="w-full lg:w-1/2 bg-slate-50 p-4 sm:p-6 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-r border-slate-100 shrink-0 overflow-hidden">
                 <ImageZoomViewer 
                   src={selectedProduct.imageUrl} 
                   alt={selectedProduct.name}
                   imageUrls={selectedProduct.imageUrls}
                   badge={selectedProduct.badge}
+                  onAddImage={() => setIsAddImageModalOpen(true)}
                   aspectRatio="aspect-square max-h-[30vh] lg:max-h-[44vh] max-w-[260px] sm:max-w-[340px] mx-auto"
                 />
-                <div className="mt-2 text-center text-slate-400 text-[10px] font-bold">
-                  🔍 Batch Ref: #{selectedProduct.id?.slice(0, 8).toUpperCase()}
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddImageModalOpen(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-white border border-[#FA9411]/50 hover:border-[#FA9411] text-[#08047D] hover:bg-amber-50 text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer"
+                  >
+                    <Plus size={13} className="text-[#FA9411]" />
+                    <span>+ Add More Images</span>
+                  </button>
+                  <span className="text-slate-300">•</span>
+                  <div className="text-slate-400 text-[10px] font-bold">
+                    Ref #{selectedProduct.id?.slice(0, 8).toUpperCase()}
+                  </div>
                 </div>
+                <AddProductImageModal
+                  isOpen={isAddImageModalOpen}
+                  onClose={() => setIsAddImageModalOpen(false)}
+                  product={selectedProduct}
+                  onImagesUpdated={(newUrls, primary) => {
+                    setIsAddImageModalOpen(false);
+                  }}
+                />
               </div>
 
               {/* Right Column: Interactive customization options form */}
-              <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-hidden flex-1">
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-4">
+              <div className="w-full lg:w-1/2 flex flex-col min-h-0 min-w-0 bg-white overflow-y-auto lg:overflow-hidden flex-1 pb-24 lg:pb-0">
+                <div className="flex-1 overflow-y-visible lg:overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-4">
                   <h2 className="text-xl lg:text-2xl font-bold text-[#08047D] mb-2">{selectedProduct.name}</h2>
                   
                   {/* Detailed features review block */}
@@ -1212,8 +1258,8 @@ export default function ProductsPage() {
                   </div>
                 </div>
 
-                {/* Pricing summary & Quick Action Area */}
-                <div className="shrink-0 bg-white border-t border-slate-100 p-3.5 sm:p-4 z-20 flex items-center justify-between gap-3">
+                {/* Desktop Pricing summary & Quick Action Area */}
+                <div className="hidden lg:flex shrink-0 bg-white border-t border-slate-100 p-3.5 sm:p-4 z-20 items-center justify-between gap-3">
                   <div>
                     <span className="text-[10px] text-slate-400 font-bold uppercase block">Calculated Value</span>
                     <span className="text-xl sm:text-2xl font-black text-[#08047D] font-mono">
@@ -1224,14 +1270,34 @@ export default function ProductsPage() {
                   <div className="flex gap-2">
                     <button 
                       onClick={handleAddCustomProductToCart}
-                      className="w-10 h-10 sm:w-11 sm:h-11 bg-[#08047D] hover:bg-[#08047D] text-white rounded-xl transition-all flex items-center justify-center active:scale-95 shrink-0 cursor-pointer shadow-md"
+                      className="px-5 py-2.5 bg-[#08047D] hover:bg-[#050259] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shrink-0 cursor-pointer shadow-md"
                       title="Add to Cart"
                     >
                       <ShoppingBag size={16} />
+                      <span>Add to Cart</span>
                     </button>
                   </div>
                 </div>
 
+              </div>
+
+              {/* Mobile Floating Bottom Action Bar with Add to Cart Button */}
+              <div className="lg:hidden fixed bottom-0 inset-x-0 p-3.5 pb-safe bg-white/95 backdrop-blur-xl border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] z-50 flex items-center gap-3">
+                <div className="flex flex-col min-w-[85px] shrink-0">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 leading-none">Total</span>
+                  <span className="text-lg font-black text-[#08047D] font-mono leading-tight">
+                    {formatPrice(computedProductPrice)}
+                  </span>
+                  <span className="text-[9px] text-[#FA9411] font-bold">Qty: {qty} ({selectedSize})</span>
+                </div>
+                <button 
+                  type="button"
+                  onClick={handleAddCustomProductToCart}
+                  className="flex-1 py-3.5 px-4 bg-gradient-to-r from-[#08047D] to-[#04024E] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-indigo-950/25 active:scale-95 flex items-center justify-center gap-2 transition-all"
+                >
+                  <ShoppingBag size={17} />
+                  <span>Add to Cart</span>
+                </button>
               </div>
 
             </motion.div>

@@ -878,44 +878,19 @@ export default function AdminDashboard() {
           }
 
           Papa.parse(content, {
-            header: false, // Standard arrays first to find the real header row
+            header: true,
             skipEmptyLines: true,
+            dynamicTyping: true,
             complete: (results) => {
-              const rows = results.data as string[][];
-              if (rows.length === 0) {
-                setToast({ message: 'File is empty', type: 'error' });
+              const data = results.data as any[];
+              if (!data || data.length === 0) {
+                setToast({ message: 'File is empty or invalid format', type: 'error' });
                 resetInput();
                 return;
               }
-
-              // Find the header row (one that contains "name" or "product")
-              let headerIndex = -1;
-              for (let i = 0; i < Math.min(rows.length, 10); i++) {
-                const row = rows[i].map(c => String(c).toLowerCase());
-                if (row.some(c => c.includes('product') || c.includes('name') || c.includes('category'))) {
-                  headerIndex = i;
-                  break;
-                }
-              }
-
-              if (headerIndex === -1) {
-                setToast({ message: 'Could not find product data headers', type: 'error' });
-                resetInput();
-                return;
-              }
-
-              const headers = rows[headerIndex].map(h => h.trim().toLowerCase());
-              const dataRows = rows.slice(headerIndex + 1);
-              const formattedData = dataRows.map(row => {
-                const obj: any = {};
-                headers.forEach((h, i) => {
-                  if (h) obj[h] = row[i];
-                });
-                return obj;
-              });
 
               resetInput();
-              processImportedData(formattedData);
+              processImportedData(data);
             },
             error: (error: any) => {
               resetInput();
@@ -936,42 +911,16 @@ export default function AdminDashboard() {
           const wb = XLSX.read(data, { type: 'array' });
           const wsname = wb.SheetNames[0];
           const ws = wb.Sheets[wsname];
-          const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const jsonData = XLSX.utils.sheet_to_json(ws) as any[];
           
-          if (jsonData.length === 0) {
+          if (!jsonData || jsonData.length === 0) {
             setToast({ message: 'File is empty', type: 'error' });
             resetInput();
             return;
           }
 
-          const rows = jsonData as any[][];
-          let headerIndex = -1;
-          for (let i = 0; i < Math.min(rows.length, 10); i++) {
-            const row = rows[i].map(c => String(c).toLowerCase());
-            if (row.some(c => c.includes('product') || c.includes('name') || c.includes('category'))) {
-              headerIndex = i;
-              break;
-            }
-          }
-
-          if (headerIndex === -1) {
-            setToast({ message: 'Could not find product data headers', type: 'error' });
-            resetInput();
-            return;
-          }
-
-          const headers = rows[headerIndex].map(h => String(h).trim().toLowerCase());
-          const dataRows = rows.slice(headerIndex + 1);
-          const formattedData = dataRows.map(row => {
-            const obj: any = {};
-            headers.forEach((h, i) => {
-              if (h) obj[h] = row[i];
-            });
-            return obj;
-          });
-
           resetInput();
-          processImportedData(formattedData);
+          processImportedData(jsonData);
         } catch (error) {
           resetInput();
           setToast({ message: `Error: ${error instanceof Error ? error.message : 'Unknown'}`, type: 'error' });
@@ -994,16 +943,17 @@ export default function AdminDashboard() {
     const s = (v: any) => v === null || v === undefined ? '' : String(v).trim();
     const n = (v: any) => parseFloat(v?.toString() || '0') || 0;
 
-    // Map headers to internal fields more robustly
+    // Map headers to internal fields matching user's CSV schema
     const mappedData = importedData
       .filter(item => {
-        const nameKey = Object.keys(item).find(k => k.toLowerCase().includes('name') || k.toLowerCase().includes('title'));
+        const nameKey = Object.keys(item).find(k => {
+          const l = k.toLowerCase();
+          return l.includes('product') || l.includes('name') || l.includes('title');
+        });
         const name = nameKey ? s(item[nameKey]) : '';
-        // Skip empty rows or rows starting with separator symbols like ▶
         return name && !name.startsWith('▶') && !name.startsWith('---');
       })
       .map(item => {
-      // Find values regardless of case or slight name variations
       const getRaw = (fields: string[]) => {
         for (const field of fields) {
           const lowerField = field.toLowerCase();
@@ -1017,30 +967,40 @@ export default function AdminDashboard() {
         return undefined;
       };
 
-      const name = s(getRaw(['name', 'title', 'product name', 'item', 'label', 'description'])) || 'Unnamed Product';
-      const category = s(getRaw(['category', 'type', 'group', 'class', 'department'])) || 'School Uniforms';
-      const subCategory = s(getRaw(['subcategory', 'sub category', 'sub-category', 'subClass'])) || '';
-      const price = n(getRaw(['price', 'amount', 'cost', 'unit price', 'current price', 'selling price', 'retail'])) || 1200;
-      const wholesalePrice = n(getRaw(['wholesale', 'bulk price', 'wholesale price', 'trade price']));
-      const oldPrice = n(getRaw(['oldprice', 'discount price', 'original price', 'old price', 'was price']));
-      const desc = s(getRaw(['description', 'details', 'summary', 'about', 'long description', 'notes']));
-      const img = s(getRaw(['imageurl', 'image', 'photo', 'url']));
-      const badge = s(getRaw(['badge', 'label', 'tagline']));
-      const statusVal = getRaw(['active', 'status', 'published']);
-      const tagsVal = getRaw(['tags', 'keywords']);
-      const variantsVal = s(getRaw(['variants', 'options', 'sizes', 'styles']));
+      const name = s(getRaw(['product', 'name', 'title', 'item'])) || 'Unnamed Product';
+      const category = s(getRaw(['category'])) || 'School Uniforms';
+      const subCategory = s(getRaw(['subcategory', 'sub category', 'sub-category'])) || '';
+      const educationSector = s(getRaw(['education / sector', 'education', 'sector'])) || '';
+      const gender = s(getRaw(['gender'])) || 'Unisex';
+      const typicalSizes = s(getRaw(['typical sizes', 'sizes', 'size'])) || '';
+      const marketLowKES = n(getRaw(['market low (kes)', 'market low', 'low']));
+      const marketHighKES = n(getRaw(['market high (kes)', 'market high', 'high']));
+      const costPrice = n(getRaw(['suggested cost price (kes)', 'suggested cost price', 'cost price', 'cost']));
+      const wholesalePrice = n(getRaw(['suggested wholesale (kes)', 'suggested wholesale', 'wholesale'])) || 0;
+      const price = n(getRaw(['suggested retail (kes)', 'suggested retail', 'retail', 'price'])) || 1200;
+      const reorderLevel = n(getRaw(['reorder level', 'reorder'])) || 10;
+      const skuPrefix = s(getRaw(['sku prefix', 'sku']));
+      const notes = s(getRaw(['notes', 'description', 'details'])) || '';
 
-      const tags = tagsVal ? 
-        (typeof tagsVal === 'string' ? tagsVal.split(',').map((t: string) => t.trim()) : [s(tagsVal)]) : 
-        [];
-      
-      // Auto-tag wholesale if wholesale price detected or tag exists
-      if (wholesalePrice > 0 && !tags.some(t => t.toLowerCase() === 'wholesale')) {
+      const variantsVal = s(getRaw(['variants', 'variant', 'options'])) || '';
+      const oldPrice = marketHighKES || 0;
+      const desc = notes || s(getRaw(['description', 'desc', 'details'])) || '';
+      const img = s(getRaw(['image', 'imageurl', 'img', 'photo', 'picture'])) || '';
+      const statusVal = getRaw(['status', 'active', 'published']);
+      const badge = s(getRaw(['badge', 'tag', 'label'])) || (wholesalePrice > 0 ? 'Wholesale Available' : '');
+
+      const tags = [educationSector, gender].filter(Boolean);
+      if (wholesalePrice > 0) {
         tags.push('Wholesale');
       }
 
       let parsedVariants: any[] = [];
       let finalPrice = price;
+      
+      // Auto-tag wholesale if wholesale price detected or tag exists
+      if (wholesalePrice > 0 && !tags.some(t => t.toLowerCase() === 'wholesale')) {
+        tags.push('Wholesale');
+      }
 
       if (variantsVal) {
         const combosStr = variantsVal.split(',').map(v => v.trim()).filter(Boolean);

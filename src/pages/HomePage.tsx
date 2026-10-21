@@ -12,12 +12,15 @@ import {
   Scissors, 
   User as UserIcon,
   Zap,
-  ArrowRight
+  ArrowRight,
+  Camera,
+  ImagePlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { ImageZoomViewer } from '../components/ImageZoomViewer';
+import { AddProductImageModal } from '../components/AddProductImageModal';
 import { auth, db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, query, where, onSnapshot, orderBy, limit, addDoc, serverTimestamp, doc, setDoc, increment } from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
@@ -63,14 +66,18 @@ export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
-  // Mobile View Switcher (between catalog and cart on screens < 1024px)
-  const [mobileView, setMobileView] = useState<'catalog' | 'cart'>('catalog');
-
   // POS Catalog states
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string>(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('category') || params.get('tab') || 'School Uniforms';
+    } catch {
+      return 'School Uniforms';
+    }
+  });
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
   const [activeSizeCategory, setActiveSizeCategory] = useState<string>('all');
   const [activeSector, setActiveSector] = useState<string>('All');
@@ -115,6 +122,7 @@ export default function HomePage() {
   const [brandingPosition, setBrandingPosition] = useState('Left Chest');
   const [customLogoUrl, setCustomLogoUrl] = useState('');
   const [customLogoName, setCustomLogoName] = useState('');
+  const [isAddImageModalOpen, setIsAddImageModalOpen] = useState(false);
 
   // Handle URL product parameter
   useEffect(() => {
@@ -155,34 +163,43 @@ export default function HomePage() {
     };
   }, []);
 
-  // Compute Categories with Item Counts
+  // Compute Categories with Item Counts (School Uniforms as Premier Default)
   const categoryTabs = useMemo(() => {
     const counts: Record<string, number> = {};
+    let schoolCount = 0;
     products.forEach(p => {
       const cat = p.category || 'Other';
       counts[cat] = (counts[cat] || 0) + 1;
+      if (cat.toLowerCase().includes('school')) {
+        schoolCount++;
+      }
     });
 
     const list = [
+      { id: 'School Uniforms', name: 'School Uniforms', count: schoolCount || counts['School Uniforms'] || 0 },
       { id: 'all', name: 'All Products', count: products.length }
     ];
 
     if (categories.length > 0) {
       categories.forEach(c => {
         const title = c.title || c.name;
-        list.push({
-          id: title,
-          name: title,
-          count: counts[title] || 0
-        });
+        if (title.toLowerCase() !== 'school uniforms' && title.toLowerCase() !== 'all') {
+          list.push({
+            id: title,
+            name: title,
+            count: counts[title] || 0
+          });
+        }
       });
     } else {
       Object.keys(counts).forEach(cat => {
-        list.push({
-          id: cat,
-          name: cat,
-          count: counts[cat]
-        });
+        if (cat.toLowerCase() !== 'school uniforms') {
+          list.push({
+            id: cat,
+            name: cat,
+            count: counts[cat]
+          });
+        }
       });
     }
 
@@ -208,7 +225,10 @@ export default function HomePage() {
     return Array.from(
       new Set(
         products
-          .filter(p => p.category?.toLowerCase() === activeCategory.toLowerCase())
+          .filter(p => 
+            p.category?.toLowerCase() === activeCategory.toLowerCase() ||
+            (activeCategory.toLowerCase() === 'school uniforms' && p.category?.toLowerCase().includes('school'))
+          )
           .map(p => p.subCategory)
           .filter(Boolean)
       )
@@ -217,6 +237,11 @@ export default function HomePage() {
 
   // Filtered Products for POS Display with Size Categories, Sectors, and Gender
   const filteredProducts = useMemo(() => {
+    const hasSchoolUniforms = products.some(p => 
+      p.category?.toLowerCase() === 'school uniforms' || 
+      p.category?.toLowerCase().includes('school')
+    );
+
     return products.filter(p => {
       const queryLower = searchQuery.toLowerCase().trim();
       const matchesSearch = !queryLower ||
@@ -229,7 +254,13 @@ export default function HomePage() {
         p.id.toLowerCase().includes(queryLower);
 
       const matchesCat = activeCategory === 'all' || 
-        p.category?.toLowerCase() === activeCategory.toLowerCase();
+        Boolean(queryLower) ||
+        (!hasSchoolUniforms && activeCategory === 'School Uniforms') ||
+        p.category?.toLowerCase() === activeCategory.toLowerCase() ||
+        (activeCategory.toLowerCase() === 'school uniforms' && (
+          p.category?.toLowerCase().includes('school') ||
+          p.category?.toLowerCase() === 'school uniforms'
+        ));
 
       const matchesSub = !activeSubCategory || p.subCategory === activeSubCategory;
 
@@ -414,12 +445,11 @@ export default function HomePage() {
       />
 
       {/* 2. Main POS Workspace with safe offset for the fixed Navbar */}
-      <main className="flex-1 max-w-[1780px] w-full mx-auto px-3 sm:px-4 lg:px-6 pt-28 sm:pt-40 md:pt-48 lg:pt-52 pb-24 lg:pb-8 flex flex-col">
-        {/* POS Action Toolbar: Search, Barcode, View Mode, Custom Item, Held Orders */}
+      <main className="flex-1 max-w-[1780px] w-full mx-auto px-3 sm:px-4 lg:px-6 pt-20 sm:pt-28 md:pt-40 lg:pt-48 pb-24 lg:pb-8 flex flex-col">
+        {/* POS Action Toolbar: Search input alone on mobile, secondary tools on md+ */}
         <POSHeader
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          onOpenCustomItem={() => setIsCustomItemOpen(true)}
           onOpenHeldOrders={() => setIsHeldOrdersOpen(true)}
           heldCount={heldOrders.length}
           onSimulateBarcodeScan={handleSimulateBarcodeScan}
@@ -428,80 +458,52 @@ export default function HomePage() {
           totalProductsCount={products.length}
         />
 
-        {/* Mobile Tab Switcher (< lg) */}
-        <div className="lg:hidden mb-3 bg-white p-1 rounded-2xl border border-slate-200/90 shadow-xs flex">
-          <button 
-            type="button"
-            onClick={() => { appExperience.triggerFeedback('tap'); setMobileView('catalog'); }}
-            className={`flex-1 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
-              mobileView === 'catalog' 
-                ? 'bg-[#08047D] text-white shadow-xs' 
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ShoppingBag size={14} />
-            <span>Catalog ({filteredProducts.length})</span>
-          </button>
-          <button 
-            type="button"
-            onClick={() => { appExperience.triggerFeedback('tap'); setMobileView('cart'); }}
-            className={`flex-1 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
-              mobileView === 'cart' 
-                ? 'bg-[#08047D] text-white shadow-xs' 
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ShoppingBag size={14} />
-            <span>Ticket ({cart.length}) · {formatPrice(cartTotal)}</span>
-          </button>
-        </div>
-
-        {/* POS 2-Column Split: Left = Catalog (66%), Right = Checkout Cart (34%) */}
+        {/* POS 2-Column Split: Left = Catalog (66%), Right = Checkout Cart (34% on lg+) */}
         <div className="flex-1 flex flex-col lg:flex-row gap-4 sm:gap-5 items-start">
           
           {/* Left Column: POS Category Filters & Products */}
-          <section className={`w-full lg:w-[58%] xl:w-[60%] 2xl:w-[63%] flex flex-col ${
-            mobileView === 'cart' ? 'hidden lg:flex' : 'flex'
-          }`}>
-            {/* Fast Category Pills & Subcategories */}
-            <POSCategoryTabs
-              categories={categoryTabs}
-              activeCategory={activeCategory}
-              onSelectCategory={setActiveCategory}
-              subCategories={subCategories}
-              activeSubCategory={activeSubCategory}
-              onSelectSubCategory={setActiveSubCategory}
-              activeSizeCategory={activeSizeCategory}
-              onSelectSizeCategory={setActiveSizeCategory}
-              sizeCategoryCounts={sizeCategoryCounts}
-              activeSector={activeSector}
-              onSelectSector={setActiveSector}
-              activeGender={activeGender}
-              onSelectGender={setActiveGender}
-              onOpenSizingGuide={() => setIsSizingGuideOpen(true)}
-            />
+          <section className="w-full lg:w-[58%] xl:w-[60%] 2xl:w-[63%] flex flex-col">
+            {/* Category Menus, Sectors & Size Matrix: Hidden on mobile per user instruction (desktop only) */}
+            <div className="hidden md:block">
+              <POSCategoryTabs
+                categories={categoryTabs}
+                activeCategory={activeCategory}
+                onSelectCategory={setActiveCategory}
+                subCategories={subCategories}
+                activeSubCategory={activeSubCategory}
+                onSelectSubCategory={setActiveSubCategory}
+                activeSizeCategory={activeSizeCategory}
+                onSelectSizeCategory={setActiveSizeCategory}
+                sizeCategoryCounts={sizeCategoryCounts}
+                activeSector={activeSector}
+                onSelectSector={setActiveSector}
+                activeGender={activeGender}
+                onSelectGender={setActiveGender}
+                onOpenSizingGuide={() => setIsSizingGuideOpen(true)}
+              />
+            </div>
 
-            {/* Products Grid / Dense List */}
+            {/* Products Grid / Dense List: Display all products directly */}
             {filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-12 text-center my-auto shadow-xs">
+              <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-8 sm:p-12 text-center my-auto shadow-xs">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
                   <Search size={22} />
                 </div>
                 <h3 className="text-sm font-bold text-slate-800">No products matched your search</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                  Try checking your spelling or clear filters to view all Uhuru Market uniforms.
+                  Try checking your spelling or clear search to view all Uhuru Market uniforms.
                 </p>
                 <button
                   type="button"
                   onClick={() => { setSearchQuery(''); setActiveCategory('all'); setActiveSubCategory(null); }}
-                  className="mt-4 px-4 py-2 rounded-xl bg-[#08047D] text-white text-xs font-bold hover:bg-[#050259] transition-all shadow-xs"
+                  className="mt-4 px-4 py-2 rounded-xl bg-[#08047D] text-white text-xs font-bold hover:bg-[#050259] transition-all shadow-xs cursor-pointer"
                 >
-                  Reset Catalog Filters
+                  Clear Search
                 </button>
               </div>
             ) : viewMode === 'list' ? (
               <div className="space-y-2">
-                {(isCatalogExpanded ? filteredProducts : filteredProducts.slice(0, 12)).map(product => (
+                {filteredProducts.map(product => (
                   <POSProductCard
                     key={product.id}
                     product={product}
@@ -526,7 +528,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5">
-                {(isCatalogExpanded ? filteredProducts : filteredProducts.slice(0, 12)).map(product => (
+                {filteredProducts.map(product => (
                   <POSProductCard
                     key={product.id}
                     product={product}
@@ -550,27 +552,10 @@ export default function HomePage() {
                 ))}
               </div>
             )}
-
-            {filteredProducts.length > 12 && (
-              <div className="mt-4 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    appExperience.triggerFeedback('tap');
-                    setIsCatalogExpanded(!isCatalogExpanded);
-                  }}
-                  className="px-6 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
-                >
-                  <span>{isCatalogExpanded ? 'Collapse Rows (Show Less)' : `Show More Products (${filteredProducts.length - 12} more)`}</span>
-                </button>
-              </div>
-            )}
           </section>
 
-          {/* Right Column: Dedicated Sticky POS Checkout Cart */}
-          <aside className={`w-full lg:w-[42%] xl:w-[40%] 2xl:w-[37%] lg:sticky lg:top-[144px] lg:h-[calc(100vh-164px)] flex flex-col ${
-            mobileView === 'catalog' ? 'hidden lg:flex' : 'flex'
-          }`}>
+          {/* Right Column: Dedicated Sticky POS Checkout Cart (Desktop only, mobile has bottom nav cart) */}
+          <aside className="w-full lg:w-[42%] xl:w-[40%] 2xl:w-[37%] lg:sticky lg:top-[144px] lg:h-[calc(100vh-164px)] hidden lg:flex flex-col">
             <POSCheckoutCart
               customer={customer}
               onOpenCustomerModal={() => setIsCustomerModalOpen(true)}
@@ -615,10 +600,10 @@ export default function HomePage() {
         onSaveCustomer={(c) => setCustomer(c)}
       />
 
-      {/* 7. Product Quick View Modal (For deep inspection / embroidery preview) */}
+      {/* 7. Product Quick View Modal (Full screen on mobile with floating bottom add button) */}
       <AnimatePresence>
         {selectedQuickViewProduct && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4 lg:p-6 overflow-hidden">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-0 md:p-4 lg:p-6 overflow-hidden">
             <GoogleMerchantSchema product={selectedQuickViewProduct} currency={currentCountry.currency} />
             <motion.div 
               initial={{ opacity: 0 }}
@@ -629,178 +614,268 @@ export default function HomePage() {
             />
             
             <motion.div 
-              initial={{ opacity: 0, scale: 0.94, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              className="relative w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] z-10 shadow-2xl border border-slate-100"
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 25 }}
+              className="relative w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-4xl bg-white rounded-none md:rounded-3xl overflow-hidden flex flex-col md:flex-row z-10 shadow-2xl border-0 md:border md:border-slate-100"
             >
-              {/* Close Button */}
+              {/* Mobile Top Navigation Bar */}
+              <div className="md:hidden sticky top-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between shrink-0 shadow-sm">
+                <button 
+                  type="button"
+                  onClick={handleCloseQuickView}
+                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-800 flex items-center justify-center transition-transform active:scale-90"
+                  aria-label="Close product preview"
+                >
+                  <X size={18} />
+                </button>
+                <div className="flex items-center gap-1.5 truncate max-w-[200px]">
+                  <span className="text-[10.5px] font-black uppercase tracking-wider text-[#08047D] bg-[#08047D]/10 px-2.5 py-0.5 rounded-full truncate">
+                    {selectedQuickViewProduct.category || 'Product Preview'}
+                  </span>
+                </div>
+                <div className="text-sm font-black text-[#08047D] font-mono">
+                  {formatPrice(selectedQuickViewProduct.price)}
+                </div>
+              </div>
+
+              {/* Desktop Close Button */}
               <button 
+                type="button"
                 onClick={handleCloseQuickView}
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-[60] w-9 h-9 bg-white/90 border border-slate-200 rounded-full flex items-center justify-center text-slate-800 hover:text-[#08047D] shadow-md"
+                className="hidden md:flex absolute top-3 right-3 sm:top-4 sm:right-4 z-[60] w-9 h-9 bg-white/90 border border-slate-200 rounded-full items-center justify-center text-slate-800 hover:text-[#08047D] shadow-md transition-colors"
+                aria-label="Close product preview"
               >
                 <X size={18} />
               </button>
 
-              {/* Product Gallery Section */}
-              <div className="w-full md:w-1/2 bg-slate-50 p-4 sm:p-6 flex items-center justify-center border-r border-slate-100">
-                <div className="w-full max-w-[320px] aspect-square rounded-2xl bg-white p-2 border border-slate-200 shadow-inner flex items-center justify-center overflow-hidden">
-                  {selectedQuickViewProduct.imageUrl ? (
-                    <img 
-                      src={selectedQuickViewProduct.imageUrl} 
-                      alt={selectedQuickViewProduct.name}
-                      className="w-full h-full object-cover object-top rounded-xl"
-                    />
-                  ) : (
-                    <ShoppingBag size={48} className="text-slate-300" />
-                  )}
+              {/* Main Scrollable Content Area for Mobile & Desktop */}
+              <div className="flex-1 overflow-y-auto overscroll-contain flex flex-col md:flex-row min-h-0 pb-24 md:pb-0">
+                {/* Product Gallery Section with Zoom and Multi-Image Carousel */}
+                <div className="w-full md:w-1/2 bg-slate-50 p-4 sm:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 shrink-0">
+                  <ImageZoomViewer 
+                    src={selectedQuickViewProduct.imageUrl || ''} 
+                    alt={selectedQuickViewProduct.name}
+                    imageUrls={selectedQuickViewProduct.imageUrls}
+                    badge={selectedQuickViewProduct.badge}
+                    onAddImage={() => setIsAddImageModalOpen(true)}
+                    aspectRatio="aspect-square max-h-[30vh] md:max-h-[38vh] max-w-[280px] sm:max-w-[320px] mx-auto"
+                  />
+                  <div className="mt-3 flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddImageModalOpen(true)}
+                      className="px-3.5 py-1.5 rounded-xl bg-white border border-[#FA9411]/50 hover:border-[#FA9411] text-[#08047D] hover:bg-amber-50 text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Plus size={13} className="text-[#FA9411]" />
+                      <span>+ Add More Images</span>
+                    </button>
+                    <span className="text-slate-300">•</span>
+                    <div className="text-slate-400 text-[10px] font-bold">
+                      Ref #{selectedQuickViewProduct.id?.slice(0, 8).toUpperCase()}
+                    </div>
+                  </div>
+                  <AddProductImageModal
+                    isOpen={isAddImageModalOpen}
+                    onClose={() => setIsAddImageModalOpen(false)}
+                    product={selectedQuickViewProduct}
+                    onImagesUpdated={(newUrls, primary) => {
+                      // Handle update
+                      setIsAddImageModalOpen(false);
+                    }}
+                  />
+                </div>
+
+                {/* Product Details Section */}
+                <div className="w-full md:w-1/2 p-5 sm:p-7 flex flex-col justify-between overflow-y-visible md:overflow-y-auto">
+                  <div className="space-y-3.5">
+                    <div className="hidden md:flex items-center gap-1.5 flex-wrap">
+                      <span className="px-2.5 py-1 rounded-md bg-[#08047D]/10 text-[#08047D] text-[10px] font-black uppercase tracking-wider">
+                        {selectedQuickViewProduct.category}
+                      </span>
+                      {selectedQuickViewProduct.sizeCategory && (
+                        <span className="px-2 py-0.5 rounded-md bg-[#FA9411]/15 text-[#FA9411] text-[10px] font-black uppercase">
+                          Size: {selectedQuickViewProduct.sizeCategory.toUpperCase()} ({selectedQuickViewProduct.typicalSizes || 'Standard'})
+                        </span>
+                      )}
+                      {selectedQuickViewProduct.gender && (
+                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold">
+                          {selectedQuickViewProduct.gender}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+                      {selectedQuickViewProduct.name}
+                    </h3>
+
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-2xl font-black text-[#08047D]">
+                        {formatPrice(selectedQuickViewProduct.price)}
+                      </div>
+                      {selectedQuickViewProduct.marketHighKES && (
+                        <span className="text-xs text-slate-400 line-through">
+                          Market: {formatPrice(selectedQuickViewProduct.marketHighKES)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Kenya Market Intelligence Benchmark */}
+                    {selectedQuickViewProduct.marketLowKES && selectedQuickViewProduct.marketHighKES && (
+                      <div className="p-3 bg-amber-50/70 border border-amber-200/70 rounded-xl text-xs space-y-1.5">
+                        <div className="font-bold text-amber-950 flex items-center justify-between">
+                          <span>Uhuru Market Direct Benchmark:</span>
+                          <span className="text-[#08047D] font-mono text-[11px] font-black">
+                            KES {selectedQuickViewProduct.marketLowKES} - {selectedQuickViewProduct.marketHighKES}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-amber-900 flex items-center justify-between">
+                          <span>Suggested Wholesale (10+ pcs):</span>
+                          <strong className="text-emerald-700">KES {selectedQuickViewProduct.suggestedWholesaleKES || selectedQuickViewProduct.price}</strong>
+                        </div>
+                        {selectedQuickViewProduct.skuPrefix && (
+                          <div className="text-[10px] text-slate-500 font-mono pt-0.5">
+                            SKU Prefix: {selectedQuickViewProduct.skuPrefix} · Min Reorder: {selectedQuickViewProduct.reorderLevel || 10} units
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {selectedQuickViewProduct.description || "Tailored institutional garment engineered for durability, colorfastness, and comfort under high daily usage."}
+                    </p>
+
+                    {/* Size breakdown selection */}
+                    {selectedQuickViewProduct.sizeBreakdown && selectedQuickViewProduct.sizeBreakdown.length > 0 && (
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                            Select Size ({selectedQuickViewProduct.typicalSizes || 'All Sizes'}):
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setIsSizingGuideOpen(true)}
+                            className="text-[10.5px] font-bold text-[#08047D] hover:underline"
+                          >
+                            Size Matrix Guide
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedQuickViewProduct.sizeBreakdown.map((sz: string, idx: number) => {
+                            const isPicked = (selectedVariants['Size'] || selectedQuickViewProduct.sizeBreakdown[0]) === sz;
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => setSelectedVariants(prev => ({ ...prev, Size: sz }))}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${
+                                  isPicked
+                                    ? 'bg-[#08047D] text-white border-[#08047D] shadow-sm'
+                                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                                }`}
+                              >
+                                {sz}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedQuickViewProduct.notes && (
+                      <div className="text-[10px] text-slate-400 italic">
+                        Note: {selectedQuickViewProduct.notes}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Desktop Add to ticket action button row */}
+                  <div className="hidden md:flex pt-6 border-t border-slate-100 mt-4 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        appExperience.triggerFeedback('cart_add');
+                        const chosenSize = selectedVariants['Size'] || (selectedQuickViewProduct.sizeBreakdown ? selectedQuickViewProduct.sizeBreakdown[0] : 'Standard');
+                        addToCart({
+                          id: selectedQuickViewProduct.id,
+                          name: selectedQuickViewProduct.name,
+                          price: selectedQuickViewProduct.price,
+                          imageUrl: selectedQuickViewProduct.imageUrl,
+                          category: selectedQuickViewProduct.category,
+                          selectedVariants: { Size: chosenSize }
+                        }, 1);
+                        handleCloseQuickView();
+                      }}
+                      className="flex-1 py-3 px-4 rounded-xl bg-[#08047D] hover:bg-[#050259] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all"
+                    >
+                      <Plus size={16} />
+                      <span>Add to POS Ticket</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCloseQuickView}
+                      className="py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Product Details Section */}
-              <div className="w-full md:w-1/2 p-5 sm:p-7 flex flex-col justify-between overflow-y-auto">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="px-2.5 py-1 rounded-md bg-[#08047D]/10 text-[#08047D] text-[10px] font-black uppercase tracking-wider">
-                      {selectedQuickViewProduct.category}
+              {/* Mobile Floating Bottom Action Bar with Add Button */}
+              <div className="md:hidden fixed bottom-0 inset-x-0 p-3.5 pb-safe bg-white/95 backdrop-blur-xl border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] z-50 flex items-center gap-3">
+                <div className="flex flex-col min-w-[85px] shrink-0">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 leading-none">Price</span>
+                  <span className="text-lg font-black text-[#08047D] font-mono leading-tight">
+                    {formatPrice(selectedQuickViewProduct.price)}
+                  </span>
+                  {selectedVariants['Size'] && (
+                    <span className="text-[9px] text-[#FA9411] font-black truncate">
+                      Size: {selectedVariants['Size']}
                     </span>
-                    {selectedQuickViewProduct.sizeCategory && (
-                      <span className="px-2 py-0.5 rounded-md bg-[#FA9411]/15 text-[#FA9411] text-[10px] font-black uppercase">
-                        Size: {selectedQuickViewProduct.sizeCategory.toUpperCase()} ({selectedQuickViewProduct.typicalSizes || 'Standard'})
-                      </span>
-                    )}
-                    {selectedQuickViewProduct.gender && (
-                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold">
-                        {selectedQuickViewProduct.gender}
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-xl font-black text-slate-900 leading-tight">
-                    {selectedQuickViewProduct.name}
-                  </h3>
-
-                  <div className="flex items-baseline gap-2">
-                    <div className="text-2xl font-black text-[#08047D]">
-                      {formatPrice(selectedQuickViewProduct.price)}
-                    </div>
-                    {selectedQuickViewProduct.marketHighKES && (
-                      <span className="text-xs text-slate-400 line-through">
-                        Market: {formatPrice(selectedQuickViewProduct.marketHighKES)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Kenya Market Intelligence Benchmark */}
-                  {selectedQuickViewProduct.marketLowKES && selectedQuickViewProduct.marketHighKES && (
-                    <div className="p-2.5 bg-amber-50/70 border border-amber-200/70 rounded-xl text-xs space-y-1">
-                      <div className="font-bold text-amber-950 flex items-center justify-between">
-                        <span>Uhuru Market Direct Benchmark:</span>
-                        <span className="text-[#08047D] font-mono text-[11px] font-black">
-                          KES {selectedQuickViewProduct.marketLowKES} - {selectedQuickViewProduct.marketHighKES}
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-amber-900 flex items-center justify-between">
-                        <span>Suggested Wholesale (10+ pcs):</span>
-                        <strong className="text-emerald-700">KES {selectedQuickViewProduct.suggestedWholesaleKES || selectedQuickViewProduct.price}</strong>
-                      </div>
-                      {selectedQuickViewProduct.skuPrefix && (
-                        <div className="text-[10px] text-slate-500 font-mono pt-0.5">
-                          SKU Prefix: {selectedQuickViewProduct.skuPrefix} · Min Reorder: {selectedQuickViewProduct.reorderLevel || 10} units
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {selectedQuickViewProduct.description || "Tailored institutional garment engineered for durability, colorfastness, and comfort under high daily usage."}
-                  </p>
-
-                  {/* Size breakdown selection */}
-                  {selectedQuickViewProduct.sizeBreakdown && selectedQuickViewProduct.sizeBreakdown.length > 0 && (
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
-                          Select Size ({selectedQuickViewProduct.typicalSizes || 'All Sizes'}):
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setIsSizingGuideOpen(true)}
-                          className="text-[10.5px] font-bold text-[#08047D] hover:underline"
-                        >
-                          Size Matrix Guide
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {selectedQuickViewProduct.sizeBreakdown.map((sz: string, idx: number) => {
-                          const isPicked = (selectedVariants['Size'] || selectedQuickViewProduct.sizeBreakdown[0]) === sz;
-                          return (
-                            <button
-                              key={idx}
-                              type="button"
-                              onClick={() => setSelectedVariants(prev => ({ ...prev, Size: sz }))}
-                              className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
-                                isPicked
-                                  ? 'bg-[#08047D] text-white border-[#08047D]'
-                                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                              }`}
-                            >
-                              {sz}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedQuickViewProduct.notes && (
-                    <div className="text-[10px] text-slate-400 italic">
-                      Note: {selectedQuickViewProduct.notes}
-                    </div>
                   )}
                 </div>
-
-                {/* Add to ticket action */}
-                <div className="pt-6 border-t border-slate-100 mt-4 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      appExperience.triggerFeedback('cart_add');
-                      const chosenSize = selectedVariants['Size'] || (selectedQuickViewProduct.sizeBreakdown ? selectedQuickViewProduct.sizeBreakdown[0] : 'Standard');
-                      addToCart({
-                        id: selectedQuickViewProduct.id,
-                        name: selectedQuickViewProduct.name,
-                        price: selectedQuickViewProduct.price,
-                        imageUrl: selectedQuickViewProduct.imageUrl,
-                        category: selectedQuickViewProduct.category,
-                        selectedVariants: { Size: chosenSize }
-                      }, 1);
-                      handleCloseQuickView();
-                    }}
-                    className="flex-1 py-3 px-4 rounded-xl bg-[#08047D] hover:bg-[#050259] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all"
-                  >
-                    <Plus size={16} />
-                    <span>Add to POS Ticket</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCloseQuickView}
-                    className="py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs"
-                  >
-                    Close
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    appExperience.triggerFeedback('cart_add');
+                    const chosenSize = selectedVariants['Size'] || (selectedQuickViewProduct.sizeBreakdown ? selectedQuickViewProduct.sizeBreakdown[0] : 'Standard');
+                    addToCart({
+                      id: selectedQuickViewProduct.id,
+                      name: selectedQuickViewProduct.name,
+                      price: selectedQuickViewProduct.price,
+                      imageUrl: selectedQuickViewProduct.imageUrl,
+                      category: selectedQuickViewProduct.category,
+                      selectedVariants: { Size: chosenSize }
+                    }, 1);
+                    handleCloseQuickView();
+                  }}
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#08047D] to-[#04024E] text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-indigo-950/25 active:scale-95 transition-all"
+                >
+                  <Plus size={18} strokeWidth={2.5} />
+                  <span>Add to Ticket</span>
+                </button>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* 8. Kenya Uniform Sizing & Measurement Guide Modal */}
       <KenyaSizingMatrixModal
         isOpen={isSizingGuideOpen}
         onClose={() => setIsSizingGuideOpen(false)}
         onSelectCategory={(catId) => setActiveSizeCategory(catId)}
+      />
+
+      {/* Add & Manage Product Images Modal */}
+      <AddProductImageModal
+        isOpen={isAddImageModalOpen}
+        onClose={() => setIsAddImageModalOpen(false)}
+        product={selectedQuickViewProduct}
+        onImagesUpdated={(newUrls, primaryUrl) => {
+          setSelectedQuickViewProduct((prev: any) => prev ? { ...prev, imageUrls: newUrls, imageUrl: primaryUrl } : null);
+          setProducts(prev => prev.map(p => p.id === selectedQuickViewProduct?.id ? { ...p, imageUrls: newUrls, imageUrl: primaryUrl } : p));
+        }}
       />
     </div>
   );

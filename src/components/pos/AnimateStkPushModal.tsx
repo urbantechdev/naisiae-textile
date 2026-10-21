@@ -4,14 +4,9 @@ import {
   Smartphone, 
   Check, 
   X, 
-  Send, 
   ShieldCheck, 
   Lock, 
-  Wifi, 
-  Battery, 
-  RotateCcw,
-  Sparkles,
-  ArrowRight
+  RotateCcw
 } from 'lucide-react';
 import { appExperience } from '../../utils/haptics';
 import { useLocalization } from '../../context/LocalizationContext';
@@ -39,7 +34,6 @@ export function AnimateStkPushModal({
   const [enteredPinDots, setEnteredPinDots] = useState<number>(0);
   const [transactionCode, setTransactionCode] = useState<string>('');
 
-  // Reset & start sequence when modal opens
   useEffect(() => {
     if (!isOpen) {
       setStage('sending');
@@ -54,7 +48,6 @@ export function AnimateStkPushModal({
     setCountdown(15);
     setEnteredPinDots(0);
 
-    // Generate random realistic Safaricom transaction reference
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let code = 'RK';
     for (let i = 0; i < 8; i++) {
@@ -62,12 +55,10 @@ export function AnimateStkPushModal({
     }
     setTransactionCode(code);
 
-    // Step 1: Sending -> Prompted (1.2s)
     const timer1 = setTimeout(() => {
       setStage('prompted');
       appExperience.playSound('tap');
 
-      // Animate simulated PIN entry dots
       const dot1 = setTimeout(() => setEnteredPinDots(1), 800);
       const dot2 = setTimeout(() => setEnteredPinDots(2), 1500);
       const dot3 = setTimeout(() => setEnteredPinDots(3), 2200);
@@ -86,7 +77,6 @@ export function AnimateStkPushModal({
     };
   }, [isOpen]);
 
-  // Countdown timer while waiting for PIN
   useEffect(() => {
     if (!isOpen || stage !== 'prompted') return;
 
@@ -94,7 +84,6 @@ export function AnimateStkPushModal({
       setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(interval);
-          // Auto approve on timeout or finish
           handleApprove();
           return 0;
         }
@@ -137,44 +126,35 @@ export function AnimateStkPushModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md"
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm"
           onClick={stage === 'success' ? () => onSuccess(transactionCode) : onCancel}
         />
 
-        {/* Centered Modal Container */}
+        {/* Centered Modal Container - Clean Simple Light Theme */}
         <motion.div
-          initial={{ scale: 0.82, opacity: 0, y: 25 }}
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.88, opacity: 0, y: 20 }}
-          transition={{ type: 'spring', damping: 26, stiffness: 340 }}
-          className="relative w-full max-w-md bg-gradient-to-b from-slate-900 to-[#070b14] border border-emerald-500/30 rounded-[2.5rem] shadow-[0_25px_70px_rgba(0,150,57,0.25)] overflow-hidden text-white my-auto z-10"
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          className="relative w-full h-[100dvh] sm:h-auto sm:max-w-md bg-white sm:rounded-3xl border-0 sm:border border-slate-200 shadow-2xl overflow-hidden text-slate-800 z-10 flex flex-col justify-center"
         >
-          {/* Top Decorative Glow */}
-          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-emerald-500 via-[#009639] to-emerald-400" />
-          <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Close button */}
-          <button
-            type="button"
-            onClick={onCancel}
-            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-all z-20 cursor-pointer"
-          >
-            <X size={16} />
-          </button>
-
-          {/* Phone Simulated Status Bar */}
-          <div className="px-6 pt-5 pb-3 flex items-center justify-between text-[11px] font-mono text-slate-400 border-b border-white/5">
-            <span className="font-bold flex items-center gap-1.5 text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping inline-block" />
-              Safaricom 5G
-            </span>
-            <div className="flex items-center gap-3">
-              <Wifi size={13} className="text-slate-300" />
-              <div className="flex items-center gap-1">
-                <span className="text-[10px]">98%</span>
-                <Battery size={13} className="text-emerald-400 fill-emerald-400" />
+          {/* Top M-Pesa Brand Bar */}
+          <div className="px-6 py-4 bg-[#009639] text-white flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white text-[#009639] flex items-center justify-center font-black text-sm">
+                M
+              </div>
+              <div>
+                <h3 className="font-black text-sm tracking-wide">M-Pesa Express</h3>
+                <p className="text-[10px] text-emerald-100 font-medium">Safaricom Secure STK Push</p>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-white flex items-center justify-center transition-all cursor-pointer"
+            >
+              <X size={16} />
+            </button>
           </div>
 
           {/* Content Area */}
@@ -182,38 +162,18 @@ export function AnimateStkPushModal({
 
             {/* STAGE 1: SENDING HANDSHAKE */}
             {stage === 'sending' && (
-              <div className="py-6 flex flex-col items-center justify-center text-center space-y-5">
-                <div className="relative">
-                  {/* Radiating wave rings */}
-                  <motion.div 
-                    animate={{ scale: [1, 1.8], opacity: [0.8, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: 'easeOut' }}
-                    className="absolute -inset-4 rounded-full border-2 border-emerald-400/60"
-                  />
-                  <motion.div 
-                    animate={{ scale: [1, 2.3], opacity: [0.5, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5, delay: 0.4, ease: 'easeOut' }}
-                    className="absolute -inset-6 rounded-full border-2 border-emerald-400/30"
-                  />
-                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#009639] to-emerald-700 flex items-center justify-center text-white shadow-2xl shadow-emerald-500/40 relative z-10">
-                    <Smartphone size={36} className="animate-pulse" />
-                  </div>
+              <div className="py-6 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-[#009639] flex items-center justify-center shadow-md animate-pulse">
+                  <Smartphone size={32} />
                 </div>
-
-                <div className="space-y-1.5">
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest inline-block">
-                    Pushing SIM Toolkit Prompt
-                  </span>
-                  <h3 className="text-xl font-black text-white">Contacting M-Pesa Gateway</h3>
-                  <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-                    Triggering encrypted payment prompt to{' '}
-                    <span className="text-emerald-300 font-bold font-mono">{phoneNumber || 'Customer Phone'}</span>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-black text-slate-900">Sending M-Pesa Prompt</h3>
+                  <p className="text-xs text-slate-500 max-w-xs leading-relaxed">
+                    Contacting phone <strong className="text-slate-800 font-mono">{phoneNumber || 'Customer Phone'}</strong>...
                   </p>
                 </div>
-
-                <div className="flex items-center gap-2 text-xs font-mono text-slate-400 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-                  <div className="w-2 h-2 rounded-full bg-[#009639] animate-pulse" />
-                  <span>Uhuru Market Till: 714920</span>
+                <div className="text-[11px] font-mono text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                  Till: 714920 · Uhuru Market
                 </div>
               </div>
             )}
@@ -221,46 +181,38 @@ export function AnimateStkPushModal({
             {/* STAGE 2: PROMPTED ON USER PHONE (WAITING FOR PIN) */}
             {(stage === 'prompted' || stage === 'verifying') && (
               <div className="space-y-5">
-                {/* Simulated Phone Screen Prompt Box */}
-                <div className="bg-slate-950 rounded-2xl border-2 border-emerald-500/40 p-5 shadow-2xl relative overflow-hidden">
-                  {/* Safaricom Header Strip */}
-                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#009639] flex items-center justify-center text-white font-black text-[10px]">
-                        M
-                      </div>
-                      <span className="text-[11px] font-black uppercase tracking-wider text-emerald-400">
-                        SIM Toolkit Prompt
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-mono text-amber-400 font-bold animate-pulse">
-                      ⏱ {countdown}s
+                <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                    <span className="text-xs font-black uppercase tracking-wider text-slate-700">
+                      Payment Request
+                    </span>
+                    <span className="text-xs font-mono text-amber-600 font-bold">
+                      ⏱ {countdown}s remaining
                     </span>
                   </div>
 
-                  {/* Transaction Details */}
-                  <div className="space-y-2 text-center py-2">
-                    <p className="text-[11px] font-medium text-slate-300 leading-snug">
-                      Do you want to pay <span className="font-black text-white">{formatPrice(amount)}</span> to{' '}
-                      <span className="font-black text-emerald-300">NAISIAE TEXTILES LTD</span>?
+                  <div className="space-y-1 text-center py-1">
+                    <p className="text-xs font-semibold text-slate-600">
+                      Pay <span className="font-black text-slate-900">{formatPrice(amount)}</span> to{' '}
+                      <span className="font-black text-[#009639]">NAISIAE TEXTILES</span>
                     </p>
-                    <div className="text-[10px] font-mono text-slate-400">
-                      Till / Store: <strong className="text-white">714920</strong> · Ref: <strong className="text-white">{ticketNumber}</strong>
+                    <div className="text-[10px] text-slate-400 font-mono">
+                      Ref: <strong className="text-slate-700">{ticketNumber}</strong>
                     </div>
 
                     {/* PIN Entry Display */}
-                    <div className="pt-3 pb-1">
-                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400 mb-2">
-                        Enter M-PESA PIN
+                    <div className="pt-4 pb-1">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-2">
+                        Enter M-Pesa PIN
                       </p>
-                      <div className="flex justify-center gap-2.5">
+                      <div className="flex justify-center gap-2">
                         {[0, 1, 2, 3].map(i => (
                           <div 
                             key={i}
-                            className={`w-9 h-10 rounded-xl border-2 flex items-center justify-center font-black text-lg transition-all ${
+                            className={`w-9 h-10 rounded-xl border flex items-center justify-center font-black text-lg transition-all ${
                               i < enteredPinDots 
-                                ? 'bg-emerald-500/20 border-emerald-400 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.4)]' 
-                                : 'bg-white/5 border-white/15 text-transparent'
+                                ? 'bg-emerald-50 border-[#009639] text-[#009639]' 
+                                : 'bg-white border-slate-200 text-transparent'
                             }`}
                           >
                             {i < enteredPinDots ? '●' : ''}
@@ -271,33 +223,32 @@ export function AnimateStkPushModal({
                   </div>
 
                   {stage === 'verifying' && (
-                    <div className="mt-3 pt-3 border-t border-white/10 text-center flex items-center justify-center gap-2 text-xs font-bold text-amber-300 animate-pulse">
-                      <div className="w-3.5 h-3.5 border-2 border-amber-300 border-t-transparent rounded-full animate-spin" />
-                      <span>Authorizing transaction with Safaricom...</span>
+                    <div className="pt-3 border-t border-slate-200 text-center flex items-center justify-center gap-2 text-xs font-bold text-amber-700">
+                      <div className="w-3.5 h-3.5 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" />
+                      <span>Authorizing transaction...</span>
                     </div>
                   )}
                 </div>
 
-                {/* Cashier / Customer Control Actions */}
-                <div className="space-y-2 pt-1">
+                {/* Actions */}
+                <div className="space-y-2">
                   <button
                     type="button"
                     onClick={handleApprove}
                     disabled={stage === 'verifying'}
-                    className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#009639] to-emerald-600 hover:from-[#007a2f] hover:to-emerald-500 active:scale-[0.98] text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+                    className="w-full py-3.5 px-5 rounded-2xl bg-[#009639] hover:bg-[#007a2f] text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                   >
                     <Lock size={15} />
                     <span>Approve & Verify PIN (Customer OK)</span>
-                    <ArrowRight size={15} />
                   </button>
 
                   <button
                     type="button"
                     onClick={handleReject}
                     disabled={stage === 'verifying'}
-                    className="w-full py-2.5 rounded-xl text-slate-400 hover:text-red-400 hover:bg-white/5 text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer"
+                    className="w-full py-2.5 rounded-xl text-slate-500 hover:text-red-600 hover:bg-slate-50 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
                   >
-                    Simulate Customer Cancel / Reject
+                    Cancel / Reject
                   </button>
                 </div>
               </div>
@@ -310,51 +261,33 @@ export function AnimateStkPushModal({
                 animate={{ scale: 1, opacity: 1 }}
                 className="py-4 flex flex-col items-center justify-center text-center space-y-4"
               >
-                {/* Animated Tick with Expanding Ring */}
-                <div className="relative">
-                  <motion.div 
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: [1, 1.4, 1.2], opacity: [0.8, 0.3, 0] }}
-                    transition={{ duration: 1.2, ease: 'easeOut' }}
-                    className="absolute -inset-4 rounded-full bg-emerald-500/40"
-                  />
-                  <motion.div
-                    initial={{ scale: 0, rotate: -45 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                    className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-[#009639] flex items-center justify-center text-white shadow-2xl shadow-emerald-500/50 relative z-10"
-                  >
-                    <Check size={40} className="stroke-[3.5]" />
-                  </motion.div>
+                <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#009639] flex items-center justify-center shadow-md">
+                  <Check size={32} className="stroke-[3]" />
                 </div>
 
                 <div className="space-y-1">
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase tracking-widest inline-block border border-emerald-500/30">
-                    Payment Verified ✓
+                  <span className="px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider inline-block">
+                    Payment Confirmed
                   </span>
-                  <h3 className="text-2xl font-black text-white">M-Pesa Express Confirmed</h3>
-                  <p className="text-xs text-slate-300 font-semibold">
-                    Amount received: <strong className="text-emerald-400 font-bold">{formatPrice(amount)}</strong>
+                  <h3 className="text-xl font-black text-slate-900">M-Pesa Successful</h3>
+                  <p className="text-xs text-slate-600 font-semibold">
+                    Amount: <strong className="text-emerald-700 font-bold">{formatPrice(amount)}</strong>
                   </p>
                 </div>
 
-                {/* Receipt Code Box */}
-                <div className="w-full p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                    M-Pesa Transaction Reference Code
+                <div className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1 text-left">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    M-Pesa Reference Code
                   </p>
-                  <p className="font-mono text-lg font-black text-emerald-400 tracking-wider">
+                  <p className="font-mono text-base font-black text-slate-900 tracking-wider">
                     {transactionCode}
-                  </p>
-                  <p className="text-[10px] text-slate-400">
-                    Receipt SMS generated and queued for printing
                   </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => onSuccess(transactionCode)}
-                  className="w-full py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-[#08047D] font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg"
+                  className="w-full py-3.5 rounded-2xl bg-[#08047D] hover:bg-[#050259] text-white font-black text-xs uppercase tracking-wider shadow-md transition-all cursor-pointer"
                 >
                   Continue to Order Ticket
                 </button>
@@ -368,14 +301,14 @@ export function AnimateStkPushModal({
                 animate={{ scale: 1, opacity: 1 }}
                 className="py-4 flex flex-col items-center justify-center text-center space-y-4"
               >
-                <div className="w-20 h-20 rounded-full bg-red-500/20 border-2 border-red-500 flex items-center justify-center text-red-500 shadow-xl shadow-red-500/20">
-                  <X size={38} className="stroke-[3]" />
+                <div className="w-16 h-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                  <X size={32} className="stroke-[3]" />
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-xl font-black text-white">STK Push Cancelled</h3>
-                  <p className="text-xs text-slate-400 max-w-xs">
-                    Customer cancelled the PIN prompt or timeout reached. No funds were deducted.
+                  <h3 className="text-lg font-black text-slate-900">STK Push Cancelled</h3>
+                  <p className="text-xs text-slate-500 max-w-xs">
+                    Customer cancelled the PIN prompt or timeout reached.
                   </p>
                 </div>
 
@@ -388,7 +321,7 @@ export function AnimateStkPushModal({
                       setEnteredPinDots(0);
                       setTimeout(() => setStage('prompted'), 1000);
                     }}
-                    className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    className="flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
                   >
                     <RotateCcw size={14} />
                     <span>Try Again</span>
@@ -406,13 +339,13 @@ export function AnimateStkPushModal({
 
           </div>
 
-          {/* Footer Branding */}
-          <div className="px-6 py-3.5 bg-black/40 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-400">
+          {/* Footer */}
+          <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck size={13} className="text-emerald-400" />
-              Safaricom Daraja API Verified
+              <ShieldCheck size={14} className="text-[#009639]" />
+              Secure M-Pesa Gateway
             </span>
-            <span className="font-mono text-slate-500">Till #714920</span>
+            <span className="font-mono text-slate-400">Till #714920</span>
           </div>
 
         </motion.div>

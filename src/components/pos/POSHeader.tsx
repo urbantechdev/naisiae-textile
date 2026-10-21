@@ -15,7 +15,6 @@ import { appExperience } from '../../utils/haptics';
 interface POSHeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  onOpenCustomItem: () => void;
   onOpenHeldOrders: () => void;
   heldCount: number;
   onSimulateBarcodeScan: () => void;
@@ -27,7 +26,6 @@ interface POSHeaderProps {
 export function POSHeader({
   searchQuery,
   onSearchChange,
-  onOpenCustomItem,
   onOpenHeldOrders,
   heldCount,
   onSimulateBarcodeScan,
@@ -60,7 +58,7 @@ export function POSHeader({
   return (
     <div className="bg-white rounded-2xl border border-slate-200/90 p-2.5 sm:p-3 shadow-xs mb-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3">
       {/* Search Input Bar */}
-      <div className="relative flex-1">
+      <div className="relative flex-1 md:mt-0 mt-2">
         <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
           ref={searchInputRef}
@@ -88,8 +86,8 @@ export function POSHeader({
         </div>
       </div>
 
-      {/* Action Strip: Barcode, View Mode, Custom Item, Held Tickets */}
-      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
+      {/* Action Strip: Barcode, View Mode, Custom Item, Held Tickets - Hidden on mobile per user instruction */}
+      <div className="hidden md:flex items-center gap-2 flex-wrap sm:flex-nowrap shrink-0">
         {/* Barcode Scanner Button */}
         <button
           type="button"
@@ -130,17 +128,6 @@ export function POSHeader({
           </button>
         </div>
 
-        {/* Custom Item Quick Line Creator */}
-        <button
-          type="button"
-          onClick={onOpenCustomItem}
-          className="px-3 py-2 sm:py-2.5 rounded-xl bg-[#08047D] hover:bg-[#050259] text-white font-bold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition-all"
-          title="Add a custom one-off item or tailoring alteration"
-        >
-          <Plus size={14} className="text-[#FA9411]" />
-          <span>+ Custom Item</span>
-        </button>
-
         {/* Held Orders Quick Recall Button */}
         {heldCount > 0 && (
           <button
@@ -154,11 +141,6 @@ export function POSHeader({
           </button>
         )}
 
-        {/* Station Status Pill */}
-        <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[11px] font-semibold">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Terminal #01 · Cashier</span>
-        </div>
       </div>
     </div>
   );
